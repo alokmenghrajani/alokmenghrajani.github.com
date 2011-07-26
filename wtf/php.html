@@ -1,0 +1,33 @@
+<html>
+<head></head>
+<body>
+<p>A list of PHP weirdness...</p>
+
+<h2>operator precedence</h2>
+
+<h3>PHP code</h3>
+<pre>
+<?php
+
+echo 1 ? 2 : 3 ? 4 : 5;
+</pre>
+<h3>output</h3>
+<pre>
+4
+</pre>
+<h3>C code</h3>
+<pre>
+#include <stdio.h>
+
+int main() {
+  printf("f=%d\n", 1 ? 2 : 3 ? 4 : 5);
+  return 0;
+}
+</pre>
+<h3>output</h3>
+<pre>
+2
+</pre>
+
+</body>
+</html>
