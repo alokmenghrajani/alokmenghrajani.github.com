@@ -38,7 +38,7 @@ int main() {
 <pre>
 &lt;?php
 
-class A{
+class A {
   public function printName() {
    echo 'I am:', get_class($this), "\n";
   }
@@ -67,5 +67,29 @@ I am: A
 I am: B
 </pre>
 
+<hr/>
+
+<h2>Can't call future constructor</h2>
+<h3>PHP code</h3>
+<pre>
+&lt;?php
+
+class A {
+}
+
+class B extends A {
+  public function __construct() {
+    // make sure parent constructor gets called if someone adds one
+    parent::__construct();
+  }
+}
+
+new B();
+</pre>
+
+<h3>output</h3>
+<pre>
+Fatal PHP Fatal error: Can not call constructor in...
+</pre>
 </body>
 </html>
