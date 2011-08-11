@@ -128,5 +128,40 @@ foo in B
 foo in A
 </pre>
 
+<h2>__construct is just another method</h2>
+<h3>PHP code</h3>
+<pre>
+&lt;?php
+
+class A {
+  public $v;
+
+  public function __construct($v) {
+    $this->v = $v;
+  }
+}
+
+$a = new A(42);
+$b = range(0, 9);
+for ($i=0; $i<10; $i++) {
+  $b[$i] = $a->__construct($i);
+  echo 'memory:', memory_get_usage(), "\n";
+}
+</pre>
+
+<h3>output</h3>
+<pre>
+memory: 629952
+memory: 629952
+memory: 629952
+memory: 629952
+memory: 629952
+memory: 629952
+memory: 629952
+memory: 629952
+memory: 629952
+memory: 629952
+</pre>
+
 </body>
 </html>
