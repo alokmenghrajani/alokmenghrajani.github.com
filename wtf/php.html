@@ -91,5 +91,42 @@ new B();
 <pre>
 Fatal PHP Fatal error: Can not call constructor in...
 </pre>
+
+<h2>Redefine private methods</h2>
+<h3>PHP code</h3>
+<pre>
+&lt;?php
+
+class A {
+  private function foo() {
+    return 'foo in A';
+  }
+
+  public function bar() {
+    echo $this->foo(), "\n";
+  }
+}
+
+class B extends A {
+  private function foo() {
+    return 'foo in B';
+  }
+
+  public function bar2() {
+    echo $this->foo(), "\n";
+  }
+}
+
+$b = new B();
+$b->bar2();
+$b->bar();
+</pre>
+
+<h3>output</h3>
+<pre>
+foo in B
+foo in A
+</pre>
+
 </body>
 </html>
