@@ -1,0 +1,650 @@
+<html>
+  <head>
+    <title>Hackathon 27 - FbCube</title>
+    <style>
+      body, html {height: 100%;}
+      #outer {height: 100%; width: 100%; overflow: visible;}
+      #inner {width: 1000px; margin-left: auto; margin-right: auto; position: relative; top: 50%; height: 0px;}
+      #canvas {position: relative; top: -250px;}
+      #desc {position: absolute; left: 500px; top: -250px; width: 480px; height: 480px; margin: 10px;}
+      body {
+        color: #333333;
+        font-family: ‘Lucida Sans Unicode’, ‘Lucida Grande’, sans-serif;
+      }
+      #state {position: absolute; left: 500px; bottom: -200px; margin: 10px;}
+    </style>
+  </head>
+<body>
+<div id="outer">
+<div id="inner">
+<canvas id="canvas" width="500" height="500"></canvas>
+<div id="desc">
+<h1>Hackathon 27</h1>
+<p>9x9x9 Rubik's cube</p>
+<p>Coded in Javascript using Webgl</p>
+<p>Algorithm used to solve the cube: undo</p>
+</ul>
+</div>
+<div id="state" style="opacity: 1"></div>
+</div>
+</div>
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+    #ifdef GL_ES
+    precision highp float;
+    #endif
+
+    varying vec4 vColor;
+
+    void main(void) {
+        gl_FragColor = vColor;
+    }
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    attribute vec3 aVertexNormal;
+    attribute vec4 aVertexColor;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+    varying vec4 vColor;
+
+    void main(void) {
+      gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1);
+      vColor = aVertexColor;
+    }
+</script>
+
+
+<script type="text/javascript">
+  var gl;
+  var shaderProgram;
+  var mvMatrix = mat4.create();
+  var mvMatrixStack = [];
+  var pMatrix = mat4.create();
+
+  var rubik;
+
+  function fade(text, count) {
+    if (document.getElementById('state').innerHTML == text) {
+      return;
+    }
+    var f = count/10;
+    if (text) {
+      f = 1-f;
+    }
+    document.getElementById('state').style.opacity = f;
+    if (count<10) {
+      setTimeout(function(){fade(text, count+1)}, 100);
+    } else if (text) {
+      document.getElementById('state').innerHTML = text;
+      fade(null, 0);
+    }
+  }
+
+  function initGL(canvas) {
+    try {
+      gl = canvas.getContext("experimental-webgl") ||
+           canvas.getContext("webgl");
+      gl.viewportWidth = canvas.width;
+      gl.viewportHeight = canvas.height;
+    } catch (e) {
+      console.log(e);
+    }
+    if (!gl) {
+      alert("Could not initialise WebGL, sorry :-(");
+    }
+  }
+
+  function getShader(gl, id) {
+    var shaderScript = document.getElementById(id);
+    if (!shaderScript) {
+      return null;
+    }
+
+    var str = "";
+    var k = shaderScript.firstChild;
+    while (k) {
+      if (k.nodeType == 3) {
+        str += k.textContent;
+      }
+      k = k.nextSibling;
+    }
+
+    var shader;
+    if (shaderScript.type == "x-shader/x-fragment") {
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (shaderScript.type == "x-shader/x-vertex") {
+      shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+      return null;
+    }
+
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      alert(gl.getShaderInfoLog(shader));
+      return null;
+    }
+
+    return shader;
+  }
+
+
+  function initShaders() {
+    var fragmentShader = getShader(gl, "shader-fs");
+    var vertexShader = getShader(gl, "shader-vs");
+
+    shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      alert("Could not initialise shaders");
+    }
+
+    gl.useProgram(shaderProgram);
+
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+    shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+
+    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+  }
+
+  function mvPushMatrix() {
+    var copy = mat4.create();
+    mat4.set(mvMatrix, copy);
+    mvMatrixStack.push(copy);
+  }
+
+  function mvPopMatrix() {
+    if (mvMatrixStack.length == 0) {
+      throw "Invalid popMatrix!";
+    }
+    mvMatrix = mvMatrixStack.pop();
+  }
+
+  function setMatrixUniforms() {
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+  }
+
+  function degToRad(degrees) {
+    return degrees * Math.PI / 180;
+  }
+
+  // The interesting code starts here!
+
+  /**
+   * Rubik class which holds the small cubes.
+   *
+   * It builds the cubes, making sure each cube is set to
+   * render the right sides.
+   *
+   * It also contains the logic to shuffle/solve.
+   */
+  function /* class */ Rubik(size) {
+    this.pos = mat4.create();
+    mat4.identity(this.pos);
+    this.size = size;
+    this.cubes = [];
+
+    // List of moves to execute
+    this.moves = [];
+    this.state = Rubik.SOLVED;
+
+    this.currentMove = null;
+    this.currentMoveAngle = 0;
+    this.currentSpeed = 1;
+    this.positions = {};
+
+    // Each cube is centered around [0,0,0], so we need to compute
+    // the new center of gravity, m, to keep things centered.
+    var m = (size-1)*2/2;
+
+    // Build the cubes. Only the outside cubes are created, so
+    // a 9x9x9 rubik's cube will have 217 cubes.
+    for (var i=0; i<size; i++) {
+      for (var j=0; j<size; j++) {
+        for (var k=0; k<size; k++) {
+          if ((i==0) || (i==size-1) ||
+              (j==0) || (j==size-1) ||
+              (k==0) || (k==size-1)) {
+            var orientations = [];
+            orientations.push(i==0);
+            orientations.push(i==size-1);
+            orientations.push(j==0);
+            orientations.push(j==size-1);
+            orientations.push(k==0);
+            orientations.push(k==size-1);
+
+            var cube = new Cube(i, j, k, orientations);
+
+            // Move the new cube to it's correct position
+            mat4.translate(cube.pos, [i*2-m, j*2-m, k*2-m]);
+            this.cubes.push(cube);
+          }
+        }
+      }
+    }
+  }
+
+  // Various states
+  Rubik.SOLVED = 0;
+  Rubik.SHUFFLING = 1;
+  Rubik.SHUFFLED = 2
+  Rubik.SOLVING = 3;
+
+  /**
+   * The animation logic
+   *
+   * Handles the rotation of the rubik's (induced by the mouse
+   * movements) as well as the animation of the smaller cubes being
+   * shuffled or solved.
+   */
+  Rubik.prototype.animate = function(elapsed) {
+    // mouse induced rotation
+    var newRotationMatrix = mat4.create();
+    mat4.identity(newRotationMatrix);
+    mat4.rotate(newRotationMatrix, degToRad(lastMouseDX / 10), [0, 1, 0]);
+    mat4.rotate(newRotationMatrix, degToRad(lastMouseDY / 10), [1, 0, 0]);
+    mat4.multiply(newRotationMatrix, rubik.pos, rubik.pos);
+    mat4.multiply(mvMatrix, this.pos);
+
+    // shuffling/solving animation
+    var delta;
+    if (this.currentMove) {
+      if (this.currentMoveAngle < 90) {
+        delta = elapsed * this.currentSpeed / 20;
+        if ((delta + this.currentMoveAngle) > 90) {
+          delta = 90 - this.currentMoveAngle;
+        }
+
+        // Animate the smaller cubes
+        this.currentMoveAngle += delta;
+
+        for (var ii in this.cubes) {
+          var cube = this.cubes[ii];
+          var axe = null;
+          if (this.currentMove.i!==null && this.currentMove.i == cube.i) {
+            axe = [1, 0, 0];
+          } else if (this.currentMove.j!==null && this.currentMove.j == cube.j) {
+            axe = [0, 1, 0];
+          } else if (this.currentMove.k!==null && this.currentMove.k == cube.k) {
+            axe = [0, 0, 1];
+          }
+          if (axe) {
+            if (!this.positions[cube.id]) {
+              // Save the position of every cube
+              var t = [0, 0, 0];
+              mat4.multiplyVec3(cube.pos, t);
+              this.positions[cube.id] = {'i': cube.i, 'j': cube.j, 'k': cube.k,
+                                         'center': t};
+            }
+            mat4.inverse(cube.pos);
+            mat4.rotate(cube.pos, degToRad(delta*this.currentMove.d), axe);
+            mat4.inverse(cube.pos);
+          }
+        }
+      } else {
+        this.currentMove = null;
+        this.currentMoveAngle = 0;
+        // Reset the internal state using this.positions
+        for (var i in this.cubes) {
+          var cube = this.cubes[i];
+          if (!this.positions[cube.id]) {
+            continue;
+          }
+          var t = [0, 0, 0];
+          mat4.multiplyVec3(cube.pos, t);
+
+          // find closest cube
+          var closest = null;
+          var closest_d = 1000000;
+          for (var j in this.positions) {
+            var position = this.positions[j];
+            var position_d = Math.sqrt((t[0]-position.center[0])*(t[0]-position.center[0])+
+                                       (t[1]-position.center[1])*(t[1]-position.center[1])+
+                                       (t[2]-position.center[2])*(t[2]-position.center[2]));
+            if (position_d < closest_d) {
+              closest = position;
+              closest_d = position_d;
+            }
+          }
+          if ((cube.i != closest.i) || (cube.j != closest.j) || (cube.k != closest.k)) {
+            cube.i = closest.i;
+            cube.j = closest.j;
+            cube.k = closest.k;
+          }
+        }
+        this.positions = {};
+      }
+    } else {
+      // We are in a state transition
+      switch (this.state) {
+        case Rubik.SOLVED:
+          fade(" ", 0);
+          // Wait for a while
+          this.currentMove = {i:0,j:null,k:null,d:0};
+          this.currentSpeed = 0.1;
+          this.state = Rubik.SHUFFLING;
+        break;
+        case Rubik.SHUFFLING:
+          fade("Shuffling...", 0);
+          if (this.moves.length < 40) {
+            this.addRandomMove();
+            this.currentMove = this.moves[0];
+            this.currentSpeed = 20;
+          } else {
+            this.state = Rubik.SHUFFLED;
+          }
+        break;
+        case Rubik.SHUFFLED:
+          fade(" ", 0);
+          // Wait for a while
+          this.currentMove = {i:0,j:null,k:null,d:0};
+          this.currentSpeed = 0.3;
+          this.state = Rubik.SOLVING;
+        break;
+        case Rubik.SOLVING:
+          fade("Solving...", 0);
+          if (this.moves.length) {
+            this.currentMove = this.moves.shift();
+            this.currentSpeed = 3 * Math.random() + 1;
+          } else {
+            this.state = Rubik.SOLVED;
+          }
+        break;
+      }
+    }
+  };
+
+  Rubik.prototype.addRandomMove = function() {
+    var r = Math.floor(Math.random() * 3);
+    var d = Math.floor(Math.random() * 2)*2-1;
+    var x = Math.floor(Math.random() * this.size);
+    switch (r) {
+    case 0:
+      this.moves.unshift({'i': x, 'j': null, 'k': null, 'd': d});
+      break;
+    case 1:
+      this.moves.unshift({'i': null, 'j': x, 'k': null, 'd': d});
+      break;
+    case 2:
+      this.moves.unshift({'i': null, 'j': null, 'k': x, 'd': d});
+      break;
+    }
+  }
+
+  /**
+   * Draw the cubes.
+   */
+  Rubik.prototype.draw = function() {
+    // rubik's position
+    mat4.multiply(mvMatrix, this.pos);
+
+    for (var i in this.cubes) {
+      var cube = this.cubes[i];
+      mvPushMatrix();
+      cube.draw();
+      mvPopMatrix();
+    }
+  }
+
+  /**
+   * Cube class.
+   *
+   * The vertices and index (i.e. cube model) is shared between each instance. This reduces the
+   * amount of data sent to the graphics card.
+   *
+   * Each cube only needs to keep track of its position and colors.
+   */
+  function /* class */ Cube(i, j, k, orientations) {
+    this.id = Cube.id++;
+    this.i = i;
+    this.j = j;
+    this.k = k;
+    this.pos = mat4.create();
+    mat4.identity(this.pos);
+
+    this.color = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.color);
+    var colors = [];
+    var black = [0, 0, 0, 1];
+    var w1 = [1, 1, 1, 1];
+    var b1 = [59/255, 89/255, 152/255, 1];
+    var b2 = [109/255, 132/255, 180/255, 1];
+    var choices = [[0,0,0,1], [0.5, 0, 0, 1], [0.5, 0, 0.5, 1], [0, 0.5, 0.5, 1], [0.8, 0.8, 0, 1], [0.4, 0.4, 0.4, 1]];
+    var texture =
+      [[b1, b1, b1, b1, w1, w1, w1, w1, b1],
+       [b1, b1, b1, b1, w1, w1, w1, w1, b1],
+       [b1, b1, b1, b1, w1, w1, b1, b1, b1],
+       [b1, b1, b1, b1, w1, w1, b1, b1, b1],
+       [b1, b1, w1, w1, w1, w1, w1, w1, b1],
+       [b1, b1, w1, w1, w1, w1, w1, w1, b1],
+       [b1, b1, b1, b1, w1, w1, b1, b1, b1],
+       [b1, b1, b1, b1, w1, w1, b1, b1, b1],
+       [b2, b2, b2, b2, w1, w1, b2, b2, b2]];
+
+
+    for (var ii in orientations) {
+      var orientation = orientations[ii];
+      if (orientation) {
+        if (ii==0) {
+          colors.push(texture[k][j]);
+        } else {
+          colors.push(choices[ii]);
+        }
+      } else {
+        colors.push(black);
+      }
+    }
+    for (ii=0; ii<24; ii++) {
+      // put the black borders
+      colors.push(black);
+    }
+
+    var unpackedColors = [];
+    for (var i in colors) {
+      var color = colors[i];
+      for (var j=0; j < 4; j++) {
+        unpackedColors = unpackedColors.concat(color);
+      }
+    }
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
+    this.color.itemSize = 4;
+    this.color.numItems = colors.length / 4;
+
+    this.moved = false;
+  }
+
+  Cube.id = 0;
+  Cube.vertices = null;
+  Cube.index = null;
+  Cube.normals = null;
+
+  Cube.getVertices = function() {
+    if (!Cube.vertices) {
+      Cube.vertices = gl.createBuffer();
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, Cube.vertices);
+
+      // Build the main faces and borders
+      var vertices = [];
+      var square = [[-0.9, -0.9], [0.9, -0.9], [0.9, 0.9], [-0.9, 0.9]];
+      for (var ii=0; ii<6; ii++) {
+        var t1 = (ii % 2) * 2 - 1;
+        for (var jj=0; jj<square.length; jj++) {
+          var t2 = square[jj].slice();
+          t2.splice(Math.floor(ii/2), 0, t1);
+          vertices = vertices.concat(t2);
+        }
+      }
+      var border = [[-1, -1],[-1,1],[-0.9,1],[-0.9,-1],
+                    [1,-1],[1,1],[0.9,1],[0.9,-1],
+                    [-0.9,-1],[-0.9,-0.9],[0.9,-0.9],[0.9,-1],
+                    [-0.9,1],[-0.9,0.9],[0.9,0.9],[0.9,1]];
+      for (var ii=0; ii<6; ii++) {
+        var t1 = (ii % 2) * 2 - 1;
+        for (var jj=0; jj<border.length; jj++) {
+          var t2 = border[jj].slice();
+          t2.splice(Math.floor(ii/2),0,t1);
+          vertices = vertices.concat(t2);
+        }
+      }
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+      Cube.vertices.itemSize = 3;
+      Cube.vertices.numItems = vertices.length/3;
+    }
+    return Cube.vertices;
+  };
+
+  Cube.getIndex = function() {
+    if (!Cube.index) {
+      Cube.index = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Cube.index);
+      var index = [];
+      for (var ii=0; ii<Cube.vertices.numItems; ii+=4) {
+        index.push(ii);
+        index.push(ii+1);
+        index.push(ii+2);
+        index.push(ii);
+        index.push(ii+2);
+        index.push(ii+3);
+      }
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index), gl.STATIC_DRAW);
+      Cube.index.itemSize = 1;
+      Cube.index.numItems = index.length;
+    }
+    return Cube.index;
+  };
+
+  Cube.prototype.draw = function() {
+    mat4.multiply(mvMatrix, this.pos);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, Cube.getVertices());
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, Cube.getVertices().itemSize, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.color);
+    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, this.color.itemSize, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, Cube.getIndex());
+
+    setMatrixUniforms();
+    gl.drawElements(gl.TRIANGLES, Cube.getIndex().numItems, gl.UNSIGNED_SHORT, 0);
+  };
+
+  function drawScene() {
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100, pMatrix);
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, [0, 0, -45]);
+
+    mvPushMatrix();
+    rubik.draw();
+    mvPopMatrix();
+  }
+
+  var lastTime = 0;
+
+  function animate() {
+    var timeNow = new Date().getTime();
+    if (lastTime != 0) {
+      var elapsed = timeNow - lastTime;
+    }
+    lastTime = timeNow;
+
+    rubik.animate(elapsed);
+  }
+
+  function tick() {
+    // make sure we come back here for the next frame
+    requestAnimFrame(tick);
+
+    // draw everything
+    drawScene();
+
+    // animation goes here
+    animate();
+  }
+
+  var mouseDown = false;
+  var lastMouseX = null;
+  var lastMouseY = null;
+  var lastMouseDX = 4;
+  var lastMouseDY = 4;
+  var lastMouseDownX = null;
+  var lastMouseDownY = null;
+
+  function handleMouseDown(event) {
+    mouseDown = true;
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+    lastMouseDownX = event.clientX;
+    lastMouseDownY = event.clientY;
+  }
+
+  function handleMouseUp(event) {
+    mouseDown = false;
+    var newX = event.clientX;
+    var newY = event.clientY;
+
+    if (((newX - lastMouseDownX)*(newX - lastMouseDownX)
+         + (newY - lastMouseDownY)*(newY - lastMouseDownY)) < 10) {
+      // the mouse was released close to where it went down, so we'll
+      // stop rotating the cube
+      lastMouseDX = 0;
+      lastMouseDY = 0;
+    }
+  }
+
+  function handleMouseMove(event) {
+    if (!mouseDown) {
+      return;
+    }
+    var newX = event.clientX;
+    var newY = event.clientY;
+
+    lastMouseDX = newX - lastMouseX;
+    lastMouseDY = newY - lastMouseY;
+    lastMouseX = newX;
+    lastMouseY = newY;
+  }
+
+  function webGLStart() {
+    // Init webgl
+    var canvas = document.getElementById("canvas");
+    initGL(canvas);
+    initShaders();
+
+    // Intiantiate a Rubik cube
+    rubik = new Rubik(9);
+
+    // Background color is white
+    gl.clearColor(1, 1, 1, 1);
+    gl.enable(gl.DEPTH_TEST);
+
+    // Handle mouse movements
+    canvas.onmousedown = handleMouseDown;
+    document.onmouseup = handleMouseUp;
+    document.onmousemove = handleMouseMove;
+
+    // Draw the first frame
+    tick();
+  }
+  webGLStart();
+</script>
+</body>
+</html>
