@@ -360,6 +360,7 @@
           fade("Solving...", 0);
           if (this.moves.length) {
             this.currentMove = this.moves.shift();
+            this.currentMove.d = -this.currentMove.d;
             this.currentSpeed = 3 * Math.random() + 1;
           } else {
             this.state = Rubik.SOLVED;
