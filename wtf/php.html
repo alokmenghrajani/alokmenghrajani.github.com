@@ -163,5 +163,33 @@ memory: 629952
 memory: 629952
 </pre>
 
+<h2>curl_multi_exec</h2>
+<p>curl_multi_exec does not affect curl_errno(), but it does affect
+curl_error().</p>
+<pre>
+&lt;?php
+
+$c = curl_init('http://www.google.com:443/');
+curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+$mh = curl_multi_init();
+curl_multi_add_handle($mh,$c);
+$active = null;
+do {
+  $mrc = curl_multi_exec($mh, $active);
+} while ($mrc == CURLM_CALL_MULTI_PERFORM || $active);
+
+$r = curl_multi_info_read($mh);
+echo $r['result'], "\n";
+echo curl_errno($c), "\n";
+echo curl_error($c), "\n";
+</pre>
+
+<h3>output</h3>
+<pre>
+52
+0
+Empty reply from server
+</pre>
+
 </body>
 </html>
