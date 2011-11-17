@@ -197,5 +197,19 @@ echo curl_error($c), "\n";
 Empty reply from server
 </pre>
 
+<h2>don't trust ==</h2>
+<pre>
+&lt;?php
+
+echo (int)("  4"  == "    4"), "\n";
+echo (int)("  4 " == "    4 "), "\n";
+</pre>
+
+<h3>output</h3>
+<pre>
+1
+0
+</pre>
+
 </body>
 </html>
