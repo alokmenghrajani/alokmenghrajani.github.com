@@ -1,14 +1,26 @@
 <html>
 <body>
-<iframe id="iframe" src="https://github.com/robots.txt"></iframe>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js"></script>
 
 <script>
-document.domain = "github.com";
+  document.domain = "github.com";
 
-var x = document.getElementById('iframe');
-
-document.write(x.innerHTML);
+  new Ajax.Request("http://github.com:443/robots.txt", {
+		method: 'get',
+                onSuccess: function(response) {
+                        console.log(response.responseText);
+                },
+                onFailure: function(response) {
+	alok = response;
+                        console.log(response);
+                },
+	      	onException: function(request,error) {
+                  alok = error;
+                        console.log(error.message);
+		}
+	});
 </script>
+
 
 </body>
 </html>
