@@ -1,0 +1,14 @@
+<html>
+<body>
+<iframe id="iframe" src="https://github.com/robots.txt"></iframe>
+
+<script>
+document.domain = "github.com";
+
+var x = document.getElementById('iframe');
+
+document.write(x.innerHTML);
+</script>
+
+</body>
+</html>
