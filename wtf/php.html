@@ -197,6 +197,8 @@ echo curl_error($c), "\n";
 Empty reply from server
 </pre>
 
+<hr/>
+
 <h2>don't trust ==</h2>
 <pre>
 &lt;?php
@@ -209,6 +211,26 @@ echo (int)("  4 " == "    4 "), "\n";
 <pre>
 1
 0
+</pre>
+
+<hr/>
+
+<h2>Funny increments</h2>
+In general, I have tried to avoid discussing php's funky API, however this one is just too funny:
+<pre>
+&lt;?php
+
+$x = "x";
+$x++; $x++; $x++;
+echo $x, "\n";
+$x--; $x--; $x--;
+echo $x, "\n";
+</pre>
+
+<h3>output</h3>
+<pre>
+aa
+aa
 </pre>
 
 </body>
