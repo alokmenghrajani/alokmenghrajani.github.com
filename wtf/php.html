@@ -233,5 +233,29 @@ aa
 aa
 </pre>
 
+<hr/>
+
+<h2>don't trust get_class()</h2>
+<pre>
+&lt;?php
+
+class A { }
+
+class Foo {
+  public static function bar($x) {
+    echo get_class($x), "\n";
+  }
+}
+
+Foo::bar(new A());
+Foo::bar(null);
+</pre>
+
+<h3>output</h3>
+<pre>
+A
+Foo
+</pre>
+
 </body>
 </html>
