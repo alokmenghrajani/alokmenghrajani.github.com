@@ -1,42 +1,86 @@
-<html>
-<head></head>
-<body>
-<p>A list of PHP weirdness...</p>
+<!DOCTYPE html>
+<html lang="en">
+<head><title>A list of PHP weirdness</title>
+<meta name="author" content="Alok Menghrajani">
+<link href="../bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="../jquery-1.7.1.min.js"></script>
+<link href="../prettify/prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="../prettify/prettify.js"></script>
+<style>
+body { margin-top: 40px; }
+section { margin-top: 80px; }
+</style>
+</head>
+<body onload="prettyPrint()">
+<div class="container">
+  <div class="hero-unit">
+    <h1>PHP weirdness</h1>
+    <p>A list of poor design decisions in PHP which has lead to debugging pain for me or my co-workers</p>
+    <div>
+      <ol>
+        <li><a href="#weirdness01">operator precedence</a></li>
+        <li><a href="#weirdness02">calling instance methods in static context</a></li>
+        <li><a href="#weirdness03">can't call future constructor</a></li>
+        <li><a href="#weirdness04">redefine private methods</a></li>
+        <li><a href="#weirdness05">__construct is just another method</a></li>
+        <li><a href="#weirdness06">curl_multi_exec</a></li>
+        <li><a href="#weirdness07">can't trust ==</a></li>
+        <li><a href="#weirdness08">funny increments</a></li>
+        <li><a href="#weirdness09">can't trust get_class()</a></li>
+        <li><a href="#weirdness10">constructor does not get called, but destructor sure does</a></li>
+        <li><a href="#links">more stuff...</a></li>
+      </ol>
+    </div>
+    <div style="position:relative; top:60px;">
+    <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Falokmenghrajani.github.com%2Fwtf%2Fphp.html&amp;send=false&amp;layout=standard&amp;width=800&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80&amp;appId=202717489767277" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:800px; height:80px;" allowTransparency="true"></iframe>
+    </div>
+  </div>
 
-<h2>operator precedence</h2>
-<p>PHP's operator's don't always follow the C standard. This can lead to subtle bugs, so the
-recommendation is to use and abuse () in expressions.</p>
+  <section id="weirdness01">
+    <div class="page-header">
+      <h1>operator precedence</h1>
+    </div>
+    <p>
+      You would think that PHP's operators are based on C's. Unfortunately there are subtle differences.
+      I usually end up abusing '(' and ')' in my expressions. For example, the following pieces of similar
+      PHP and C code don't output the same result!
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+echo 1 ? 2 : 3 ? 4 : 5;</pre>
 
-<h3>PHP code</h3>
-<pre>
-&lt;?php
-
-echo 1 ? 2 : 3 ? 4 : 5;
-</pre>
-<h3>output</h3>
-<pre>
-4
-</pre>
-<h3>C code</h3>
-<pre>
-#include <stdio.h>
-
+        <a onclick="$(event.target).hide();$('#weirdness01output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness01output01" style="display: none;">&gt; 4</pre>
+      </div>
+    </div>
+    <div>
+      <h3>C code</h3>
+      <div>
+        <pre class="prettyprint linenums">#include &lt;stdio.h&gt;
 int main() {
   printf("f=%d\n", 1 ? 2 : 3 ? 4 : 5);
   return 0;
-}
-</pre>
-<h3>output</h3>
-<pre>
-2
-</pre>
+}</pre>
 
-<hr/>
+        <a onclick="$(event.target).hide();$('#weirdness01output02').fadeIn()">(click to see output)</a>
+        <pre id="weirdness01output02" style="display: none;">&gt; 2</pre>
+      </div>
+    </div>
+  </section>
 
-<h2>Calling instance methods in static context</h2>
-<h3>PHP code</h3>
-<pre>
-&lt;?php
+  <section id="weirdness02">
+    <div class="page-header">
+      <h1>calling instance methods in static context</h1>
+    </div>
+    <p>
+      Not a huge deal, since this can easily be solved with a linter.
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
 class A {
   public function printName() {
@@ -58,21 +102,23 @@ $a = new A();
 $a->foo();
 
 $b = new B();
-$b->foo();
-</pre>
+$b->foo();</pre>
 
-<h3>output</h3>
-<pre>
-I am: A
-I am: B
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness02output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness02output01" style="display: none;">&gt; I am: A
+&gt; I am: B</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>Can't call future constructor</h2>
-<h3>PHP code</h3>
-<pre>
-&lt;?php
+  <section id="weirdness03">
+    <div class="page-header">
+      <h1>can't call future constructor</h1>
+    </div>
+    <p>Can lead to bugs as code changes over time.</p>
+    <div>
+      <h3>PHP code</h3>
+        <pre class="prettyprint linenums">&lt;?php
 
 class A {
 }
@@ -84,20 +130,22 @@ class B extends A {
   }
 }
 
-new B();
-</pre>
+new B();</pre>
 
-<h3>output</h3>
-<pre>
-Fatal PHP Fatal error: Can not call constructor in...
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness03output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness03output01" style="display: none;">&gt; Fatal PHP Fatal error: Can not call constructor in...</pre>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>Redefine private methods</h2>
-<h3>PHP code</h3>
-<pre>
-&lt;?php
+  <section id="weirdness04">
+    <div class="page-header">
+      <h1>redefine private methods</h1>
+    </div>
+    <p>It's debatable what's the right thing to do. PHP's design decision isn't unreasonable in this case.</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
 class A {
   private function foo() {
@@ -121,21 +169,28 @@ class B extends A {
 
 $b = new B();
 $b->bar2();
-$b->bar();
-</pre>
+$b->bar();</pre>
 
-<h3>output</h3>
-<pre>
-foo in B
-foo in A
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness04output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness04output01" style="display: none;">&gt; foo in B
+&gt; foo in A</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>__construct is just another method</h2>
-<h3>PHP code</h3>
-<pre>
-&lt;?php
+  <section id="weirdness05">
+    <div class="page-header">
+      <h1>__construct is just another method</h1>
+    </div>
+    <p>
+      Unless you are writing at the compiler/framework layer, calling
+      __construct and __destruct behaves like just any methods and does
+      not cause you to allocate or free any memory.
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
 class A {
   public $v;
@@ -150,30 +205,27 @@ $b = range(0, 9);
 for ($i=0; $i<10; $i++) {
   $b[$i] = $a->__construct($i);
   echo 'memory:', memory_get_usage(), "\n";
-}
-</pre>
+}</pre>
 
-<h3>output</h3>
-<pre>
-memory: 629952
-memory: 629952
-memory: 629952
-memory: 629952
-memory: 629952
-memory: 629952
-memory: 629952
-memory: 629952
-memory: 629952
-memory: 629952
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness05output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness05output01" style="display: none;">&gt; memory: 629952
+&gt; memory: 629952
+&gt; memory: 629952
+&gt; memory: 629952
+&gt; &hellip;</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>curl_multi_exec</h2>
-<p>curl_multi_exec does not affect curl_errno(), but it does affect
-curl_error().</p>
-<pre>
-&lt;?php
+  <section id="weirdness06">
+    <div class="page-header">
+      <h1>curl_multi_exec</h1>
+    </div>
+    <p>curl_multi_exec does not affect curl_errno(), but it does affect the return value of curl_error().</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
 $c = curl_init('http://www.google.com:443/');
 curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
@@ -187,59 +239,69 @@ do {
 $r = curl_multi_info_read($mh);
 echo $r['result'], "\n";
 echo curl_errno($c), "\n";
-echo curl_error($c), "\n";
-</pre>
+echo curl_error($c), "\n";</pre>
 
-<h3>output</h3>
-<pre>
-52
-0
-Empty reply from server
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness06output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness06output01" style="display: none;">&gt; 52
+&gt; 0
+&gt; Empty reply from server</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>don't trust ==</h2>
-credits: erling
-<pre>
-&lt;?php
+  <section id="weirdness07">
+    <div class="page-header">
+      <h1>can't trust ==</h1>
+    </div>
+    <p>You can't trust ==, even when you know the types are going to match.</p>
+    <p>credits: erling</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
 echo (int)("  4"  == "    4"), "\n";
-echo (int)("  4 " == "    4 "), "\n";
-</pre>
+echo (int)("  4 " == "    4 "), "\n";</pre>
 
-<h3>output</h3>
-<pre>
-1
-0
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness07output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness07output01" style="display: none;">&gt; 1
+&gt 0</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>Funny increments</h2>
-In general, I have tried to avoid critizing php's API, however this one deserves to be listed here:
-<pre>
-&lt;?php
+  <section id="weirdness08">
+    <div class="page-header">
+      <h1>funny increments</h1>
+    </div>
+    <p>In general, I have tried to avoid critizing PHP's API, however this one deserves to be listed.</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
 $x = "x";
 $x++; $x++; $x++;
 echo $x, "\n";
 $x--; $x--; $x--;
-echo $x, "\n";
-</pre>
+echo $x, "\n";</pre>
 
-<h3>output</h3>
-<pre>
-aa
-aa
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness08output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness08output01" style="display: none;">&gt; aa
+&gt; aa</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>don't trust get_class()</h2>
-credits: jfrank
-<pre>
-&lt;?php
+  <section id="weirdness09">
+    <div class="page-header">
+      <h1>can't trust get_class()</h1>
+    </div>
+    <p>credits: jfrank</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
 class A { }
 
@@ -250,24 +312,26 @@ class Foo {
 }
 
 Foo::bar(new A());
-Foo::bar(null);
-</pre>
+Foo::bar(null);</pre>
 
-<h3>output</h3>
-<pre>
-A
-Foo
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness09output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness09output01" style="display: none;">&gt; A
+&gt; Foo</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
+  <section id="weirdness10">
+    <div class="page-header">
+      <h1>constructor does not get called, but destructor sure does</h1>
+    </div>
+    <p>This caused us hours in debugging time. Things were eventually fixed in php 5.3.x.</p>
+    <p>credits: pgriess</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
 
-<h2>Constructor does not get called, but destructor does</h2>
-This caused us hours in debugging... Things were eventually fixed in php 5.3.x.
-
-<h3>PHP code</h3>
-credits: pgriess
-<pre>
-&lt;?php
 
 class Foo {
   public function __construct($a) {
@@ -285,22 +349,26 @@ function blah() {
 
 try {
   $f = new Foo(blah());
-  unset($f);
 } catch (Exception $e){
-}
-</pre>
+}</pre>
 
-<h3>output</h3>
-<pre>
-Foo::__destruct()
-</pre>
+        <a onclick="$(event.target).hide();$('#weirdness10output01').fadeIn()">(click to see output)</a>
+        <pre id="weirdness10output01" style="display: none;">&gt; Foo::__destruct()</pre>
+      </div>
+    </div>
+  </section>
 
-<hr/>
-
-<h2>Links</h2>
-<ul>
-<li><a href="http://www.reddit.com/r/lolphp">http://www.reddit.com/r/lolphp</a></li>
-</ul>
+  <section id="links">
+    <div class="page-header">
+      <h1>links</h1>
+    </div>
+    <ul>
+      <li><a href="http://www.reddit.com/r/lolphp">http://www.reddit.com/r/lolphp</a></li>
+      <li><a href="http://phpsadness.com/">http://phpsadness.com/</a></li>
+      <li><a href="http://www.phpwtf.org/">http://www.phpwtf.org/</a></li>
+      <li><a href="http://wiki.theory.org/YourLanguageSucks#PHP_sucks_because%3A">http://wiki.theory.org/YourLanguageSucks</a></li>
+  </section>
+</div>
 
 </body>
 </html>
