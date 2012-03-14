@@ -261,6 +261,41 @@ Foo
 
 <hr/>
 
+<h2>Constructor does not get called, but destructor does</h2>
+This caused us hours in debugging... Things were eventually fixed in php 5.3.x.
+
+<h3>PHP code</h3>
+<pre>
+&lt;?php
+
+class Foo {
+  public function __construct($a) {
+    echo 'Foo::__construct()',"\n";
+  }
+
+  public function __destruct() {
+    echo 'Foo::__destruct()',"\n";
+  }
+}
+
+function blah() {
+  throw new Exception();
+}
+
+try {
+  $f = new Foo(blah());
+  unset($f);
+} catch (Exception $e){
+}
+</pre>
+
+<h3>output</h3>
+<pre>
+Foo::__destruct()
+</pre>
+
+<hr/>
+
 <h2>Links</h2>
 <ul>
 <li><a href="http://www.reddit.com/r/lolphp">http://www.reddit.com/r/lolphp</a></li>
