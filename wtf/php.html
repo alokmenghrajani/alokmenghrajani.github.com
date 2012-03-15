@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>A list of PHP weirdness</title>
+<head><title>PHP turtles</title>
 <meta name="author" content="Alok Menghrajani">
 <link href="../bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="../jquery-1.7.1.min.js"></script>
@@ -14,20 +14,20 @@ section { margin-top: 80px; }
 <body onload="prettyPrint()">
 <div class="container">
   <div class="hero-unit">
-    <h1>PHP weirdness</h1>
-    <p>A list of poor design decisions in PHP which has lead to debugging pain for me or my co-workers</p>
+    <h1>PHP turtles</h1>
+    <p>Turtles all the way down</p>
     <div>
       <ol>
-        <li><a href="#weirdness01">operator precedence</a></li>
-        <li><a href="#weirdness02">calling instance methods in static context</a></li>
-        <li><a href="#weirdness03">can't call future constructor</a></li>
-        <li><a href="#weirdness04">redefine private methods</a></li>
-        <li><a href="#weirdness05">__construct is just another method</a></li>
-        <li><a href="#weirdness06">curl_multi_exec</a></li>
-        <li><a href="#weirdness07">can't trust ==</a></li>
-        <li><a href="#weirdness08">funny increments</a></li>
-        <li><a href="#weirdness09">can't trust get_class()</a></li>
-        <li><a href="#weirdness10">constructor does not get called, but destructor sure does</a></li>
+        <li><a href="#turtle01">operator precedence</a></li>
+        <li><a href="#turtle02">calling instance methods in static context</a></li>
+        <li><a href="#turtle03">can't call future constructor</a></li>
+        <li><a href="#turtle04">redefine private methods</a></li>
+        <li><a href="#turtle05">__construct is just another method</a></li>
+        <li><a href="#turtle06">curl_multi_exec</a></li>
+        <li><a href="#turtle07">can't trust ==</a></li>
+        <li><a href="#turtle08">funny increments</a></li>
+        <li><a href="#turtle09">can't trust get_class()</a></li>
+        <li><a href="#turtle10">constructor does not get called, but destructor sure does</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -36,7 +36,7 @@ section { margin-top: 80px; }
     </div>
   </div>
 
-  <section id="weirdness01">
+  <section id="turtle01">
     <div class="page-header">
       <h1>operator precedence</h1>
     </div>
@@ -51,8 +51,8 @@ section { margin-top: 80px; }
         <pre class="prettyprint linenums">&lt;?php
 echo 1 ? 2 : 3 ? 4 : 5;</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness01output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness01output01" style="display: none;">&gt; 4</pre>
+        <a onclick="$(event.target).hide();$('#turtle01output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle01output01" style="display: none;">&gt; 4</pre>
       </div>
     </div>
     <div>
@@ -64,13 +64,13 @@ int main() {
   return 0;
 }</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness01output02').fadeIn()">(click to see output)</a>
-        <pre id="weirdness01output02" style="display: none;">&gt; 2</pre>
+        <a onclick="$(event.target).hide();$('#turtle01output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle01output02" style="display: none;">&gt; 2</pre>
       </div>
     </div>
   </section>
 
-  <section id="weirdness02">
+  <section id="turtle02">
     <div class="page-header">
       <h1>calling instance methods in static context</h1>
     </div>
@@ -104,14 +104,14 @@ $a->foo();
 $b = new B();
 $b->foo();</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness02output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness02output01" style="display: none;">&gt; I am: A
+        <a onclick="$(event.target).hide();$('#turtle02output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle02output01" style="display: none;">&gt; I am: A
 &gt; I am: B</pre>
       </div>
     </div>
   </section>
 
-  <section id="weirdness03">
+  <section id="turtle03">
     <div class="page-header">
       <h1>can't call future constructor</h1>
     </div>
@@ -132,12 +132,12 @@ class B extends A {
 
 new B();</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness03output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness03output01" style="display: none;">&gt; Fatal PHP Fatal error: Can not call constructor in...</pre>
+        <a onclick="$(event.target).hide();$('#turtle03output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle03output01" style="display: none;">&gt; Fatal PHP Fatal error: Can not call constructor in...</pre>
     </div>
   </section>
 
-  <section id="weirdness04">
+  <section id="turtle04">
     <div class="page-header">
       <h1>redefine private methods</h1>
     </div>
@@ -171,14 +171,14 @@ $b = new B();
 $b->bar2();
 $b->bar();</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness04output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness04output01" style="display: none;">&gt; foo in B
+        <a onclick="$(event.target).hide();$('#turtle04output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle04output01" style="display: none;">&gt; foo in B
 &gt; foo in A</pre>
       </div>
     </div>
   </section>
 
-  <section id="weirdness05">
+  <section id="turtle05">
     <div class="page-header">
       <h1>__construct is just another method</h1>
     </div>
@@ -207,8 +207,8 @@ for ($i=0; $i<10; $i++) {
   echo 'memory:', memory_get_usage(), "\n";
 }</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness05output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness05output01" style="display: none;">&gt; memory: 629952
+        <a onclick="$(event.target).hide();$('#turtle05output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle05output01" style="display: none;">&gt; memory: 629952
 &gt; memory: 629952
 &gt; memory: 629952
 &gt; memory: 629952
@@ -217,7 +217,7 @@ for ($i=0; $i<10; $i++) {
     </div>
   </section>
 
-  <section id="weirdness06">
+  <section id="turtle06">
     <div class="page-header">
       <h1>curl_multi_exec</h1>
     </div>
@@ -241,15 +241,15 @@ echo $r['result'], "\n";
 echo curl_errno($c), "\n";
 echo curl_error($c), "\n";</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness06output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness06output01" style="display: none;">&gt; 52
+        <a onclick="$(event.target).hide();$('#turtle06output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle06output01" style="display: none;">&gt; 52
 &gt; 0
 &gt; Empty reply from server</pre>
       </div>
     </div>
   </section>
 
-  <section id="weirdness07">
+  <section id="turtle07">
     <div class="page-header">
       <h1>can't trust ==</h1>
     </div>
@@ -263,14 +263,14 @@ echo curl_error($c), "\n";</pre>
 echo (int)("  4"  == "    4"), "\n";
 echo (int)("  4 " == "    4 "), "\n";</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness07output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness07output01" style="display: none;">&gt; 1
+        <a onclick="$(event.target).hide();$('#turtle07output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle07output01" style="display: none;">&gt; 1
 &gt 0</pre>
       </div>
     </div>
   </section>
 
-  <section id="weirdness08">
+  <section id="turtle08">
     <div class="page-header">
       <h1>funny increments</h1>
     </div>
@@ -286,14 +286,14 @@ echo $x, "\n";
 $x--; $x--; $x--;
 echo $x, "\n";</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness08output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness08output01" style="display: none;">&gt; aa
+        <a onclick="$(event.target).hide();$('#turtle08output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle08output01" style="display: none;">&gt; aa
 &gt; aa</pre>
       </div>
     </div>
   </section>
 
-  <section id="weirdness09">
+  <section id="turtle09">
     <div class="page-header">
       <h1>can't trust get_class()</h1>
     </div>
@@ -314,14 +314,14 @@ class Foo {
 Foo::bar(new A());
 Foo::bar(null);</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness09output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness09output01" style="display: none;">&gt; A
+        <a onclick="$(event.target).hide();$('#turtle09output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle09output01" style="display: none;">&gt; A
 &gt; Foo</pre>
       </div>
     </div>
   </section>
 
-  <section id="weirdness10">
+  <section id="turtle10">
     <div class="page-header">
       <h1>constructor does not get called, but destructor sure does</h1>
     </div>
@@ -352,8 +352,8 @@ try {
 } catch (Exception $e){
 }</pre>
 
-        <a onclick="$(event.target).hide();$('#weirdness10output01').fadeIn()">(click to see output)</a>
-        <pre id="weirdness10output01" style="display: none;">&gt; Foo::__destruct()</pre>
+        <a onclick="$(event.target).hide();$('#turtle10output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle10output01" style="display: none;">&gt; Foo::__destruct()</pre>
       </div>
     </div>
   </section>
