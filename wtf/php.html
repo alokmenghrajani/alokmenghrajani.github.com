@@ -28,6 +28,7 @@ section { margin-top: 80px; }
         <li><a href="#turtle08">funny increments</a></li>
         <li><a href="#turtle09">can't trust get_class()</a></li>
         <li><a href="#turtle10">constructor does not get called, but destructor sure does</a></li>
+        <li><a href="#turtle11">inflexible type hints</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -354,6 +355,33 @@ try {
 
         <a onclick="$(event.target).hide();$('#turtle10output01').fadeIn()">(click to see output)</a>
         <pre id="turtle10output01" style="display: none;">&gt; Foo::__destruct()</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="turtle11">
+    <div class="page-header">
+      <h1>inflexible type hints</h1>
+    </div>
+    <p>Not really a bug, but pretty annoying.</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+class Stringy {
+  public function __toString() {
+    "I am Stringy";
+  }
+}
+
+function foo(string $s) {
+  echo $s.' is a string';
+}
+foo(new Stringy());</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle11output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle11output01" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, instance of Stringy given</pre>
       </div>
     </div>
   </section>
