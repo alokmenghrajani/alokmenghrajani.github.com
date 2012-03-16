@@ -29,6 +29,7 @@ section { margin-top: 80px; }
         <li><a href="#turtle09">can't trust get_class()</a></li>
         <li><a href="#turtle10">constructor does not get called, but destructor sure does</a></li>
         <li><a href="#turtle11">inflexible type hints</a></li>
+        <li><a href="#turtle12">to count or not to count</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -39,7 +40,7 @@ section { margin-top: 80px; }
 
   <section id="turtle01">
     <div class="page-header">
-      <h1>operator precedence</h1>
+      <h1>turtle 1: operator precedence</h1>
     </div>
     <p>
       You would think that PHP's operators are based on C's. Unfortunately there are subtle differences.
@@ -73,7 +74,7 @@ int main() {
 
   <section id="turtle02">
     <div class="page-header">
-      <h1>calling instance methods in static context</h1>
+      <h1>turtle 2: calling instance methods in static context</h1>
     </div>
     <p>
       Not a huge deal, since this can easily be solved with a linter.
@@ -114,7 +115,7 @@ $b->foo();</pre>
 
   <section id="turtle03">
     <div class="page-header">
-      <h1>can't call future constructor</h1>
+      <h1>turtle 3: can't call future constructor</h1>
     </div>
     <p>Can lead to bugs as code changes over time.</p>
     <div>
@@ -140,7 +141,7 @@ new B();</pre>
 
   <section id="turtle04">
     <div class="page-header">
-      <h1>redefine private methods</h1>
+      <h1>turtle 4: redefine private methods</h1>
     </div>
     <p>It's debatable what's the right thing to do. PHP's design decision isn't unreasonable in this case.</p>
     <div>
@@ -181,7 +182,7 @@ $b->bar();</pre>
 
   <section id="turtle05">
     <div class="page-header">
-      <h1>__construct is just another method</h1>
+      <h1>turtle 5: __construct is just another method</h1>
     </div>
     <p>
       Unless you are writing at the compiler/framework layer, calling
@@ -220,7 +221,7 @@ for ($i=0; $i<10; $i++) {
 
   <section id="turtle06">
     <div class="page-header">
-      <h1>curl_multi_exec</h1>
+      <h1>turtle 6: curl_multi_exec</h1>
     </div>
     <p>curl_multi_exec does not affect curl_errno(), but it does affect the return value of curl_error().</p>
     <div>
@@ -252,7 +253,7 @@ echo curl_error($c), "\n";</pre>
 
   <section id="turtle07">
     <div class="page-header">
-      <h1>can't trust ==</h1>
+      <h1>turtle 7: can't trust ==</h1>
     </div>
     <p>You can't trust ==, even when you know the types are going to match.</p>
     <p>credits: erling</p>
@@ -273,7 +274,7 @@ echo (int)("  4 " == "    4 "), "\n";</pre>
 
   <section id="turtle08">
     <div class="page-header">
-      <h1>funny increments</h1>
+      <h1>turtle 8: funny increments</h1>
     </div>
     <p>In general, I have tried to avoid critizing PHP's API, however this one deserves to be listed.</p>
     <div>
@@ -296,7 +297,7 @@ echo $x, "\n";</pre>
 
   <section id="turtle09">
     <div class="page-header">
-      <h1>can't trust get_class()</h1>
+      <h1>turtle 9: can't trust get_class()</h1>
     </div>
     <p>credits: jfrank</p>
     <div>
@@ -324,7 +325,7 @@ Foo::bar(null);</pre>
 
   <section id="turtle10">
     <div class="page-header">
-      <h1>constructor does not get called, but destructor sure does</h1>
+      <h1>turtle 10: constructor does not get called, but destructor sure does</h1>
     </div>
     <p>This caused us hours in debugging time. Things were eventually fixed in php 5.3.x.</p>
     <p>credits: pgriess</p>
@@ -361,7 +362,7 @@ try {
 
   <section id="turtle11">
     <div class="page-header">
-      <h1>inflexible type hints</h1>
+      <h1>turtle 11: inflexible type hints</h1>
     </div>
     <p>Not really a bug, but pretty annoying.</p>
     <div>
@@ -382,6 +383,52 @@ foo(new Stringy());</pre>
 
         <a onclick="$(event.target).hide();$('#turtle11output01').fadeIn()">(click to see output)</a>
         <pre id="turtle11output01" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, instance of Stringy given</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="turtle12">
+    <div class="page-header">
+      <h1>turtle 12: to count or not to count</h1>
+    </div>
+    <p>
+      Reference counting based garbage collectors have lots of pros and some cons. The pros are that it's usually
+      simpler to implement and runs faster. The cons can usually be worked around & ignored in the context
+      of web applications.
+    </p>
+    <p>
+      In PHP, the concept of references is exposed to the programmer, which can lead to various nasty bugs,
+      as shown by the following example.
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+
+function foo() {
+  $i = 1;
+  return array(&$i);
+}
+
+function bar() {
+  $i = 1;
+  return array(&$i, &$i);
+}
+
+$a = foo();
+$b = $a;
+$a[0] = 2;
+echo $b[0], "\n";
+
+$a = bar();
+$b = $a;
+$a[0] = 2;
+echo $b[0], "\n";</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle12output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle12output01" style="display: none;">&gt; 1
+&gt; 2</pre>
       </div>
     </div>
   </section>
