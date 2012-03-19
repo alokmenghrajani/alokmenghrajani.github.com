@@ -30,6 +30,7 @@ section { margin-top: 80px; }
         <li><a href="#turtle10">constructor does not get called, but destructor sure does</a></li>
         <li><a href="#turtle11" style="text-decoration: line-through">inflexible type hints</a></li>
         <li><a href="#turtle12">to count or not to count</a></li>
+        <li><a href="#turtle13">error messages</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -135,7 +136,7 @@ class B extends A {
 new B();</pre>
 
         <a onclick="$(event.target).hide();$('#turtle03output01').fadeIn()">(click to see output)</a>
-        <pre id="turtle03output01" style="display: none;">&gt; Fatal PHP Fatal error: Can not call constructor in...</pre>
+        <pre id="turtle03output01" style="display: none;">&gt; Fatal PHP Fatal error: Can not call constructor in&hellip;</pre>
     </div>
   </section>
 
@@ -432,6 +433,39 @@ echo $b[0], "\n";</pre>
       </div>
     </div>
   </section>
+
+  <section id="turtle13">
+    <div class="page-header">
+      <h1>turtle 13: error messages</h1>
+    </div>
+    <p>
+      The error messages you get sometimes don't make sense. It's however not a big issues, since
+      Googling around will quickly help you figure out what's going on.
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+::</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle13output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle13output01" style="display: none;">&gt; Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM&hellip;</pre>
+      </div>
+
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+function foo(string $s){}
+
+foo("hello world");</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle13output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle13output02" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, string given&hellip;</pre>
+      </div>
+    </div>
+  </section>
+
 
   <section id="links">
     <div class="page-header">
