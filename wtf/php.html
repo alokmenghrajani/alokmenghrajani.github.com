@@ -52,6 +52,7 @@ section { margin-top: 80px; }
       <h3>PHP code</h3>
       <div>
         <pre class="prettyprint linenums">&lt;?php
+
 echo 1 ? 2 : 3 ? 4 : 5;</pre>
 
         <a onclick="$(event.target).hide();$('#turtle01output01').fadeIn()">(click to see output)</a>
@@ -62,6 +63,7 @@ echo 1 ? 2 : 3 ? 4 : 5;</pre>
       <h3>C code</h3>
       <div>
         <pre class="prettyprint linenums">#include &lt;stdio.h&gt;
+
 int main() {
   printf("f=%d\n", 1 ? 2 : 3 ? 4 : 5);
   return 0;
@@ -294,6 +296,26 @@ echo $x, "\n";</pre>
 &gt; aa</pre>
       </div>
     </div>
+    <br/>
+    <div>
+      <p>When you combine with &lt;, you end up with really fun things:</p>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+$x = 'y';
+echo (int)($x < 'yy'), "\n";
+
+$x++;
+echo (int)($x < 'yy'), "\n";
+
+$x++;
+echo (int)($x < 'yy'), "\n";</pre>
+        <a onclick="$(event.target).hide();$('#turtle08output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle08output02" style="display: none;">&gt; 1
+&gt; 0
+&gt; 1</pre>
+      </div>
+    </div>
   </section>
 
   <section id="turtle09">
@@ -338,7 +360,6 @@ Foo::bar(null);</pre>
       <div>
         <pre class="prettyprint linenums">&lt;?php
 
-
 class Foo {
   public function __construct($a) {
     echo 'Foo::__construct()',"\n";
@@ -366,9 +387,9 @@ try {
 
   <section id="turtle11">
     <div class="page-header">
-      <h1 style="line-through">turtle 11: inflexible type hints</h1>
+      <h1 style="text-decoration: line-through">turtle 11: inflexible type hints</h1>
     </div>
-    <p>Removed, since this only applies to hphp.</p>
+    <p>Note: Removed, since this only applies to hphp.</p>
     <div>
       <h3>PHP code</h3>
       <div>
@@ -408,7 +429,6 @@ foo(new Stringy());</pre>
       <h3>PHP code</h3>
       <div>
         <pre class="prettyprint linenums">&lt;?php
-
 
 function foo() {
   $i = 1;
