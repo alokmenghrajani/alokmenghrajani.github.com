@@ -203,7 +203,7 @@ code { white-space:nowrap; color: black; }
       <p>the grid is a single dimension, going up or down requires us to add or subtract <code>n</code> units.</p>
       <p>besides being places in a cross shape on the keyboard, 'i', 'j', 'k', 'l' are also consecutive letters. We convert the key code
         into an index by simply doing <code&3</code> (notice e.which is shorter than e.keyCode by 2 bytes).</p>
-      <p>note: hitting any other key will also move the tron in various direction. Filtering all other keys would require quite a few more
+      <p>note: hitting any other key will also move the tron in various direction. Filtering all other keys would require a few more
         bytes.</p>
     </div>
 
@@ -246,8 +246,8 @@ code { white-space:nowrap; color: black; }
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p>by using the ternary <code>?:</code> operator, we replace the page's content with "game over" when a collision occurs.</p>
-      <p>since we are inside an attribute we cannot use a space character. We instead use 0xa0 (non breaking space) and shown here as &#x2B1C;. This
-        works as long as the page is not served with a content type like utf-8.</p>
+      <p>since we are inside an attribute we cannot use a space character. We instead use U+00A0 (non breaking space) and shown here as &#x2B1C;. In
+        iso88591 this only takes one byte. The browser auto detects iso88591 if we don't serve the page with another content type.</p>
     </div>
 
     <div class="slide" id="slide12">
@@ -276,7 +276,7 @@ code { white-space:nowrap; color: black; }
 </pre>
       <p>defines the canvas. We use the same trick of setting an <code>id</code> on canvas, which reappears in the global space.</p>
       <p>note: we removed any unnecessary tags, like <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;/head&gt;</code>,
-        <code>&lt;/body&gt;</code>, <code>&lt;/head&gt;</code> and <code>&lt;/html&gt;</code>.</p>
+        <code>&lt;/canvas&gt;</code>, <code>&lt;/body&gt;</code>, <code>&lt;/head&gt;</code> and <code>&lt;/html&gt;</code>.</p>
     </div>
 
     <div class="btn-toolbar">
