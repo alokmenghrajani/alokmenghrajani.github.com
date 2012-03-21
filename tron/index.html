@@ -1,0 +1,164 @@
+<html>
+<body>
+<h1>Size coding competition: tron</h1>
+<p>
+  With some coworkers, we challenged each other to write the smallest possible game of tron in javascript
+  (an exercice also known as javascript golfing).
+</p>
+<p>
+  This page explains our final version (226 bytes). We initially worked alone but then exchanged ideas
+  and tricks, so erling & mathewsb deserve most of the credits!
+</p>
+<h1>rules</h1>
+<div>We started with some basic rules:
+<ol>
+<li>the tron must start in the center, facing any direction.</li>
+<li>the game controls must be 'i', 'j', 'k', 'l'.</li>
+<li>when the tron hits it's trail or an edge, "game over" must be shown to the user.</li>
+<li>the code need only run on Chrome 17.</li>
+</ol>
+</div>
+<p>Unlike some js size optimization competitions, we did not use a shim. We took into account the entire page's size. This
+forced us to explore novel tricks.</p>
+<p>My coworkers represented the board as ascii-art (which resulted in shorter code but an unplayable game).
+I preferred to keep the game nicer and use a &lt;canvas&gt; tag.</p>
+
+<h1>screenshot</h1>
+<img src="tron.png">
+
+<h1>code</h1>
+<p>Here is the complete (formatted) source code:
+<pre>
+&lt;body id=b onkeyup=e=event onload=
+  z=c.getContext('2d');
+  z.fillRect(0,0,n=150,n);
+  for(i=n*n;i--;x=11325)
+    z[i]=0&lt;i%n;
+  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+&gt;&lt;canvas id=c&gt;</pre>
+
+<p>let's see what's going on:</p>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>
+&lt;body id=b&hellip;
+</pre>
+<p>by assigning an <code>id</code> to the body, we are going to be able to write
+<code>b.innerHTML="game over"</code>, instead
+of having to write <code>document.body.innerHTML="game over"</code>. This saves us 7 bytes.</p>
+<p>We can also drop the quotes around the entity, since browsers are able to fix that for us.</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>
+&hellip;onkeyup=e=event&hellip;
+</pre>
+<p>we use <code>onkeyup</code> instead of <code>onkeydown</code>, since it saves 2 bytes. The game
+feels a little different, but who cares?</p>
+<p>e is going to contain the event. This implies the game is going to spew js errors until the
+first key is released. It also means the game doesn't start until you press the first key. This
+can be improved, but requires 2 extra bytes.</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>
+&hellip;onload=&hellip;
+</pre>
+<p>we put our main code in a <code>onload=</code>, since it saves us the &lt;script&gt; and &lt;/script&gt; tags
+(saves 10 bytes). Since we are not going to use quotes, there is a set of characters we can't use in the code (as
+it would end the attribute). The list of forbidden characters includes &gt;, space, tab.</p>
+<p>Note: the <code>&lt;script&gt;</code> tag always requires a closing tag.</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>
+&hellip;z=c.getContext('2d');&hellip;
+</pre>
+<p>z is going to contain the context for the canvas. There is no way to avoid this expensive expression. We are however also going
+to use z to store our grid to detect collisions. JavaScript lets you access properties on objects using the array [] syntax, and
+everything works out as long as you don't need to call array functions (i.e. we can't do z.join(&hellip;);).</p>
+<p>reusing z to store our grid saves 2 to 5 bytes, depending on how you do things. The grid is going to be a single dimension, n*n grid.</p>
+<p>note: I initially did not have an external grid and used the canvas to detect collisions. Access the pixel values of a canvas
+however requires lots of bytes, so this is shorter.</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>
+&hellip;z.fillRect(0,0,n=150,n);&hellip;
+</pre>
+<p>by default, an empty canvas has a black foreground color, white background color and is 300x150 wide. This expression sets the background
+to black. We also initialize n to 150 (which is going to be our board size), in a way that saves 2 bytes.</p>
+<p>Simultaneously calling a function
+and setting a variable is a very common trick is js golf.</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>
+&hellip;for(i=n*n;i--;x=11325)
+  z[i]=0&lt;i%n;&hellip;</pre>
+<p>this expression initializes the grid with mostly boolean values. Most of the grid is set to <code>true</code>, except the right edge where we
+put the value <code>false</code>. Remember we aren't allowed to use the &gt; symbol, since we are in an attribute context. We can however
+use the &lt; operator. We are not going to need to care about the top &amp; bottom of the grid, because those values default to
+<code>undefined</code>, which is falsy.</p>
+<p>the loop is written from n*n to 0, because it makes the code shorter (saves 4 bytes).</p>
+<p>x holds the tron's position, and is set to 11325 (11325=75*75+75=center of the grid). We could have initialized x anywhere, but
+putting it here saves us a ";" (saves 1 byte).</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>
+&hellip;setInterval("&hellip;",9)&hellip;</pre>
+<p>setInterval causes our code to get called every 9 ms. The code inside setInterval is the main game loop. It updates the
+tron's position and detects collisions.</p>
+<p>the code is written as a string, as it's shorter than writing <code>function(){&hellip;}</code> (saves 10 bytes). This implies
+the main loop cannot use the &#34;, &gt;, space and tab characters.</p>
+<p>Now let's see what's going on in the main game loop:</p>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>&hellip;x+=[1,-n,-1,n][e.which&3]&hellip;</pre>
+<p>this updates the variable <code>x</code> based on the value of <code>e</code> (remember, onkeyup saves the event in the <code>e</code>
+variable).</p>
+<p>since the grid is a single dimension, going up or down requires us to add or subtract <code>n</code> units.</p>
+<p>besides being places in a cross shape on the keyboard, 'i', 'j', 'k', 'l' are also consecutive letters. We convert the key code
+into an index by simply doing <code&3</code> (notice how e.which is shorter than e.keyCode by 2 bytes).<p>
+<p>note: hitting any other key will also move the tron in various direction. Filtering all other keys would require quite a few more
+bytes.</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>&hellip;z[&hellip;]^=1&hellip;</pre>
+<p>this expression is one of the nicest parts of the code. There's a lot going on here:</p>
+<p>the <code>^=</code> (bitwise xor assignment) operator lets us assign a value while also checking for a collision. If the value in the grid
+is <code>0</code>, <code>false</code> or <code>undefined</code>, the result is <code>1</code>. If the value is <code>1</code> or
+<code>true</code>, the result will be <code>0</code>.</p>
+<p>the grid initially started out with boolean values. The result of <code>^=</code> is numeric. Things however work out!</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>(&hellip;)?b.innerHTML='game&#x2B1C;over'&hellip;</pre>
+<p>by using the ternary <code>?:</code> operator, we replace the page's content with "game over" when a collision occurs.</p>
+<p>since we are inside an attribute we cannot use a space character. We instead use 0xa0 (non breaking space) and shown here as &#x2B1C;. This
+works as long as the page is not served with any specific content type.</p>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>&hellip;:z.clearRect(x%n,x/n,1,1)&hellip;</pre>
+<p>this draws a white pixel at the tron's position. Since our grid and <code>x</code> are a single dimension, we need to use <code>/</code>
+and <code>%</code> operators to get each dimension's value.</pre>
+</div>
+</div>
+
+<div style="border:1px solid black; padding: 2px; margin: 2px;">
+<pre>&hellip;&gt;&lt;canvas id=c&gt;</pre>
+<p>this defines the canvas. We use the same trick of setting an <code>id</code> on canvas, which reappears in the global space.</p>
+<p>note: we removed any unnecessary tags, like <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;/head&gt;</code>,
+<code>&lt;/body&gt;</code>, <code>&lt;/head&gt;</code> and <code>&lt;/html&gt;</code>.</p>
+</div>
+
+<h2>see it in action</h2>
+<ul>
+<li><a href="https://raw.github.com/alokmenghrajani/alokmenghrajani.github.com/master/tron/tron.html">view source (226 bytes)</a></li>
+<li><a href="tron.html">play (press 'i', 'j', 'k' or 'l' to start)</a></li>
+</ul>
+</body>
+</html>
