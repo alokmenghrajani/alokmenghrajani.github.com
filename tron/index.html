@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>226 bytes tron</title>
+<head><title>javascript game of tron in 223 bytes</title>
 <meta property="fb:admins" content="536181839"/>
 <meta name="author" content="Alok Menghrajani"/>
 <link href="../bootstrap.min.css" rel="stylesheet"/>
@@ -14,15 +14,18 @@ code { white-space:nowrap; color: black; }
 <body>
 <div class="container">
   <div class="hero-unit">
-    <h1>226 bytes tron</h1>
+    <h1>223 bytes tron</h1>
     <p>
       With some coworkers, we challenged each other to write the smallest
       possible game of tron in javascript (an exercice known
       as javascript golfing).
     </p>
     <p>
-      This page explains our final version (226 bytes). We initially worked alone but then exchanged ideas
+      This page explains our final version (223 bytes). We initially worked alone but then exchanged ideas
       and tricks, so erling & mathewsb deserve most of the credits!
+    </p>
+    <p>
+      edit: our code was originally 226 bytes, but "Cosmologicon" pointed out a way to save three whole byte!
     </p>
     <div style="position:relative; top:60px;">
       <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Falokmenghrajani.github.com%2Ftron&amp;send=false&amp;layout=standard&amp;width=800&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80&amp;appId=202717489767277" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:800px; height:80px;" allowTransparency="true"></iframe>
@@ -64,10 +67,10 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-        <p>this is the entire code, with only a few extra newlines for readibility.</p>
+        <p>The entire code, with only a few extra newlines for readibility.</p>
     </div>
 
     <div class="slide" id="slide2">
@@ -77,12 +80,12 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>by assigning an <code>id</code> to the body, we are going to be able to write
+      <p>By assigning an <code>id</code> to the body, we are going to be able to write
         <code>b.innerHTML="game over"</code>, instead
-        of having to write <code>document.body.innerHTML="game over"</code>. This saves us 7 bytes.</p>
+        of having to write <code>document.body.innerHTML="game over"</code>. Saves us 7 bytes.</p>
       <p>We can also drop the quotes around the attribute, since browsers are able to fix that for us.</p>
     </div>
 
@@ -93,12 +96,12 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>we use <code>onkeyup</code> instead of <code>onkeydown</code>, since it saves 2 bytes. The game
+      <p>We use <code>onkeyup</code> instead of <code>onkeydown</code>, since it saves 2 bytes. The game
         feels a little different, but who cares?</p>
-      <p><code>e</code> is going to contain the keyboard event. This implies the game is going to spew js errors until the
+      <p><code>e</code> is going to contain the keyboard event. Implies the game is going to spew js errors until the
         first key is released. It also means the game doesn't start until you press the first key. This
         can be improved, but requires 2 extra bytes.</p>
     </div>
@@ -110,12 +113,12 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 </font>&gt;&lt;canvas id=c&gt;
 </pre>
-      <p>we put our main code in a <code>onload=</code>, since it saves us the &lt;script&gt; and &lt;/script&gt; tags
+      <p>We put our main code in a <code>onload=</code>, since it saves us the &lt;script&gt; and &lt;/script&gt; tags
         (saves 10 bytes). We are not going to use quotes, so there is a set of characters we can't use in the code (as
-        it would end the attribute). This set of forbidden characters includes &gt;, space, tab.</p>
+        it would end the attribute). The set of forbidden characters includes &gt;, space, tab.</p>
       <p>Note: the <code>&lt;script&gt;</code> tag always requires a closing tag.</p>
     </div>
 
@@ -126,7 +129,7 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p><code>z</code> is going to contain the context for the canvas. There is no way to avoid this expensive expression. We are however also going
@@ -144,10 +147,10 @@ code { white-space:nowrap; color: black; }
   <font color="red">z.fillRect(0,0,n=150,n);</font>
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>by default, an empty canvas has a black foreground color, white background color and is 300x150 pixels wide. This expression sets the background
+      <p>By default, an empty canvas has a black foreground color, white background color and is 300x150 pixels wide. This expression sets the background
         to black. We also initialize <code>n</code> to 150 (which is going to be our arena size), in a way that saves 2 bytes.</p>
       <p>Simultaneously calling a function
         and setting a variable is a very common trick is js golf.</p>
@@ -160,10 +163,10 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   <font color="red">for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;</font>
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>this expression initializes the grid with mostly boolean values. Most of the grid is set to <code>true</code>, except the right edge where we
+      <p>This expression initializes the grid with mostly boolean values. Most of the grid is set to <code>true</code>, except the right edge where we
         put the value <code>false</code>. Remember we aren't allowed to use the &gt; symbol, since we are in an attribute context. We can however
         use the &lt; operator. We are not going to initialize the top &amp; bottom of the grid, those values default to
         <code>undefined</code>, which is falsy.</p>
@@ -179,7 +182,7 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  <font color="red">setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)</font>
+  <font color="red">setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)</font>
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p><code>setInterval</code> causes our code to get called every 9ms. The code inside <code>setInterval</code> is the main game loop. It updates the
@@ -195,10 +198,10 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[<font color="red">x+=[1,-n,-1,n][e.which&3]</font>]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[<font color="red">x+=[1,-n,-1,n][e.which&3]</font>]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>updatess the variable <code>x</code> based on the value of <code>e</code> (remember, onkeyup saves the event in the <code>e</code>
+      <p>Updates the variable <code>x</code> based on the value of <code>e</code> (remember, onkeyup saves the event in the <code>e</code>
         variable).</p>
       <p>the grid is a single dimension, going up or down requires us to add or subtract <code>n</code> units.</p>
       <p>besides being places in a cross shape on the keyboard, 'i', 'j', 'k', 'l' are also consecutive letters. We convert the key code
@@ -213,23 +216,24 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(<font color="red">z[</font>x+=[1,-n,-1,n][e.which&3]<font color="red">]^=1</font>)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("<font color="red">z[</font>x+=[1,-n,-1,n][e.which&3]<font color="red">]--</font>?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>this expression is one of the nicest parts of the code. There's a lot going on here:</p>
+      <p>This expression is one of the nicest parts of the code. There's a lot going on here:</p>
       <ul>
         <li>
-          <p>the <code>^=</code> (bitwise xor assignment) operator lets us assign a value while also checking for a collision.</p>
+          <p>the <code>--</code> operator lets us decrement the value in the grid while also checking for a collision.</p>
         </li>
         <li>
-          <p>if the value in the grid is a legal position, the value will be <code>true</code>. This sets the value to 1 and returns 0.</p>
+          <p>if the value in the grid is a legal position, the value will be <code>true</code>. This sets the value to <code>0</code> and
+            returns <code>1</code>.</p>
         </li>
         <li>
           <p>if the value in the grid is not a legal position, the value will be <code>0</code>, <code>false</code> or <code>undefined</code>.
-            This returns 1.</p>
+            This sets the value to <code>-1</code> or <code>NaN</code> (we don't really care) and returns falsy (<code>0</code> or <code>NaN</code>).</p>
         </li>
         <li>
-          <p>the grid initially starts out with boolean values. The result of <code>^=</code> is numeric. Things however work out!</p>
+          <p>the grid initially starts out with boolean values. The result of <code>--</code> is numeric. Things however work out!</p>
         </li>
       </ul>
     </div>
@@ -241,12 +245,12 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)<font color="red">?b.innerHTML='game&#x2B1C;over'</font>:z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--<font color="red">?z.clearRect(x%n,x/n,1,1)</font>:b.innerHTML='game&#x2B1C;over'",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>by using the ternary <code>?:</code> operator, we replace the page's content with "game over" when a collision occurs.</p>
-      <p>since we are inside an attribute we cannot use a space character. We instead use U+00A0 (non breaking space) and shown here as &#x2B1C;. In
-        iso88591 this only takes one byte. The browser auto detects iso88591 if we don't serve the page with another content type.</p>
+      <p>By using the ternary <code>?:</code> operator, we draw a white pixel at the tron's position when the game has not ended.
+        Since our grid and <code>x</code> are a single dimension, we need to use <code>/</code>
+        and <code>%</code> operators to get each coordinate's value.</pre>
     </div>
 
     <div class="slide" id="slide12">
@@ -256,11 +260,12 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over'<font color="red">:z.clearRect(x%n,x/n,1,1)</font>",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1)<font color="red">:b.innerHTML='game&#x2B1C;over'</font>",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>this draws a white pixel at the tron's position. Since our grid and <code>x</code> are a single dimension, we need to use <code>/</code>
-        and <code>%</code> operators to get each dimension's value.</pre>
+      <p>We replace the page's content with "game over" when a collision occurs.</p>
+      <p>Since we are inside an attribute we cannot use a space character. We instead use U+00A0 (non breaking space) and shown here as &#x2B1C;. In
+        iso88591 this only takes one byte. The browser auto detects iso88591 if we don't serve the page with another content type.</p>
     </div>
 
     <div class="slide" id="slide13">
@@ -270,10 +275,10 @@ code { white-space:nowrap; color: black; }
   z.fillRect(0,0,n=150,n);
   for(i=n*n;i--;x=11325)
     z[i]=0&lt;i%n;
-  setInterval("(z[x+=[1,-n,-1,n][e.which&3]]^=1)?b.innerHTML='game&#x2B1C;over':z.clearRect(x%n,x/n,1,1)",9)
+  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
 <font color="red">&gt;&lt;canvas id=c&gt;</font>
 </pre>
-      <p>defines the canvas. We use the same trick of setting an <code>id</code> on canvas, which reappears in the global space.</p>
+      <p>Defines the canvas. We use the same trick of setting an <code>id</code> on canvas, which reappears in the global space.</p>
       <p>note: we removed any unnecessary tags, like <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;/head&gt;</code>,
         <code>&lt;/canvas&gt;</code>, <code>&lt;/body&gt;</code>, <code>&lt;/head&gt;</code> and <code>&lt;/html&gt;</code>.</p>
     </div>
@@ -313,7 +318,7 @@ slide(1);
   <section id="play">
     <div class="page-header"><h1>play</h1></div>
     <ul>
-      <li><a href="https://raw.github.com/alokmenghrajani/alokmenghrajani.github.com/master/tron/tron.html">view source (226 bytes)</a></li>
+      <li><a href="https://raw.github.com/alokmenghrajani/alokmenghrajani.github.com/master/tron/tron.html">view source (223 bytes)</a></li>
       <li><a href="tron.html">play (press 'i', 'j', 'k' or 'l' to start)</a></li>
     </ul>
   </section>
