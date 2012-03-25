@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>javascript game of tron in 223 bytes</title>
+<head><title>javascript game of tron in 221 bytes</title>
 <meta property="fb:admins" content="536181839"/>
 <meta name="author" content="Alok Menghrajani"/>
 <link href="../bootstrap.min.css" rel="stylesheet"/>
@@ -14,18 +14,23 @@ code { white-space:nowrap; color: black; }
 <body>
 <div class="container">
   <div class="hero-unit">
-    <h1>223 bytes tron</h1>
+    <h1>221 bytes tron</h1>
     <p>
       With some coworkers, we challenged each other to write the smallest
       possible game of tron in javascript (an exercice known
       as javascript golfing).
     </p>
     <p>
-      This page explains our final version (223 bytes). We initially worked alone but then exchanged ideas
+      This page explains our final version (221 bytes). We initially worked alone but then exchanged ideas
       and tricks, so erling & mathewsb deserve most of the credits!
     </p>
     <p>
-      edit: our code was originally 226 bytes, but "Cosmologicon" pointed out a way to save three whole bytes!
+      our code was originally 226 bytes, but "Cosmologicon" pointed out a way to save three whole bytes, bring us
+      to 223 bytes.
+    </p>
+    <p>
+      With p01, we then came up with a way to save another 11 bytes (making the game 212 bytes).
+      He also suggested keeping track of score, which takes 9 bytes but is totally worth it!
     </p>
     <div style="position:relative; top:60px;">
       <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Falokmenghrajani.github.com%2Ftron&amp;send=false&amp;layout=standard&amp;width=800&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80&amp;appId=202717489767277" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:800px; height:80px;" allowTransparency="true"></iframe>
@@ -64,10 +69,14 @@ code { white-space:nowrap; color: black; }
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
         <p>The entire code, with only a few extra newlines for readibility.</p>
@@ -77,10 +86,14 @@ code { white-space:nowrap; color: black; }
 <pre>
 <font color="red">&lt;body id=b</font> onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p>By assigning an <code>id</code> to the body, we are going to be able to write
@@ -93,10 +106,14 @@ code { white-space:nowrap; color: black; }
 <pre>
 &lt;body id=b <font color="red">onkeyup=e=event</font> onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p>We use <code>onkeyup</code> instead of <code>onkeydown</code>, since it saves 2 bytes. The game
@@ -110,10 +127,14 @@ code { white-space:nowrap; color: black; }
 <pre>
 &lt;body id=b onkeyup=e=event <font color="red">onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 </font>&gt;&lt;canvas id=c&gt;
 </pre>
       <p>We put our main code in a <code>onload=</code>, since it saves us the &lt;script&gt; and &lt;/script&gt; tags
@@ -126,17 +147,21 @@ code { white-space:nowrap; color: black; }
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   <font color="red">z=c.getContext('2d');</font>
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p><code>z</code> is going to contain the context for the canvas. There is no way to avoid this expensive expression. We are however also going
         to use <code>z</code> to store our grid to detect collisions. JavaScript lets you access properties on objects using the array [] syntax, and
         everything works out as long as you don't need to call array functions (i.e. we can't do <code>z.join(&hellip;);</code>).</p>
-      <p>reusing <code>z</code> to store our grid saves 2 to 5 bytes, depending on things are done. The grid is going to be a single dimension, n*n grid.</p>
-      <p>note: I initially used the canvas to detect collisions. Accessing the pixel values of a canvas
+      <p>Reusing <code>z</code> to store our grid saves 2 to 5 bytes, depending on how things are done. The grid is going to be a single dimension, n*n grid.</p>
+      <p>Note: we tried using the canvas to detect collisions. Accessing the pixel values of a canvas
         turned out to require lots of bytes.</p>
     </div>
 
@@ -144,96 +169,127 @@ code { white-space:nowrap; color: black; }
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  <font color="red">z.fillRect(0,0,n=150,n);</font>
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  <font color="red">z.fillRect(s=0,0,n=150,x=11325);</font>
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>By default, an empty canvas has a black foreground color, white background color and is 300x150 pixels wide. This expression sets the background
-        to black. We also initialize <code>n</code> to 150 (which is going to be our arena size), in a way that saves 2 bytes.</p>
+      <p>Draws the black background.</p>
+      <p>By default, an empty canvas has a black foreground color, white background color and is 300x150 pixels wide.</p>
+      <p>We also initialize 3 variables, <code>n</code> is set to 150 (which is going to be our arena size).</p>
+      <p><code>x</code> is going to be the tron's position, and is set to 11325 (11325=75*75+75=center of the grid).</p>
+      <p><code>s</code> is going to keep track of the score and is set to 0.</p>
+      <p>We are effectively drawing a 150x11325 box, but the game is going to look &amp; feel 150x150.</p>
       <p>Simultaneously calling a function
-        and setting a variable is a very common trick is js golf.</p>
+        and setting a variable is a very common trick in js golf and saves lots of bytes.</p>
     </div>
 
     <div class="slide" id="slide7">
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  <font color="red">for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;</font>
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  <font color="red">setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)</font>
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>This expression initializes the grid with mostly boolean values. Most of the grid is set to <code>true</code>, except the right edge where we
-        put the value <code>false</code>. Remember we aren't allowed to use the &gt; symbol, since we are in an attribute context. We can however
-        use the &lt; operator. We are not going to initialize the top &amp; bottom of the grid, those values default to
-        <code>undefined</code>, which is falsy.</p>
-      <p>the loop count down from <code>n*n</code>, because it makes the code shorter (saves 4 bytes).</p>
-      <p><code>x</code> holds the tron's position, and is set to 11325 (11325=75*75+75=center of the grid). We could have initialized <code>x</code> anywhere, but
-        putting it here saves us a ";" (saves 1 byte).</p>
+      <p><code>setInterval</code> causes our code to get called every 9ms. The code inside <code>setInterval</code> is the main game loop. It updates the
+        tron's position and detects collisions.</p>
+      <p>The code is written as a string, as it's shorter than writing <code>function(){&hellip;}</code> (saves 10 bytes). This implies
+        the main loop cannot use the &#34;, &gt;, space and tab characters.</p>
     </div>
 
     <div class="slide" id="slide8">
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  <font color="red">setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)</font>
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    <font color="red">0&lt;x%n
+    &&x&lt;n*n</font>
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p><code>setInterval</code> causes our code to get called every 9ms. The code inside <code>setInterval</code> is the main game loop. It updates the
-        tron's position and detects collisions.</p>
-      <p>the code is written as a string, as it's shorter than writing <code>function(){&hellip;}</code> (saves 10 bytes). This implies
-        the main loop cannot use the &#34;, &gt;, space and tab characters.</p>
+      <p>Checks if we are within the game boundary. We can't use the <code>&gt;</code> operator (we are inside an attribute),
+      but <code>&lt;</code> works.</p>
+      <ul>
+        <li>
+          <p>If the tron hits the left edge, <code>x%n</code> will return <code>0</code>.</p>
+        </li>
+        <li>
+          <p>If the tron hits the right edge, <code>x</code> will wrap around and <code>x%n</code> will return <code>0</code>.</p>
+        </li>
+        <li>
+          <p>If the tron hits the top edge, <code>x</code> will become negative and <code>x%n</code> will return a negative value.</p>
+        </li>
+        <li>
+          <p>If the tron hits the bottom edge, <code>x</code> will be larger than <code>n*n</code>.</p>
+        </li>
+      </ul>
     </div>
 
     <div class="slide" id="slide9">
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[<font color="red">x+=[1,-n,-1,n][e.which&3]</font>]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[<font color="red">x+=[1,-n,-1,n][e.which&3]</font>]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p>Updates the variable <code>x</code> based on the value of <code>e</code> (remember, onkeyup saves the event in the <code>e</code>
         variable).</p>
-      <p>the grid is a single dimension, going up or down requires us to add or subtract <code>n</code> units.</p>
-      <p>besides being places in a cross shape on the keyboard, 'i', 'j', 'k', 'l' are also consecutive letters. We convert the key code
-        into an index by simply doing <code&3</code> (notice e.which is shorter than e.keyCode by 2 bytes).</p>
-      <p>note: hitting any other key will also move the tron in various directions. Filtering all other keys requires 4 more bytes.</p>
+      <p>The grid is a single dimension, going up or down requires us to add or subtract <code>n</code> units.</p>
+      <p>Besides being places in a cross shape on the keyboard, 'i', 'j', 'k', 'l' are also consecutive letters. We convert the key code
+        into an index by simply doing <code&3</code> (notice how <code>e.which</code> is shorter than <code>e.keyCode</code> by 2 bytes).</p>
+      <p>Note: hitting any other key will also move the tron in various directions. Filtering all other keys requires 4 more bytes.</p>
     </div>
 
     <div class="slide" id="slide10">
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("<font color="red">z[</font>x+=[1,-n,-1,n][e.which&3]<font color="red">]--</font>?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&<font color="red">(z[</font>x+=[1,-n,-1,n][e.which&3]<font color="red">]^=1)</font>
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
       <p>This expression is one of the nicest parts of the code. There's a lot going on here:</p>
       <ul>
         <li>
-          <p>the <code>--</code> operator lets us decrement the value in the grid while also checking for a collision.</p>
+          <p>The grid is never initialized, so it starts out with all the values set to <code>undefined</code>.</p>
         </li>
         <li>
-          <p>if the value in the grid is a legal position, the value will be <code>true</code>. This sets the value to <code>0</code> and
-            returns <code>1</code>.</p>
+          <p>The <code>^=</code> (bitwise xor assignment) operator lets us update the grid while checking for a collision:</p>
         </li>
         <li>
-          <p>if the value in the grid is not a legal position, the value will be <code>0</code>, <code>false</code> or <code>undefined</code>.
-            This sets the value to <code>-1</code> or <code>NaN</code> (we don't really care) and returns falsy (<code>0</code> or <code>NaN</code>).</p>
+          <p>If the value in the grid has never been visited, we set the grid value to <code>1</code> and return <code>1</code>.</p>
         </li>
         <li>
-          <p>the grid initially starts out with boolean values. The result of <code>--</code> is numeric. Things however work out!</p>
+          <p>If the value in the grid has been visited, we return <code>0</code>.</p>
         </li>
       </ul>
     </div>
@@ -242,40 +298,56 @@ code { white-space:nowrap; color: black; }
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--<font color="red">?z.clearRect(x%n,x/n,1,1)</font>:b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      <font color="red">?z.clearRect(x%n,x/n,1,1,s++)</font>
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>By using the ternary <code>?:</code> operator, we draw a white pixel at the tron's position when the game has not ended.
+      <p>Using the ternary <code>?:</code> operator, we draw a white pixel at the tron's position when the game has not ended.
         Since our grid and <code>x</code> are a single dimension, we need to use <code>/</code>
-        and <code>%</code> operators to get each coordinate's value.</pre>
+        and <code>%</code> operators to get each coordinate's value.</p>
+      <p>
+        We also increment the score. Another common trick to save bytes is to add extra parameters to function calls.
+      </p>
     </div>
 
     <div class="slide" id="slide12">
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1)<font color="red">:b.innerHTML='game&#x2B1C;over'</font>",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      <font color="red">:b.innerHTML='game&#x2B1C;over:'+s</font>
+  ",9)
 &gt;&lt;canvas id=c&gt;
 </pre>
-      <p>We replace the page's content with "game over" when a collision occurs.</p>
+      <p>We replace the page's content with "game over" and the score when a collision occurs.</p>
       <p>Since we are inside an attribute we cannot use a space character. We instead use U+00A0 (non breaking space) and shown here as &#x2B1C;. In
         iso88591 this only takes one byte. The browser auto detects iso88591 if we don't serve the page with another content type.</p>
+      <p>Note: the game still exists in memory and is still running.</p>
     </div>
 
     <div class="slide" id="slide13">
 <pre>
 &lt;body id=b onkeyup=e=event onload=
   z=c.getContext('2d');
-  z.fillRect(0,0,n=150,n);
-  for(i=n*n;i--;x=11325)
-    z[i]=0&lt;i%n;
-  setInterval("z[x+=[1,-n,-1,n][e.which&3]]--?z.clearRect(x%n,x/n,1,1):b.innerHTML='game&#x2B1C;over'",9)
+  z.fillRect(s=0,0,n=150,x=11325);
+  setInterval("
+    0&lt;x%n
+    &&x&lt;n*n
+    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+      ?z.clearRect(x%n,x/n,1,1,s++)
+      :b.innerHTML='game&#x2B1C;over:'+s
+  ",9)
 <font color="red">&gt;&lt;canvas id=c&gt;</font>
 </pre>
       <p>Defines the canvas. We use the same trick of setting an <code>id</code> on canvas, which reappears in the global space.</p>
@@ -318,7 +390,7 @@ slide(1);
   <section id="play">
     <div class="page-header"><h1>play</h1></div>
     <ul>
-      <li><a href="https://raw.github.com/alokmenghrajani/alokmenghrajani.github.com/master/tron/tron.html">view source (223 bytes)</a></li>
+      <li><a href="https://raw.github.com/alokmenghrajani/alokmenghrajani.github.com/master/tron/tron.html">view source (221 bytes)</a></li>
       <li><a href="tron.html">play (press 'i', 'j', 'k' or 'l' to start)</a></li>
     </ul>
   </section>
