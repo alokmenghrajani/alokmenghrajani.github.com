@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>javascript game of tron in 221 bytes</title>
+<head><title>javascript game of tron in 219 bytes</title>
 <meta property="fb:admins" content="536181839"/>
 <meta name="author" content="Alok Menghrajani"/>
 <link href="../bootstrap.min.css" rel="stylesheet"/>
@@ -14,23 +14,26 @@ code { white-space:nowrap; color: black; }
 <body>
 <div class="container">
   <div class="hero-unit">
-    <h1>221 bytes tron</h1>
+    <h1>219 bytes tron</h1>
     <p>
       With some coworkers, we challenged each other to write the smallest
       possible game of tron in javascript (an exercice known
       as javascript golfing).
     </p>
     <p>
-      This page explains our final version (221 bytes). We initially worked alone but then exchanged ideas
+      This page explains our final version (219 bytes). We initially worked alone but then exchanged ideas
       and tricks, so erling & mathewsb deserve most of the credits!
     </p>
     <p>
-      our code was originally 226 bytes, but "Cosmologicon" pointed out a way to save three whole bytes, bring us
+      our code was originally 226 bytes, but "Cosmologicon" pointed out a way to save three whole bytes, bringing us
       to 223 bytes.
     </p>
     <p>
       With p01, we then came up with a way to save another 11 bytes (making the game 212 bytes).
       He also suggested keeping track of score, which takes 9 bytes but is totally worth it!
+    </p>
+    <p>
+      skrounge found a way to save 2 more bytes, brining the game to 219 bytes.
     </p>
     <div style="position:relative; top:60px;">
       <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Falokmenghrajani.github.com%2Ftron&amp;send=false&amp;layout=standard&amp;width=800&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80&amp;appId=202717489767277" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:800px; height:80px;" allowTransparency="true"></iframe>
@@ -72,8 +75,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -89,8 +92,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -109,8 +112,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -130,8 +133,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -150,8 +153,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -172,8 +175,8 @@ code { white-space:nowrap; color: black; }
   <font color="red">z.fillRect(s=0,0,n=150,x=11325);</font>
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -196,8 +199,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   <font color="red">setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)</font>
@@ -216,8 +219,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     <font color="red">0&lt;x%n
-    &&x&lt;n*n</font>
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n</font>
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -239,6 +242,8 @@ code { white-space:nowrap; color: black; }
           <p>If the tron hits the bottom edge, <code>x</code> will be larger than <code>n*n</code>.</p>
         </li>
       </ul>
+      <p>skrounge pointed out that we can use the <code>&</code> (binary and) instead of <code>&&</code> (logical and)
+        since both sides of the operator are boolean values.</p>
     </div>
 
     <div class="slide" id="slide9">
@@ -248,8 +253,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[<font color="red">x+=[1,-n,-1,n][e.which&3]</font>]^=1)
+    &x&lt;n*n
+    &(z[<font color="red">x+=[1,-n,-1,n][e.which&3]</font>]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -270,8 +275,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&<font color="red">(z[</font>x+=[1,-n,-1,n][e.which&3]<font color="red">]^=1)</font>
+    &x&lt;n*n
+    &<font color="red">(z[</font>x+=[1,-n,-1,n][e.which&3]<font color="red">]^=1)</font>
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -301,8 +306,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       <font color="red">?z.clearRect(x%n,x/n,1,1,s++)</font>
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -323,8 +328,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       <font color="red">:b.innerHTML='game&#x2B1C;over:'+s</font>
   ",9)
@@ -343,8 +348,8 @@ code { white-space:nowrap; color: black; }
   z.fillRect(s=0,0,n=150,x=11325);
   setInterval("
     0&lt;x%n
-    &&x&lt;n*n
-    &&(z[x+=[1,-n,-1,n][e.which&3]]^=1)
+    &x&lt;n*n
+    &(z[x+=[1,-n,-1,n][e.which&3]]^=1)
       ?z.clearRect(x%n,x/n,1,1,s++)
       :b.innerHTML='game&#x2B1C;over:'+s
   ",9)
@@ -390,7 +395,7 @@ slide(1);
   <section id="play">
     <div class="page-header"><h1>play</h1></div>
     <ul>
-      <li><a href="https://raw.github.com/alokmenghrajani/alokmenghrajani.github.com/master/tron/tron.html">view source (221 bytes)</a></li>
+      <li><a href="https://raw.github.com/alokmenghrajani/alokmenghrajani.github.com/master/tron/tron.html">view source (219 bytes)</a></li>
       <li><a href="tron.html">play (press 'i', 'j', 'k' or 'l' to start)</a></li>
     </ul>
   </section>
