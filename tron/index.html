@@ -101,8 +101,9 @@ code { white-space:nowrap; color: black; }
 </pre>
       <p>By assigning an <code>id</code> to the body, we are going to be able to write
         <code>b.innerHTML="game over"</code>, instead
-        of having to write <code>document.body.innerHTML="game over"</code>. Saves us 7 bytes.</p>
+        of having to write <code>document.body.innerHTML="game over"</code>*. Saves us 7 bytes.</p>
       <p>We can also drop the quotes around the attribute, since browsers are able to fix that for us.</p>
+      <p>* In Firefox, this only works in Quirks Mode (which is enabled since there isn't a doctype in the demo).</p>
     </div>
 
     <div class="slide" id="slide3">
