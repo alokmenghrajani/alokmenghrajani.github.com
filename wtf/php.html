@@ -456,6 +456,33 @@ echo $b[0], "\n";</pre>
 &gt; 2</pre>
       </div>
     </div>
+    <p>Similarly, the following code's output is hard to predict:</p>
+    <p>credits: julienv</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+function foo($x) {
+  $x[0] = 42;
+}
+
+$a = array(1);
+$b = array(&$a[0]);
+foo($b);
+
+$c = array(1);
+$d = array(&$c[0]);
+$c=0;
+foo($d);
+
+echo $b[0], "\n";
+echo $d[0], "\n";</pre>
+        <a onclick="$(event.target).hide();$('#turtle12output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle12output02" style="display: none;">&gt; 42
+&gt; 1</pre>
+      </div>
+    </div>
   </section>
 
   <section id="turtle13">
