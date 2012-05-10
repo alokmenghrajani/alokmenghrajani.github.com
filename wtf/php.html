@@ -296,10 +296,22 @@ echo $x, "\n";</pre>
         <pre id="turtle08output01" style="display: none;">&gt; aa
 &gt; aa</pre>
       </div>
+      And another weird case:
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+$x = null;
+var_dump(--$x);
+var_dump(++$x);
+
+        <a onclick="$(event.target).hide();$('#turtle08output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle08output02" style="display: none;">&gt; NULL
+&gt; int(1)</pre>
+      </div>
     </div>
     <br/>
     <div>
-      <p>When you combine with &lt;, you end up with really fun things:</p>
+      <p>When you combine with &lt;, you end up with fun things:</p>
       <div>
         <pre class="prettyprint linenums">&lt;?php
 
@@ -311,8 +323,8 @@ echo (int)($x < 'yy'), "\n";
 
 $x++;
 echo (int)($x < 'yy'), "\n";</pre>
-        <a onclick="$(event.target).hide();$('#turtle08output02').fadeIn()">(click to see output)</a>
-        <pre id="turtle08output02" style="display: none;">&gt; 1
+        <a onclick="$(event.target).hide();$('#turtle08output03').fadeIn()">(click to see output)</a>
+        <pre id="turtle08output03" style="display: none;">&gt; 1
 &gt; 0
 &gt; 1</pre>
       </div>
