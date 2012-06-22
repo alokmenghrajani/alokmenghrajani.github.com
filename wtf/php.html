@@ -26,12 +26,13 @@ section { margin-top: 80px; }
         <li><a href="#turtle05">__construct is just another method</a></li>
         <li><a href="#turtle06">curl_multi_exec</a></li>
         <li><a href="#turtle07">can't trust ==</a></li>
-        <li><a href="#turtle08">funny increments</a></li>
-        <li><a href="#turtle09">can't trust get_class()</a></li>
-        <li><a href="#turtle10">constructor does not get called, but destructor sure does</a></li>
-        <li><a href="#turtle11" style="text-decoration: line-through">inflexible type hints</a></li>
-        <li><a href="#turtle12">to count or not to count</a></li>
-        <li><a href="#turtle13">error messages</a></li>
+        <li><a href="#turtle08">can't trust &lt;</a></li>
+        <li><a href="#turtle09">funny increments</a></li>
+        <li><a href="#turtle10">can't trust get_class()</a></li>
+        <li><a href="#turtle11">constructor does not get called, but destructor sure does</a></li>
+        <li><a href="#turtle12" style="text-decoration: line-through">inflexible type hints</a></li>
+        <li><a href="#turtle13">to count or not to count</a></li>
+        <li><a href="#turtle14">error messages</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -278,7 +279,29 @@ echo (int)("  4 " == "    4 "), "\n";</pre>
 
   <section id="turtle08">
     <div class="page-header">
-      <h1>turtle 8: funny increments</h1>
+      <h1>turtle 8: can't trust &lt;</h1>
+    </div>
+    <p>&lt; and &gt; can do weird things when there's a type mismatch.</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+echo (int)(null > -1), "\n";
+echo (int)(null < 1), "\n";
+echo (int)(null == 0), "\n";</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle08output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle08output01" style="display: none;">&gt; 0
+&gt; 1
+&gt; 1</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="turtle09">
+    <div class="page-header">
+      <h1>turtle 9: funny increments</h1>
     </div>
     <p>In general, I have tried to avoid critizing PHP's API, however this one deserves to be listed.</p>
     <div>
@@ -292,8 +315,8 @@ echo $x, "\n";
 $x--; $x--; $x--;
 echo $x, "\n";</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle08output01').fadeIn()">(click to see output)</a>
-        <pre id="turtle08output01" style="display: none;">&gt; aa
+        <a onclick="$(event.target).hide();$('#turtle09output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle09output01" style="display: none;">&gt; aa
 &gt; aa</pre>
       </div>
     </div>
@@ -307,8 +330,8 @@ $x = null;
 var_dump(--$x);
 var_dump(++$x);</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle08output02').fadeIn()">(click to see output)</a>
-        <pre id="turtle08output02" style="display: none;">&gt; NULL
+        <a onclick="$(event.target).hide();$('#turtle09output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle09output02" style="display: none;">&gt; NULL
 &gt; int(1)</pre>
       </div>
     </div>
@@ -326,17 +349,17 @@ echo (int)($x < 'yy'), "\n";
 
 $x++;
 echo (int)($x < 'yy'), "\n";</pre>
-        <a onclick="$(event.target).hide();$('#turtle08output03').fadeIn()">(click to see output)</a>
-        <pre id="turtle08output03" style="display: none;">&gt; 1
+        <a onclick="$(event.target).hide();$('#turtle09output03').fadeIn()">(click to see output)</a>
+        <pre id="turtle09output03" style="display: none;">&gt; 1
 &gt; 0
 &gt; 1</pre>
       </div>
     </div>
   </section>
 
-  <section id="turtle09">
+  <section id="turtle10">
     <div class="page-header">
-      <h1>turtle 9: can't trust get_class()</h1>
+      <h1>turtle 10: can't trust get_class()</h1>
     </div>
     <p>
       Note: this behavior is documented in the manual. Why would anyone go out of their way
@@ -358,16 +381,16 @@ class Foo {
 Foo::bar(new A());
 Foo::bar(null);</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle09output01').fadeIn()">(click to see output)</a>
-        <pre id="turtle09output01" style="display: none;">&gt; A
+        <a onclick="$(event.target).hide();$('#turtle10output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle10output01" style="display: none;">&gt; A
 &gt; Foo</pre>
       </div>
     </div>
   </section>
 
-  <section id="turtle10">
+  <section id="turtle11">
     <div class="page-header">
-      <h1>turtle 10: constructor does not get called, but destructor sure does</h1>
+      <h1>turtle 11: constructor does not get called, but destructor sure does</h1>
     </div>
     <p>This caused us hours in debugging time. Things were eventually fixed in php 5.3.x.</p>
     <p>credits: pgriess</p>
@@ -395,15 +418,15 @@ try {
 } catch (Exception $e){
 }</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle10output01').fadeIn()">(click to see output)</a>
-        <pre id="turtle10output01" style="display: none;">&gt; Foo::__destruct()</pre>
+        <a onclick="$(event.target).hide();$('#turtle11output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle11output01" style="display: none;">&gt; Foo::__destruct()</pre>
       </div>
     </div>
   </section>
 
-  <section id="turtle11">
+  <section id="turtle12">
     <div class="page-header">
-      <h1 style="text-decoration: line-through">turtle 11: inflexible type hints</h1>
+      <h1 style="text-decoration: line-through">turtle 12: inflexible type hints</h1>
     </div>
     <p>Note: Removed, since this only applies to hphp.</p>
     <div>
@@ -422,15 +445,15 @@ function foo(string $s) {
 }
 foo(new Stringy());</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle11output01').fadeIn()">(click to see output)</a>
-        <pre id="turtle11output01" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, instance of Stringy given</pre>
+        <a onclick="$(event.target).hide();$('#turtle12output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle12output01" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, instance of Stringy given</pre>
       </div>
     </div>
   </section>
 
-  <section id="turtle12">
+  <section id="turtle13">
     <div class="page-header">
-      <h1>turtle 12: to count or not to count</h1>
+      <h1>turtle 13: to count or not to count</h1>
     </div>
     <p>
       Reference counting based garbage collectors have lots of pros and some cons. The pros are that it's usually
@@ -466,8 +489,8 @@ $b = $a;
 $a[0] = 2;
 echo $b[0], "\n";</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle12output01').fadeIn()">(click to see output)</a>
-        <pre id="turtle12output01" style="display: none;">&gt; 1
+        <a onclick="$(event.target).hide();$('#turtle13output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle13output01" style="display: none;">&gt; 1
 &gt; 2</pre>
       </div>
     </div>
@@ -493,16 +516,16 @@ foo($d);
 
 echo $b[0], "\n";
 echo $d[0], "\n";</pre>
-        <a onclick="$(event.target).hide();$('#turtle12output02').fadeIn()">(click to see output)</a>
-        <pre id="turtle12output02" style="display: none;">&gt; 42
+        <a onclick="$(event.target).hide();$('#turtle13output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle13output02" style="display: none;">&gt; 42
 &gt; 1</pre>
       </div>
     </div>
   </section>
 
-  <section id="turtle13">
+  <section id="turtle14">
     <div class="page-header">
-      <h1>turtle 13: error messages</h1>
+      <h1>turtle 14: error messages</h1>
     </div>
     <p>
       The error messages you get sometimes don't make sense. It's however not a big issues, since
@@ -515,8 +538,8 @@ echo $d[0], "\n";</pre>
 
 ::</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle13output01').fadeIn()">(click to see output)</a>
-        <pre id="turtle13output01" style="display: none;">&gt; Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM&hellip;</pre>
+        <a onclick="$(event.target).hide();$('#turtle14output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle14output01" style="display: none;">&gt; Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM&hellip;</pre>
       </div>
 
       <div>
@@ -526,8 +549,8 @@ function foo(string $s){}
 
 foo("hello world");</pre>
 
-        <a onclick="$(event.target).hide();$('#turtle13output02').fadeIn()">(click to see output)</a>
-        <pre id="turtle13output02" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, string given&hellip;</pre>
+        <a onclick="$(event.target).hide();$('#turtle14output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle14output02" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, string given&hellip;</pre>
       </div>
     </div>
   </section>
