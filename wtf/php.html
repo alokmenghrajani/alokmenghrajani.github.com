@@ -33,6 +33,7 @@ section { margin-top: 80px; }
         <li><a href="#turtle12" style="text-decoration: line-through">inflexible type hints</a></li>
         <li><a href="#turtle13">to count or not to count</a></li>
         <li><a href="#turtle14">error messages</a></li>
+        <li><a href="#turtle15">protected, not really</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -555,6 +556,39 @@ foo("hello world");</pre>
     </div>
   </section>
 
+  <section id="turtle15">
+    <div class="page-header">
+      <h1>turtle 15: protected, not really</h1>
+    </div>
+    <p>
+      PHP's handling of the protected visibiltiy on method is counter intuitive in many ways. Here is one example.
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+class A {
+  public static function f1() {
+    $b = new B();
+    $b->f2();
+  }
+}
+
+class B extends A {
+  protected function f2() {
+    echo "protected method\n";
+  }
+}
+
+A::f1();
+</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle15output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle15output01" style="display: none;">&gt; protected method</pre>
+      </div>
+    </div>
+  </section>
 
   <section id="links">
     <div class="page-header">
