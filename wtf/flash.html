@@ -1,0 +1,32 @@
+<html>
+<body>
+<p>I reported the following issue to Adobe, and they eventually updated their documentation 
+(see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/text/TextField.html#text).</p>
+<p>I however still think this deserves a Flash wtf!</p>
+<pre>
+import flash.text.*;
+
+var field1 = new TextField();
+field1.x = 0;
+field1.width = 500;
+field1.y = 10;
+field1.text = "<u>This text field is not interpreted as html</u>";
+this.addChild(field1);
+
+var field2 = new TextField();
+field2.x = 0;
+field2.width = 500;
+field2.y = 50;
+field2.htmlText = "<u>This text field is interpreted as html</u>";
+this.addChild(field2);
+
+var field3 = new TextField();
+field3.styleSheet = new StyleSheet();
+field3.x = 0;
+field3.width = 500;
+field3.y = 100;
+field3.text = "<u>also interpreted as html!</u>";
+this.addChild(field3);
+</pre>
+</body>
+</html>
