@@ -1,0 +1,45 @@
+.container-narrow {
+  margin: 0 auto;
+  width: 700px;
+}
+.jumbotron {
+  padding: 60px 0;
+}
+.anchor {
+  padding-bottom: 60px;
+}
+#bytes {
+  background-color: white;
+}
+.offset {
+  font-family: Andale Mono, monospace;
+  font-size: small;
+  overflow: hidden;
+  word-break: break-all;
+  word-wrap:break-word;
+  white-space: pre-wrap;
+}
+#debug {
+  border: 1px solid gray;
+}
+#output div {
+  padding-left: 1em;
+}
+.mbr {
+  background-color: yellow;
+}
+.bootsector {
+  background-color: red;
+}
+.fat1 {
+  background-color: blue;
+}
+.fat2 {
+  background-color: lightblue;
+}
+.root {
+  background-color: green;
+}
+.files {
+  background-color: gray;
+}

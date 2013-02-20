@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>fat12fs.js</title>
+<meta property="fb:admins" content="536181839"/>
+<meta charset="utf-8"/>
+<link href="bstrap.css" rel="stylesheet">
+<link href="fat12js.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-narrow">
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="./index.htm">fat12fs.js</a>
+        <div class="nav-collapse collapse">
+          <ul class="nav">
+            <li><a href="#mbr">master boot record</a></li>
+            <li><a href="#bs">boot sector</a></li>
+            <li><a href="#fat">file allocation table</a></li>
+            <li><a href="#root">root directory</a></li>
+            <li><a href="#files">files</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jumbotron">
+    <h1>fat12fs.js</h1>
+    <div class="lead">
+      <p>
+        The FAT12 (File Allocation Table) is one of the oldest file systems which are still
+        supported by modern computers. It was designed in the 1970s. Code to deal with
+        this file system still exists in practically any device that deals with files:
+        your laptop, your camera, your phone, etc. The file system is called FAT12 because the
+        clusters are encoded on 12 bits. The file system can be used on partition up to 8MB
+        in size.
+      </p>
+      <p>
+        The file system is the piece of system code responsible to manage directories and files on a disk.
+        Usually, the file system divides the disk into sectors. The file system keeps track of which
+        sectors are free, used or bad. The file system also keeps track of which blocks need to be combined
+        to read a file.
+      </p>
+      <p>
+        Usually, file system code is written in C. I figured it would be fun to write a "driver" in javascript.
+        The current code loads a file system, reads the various data structures and then pretty prints the
+        data.
+      </p>
+      <p>
+        For the meta lol, the file system contains this webpage &amp; all the javascript itself :)
+      </p>
+      <p>
+        This project might be a useful as a teaching aid (you could ask students to extend this code and
+        implement a defragmentation algorithm or add support for FAT16 or FAT32), reused to build
+        collaborative forensics tool, etc. File systems have also started to get some attention from
+        the security community. A maliciously crafted file system can lead to host compromise in some
+        cases: <a href="https://media.blackhat.com/bh-dc-11/Larimer/BlackHat_DC_2011_Larimer_Vulnerabiliters_w-removeable_storage-wp.pdf">Exploiting vulnerabilities with removable storage</a>.
+      </p>
+      <p><a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/fat12js">The code is open source and available on github</a>. Feel free to fork and send pull me pull requests!</p>
+      <p style="text-align: right">-- Alok Menghrajani</p>
+    </div>
+  </div>
+
+  <div>
+    <canvas id="bytes"></canvas>
+  </div>
+
+  <div id="debug">
+    <h1>logs</h1>
+  </div>
+
+<div id="output"></div>
+
+<script src="jquery.js"></script>
+<script src="utils.js"></script>
+<script src="datanode.js"></script>
+<script src="mbr.js"></script>
+<script src="bs.js"></script>
+<script src="fat.js"></script>
+<script src="dir.js"></script>
+<script src="fatfs.js"></script>
+<script>
+setTimeout(function(){
+  Utils.load("disk.dmg", function(data) {
+    new Fat12FS(data);
+  });
+}, 1);
+</script>
+<br>
+</div>
+</body>
+</html>
