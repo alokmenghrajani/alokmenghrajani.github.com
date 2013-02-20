@@ -10,4 +10,5 @@ document.body.innerHTML=
   "the disk image and view/add/remove files.</p>" +
   "<p>Writing this bootloader was non-trivial since I only had 446 bytes of space (I didn't " +
   "want to modify the number of reserved sectors on the disk, that would be too easy).</p>" +
-  "<p>Note: the bootloader assumes that the file system is FAT12!</p>";
+  "<p>Note: the bootloader assumes that the file system is FAT12!</p>" +
+  "<ul><li><a href=\"http://alokmenghrajani.github.com/fat12/\">source + more info</a></li></ul>";
