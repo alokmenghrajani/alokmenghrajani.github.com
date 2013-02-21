@@ -31,17 +31,18 @@
     <div class="lead">
       <p>
         The FAT12 (File Allocation Table) is one of the oldest file systems which are still
-        supported by modern computers. It was designed in the 1970s. Code to deal with
-        this file system still exists in practically any device that deals with files:
+        supported by modern computers. Designed in the 1970s, code to deal with
+        this file system still exists in practically any device that handles files:
         your laptop, your camera, your phone, etc. The file system is called FAT12 because the
         clusters are encoded on 12 bits. The file system can be used on partition up to 8MB
         in size.
       </p>
       <p>
-        The file system is the piece of system code responsible to manage directories and files on a disk.
-        Usually, the file system divides the disk into sectors. The file system keeps track of which
-        sectors are free, used or bad. The file system also keeps track of which blocks need to be combined
-        to read a file.
+        The file system is the piece of system code responsible for managing directories
+        and files on a disk.
+        Typically, the file system divides the disk into sectors and keeps track of which
+        sectors are free, used or bad. The file system also keeps track of how to combine
+        blocks when reading a file.
       </p>
       <p>
         Usually, file system code is written in C. I figured it would be fun to write a "driver" in javascript.
