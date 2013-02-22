@@ -1,11 +1,8 @@
 /**
- * "driver" for the FAT12 file system.
+ * Core "driver" for the FAT12 file system.
  *
- * A few TODOs:
- * - what if root directory or subdirectory is >512 bytes?
- * - allow user to edit the raw data?
- * - allow user to add/remove/edit files?
- * - allow user to save the modified fs?
+ * @author Alok Menghrajani
+ * @license http://www.gnu.org/licenses/agpl-3.0.html
  */
 
 function Fat12FS(bytes) {

@@ -1,5 +1,8 @@
 /**
  * Various utils
+ *
+ * @author Alok Menghrajani
+ * @license http://www.gnu.org/licenses/agpl-3.0.html
  */
 function Utils() {
 }

@@ -4,10 +4,8 @@
  * It's orgranized in a linked-list like structure since files can
  * span multiple sectors.
  *
- * Note: there are two copies of the FAT. For now, we'll just
- *       ignore the second copy.
- *
- * TODO: assert fat2 == fat1
+ * @author Alok Menghrajani
+ * @license http://www.gnu.org/licenses/agpl-3.0.html
  */
 function Fat() {
   this.map = function(fatfs) {
@@ -41,7 +39,13 @@ function Fat() {
     }
 
     // consume the copy of the FAT
+    Utils.check(
+      fatfs.bootsector.getNumFats() == 2,
+      "Was expecting 2 copies of the FAT")
     this.data2 = fatfs.data.consume(fat_size);
+    Utils.check(
+      Utils.getHex(fatfs, this.data) == Utils.getHex(fatfs, this.data2),
+      "The two FATs don't contain the same data!");
   }
 
   /**

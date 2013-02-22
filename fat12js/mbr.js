@@ -2,8 +2,9 @@
  * The MBR lives in the first 512 bytes.
  *
  * The first 446 bytes were used for bootstrapping operating systems.
- * There is then information about partitions (up to 4) followed by
- * a 0x55 0xAA signature.
+ *
+ * @author Alok Menghrajani
+ * @license http://www.gnu.org/licenses/agpl-3.0.html
  */
 function MasterBootRecord() {
   this.map = function(fatfs) {

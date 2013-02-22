@@ -6,6 +6,9 @@
  * bytes to structured data and vice-versa.
  *
  * Parts of the data can be rendered by a sub node.
+ *
+ * @author Alok Menghrajani
+ * @license http://www.gnu.org/licenses/agpl-3.0.html
  */
 function DataNode(start, length) {
   this.ptr = 0;

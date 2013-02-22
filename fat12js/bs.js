@@ -6,6 +6,9 @@
  * The bootsector also contains instructions, which get executed when
  * you insert the disk and powerup a computer. These instructions
  * would bootstrap the operating system.
+ *
+ * @author Alok Menghrajani
+ * @license http://www.gnu.org/licenses/agpl-3.0.html
  */
 function BootSector() {
   this.map = function(fatfs) {
@@ -44,6 +47,7 @@ function BootSector() {
     this.total_sectors = Utils.getInt(fatfs, this.bootsector.total_sectors);
     this.bytes_per_sector = Utils.getInt(fatfs, this.bootsector.bytes_per_sector);
     this.sectors_per_fat = Utils.getInt(fatfs, this.bootsector.sectors_per_fat);
+    this.fats = Utils.getInt(fatfs, this.bootsector.fats);
   }
 
   this.render = function() {
@@ -56,20 +60,36 @@ function BootSector() {
     div.append($("<div></div>").append(subdiv));
 
     meta = {};
-    meta.bootstrap_offset = Utils.getHex(this.fatfs, this.bootsector.bootstrap_offset);
-    meta.bootstrap_offset = Utils.getHex(this.fatfs, this.bootsector.bootstrap_offset);
+    meta.bootstrap_offset = Utils.getHex(
+      this.fatfs,
+      this.bootsector.bootstrap_offset);
+    meta.bootstrap_offset = Utils.getHex(
+      this.fatfs,
+      this.bootsector.bootstrap_offset);
     meta.oem = Utils.getStr(this.fatfs, this.bootsector.oem);
-    meta.bytes_per_sector = Utils.getInt(this.fatfs, this.bootsector.bytes_per_sector);
-    meta.sectors_per_cluster = Utils.getInt(this.fatfs, this.bootsector.sectors_per_cluster);
-    meta.reserved_sectors = Utils.getInt(this.fatfs, this.bootsector.reserved_sectors);
+    meta.bytes_per_sector = Utils.getInt(
+      this.fatfs,
+      this.bootsector.bytes_per_sector);
+    meta.sectors_per_cluster = Utils.getInt(
+      this.fatfs,
+      this.bootsector.sectors_per_cluster);
+    meta.reserved_sectors = Utils.getInt(
+      this.fatfs,
+      this.bootsector.reserved_sectors);
     meta.fats = Utils.getInt(this.fatfs, this.bootsector.fats);
     meta.root_directories = this.root_directories;
     meta.total_sectors = this.total_sectors;
     meta.media_type = Utils.getInt(this.fatfs, this.bootsector.media_type);
-    meta.sectors_per_fat = Utils.getInt(this.fatfs, this.bootsector.sectors_per_fat);
-    meta.sectors_per_track = Utils.getInt(this.fatfs, this.bootsector.sectors_per_track);
+    meta.sectors_per_fat = Utils.getInt(
+      this.fatfs,
+      this.bootsector.sectors_per_fat);
+    meta.sectors_per_track = Utils.getInt(
+      this.fatfs,
+      this.bootsector.sectors_per_track);
     meta.heads = Utils.getInt(this.fatfs, this.bootsector.heads);
-    meta.hidden_sectors = Utils.getInt(this.fatfs, this.bootsector.hidden_sectors);
+    meta.hidden_sectors = Utils.getInt(
+      this.fatfs,
+      this.bootsector.hidden_sectors);
     meta.bootstrap = Utils.getHex(this.fatfs, this.bootsector.bootstrap);
     meta.signature = Utils.getHex(this.fatfs, this.bootsector.signature);
 
@@ -91,6 +111,10 @@ function BootSector() {
 
   this.getTotalSectors = function() {
     return this.total_sectors;
+  }
+
+  this.getNumFats = function() {
+    return this.fats;
   }
 }
 

@@ -1,6 +1,9 @@
 /**
  * The directory information is stored in 32 bytes
  * records.
+ *
+ * @author Alok Menghrajani
+ * @license http://www.gnu.org/licenses/agpl-3.0.html
  */
 function Directory() {
   this.root = {};
@@ -185,12 +188,17 @@ function Directory() {
         continue;
       }
       var subdiv = $("<span></span>");
-      subdiv.append(file.label);
+      var cluster_id = Utils.getInt(this.fatfs, file.cluster_id);
+      if (!file.isSpecial && !file.isDirectory) {
+        subdiv.append('<a href="#'+cluster_id+'">'+file.label+'</a>');
+      } else {
+        subdiv.append(file.label);
+      }
       var attributes = $('<span class="offset"></span>');
       attributes.append(
        ' (date: ' + this.dateToStr(file.date) + ', ' +
        'time: ' + this.timeToStr(file.time) + ', ' +
-       'cluster: ' + Utils.getInt(this.fatfs, file.cluster_id));
+       'cluster: ' + cluster_id + ')');
       if (!file.isSpecial && !file.isDirectory) {
         attributes.append(', size: ' + file.file_data.length);
       }
@@ -243,12 +251,15 @@ function Directory() {
       if (file.isDirectory) {
         this.renderFiles(div, file, path + file.label);
       } else {
-        var subdiv = $("<span></span>");
+        var cluster_id = Utils.getInt(this.fatfs, file.cluster_id);
+        var subdiv = $('<div id="'+cluster_id+'" class="anchor"></div>');
+        div.append(subdiv);
+
+        subdiv = $("<span></span>");
         subdiv.append(path + file.label);
         var file_data = $('<span class="offset"></span>');
         file_data.html(file.file_data);
         subdiv.append($("<div></div>").append(file_data));
-
         div.append($("<div></div>").append(subdiv));
       }
     }
