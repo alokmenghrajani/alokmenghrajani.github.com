@@ -2,7 +2,7 @@
 <body>
 <p>jQuery has this quirk, where you can't pass user data to the $() function:</p>
 <pre>
-$('<img src=1 onerror=alert(document.domain)>')
+$('&lt;img src=1 onerror=alert(document.domain)&gt;')
 </pre>
 
 <p>The $() code ends up creating an HTML node, which can lead to a XSS hole.</p>
