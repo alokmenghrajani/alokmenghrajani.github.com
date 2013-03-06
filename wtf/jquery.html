@@ -1,0 +1,28 @@
+<html>
+<body>
+<p>jQuery has this quirk, where you can't pass user data to the $() function:</p>
+<pre>
+$('<img src=1 onerror=alert(document.domain)>')
+</pre>
+
+<p>The $() code ends up creating an HTML node, which can lead to a XSS hole.</p>
+
+<p>This vector for bugs has been known for a while (<a href="http://bugs.jquery.com/ticket/9521">bug 9521</a>,
+<a href="http://bugs.jquery.com/ticket/11617">bug 11617), but can unfortunately still be exploited in some cases.</p>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2373559-11']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>
