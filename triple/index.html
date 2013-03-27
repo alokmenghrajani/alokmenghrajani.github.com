@@ -780,93 +780,71 @@ svg { display: block; margin: 30px auto}
     </p>
     <p>
       For each state, we write down how to get there:
-      <pre>
-        A = &empty; | A[0369] | B[258] | C[147]
-        B = A[147] | B[0369] | C[258]
-        C = A[258] | B[147] | C[0369]
-      </pre>
+<pre>A = &empty; | A[0369] | B[258] | C[147]
+B = A[147] | B[0369] | C[258]
+C = A[258] | B[147] | C[0369]</pre>
     </p>
     <p>
       &empty; represents the initial state.
       Having to write [0369], [147] and [258] is cumbersome, so
       we'll only write 0, 1 and 2 respectively:
-      <pre>
-        A = &empty; | A0 | B2 | C1
-        B = A1 | B0 | C2
-        C = A2 | B1 | C0
-      </pre>
+<pre>A = &empty; | A0 | B2 | C1
+B = A1 | B0 | C2
+C = A2 | B1 | C0</pre>
     </p>
     <p>
       The goal now is to substitute B and C, in order to
       get a forumula for A. Recursive rules like
       <code>X = Xw | Y | Z</code> become <code>X = Yw* | Zw*</code>,
       which can also be written as <code>X = (Y | Z) w*</code>:
-      <pre>
-        A = ( &empty; | B2 | C1 ) 0*
-        B = ( A1 | C2 ) 0*
-        C = ( A2 | B1 ) 0*
-      </pre>
+<pre>A = ( &empty; | B2 | C1 ) 0*
+B = ( A1 | C2 ) 0*
+C = ( A2 | B1 ) 0*</pre>
     </p>
     <p>
       C is easy to substitute:
-      <pre>
-        A = ( &empty; | B2 | ( A2 | B1 ) 0* 1 ) 0*
-        B = (A1 | ( A2 | B1 ) 0* 2 ) 0*
-      </pre>
+<pre>A = ( &empty; | B2 | ( A2 | B1 ) 0* 1 ) 0*
+B = (A1 | ( A2 | B1 ) 0* 2 ) 0*</pre>
     </p>
     <p>
       We repeat this process:
-      <pre>
-        A = 0* | B2 0* | ( A2 | B1 ) 0* 1 0*
-        B = A1 0* | ( A2 | B1 ) 0* 2 0*
-      </pre>
-      <pre>
-        A = 0* | B2 0* | A2 0* 1 0* | B1 0* 1 0*
-        B = A1 0* | A2 0* 2 0* | B1 0* 2 0*
-      </pre>
-      <pre>
-        A = ( 0* | B2 0* | B1 0* 1 0* ) ( 2 0* 1 0* )*
-        B = ( A1 0* | A2 0* 2 0* ) ( 1 0* 2 0* )*
-      </pre>
+<pre>A = 0* | B2 0* | ( A2 | B1 ) 0* 1 0*
+B = A1 0* | ( A2 | B1 ) 0* 2 0*</pre>
+<pre>A = 0* | B2 0* | A2 0* 1 0* | B1 0* 1 0*
+B = A1 0* | A2 0* 2 0* | B1 0* 2 0*</pre>
+<pre>A = ( 0* | B2 0* | B1 0* 1 0* ) ( 2 0* 1 0* )*
+B = ( A1 0* | A2 0* 2 0* ) ( 1 0* 2 0* )*</pre>
     </p>
     <p>
       We can now substitute B:
-      <pre>
-        A = (0* |
-             ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 2 0* |
-             ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 1 0* 1 0*
-            ) (2 0* 1 0* )*
-      </pre>
-      <pre>
-        A = 0* ( 2 0* 1 0* )* |
-            A1 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
-            A2 0* 2 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
-            A1 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* |
-            A2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )*
-      </pre>
+<pre>A = (0* |
+     ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 2 0* |
+     ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 1 0* 1 0*
+    ) (2 0* 1 0* )*</pre>
+<pre>A = 0* ( 2 0* 1 0* )* |
+    A1 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
+    A2 0* 2 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
+    A1 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* |
+    A2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )*</pre>
     </p>
     <p>
       At this point, we have something like <code>X = a* | Xb | Xc</code>,
       which can be expressed as <code>X = (a | b | c)*</code>:
-      <pre>
-        A = ( 0* ( 2 0* 1 0* )* |
-            1 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
-            2 0* 2 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
-            1 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* |
-            2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* )*
-      </pre>
+<pre>A = ( 0* ( 2 0* 1 0* )* |
+      1 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
+      2 0* 2 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
+      1 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* |
+      2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* )*</pre>
     </p>
     <p>
       We found a solution, this rule can be converted to a regular expression! We can however simplify it a little:
-      <pre>
-        A = ( 0 |
-              2 0* 1 |
-              1 ( 0 | 1 0* 2 )* 2 |
-              2 0* 2 ( 0 | 1 0* 2 )* 2 |
-              1 ( 0 | 1 0* 2 )* 1 0* 1 |
-              2 0* 2 ( 0 | 1 0* 2 )* 1 0* 1
-             )*
-      </pre>
+<pre>A = ( 0 |
+      2 0* 1 |
+      1 ( 0 | 1 0* 2 )* 2 |
+      2 0* 2 ( 0 | 1 0* 2 )* 2 |
+      1 ( 0 | 1 0* 2 )* 1 0* 1 |
+      2 0* 2 ( 0 | 1 0* 2 )* 1 0* 1
+    )*</pre>
     </p>
   </section>
 
@@ -878,9 +856,7 @@ svg { display: block; margin: 30px auto}
     </p>
     <p>
       We also need to replace back the 0 with [0369], 1 with [147] and 2 with [258]:
-      <pre>
-        /^([0369]|[258][0369]*[147]|[147]([0369]|[147][0369]*[258])*[258]|[258][0369]*[258]([0369]|[147][0369]*[258])*[258]|[147]([0369]|[147][0369]*[258])*[147][0369]*[147]|[258][0369]*[258]([0369]|[147][0369]*[258])*[147][0369]*[147])*$/
-      </pre>
+<pre>/^([0369]|[258][0369]*[147]|[147]([0369]|[147][0369]*[258])*[258]|[258][0369]*[258]([0369]|[147][0369]*[258])*[258]|[147]([0369]|[147][0369]*[258])*[147][0369]*[147]|[258][0369]*[258]([0369]|[147][0369]*[258])*[147][0369]*[147])*$/</pre>
     </p>
     <p>Don't believe me? Try it out:</p>
     <div class="form-inline">
@@ -927,6 +903,15 @@ svg { display: block; margin: 30px auto}
     <ul>
       <li>erling for challenging me with this stuff :)</li>
       <li>joel for finding a shorter solution: <code>/^(0|20*1|(1|20*2)(0|10*2)*(2|10*1))*$/</code></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="page-header"><h1>some links</h1></div>
+    <ul>
+      <li><a href="http://regex.alf.nu/">regex.alf.nu</a>: test your regexp skills</li>
+      <li><a href="http://www.coinheist.com/rubik/a_regular_crossword/grid.pdf">A regular expression crossword (pdf)</a></li>
+      <li><a href="http://regexp.quaxio.com/">regexp.quaxio.com</a>: A tool I wrote to visulize regexps</li>
     </ul>
   </section>
 
