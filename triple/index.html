@@ -872,9 +872,10 @@ svg { display: block; margin: 30px auto}
   <section>
     <div class="page-header"><h1>solution</h1></div>
     <p>
-      The above rule can be converted to a regular expression, by
-      replacing back the 0 with [0369], 1 with [147] and 2 with [258].
-      We also need to anchor the regular expression with ^ and $:
+      The above rule can be converted to a regular expression, by anchoring the regexp with ^ and $:
+      <code>/^(0|20*1|1(0|10*2)*2|20*2(0|10*2)*2|1(0|10*2)*10*1|20*2(0|10*2)*10*1)*$/</code>
+
+      We also need to replace back the 0 with [0369], 1 with [147] and 2 with [258]:
       <pre>
         /^([0369]|[258][0369]*[147]|[147]([0369]|[147][0369]*[258])*[258]|[258][0369]*[258]([0369]|[147][0369]*[258])*[258]|[147]([0369]|[147][0369]*[258])*[147][0369]*[147]|[258][0369]*[258]([0369]|[147][0369]*[258])*[147][0369]*[147])*$/
       </pre>
@@ -921,9 +922,10 @@ svg { display: block; margin: 30px auto}
 
   <section>
     <div class="page-header"><h1>credits</h1></div>
-    <p>
-      erling for challenging me with this stuff :)
-    </p>
+    <ul>
+      <li>erling for challenging me with this stuff :)</li>
+      <li>joel for finding a shorter solution: <code>/^(0|20*1|(1|20*2)(0|10*2)*(2|10*1))*$/</code></li>
+    </ul>
   </section>
 
   <footer class="footer">
