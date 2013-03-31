@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>javscript model of Ackermann steering</title>
+<meta property="fb:admins" content="536181839"/>
+<meta name="author" content="Alok Menghrajani"/>
+<link href="bootstrap.min.css" rel="stylesheet"/>
+<script type="text/javascript" src="../jquery-1.7.1.min.js"></script>
+<style>
+.container-narrow {
+  margin: 0 auto;
+  width: 700px;
+}
+.jumbotron h1 {
+  font-size: 32px;
+}
+body { margin-top: 40px; }
+svg { display: block; margin: 30px auto}
+</style>
+</head>
+<body>
+<div class="container-narrow">
+  <div class="jumbotron">
+    <h1>javscript model of Ackermann steering</h1>
+    <div class="lead">
+    <p>
+      When a car (or other vehicle) turns, the inner wheels are spinning
+      at a different speed than the outer wheels. The front inner wheel
+      is also at a different angle compared to the front right wheel.
+    </p>
+    <p>
+      Ackermann steering geometry provides an approximate way to
+      build a steering system. This works fine at low speed, but
+      does not take into account the effects of dynamic forces.
+    </p>
+    <p>
+      <a href="http://en.wikipedia.org/wiki/Ackermann_steering_geometry">Read more about Ackermann steering geometry</a>.
+    </p>
+    <p>Hit <span style="border: 1px solid black; font-size: larger">&#8678;</span> or
+      <span style="border: 1px solid black; font-size: larger">&#8680;</span> keys to move steering.</p>
+  </div>
+
+  <section style="padding-top: 20px">
+    <svg id="svg" style="width: 250px; height: 250px"></svg>
+  </section>
+</div>
+
+<script>
+var pressed={};
+
+document.onkeydown=function(e) {
+  e = e || window.event
+  pressed[e.keyCode] = true
+  console.log(e.keyCode);
+}
+
+document.onkeyup=function(e) {
+  e = e || window.event
+  delete pressed[e.keyCode]
+}
+
+function vehicle() {
+  this.x = 120
+  this.y = 120
+  this.body_angle = 0
+  this.turn_center = -200
+
+  this.length = 150
+  this.width = 130
+  this.wheel_size = 40
+  this.wheel_horz_joint = 5
+  this.wheel_vert_joint = 30
+}
+
+vehicle.createElement = function(type) {
+  return document.createElementNS("http://www.w3.org/2000/svg", type)
+}
+
+vehicle.prototype.render = function() {
+  // clear svg
+  $('svg').empty()
+
+  // draw the "body"
+  var body = vehicle.createElement("line")
+  body.setAttribute("x1", this.x)
+  body.setAttribute("x2", this.x)
+  body.setAttribute("y1", this.y - this.length/2)
+  body.setAttribute("y2", this.y + this.length/2)
+  body.setAttribute("style", "stroke: black;")
+  svg.appendChild(body)
+
+  // draw the axis
+  this.renderAxis(this.y - this.length/2)
+  this.renderAxis(this.y + this.length/2)
+
+  // draw the wheels
+  var anglel = 0
+  if (this.turn_center != 0) {
+    anglel = Math.atan2(this.length, this.width/2 + this.turn_center) / Math.PI * 180
+    if (this.turn_center < 0) {
+      anglel -= 180
+    }
+  }
+  this.renderWheel(this.x - this.width/2, this.y - this.length/2, -1, anglel);
+  var angler = 0
+  if (this.turn_center != 0) {
+    angler = Math.atan2(this.length, -this.width/2 + this.turn_center) / Math.PI * 180
+    if (this.turn_center < 0) {
+      angler -= 180
+    }
+  }
+  this.renderWheel(this.x + this.width/2, this.y - this.length/2, 1, angler)
+  this.renderWheel(this.x - this.width/2, this.y + this.length/2, 0, 0)
+  this.renderWheel(this.x + this.width/2, this.y + this.length/2, 0, 0)
+
+  this.renderRod(this.x, this.y, anglel, angler)
+
+  var shape = vehicle.createElement("line")
+  shape.setAttribute("cx", this.x)
+  shape.setAttribute("cy", this.y)
+  shape.setAttribute("r",  2)
+  shape.setAttribute("fill", "green")
+  svg.appendChild(shape)
+}
+
+vehicle.prototype.renderAxis = function(y) {
+  var axis = vehicle.createElement("line")
+  axis.setAttribute("x1", this.x - this.width/2)
+  axis.setAttribute("x2", this.x + this.width/2)
+  axis.setAttribute("y1", y)
+  axis.setAttribute("y2", y)
+  axis.setAttribute("style", "stroke: black;")
+  svg.appendChild(axis)
+}
+
+vehicle.prototype.renderWheel = function(x, y, left_or_right, angle) {
+  var wheel = vehicle.createElement("rect")
+  wheel.setAttribute("x", x - 5 + (this.wheel_horz_joint + 5) * left_or_right)
+  wheel.setAttribute("width", 10)
+  wheel.setAttribute("y", y - this.wheel_size)
+  wheel.setAttribute("height", 2 * this.wheel_size)
+  wheel.setAttribute("fill", "white")
+  wheel.setAttribute("style", "stroke: black;")
+  wheel.setAttribute("transform", "rotate("+angle+" "+x+" "+y+")")
+  svg.appendChild(wheel)
+
+  if (left_or_right != 0) {
+    this.renderJoint(x, y, left_or_right, angle)
+  }
+}
+
+vehicle.prototype.renderJoint = function(x, y, left_or_right, angle) {
+  var horz = vehicle.createElement("line")
+  horz.setAttribute("x1", x)
+  horz.setAttribute("x2", x + this.wheel_horz_joint * left_or_right)
+  horz.setAttribute("y1", y)
+  horz.setAttribute("y2", y)
+  horz.setAttribute("style", "stroke: red;")
+  horz.setAttribute("transform", "rotate("+angle+" "+x+" "+y+")")
+  svg.appendChild(horz)
+
+  var vert = vehicle.createElement("line")
+  vert.setAttribute("x1", x)
+  vert.setAttribute("x2", x)
+  vert.setAttribute("y1", y)
+  vert.setAttribute("y2", y+this.wheel_vert_joint)
+  vert.setAttribute("style", "stroke: red;")
+  var d = Math.atan2(this.width, 2*this.length)/Math.PI*180*left_or_right
+  vert.setAttribute(
+    "transform",
+    "rotate("+angle+" "+x+" "+y+") rotate("+d+" "+x+" "+y+")")
+  svg.appendChild(vert)
+}
+
+vehicle.prototype.renderRod = function(x, y, anglel, angler) {
+  // It's unfortunate that we can't use svg transforms here
+  var rod = vehicle.createElement("line")
+  var d = Math.atan2(this.width, 2*this.length)
+
+  var x1 = x - this.width / 2
+  var y1 = y - this.length / 2
+  x1 += Math.sin(d-anglel*Math.PI/180) * this.wheel_vert_joint
+  y1 += Math.cos(d-anglel*Math.PI/180) * this.wheel_vert_joint
+
+  var x2 = x + this.width / 2
+  var y2 = y - this.length / 2
+  x2 -= Math.sin(d+angler*Math.PI/180) * this.wheel_vert_joint
+  y2 += Math.cos(d+angler*Math.PI/180) * this.wheel_vert_joint
+  rod.setAttribute("x1", x1)
+  rod.setAttribute("x2", x2)
+  rod.setAttribute("y1", y1)
+  rod.setAttribute("y2", y2)
+  rod.setAttribute("style", "stroke: blue;")
+  svg.appendChild(rod)
+}
+
+vehicle.prototype.update = function() {
+  var magic1 = 500 // sad...
+  var magic2 = 20
+  var magic3 = 150
+
+  if (pressed[37]) { // left key
+    if (this.turn_center == 0) {
+      this.turn_center = -magic1
+    } else {
+      this.turn_center += magic2
+    }
+  }
+  if (pressed[39]) { // right key
+    if (this.turn_center == 0) {
+      this.turn_center = magic1
+    } else {
+      this.turn_center -= magic2
+    }
+  }
+  if ((this.turn_center < 0) && (this.turn_center > -magic3)) {
+    this.turn_center = -magic3;
+  }
+  if ((this.turn_center > 0) && (this.turn_center < magic3)) {
+    this.turn_center = magic3;
+  }
+  if (this.turn_center < -magic1) {
+    this.turn_center = 0;
+  }
+  if (this.turn_center > magic1) {
+    this.turn_center = 0;
+  }
+  this.render()
+}
+
+var v = new vehicle()
+v.render()
+setInterval(function(e){v.update()}, 100)
+</script>
+
+</body>
+</html>
+
+
