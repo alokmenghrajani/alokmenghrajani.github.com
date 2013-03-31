@@ -50,7 +50,6 @@ var pressed={};
 document.onkeydown=function(e) {
   e = e || window.event
   pressed[e.keyCode] = true
-  console.log(e.keyCode);
 }
 
 document.onkeyup=function(e) {
@@ -60,15 +59,16 @@ document.onkeyup=function(e) {
 
 function vehicle() {
   this.x = 120
-  this.y = 120
+  this.y = 130
   this.body_angle = 0
-  this.turn_center = -200
+  this.steering_angle = 21
 
   this.length = 150
   this.width = 130
   this.wheel_size = 40
   this.wheel_horz_joint = 5
   this.wheel_vert_joint = 30
+  this.wheel_width = 20
 }
 
 vehicle.createElement = function(type) {
@@ -93,26 +93,25 @@ vehicle.prototype.render = function() {
   this.renderAxis(this.y + this.length/2)
 
   // draw the wheels
-  var anglel = 0
-  if (this.turn_center != 0) {
-    anglel = Math.atan2(this.length, this.width/2 + this.turn_center) / Math.PI * 180
-    if (this.turn_center < 0) {
-      anglel -= 180
-    }
+  var angle_l = 0
+  var turn_point = this.length / Math.tan(this.steering_angle / 180 * Math.PI)
+
+  angle_l = Math.atan2(this.length, this.width/2 + turn_point) / Math.PI * 180
+  if (turn_point < 0) {
+    angle_l -= 180
   }
-  this.renderWheel(this.x - this.width/2, this.y - this.length/2, -1, anglel);
-  var angler = 0
-  if (this.turn_center != 0) {
-    angler = Math.atan2(this.length, -this.width/2 + this.turn_center) / Math.PI * 180
-    if (this.turn_center < 0) {
-      angler -= 180
-    }
+  this.renderWheel(this.x - this.width/2, this.y - this.length/2, -1, angle_l);
+
+  var angle_r = 0
+  angle_r = Math.atan2(this.length, -this.width/2 + turn_point) / Math.PI * 180
+  if (turn_point < 0) {
+    angle_r -= 180
   }
-  this.renderWheel(this.x + this.width/2, this.y - this.length/2, 1, angler)
+  this.renderWheel(this.x + this.width/2, this.y - this.length/2, 1, angle_r)
   this.renderWheel(this.x - this.width/2, this.y + this.length/2, 0, 0)
   this.renderWheel(this.x + this.width/2, this.y + this.length/2, 0, 0)
 
-  this.renderRod(this.x, this.y, anglel, angler)
+  this.renderRod(this.x, this.y, angle_l, angle_r)
 
   var shape = vehicle.createElement("line")
   shape.setAttribute("cx", this.x)
@@ -134,8 +133,8 @@ vehicle.prototype.renderAxis = function(y) {
 
 vehicle.prototype.renderWheel = function(x, y, left_or_right, angle) {
   var wheel = vehicle.createElement("rect")
-  wheel.setAttribute("x", x - 5 + (this.wheel_horz_joint + 5) * left_or_right)
-  wheel.setAttribute("width", 10)
+  wheel.setAttribute("x", x - (this.wheel_width/2) + (this.wheel_horz_joint + (this.wheel_width/2)) * left_or_right)
+  wheel.setAttribute("width", this.wheel_width)
   wheel.setAttribute("y", y - this.wheel_size)
   wheel.setAttribute("height", 2 * this.wheel_size)
   wheel.setAttribute("fill", "white")
@@ -171,20 +170,20 @@ vehicle.prototype.renderJoint = function(x, y, left_or_right, angle) {
   svg.appendChild(vert)
 }
 
-vehicle.prototype.renderRod = function(x, y, anglel, angler) {
+vehicle.prototype.renderRod = function(x, y, angle_l, angle_r) {
   // It's unfortunate that we can't use svg transforms here
   var rod = vehicle.createElement("line")
   var d = Math.atan2(this.width, 2*this.length)
 
   var x1 = x - this.width / 2
   var y1 = y - this.length / 2
-  x1 += Math.sin(d-anglel*Math.PI/180) * this.wheel_vert_joint
-  y1 += Math.cos(d-anglel*Math.PI/180) * this.wheel_vert_joint
+  x1 += Math.sin(d-angle_l*Math.PI/180) * this.wheel_vert_joint
+  y1 += Math.cos(d-angle_l*Math.PI/180) * this.wheel_vert_joint
 
   var x2 = x + this.width / 2
   var y2 = y - this.length / 2
-  x2 -= Math.sin(d+angler*Math.PI/180) * this.wheel_vert_joint
-  y2 += Math.cos(d+angler*Math.PI/180) * this.wheel_vert_joint
+  x2 -= Math.sin(d+angle_r*Math.PI/180) * this.wheel_vert_joint
+  y2 += Math.cos(d+angle_r*Math.PI/180) * this.wheel_vert_joint
   rod.setAttribute("x1", x1)
   rod.setAttribute("x2", x2)
   rod.setAttribute("y1", y1)
@@ -194,42 +193,19 @@ vehicle.prototype.renderRod = function(x, y, anglel, angler) {
 }
 
 vehicle.prototype.update = function() {
-  var magic1 = 500 // sad...
-  var magic2 = 20
-  var magic3 = 150
-
   if (pressed[37]) { // left key
-    if (this.turn_center == 0) {
-      this.turn_center = -magic1
-    } else {
-      this.turn_center += magic2
-    }
+    this.steering_angle -= .5
+    this.steering_angle = Math.max(this.steering_angle, -36)
   }
   if (pressed[39]) { // right key
-    if (this.turn_center == 0) {
-      this.turn_center = magic1
-    } else {
-      this.turn_center -= magic2
-    }
-  }
-  if ((this.turn_center < 0) && (this.turn_center > -magic3)) {
-    this.turn_center = -magic3;
-  }
-  if ((this.turn_center > 0) && (this.turn_center < magic3)) {
-    this.turn_center = magic3;
-  }
-  if (this.turn_center < -magic1) {
-    this.turn_center = 0;
-  }
-  if (this.turn_center > magic1) {
-    this.turn_center = 0;
+    this.steering_angle += .5
+    this.steering_angle = Math.min(this.steering_angle, 36)
   }
   this.render()
 }
 
 var v = new vehicle()
-v.render()
-setInterval(function(e){v.update()}, 100)
+setInterval(function(e){v.update()}, 1)
 </script>
 
 
