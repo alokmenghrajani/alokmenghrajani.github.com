@@ -1,36 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta property="fb:admins" content="536181839"/>
-<meta charset="utf-8"/>
+  <title>Alok Menghrajani's stuff</title>
+  <meta property="fb:admins" content="536181839"/>
+  <meta name="author" content="Alok Menghrajani"/>
+  <link href="bootstrap-2.3.1.min.css" rel="stylesheet"/>
+  <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<style>
+.container-narrow {
+  margin: 0 auto;
+  width: 700px;
+}
+.jumbotron h1 {
+  font-size: 32px;
+}
+section {
+  padding-top: 20px;
+}
+.page-header {
+  padding-bottom: 0px;
+  margin-bottom: 20px;
+}
+h3 {
+  margin-bottom: 0px;
+}
+.profile {
+  float: left;
+  position: relative;
+  width: 0px;
+  left: -170px;
+  overflow: visible;
+}
+body { margin-top: 40px; }
+</style>
 </head>
-<body>
-<h1>A list of things I have done...</h1>
+<div class="container-narrow">
+  <div class="profile">
+    <div>
+      <img class="img-polaroid" src="https://sphotos-a.xx.fbcdn.net/hphotos-ash4/307899_10151110462481840_1739550873_s.jpg">
+      <div>&#8594;&nbsp;<a href="http://www.facebook.com/alok">Facebook</a></div>
+      <div>&#8594;&nbsp;<a href="https://github.com/alokmenghrajani?tab=repositories">Github</a></div>
+    </div>
+  </div>
+  <div class="jumbotron">
+    <h1>Hello</h1>
+    <p>
+      My name is Alok Menghrajani, and this page is about various
+      interesting and uninteresting things I have done.
+    </p>
+    <p>
+      My main interests are web security and programming language
+      design. I like hacking in javascript, ocaml, opa and a bunch
+      of other languages.
+    </p>
+    <p>
+      I currently live in San Francisco and work at Facebook as an engineer.
+      You can contact me by
+      <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues">opening an issue</a>.
+    </p>
+    <p>
+      I truly believe in the benefits of open source. I use many open source
+      tools and I have contributed to numerous projects.
+      If you have never contributed to a project, but you are interested to, you might want to
+      read this note I wrote: <a href="https://www.facebook.com/notes/alok-menghrajani/getting-your-first-commit-in-an-open-source-project/10150780161673947">getting your first commit in an open source project</a>.
+    </p>
+  </div>
 
-<h2>WTF: various bugs and quirks in programming languages or frameworks</h2>
-<ul>
-  <li><a href="wtf/php.html">PHP turtles</a>: a list of things you might not know about PHP.</li>
-  <li><a href="wtf/flash.html">Adobe Flash</a></li>
-  <li><a href="wtf/jquery.html">jquery</a></li>
-</ul>
+  <section>
+    <div class="page-header"><h3>Things I have built</h3></div>
+    <p>
+      Over time, I have built a few tools and I continue to maintain them.
+      Feel free to contact me if you have any questions or find bugs.
+    </p>
+    <div>
+      <ul>
+        <li><a href="http://hack.quaxio.com/">hack.quaxio.com</a>: a server hosting a series of computer security challenges. These challenges are open to everybody, and cover various topics: (reverse engineering, cryptography, discovering logic errors, etc.) as well as various platforms (web, mobile, etc.).</a></li>
+        <li><a href="http://pixlpaste.com/">pixlpaste.com</a>: sharing pixels made easy.</li>
+        <li><a href="http://regexp.quaxio.com/">RegexpLint</a>: a linter for regular expressions.</li>
+      </ul>
+    </div>
+  </section>
 
-<h2>Random other things</h2>
-<ul>
-<li><a href="tron/">219 bytes tron</a>: javascript size optimization fun.</li>
-<li><a href="http://hack.quaxio.com/">hack.quaxio.com</a>: a server hosting a series of computer security challenges. These challenges are open to everybody, and cover various topics: (reverse engineering, cryptography, discovering logic errors, etc.) as well as various platforms (web, mobile, etc.).</a></li>
-<li><a href="http://pixlpaste.com/">pixlpaste.com</a>: sharing pixels made easy.</li>
-<li><a href="http://regexp.quaxio.com/">RegexpLint</a>: a linter for regular expressions.</li>
-<li><a href="fat12js/index.htm">FAT12 file system "driver" in javascript.</a>
-<li><a href="triple/">regular expression to match multiples of 3</a>
-<li><a href="steering/">javscript model of Ackermann steering</a>
-</ul>
+  <section>
+    <div class="page-header"><h3>WTF: interesting bugs and quirks</h3></div>
+    <p>
+      Various bugs or quirks in programming languages and/or web frameworks.
+    </p>
+    <ul>
+      <li><a href="wtf/php.html">PHP turtles</a>: a list of things you might not know about PHP.</li>
+      <li><a href="wtf/flash.html">Adobe Flash</a></li>
+      <li><a href="wtf/jquery.html">jquery</a></li>
+    </ul>
+  </section>
 
-<footer style="margin: 0 auto; width: 200px; text-align: center">
-<p>
-<a href="http://www.facebook.com/alok">Me</a> ·
-<a href="http://github.com/alokmenghrajani/">My code</a>
-</p>
-</footer>
+  <section>
+    <div class="page-header"><h3>/dev/random</h3></dev>
+    <ul>
+      <li><a href="https://www.facebook.com/notes/alok-menghrajani/fun-with-hp-15c/10150868083743947">fun with HP-15C</a></li>
+      <li><a href="tron/">219 bytes tron</a>: javascript size optimization fun.</li>
+      <li><a href="fat12js/index.htm">FAT12 file system "driver" in javascript.</a>
+      <li><a href="triple/">regular expression to match multiples of 3</a>
+      <li><a href="steering/">javscript model of Ackermann steering</a>
+    </ul>
+  </section>
+
+  <footer class="footer">
+    <p class="pull-right"><a href="#">Back to top</a></p>
+  </footer>
 
 <script type="text/javascript">
 
