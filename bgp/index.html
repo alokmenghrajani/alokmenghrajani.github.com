@@ -47,8 +47,7 @@ footer { padding-top: 40px; }
       password.
     </p>
     <p>
-      This article is going to show you how to build this mapping. We'll
-      use JavaScript, but the code can easily be implemented in any language.
+      This article is going to show you how to build this mapping...
     </p>
   </div>
 
@@ -85,11 +84,58 @@ footer { padding-top: 40px; }
   </section>
 
   <section>
+    <h3>the code</h3>
+    <p>
+      Here is what the code looks like. I removed some caching related stuff.
+    </p>
+<pre>
+  &lt;?php
+
+  header('Content-type: application/json');
+
+  $ip = $_GET['ip'];
+
+  $fh = fopen('data-raw-table', 'r');
+  while ($line = fgets($fh)) {
+    $match = array();
+    if (preg_match("%([0-9.]+)/\d+\s+(\d+)%", $line, $match)) {
+      $asn_table[ip2long($match[1])] = $match[2];
+    }
+  }
+
+  $asn_owners = array();
+  $fh = fopen('data-used-autnums', 'r');
+  while ($line = fgets($fh)) {
+    $match = array();
+    if (preg_match("%\s*(\d+)\s+(.*)%", $line, $match)) {
+      $asn_owners[$match[1]] = $match[2];
+    }
+  }
+
+  $ip_value = ip2long($ip);
+  $result = 'sorry, not found...';
+  for ($i=0; $i&lt;32; $i++) {
+    $ip2 = ($ip_value >> $i) &lt;&lt; $i;
+    if (isset($asn_table[$ip2])) {
+      $asn = $asn_table[$ip2];
+      $result = $ip . ' maps to asn '.$asn;
+      if (isset($asn_owners[$asn])) {
+        $result .= ' ('.$asn_owners[$asn].')';
+      }
+      break;
+    }
+  }
+
+  $arr = array('result' => $result);
+  echo "ip_to_asn(".json_encode($arr).")";
+</pre>
+  </section>
+
+  <section>
     <h3>see it in action</h3>
-    <div id="loading">Downloading database <img src="loading.gif"/></div>
     <div class="form-inline">
       Enter an IP address: <input id="input" class="input-medium" type="text"/>
-      <button class="btn" onclick="$('#result').text(lookup($('#input').val()));">lookup</button>
+      <button class="btn" onclick="lookup($('#input').val())">lookup</button>
     </div>
     <div id="result"></div>
   </section>
@@ -106,80 +152,27 @@ footer { padding-top: 40px; }
 </div>
 
 <script>
-// load the netmask -> asn data
-var bgp_table = {}
-xhr = $.ajax({
-  url: 'data-raw-table',
-  success: function(data) {
-    // build the table
-    data = data.split("\n")
-    var loaded = 0;
-    for (var i=0; i<data.length; i++) {
-      var entry = data[i].match(/^([0-9.]+)\/\d+\s+(\d+)/)
-      if (entry) {
-        var asn = entry[2]|0
-        var ip = entry[1]
-        bgp_table[ip] = asn
-        loaded++
-      }
-    }
-    $('#loading').text("loaded "+loaded+" entries.")
-  },
-  error: function(_, _, msg) {
-    $('#loading').text("error: "+msg)
-  }
-})
-
-// load the asn -> owner data
-var bgp_owners = {}
 $.ajax({
-  url: 'data-used-autnums',
-  success: function(data) {
-    data = data.split("\n")
-    for (var i=0; i<data.length; i++) {
-      var entry = data[i].match(/^(\s*\d+)\s+(.*)/)
-      if (entry) {
-        var asn = entry[1]|0
-        var owner = entry[2]
-        bgp_owners[asn] = owner
-      }
-    }
-  }
+  url: "http://bgp.quaxio.com/you.php",
+  dataType: "jsonp"
 })
 
-function gotip(data) {
+function you(data) {
   $('#input').val(data.ip)
 }
 
-function ip_to_int(ip) {
-  var parts = ip.split(".")
-  var res = parseInt(parts[0], 10) << 24
-  res += parseInt(parts[1], 10) << 16
-  res += parseInt(parts[2], 10) << 8
-  return res + parseInt(parts[3], 10)
-}
-
-function int_to_ip(int) {
-  var part1 = int & 255
-  var part2 = ((int >> 8) & 255)
-  var part3 = ((int >> 16) & 255)
-  var part4 = ((int >> 24) & 255)
-  return part4 + "." + part3 + "." + part2 + "." + part1
+function ip_to_asn(data) {
+  $('#result').text(data.result)
 }
 
 function lookup(ip) {
-  var ip_value = ip_to_int(ip)
-  for (var i=0; i<32; i++) {
-    var ip2 = int_to_ip((ip_value >> i) << i)
-    if (bgp_table[ip2]) {
-      var asn = bgp_table[ip2]
-      return ip + " maps to asn "+asn+" (" + bgp_owners[asn] + ")"
-    }
-  }
-  return "sorry, not found :("
+  $('#result').text('looking up...')
+  $.ajax({
+    url: "http://bgp.quaxio.com/ip_to_asn.php?ip="+ip,
+    dataType: "jsonp"
+  })
 }
 </script>
-<script src="http://jsonip.com/?callback=gotip"></script>
 
   <footer class="footer">
     <p class="pull-right"><a href="#">Back to top</a></p>
