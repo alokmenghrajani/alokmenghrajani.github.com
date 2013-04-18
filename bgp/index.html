@@ -41,15 +41,19 @@ footer { padding-top: 40px; }
       is therefore possible to map an IP address to its router's ASN.
     </p>
     <p>
-      You might wonder what's the value in having the ASN. If you are running a website,
-      knowning the ASN of your users can be used as part of a global
-      risk analysis: if a user is connecting from various shared computer on a university
-      campus, it is most likely that the user will always map to the same ASN. If he
-      suddently appears from a new ASN, you might want to prompt for a secondary
-      password.
+      You might wonder what's the value in having the ASN? If you are running
+      a website with a login or a spam filtering system, knowning the ASN of your
+      users can be used as part of a global risk analysis. The ASN number is pretty
+      stable (e.g. it should be the same for an entire university campus, or for all
+      the users of an ISP, even when the IP addresses are assigned dynamically).
     </p>
     <p>
-      This article is going to show you how to build this mapping...
+      You can use the ASN (as well as other signals) to prompt for a secondary
+      password at login-time or throw a captcha at content submission time.
+    </p>
+    <p>
+      This article is going to show you how to build this mapping. The mapping
+      only needs to be updated once in a while, and the lookup takes less than 1ms.
     </p>
   </div>
 
