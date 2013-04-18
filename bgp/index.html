@@ -127,9 +127,9 @@ for ($i=0; $i&lt;32; $i++) {
   $ip2 = ($ip_value >> $i) &lt;&lt; $i;
   if (isset($asn_table[$ip2])) {
     $asn = $asn_table[$ip2];
-    $result = $ip . ' maps to asn '.$asn;
+    $result = $ip . ' maps to asn ' . $asn;
     if (isset($asn_owners[$asn])) {
-      $result .= ' ('.$asn_owners[$asn].')';
+      $result .= ' (' . $asn_owners[$asn] . ')';
     }
     break;
   }
@@ -137,7 +137,7 @@ for ($i=0; $i&lt;32; $i++) {
 
 // Returning the response as JSONP
 $arr = array('result' => $result);
-echo "ip_to_asn(".json_encode($arr).")";
+echo 'ip_to_asn(' . json_encode($arr) . ')';
 </pre>
   </section>
 
