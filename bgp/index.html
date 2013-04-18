@@ -108,8 +108,19 @@ footer { padding-top: 40px; }
 <script>
 // load the netmask -> asn data
 var bgp_table = {}
+var progressTrigger
 $.ajax({
   url: 'data-raw-table',
+  beforeSend: function (xhr) {
+    progressTrigger = setInterval(function () {
+      if (xhr.readyState > 2) {
+        var total = xhr.getResponseHeader('Content-length')
+        var bytes = xhr.responseText.length
+        console.log(total)
+        $('#loading').text("downloading: " + Math.round((bytes / total) * 100) + "%")
+      }
+    }, 200)
+  },
   success: function(data) {
     // build the table
     data = data.split("\n")
@@ -123,7 +134,12 @@ $.ajax({
         loaded++
       }
     }
+    clearInterval(progressTrigger)
     $('#loading').text("loaded "+loaded+" entries.")
+  },
+  error: function(_, _, msg) {
+    clearInterval(progressTrigger)
+    $('#loading').text("error: "+msg)
   }
 })
 
