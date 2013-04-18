@@ -5,6 +5,8 @@
 <meta name="author" content="Alok Menghrajani"/>
 <link href="../bootstrap.min.css" rel="stylesheet"/>
 <script type="text/javascript" src="../jquery-1.7.1.min.js"></script>
+<link href="../prettify/prettify.css" type="text/css" rel="stylesheet"/>
+<script type="text/javascript" src="../prettify/prettify.js"></script>
 <style>
 .container-narrow {
   margin: 0 auto;
@@ -18,7 +20,7 @@ section { padding-top: 20px; }
 footer { padding-top: 40px; }
 </style>
 </head>
-<body>
+<body onload="prettyPrint()">
 <div class="container-narrow">
   <div class="jumbotron">
     <h1>mapping an IP address to an ASN</h1>
@@ -88,46 +90,50 @@ footer { padding-top: 40px; }
     <p>
       Here is what the code looks like. I removed some caching related stuff.
     </p>
-<pre>
-  &lt;?php
+<pre class="prettyprint linenums">&lt;?php
+header('Content-type: application/json');
+$ip = $_GET['ip'];
 
-  header('Content-type: application/json');
-
-  $ip = $_GET['ip'];
-
-  $fh = fopen('data-raw-table', 'r');
-  while ($line = fgets($fh)) {
-    $match = array();
-    if (preg_match("%([0-9.]+)/\d+\s+(\d+)%", $line, $match)) {
-      $asn_table[ip2long($match[1])] = $match[2];
-    }
+// Loading the asn table (netmask => asn).
+// You want to cache this across requests!
+$asn_table = array()
+$fh = fopen('data-raw-table', 'r');
+while ($line = fgets($fh)) {
+  $match = array();
+  if (preg_match("%([0-9.]+)/\d+\s+(\d+)%", $line, $match)) {
+    $asn_table[ip2long($match[1])] = $match[2];
   }
+}
 
-  $asn_owners = array();
-  $fh = fopen('data-used-autnums', 'r');
-  while ($line = fgets($fh)) {
-    $match = array();
-    if (preg_match("%\s*(\d+)\s+(.*)%", $line, $match)) {
-      $asn_owners[$match[1]] = $match[2];
-    }
+// Loading the owners table (asn => owner)
+// You want to also cache this across requests!
+$asn_owners = array();
+$fh = fopen('data-used-autnums', 'r');
+while ($line = fgets($fh)) {
+  $match = array();
+  if (preg_match("%\s*(\d+)\s+(.*)%", $line, $match)) {
+    $asn_owners[$match[1]] = $match[2];
   }
+}
 
-  $ip_value = ip2long($ip);
-  $result = 'sorry, not found...';
-  for ($i=0; $i&lt;32; $i++) {
-    $ip2 = ($ip_value >> $i) &lt;&lt; $i;
-    if (isset($asn_table[$ip2])) {
-      $asn = $asn_table[$ip2];
-      $result = $ip . ' maps to asn '.$asn;
-      if (isset($asn_owners[$asn])) {
-        $result .= ' ('.$asn_owners[$asn].')';
-      }
-      break;
+// The actual lookup
+$ip_value = ip2long($ip);
+$result = 'sorry, not found...';
+for ($i=0; $i&lt;32; $i++) {
+  $ip2 = ($ip_value >> $i) &lt;&lt; $i;
+  if (isset($asn_table[$ip2])) {
+    $asn = $asn_table[$ip2];
+    $result = $ip . ' maps to asn '.$asn;
+    if (isset($asn_owners[$asn])) {
+      $result .= ' ('.$asn_owners[$asn].')';
     }
+    break;
   }
+}
 
-  $arr = array('result' => $result);
-  echo "ip_to_asn(".json_encode($arr).")";
+// Returning the response as JSONP
+$arr = array('result' => $result);
+echo "ip_to_asn(".json_encode($arr).")";
 </pre>
   </section>
 
