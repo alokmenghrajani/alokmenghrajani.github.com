@@ -24,10 +24,12 @@ section {
 h3 {
   margin-bottom: 0px;
 }
+.menu {
+  top: 40px;
+  position: fixed;
+}
 .profile {
-  float: left;
   position: relative;
-  width: 0px;
   left: -170px;
   overflow: visible;
 }
@@ -39,15 +41,17 @@ body { margin-top: 40px; }
 </style>
 </head>
 <div class="container-narrow">
-  <div class="profile">
-    <div>
-      <img class="img-polaroid" src="https://sphotos-a.xx.fbcdn.net/hphotos-ash4/307899_10151110462481840_1739550873_s.jpg">
-      <div>&#8594;&nbsp;<a href="http://fb.me/alok">Facebook</a></div>
-      <div>&#8594;&nbsp;<a href="https://github.com/alokmenghrajani?tab=repositories">Github</a></div>
+  <div class="menu">
+    <div class="profile">
+      <div>
+        <img class="img-polaroid" src="https://sphotos-a.xx.fbcdn.net/hphotos-ash4/307899_10151110462481840_1739550873_s.jpg">
+        <div>&#8594;&nbsp;<a href="http://fb.me/alok">Facebook</a></div>
+        <div>&#8594;&nbsp;<a href="https://github.com/alokmenghrajani?tab=repositories">Github</a></div>
+      </div>
     </div>
   </div>
   <div class="jumbotron">
-    <h1>Hello</h1>
+    <div class="page-header"><h1>Hello</h1></div>
     <p>
       My name is Alok Menghrajani, and this page is about various
       interesting and uninteresting things I have done.
@@ -71,16 +75,23 @@ body { margin-top: 40px; }
   </div>
 
   <section>
-    <div class="page-header"><h3>Things I built</h3></div>
+    <div class="page-header"><h3>Free tools / services</h3></div>
     <p>
-      Over time, I built a few tools and I continue to maintain them.
-      Feel free to contact me if you have any questions or run into any issues.
+      The web (and computer science in general) has had a huge impact in my life. In exchange for
+      this, I maintain a set of tools anyone can use.
+    </p>
+    <p>
+      These tools represent a significant time investment (and a small financial investment too). Feel free
+      to contact me if you have any questions or run into any issues.
+    </p>
+    <p>
+      All these tools are open source, you can view the source code on my github account.
     </p>
     <div>
       <ul>
-        <li><a href="http://hack.quaxio.com/">hack.quaxio.com</a>: a server hosting a series of computer security challenges. These challenges are open to everybody, and cover various topics: (reverse engineering, cryptography, discovering logic errors, etc.) as well as various platforms (web, mobile, etc.).</a></li>
+        <li><a href="http://hack.quaxio.com/">hack.quaxio.com</a>: a series of computer security challenges. These challenges are open to everybody, and cover various topics: (reverse engineering, cryptography, discovering logic errors, etc.) as well as various platforms (web, mobile, etc.).</a></li>
         <li><a href="http://pixlpaste.com/">pixlpaste.com</a>: sharing pixels made easy.</li>
-        <li><a href="http://regexp.quaxio.com/">regexp.quaxio.com</a>: a linter for regular expressions.</li>
+        <li><a href="http://regexp.quaxio.com/">regexp.quaxio.com</a>: a linter and visualizer for regular expressions.</li>
       </ul>
     </div>
   </section>
@@ -112,7 +123,7 @@ body { margin-top: 40px; }
   </section>
 
   <footer class="footer">
-    <p class="pull-right"><a href="#">Back to top</a></p>
+    <p class="pull-right"><a href="#">Back to top &uarr;</a></p>
   </footer>
 
 <script type="text/javascript">
