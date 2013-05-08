@@ -33,19 +33,19 @@ footer { padding-top: 40px; }
       the rest of the year is going to always be the same, since the number of days in a month is fixed.
     </p>
     <p>
-      The only different comes into play if a given year is a leap year or not (i.e. if there's a 29th of February or not).
+      There is however one other difference to keep in mind:  if a given year is a leap year or not (i.e. if there is a 29th of February).
     </p>
     <p>
-      So we essentially have 7 non-leap year calendars and 7 leap year calendars.
+      There are therefore 14 possible calendars: 7 non-leap year calendars and 7 leap year calendars.
     </p>
     <p>
-      I wrote this perpetual calendar just for fun. It currently shows years 1981-2048, but this can be changed very easily.
+      I wrote this harmless perpetual calendar mostly for fun. It currently shows years 1981-2048, but this can be changed very easily.
     </p>
     <p>
       The hardest part was handling all the circle related geometry. The code is written in JavaScript, using rapha&euml;l.js.
     </p>
     <p>
-      In this perpetual calendar, I used a well known trick which consists of having a special January (red Jan) and a
+      Note: I used a well known trick which consists of having a special January (red Jan) and a
       special February (red Feb) for leap years. By doing this, we can reuse all the other months for both leap and non-leap
       years.
     </p>
