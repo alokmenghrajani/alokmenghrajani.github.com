@@ -39,15 +39,32 @@ footer { padding-top: 40px; }
       There are therefore 14 possible calendars: 7 non-leap year calendars and 7 leap year calendars.
     </p>
     <p>
-      I wrote this harmless perpetual calendar mostly for fun. It currently shows years 1981-2048, but this can be changed very easily.
-    </p>
-    <p>
-      The hardest part was handling all the circle related geometry. The code is written in JavaScript, using rapha&euml;l.js.
+      The disc below is an interactive perpetual calendar. It currently shows years 1981-2048, but this can be changed very easily.
     </p>
     <p>
       Note: I used a well known trick which consists of having a special January (red Jan) and a
       special February (red Feb) for leap years. By doing this, we can reuse all the other months for both leap and non-leap
       years.
+    </p>
+    <p>
+      This calendar is built in the following way. We start with two empty discs placed one on top of another. The bottom disc rotates,
+      while the top disc is fixed. The top disc contains two cutouts, one on the top to reveal the years and one on the bottom to
+      reveal the days of the week.
+    </p>
+    <p>
+      We first place the days of the month, numbered 1 to 31 on the bottom part of the fixed disc. We then place the month names on
+      the top part of the fixed disc. The months are arranged based on their relative offsets. E.g. Feb is 3 columns to the right
+      of Jan because Jan has 31 days, and 31 modulo 7 is 3. Mar is on the same column as Feb, because Feb has 28 days, and 28 modulo 7 is 0.
+    </p>
+    <p>
+      We place the days of the week (Mon-Sun) on the inner part of the rotating disc. The weeks are repeated 4 times
+      because the visible part takes up 90&deg; of the disc. Finally, we place the years on the outer part of the rotating disc.
+      The first year needs to be placed carefully (by looking up a known date). Each following years is shifted by 1 (because
+      there are 365 days in a year, and 365 modulo 7 is 1). Leap years are shifted by 2, since there is an extra day in the year.
+    </p>
+    <p>
+      The code on this page is written in JavaScript, mostly for harmless fun. The hardest part was handling all the circle related geometry.
+      The code uses the rapha&euml;l.js library, which provides a cross-browser API to vector graphics.
     </p>
 
     <div id="calendar"></div>
