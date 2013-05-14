@@ -87,12 +87,8 @@ footer { padding-top: 40px; }
       <input id="select_year" type="text" class="input-small" value="2013" onchange="cal.go()"/>
       <select id="select_month" onchange="cal.go()">
       </select>
+      <small>You may also use your mouse to rotate the disc.</small>
     </form>
-
-    <div>
-    <button onclick="cal.rotateCounterClockwise()">counter clockwise</button>
-    <button onclick="cal.rotateClockwise()">clockwise</button>
-    </div>
   </div>
 
   <section>
@@ -243,6 +239,7 @@ Calendar.prototype.render = function() {
   var title = paper.text(0, 0, "From " + this.year + " to " + this.endYear);
   this.objects.push(title);
   title.attr('font-size', 30);
+  title.attr('-webkit-user-select', 'none');
 
   var subtitle = paper.text(0, 30, "Place year over month (red month for leap years)")
   this.objects.push(subtitle);
@@ -468,26 +465,27 @@ Calendar.prototype.go = function() {
 }
 
 /**
- * Rotate clockwise.
+ * Rotate by N degrees
  */
-Calendar.prototype.rotateClockwise = function() {
+Calendar.prototype.rotate = function(angle) {
+  console.log(angle);
   for (var i=0; i<this.rotates.length; i++) {
     var o = this.rotates[i].obj;
-    var r = this.rotates[i].rot + 90/7;
+    var r = this.rotates[i].rot - angle;
     this.rotates[i].rot = r;
     o.animate({transform: "t300,300 r"+r+",0,0"}, 400);
   }
 }
 
 /**
- * Rotate counter clockwise.
+ * Preview rotation by N degrees
  */
-Calendar.prototype.rotateCounterClockwise = function() {
+Calendar.prototype.previewRotate = function(angle) {
+  console.log(angle);
   for (var i=0; i<this.rotates.length; i++) {
     var o = this.rotates[i].obj;
-    var r = this.rotates[i].rot - 90/7;
-    this.rotates[i].rot = r;
-    o.animate({transform: "t300,300 r"+r+",0,0"}, 400);
+    var r = this.rotates[i].rot - angle;
+    o.transform("t300,300 r"+r+",0,0");
   }
 }
 
@@ -495,6 +493,37 @@ var size = 800;
 var paper = Raphael(document.getElementById("calendar"), 600, 600);
 var cal = new Calendar(1981);
 cal.render();
+
+var state = {mouse_down: false};
+$('#calendar>svg').mousedown(function(ev){
+  state.mouse_down = true;
+  var o = $('#calendar>svg').offset();
+  state.mouse_x = ev.pageX - o.left - 300;
+  state.mouse_y = ev.pageY - o.top - 300;
+  console.log(state.mouse_x);
+  console.log(state.mouse_y);
+  state.mouse_angle = Math.atan2(state.mouse_y, state.mouse_x);
+  return false;
+});
+$('#calendar>svg').mousemove(function(ev){
+  if (state.mouse_down) {
+    var o = $('#calendar>svg').offset();
+    var x = ev.pageX - o.left - 300;
+    var y = ev.pageY - o.top - 300;
+    var angle = Math.atan2(y, x);
+    var r = state.mouse_angle - angle;
+    cal.previewRotate(r*180/Math.PI);
+  }
+});
+$('#calendar>svg').mouseup(function(ev){
+  var o = $('#calendar>svg').offset();
+  var x = ev.pageX - o.left - 300;
+  var y = ev.pageY - o.top - 300;
+  var angle = Math.atan2(y, x);
+  var r = state.mouse_angle - angle;
+  cal.rotate(r*180/Math.PI);
+  state.mouse_down = false;
+});
 </script>
 
 <script>
