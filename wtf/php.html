@@ -10,10 +10,26 @@
 <style>
 body { margin-top: 40px; }
 section { margin-top: 80px; }
+footer { margin-top: 40px; }
+.menu {
+  top: 40px;
+  position: fixed;
+}
+.profile {
+  position: relative;
+  left: -170px;
+  overflow: visible;
+}
 </style>
 </head>
 <body onload="prettyPrint()">
 <div class="container">
+  <div class="menu">
+    <div class="profile">
+      <p class="pull-right"><a href="../">&larr; Back to home</a></p>
+    </div>
+  </div>
+
   <div class="hero-unit">
     <h1>PHP turtles</h1>
     <p>Turtles all the way down</p>
@@ -34,6 +50,7 @@ section { margin-top: 80px; }
         <li><a href="#turtle13">to count or not to count</a></li>
         <li><a href="#turtle14">error messages</a></li>
         <li><a href="#turtle15">protected, not really</a></li>
+        <li><a href="#turtle16">hard to predict iterators</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -600,6 +617,48 @@ A::f1();
     </div>
   </section>
 
+  <section id="turtle16">
+    <div class="page-header">
+      <h1>turtle 16: hard to predict iterators</h1>
+    </div>
+    <p>
+      PHP has two ways to deal with array iterators. In some cases, foreach uses an array's internal iterator, in other
+cases it uses an external iterator. This can lead to confusing code.
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+$x = range(4, 10);
+foreach ($x as $v) {
+  echo key($x),",", current($x), " ";
+}
+echo "\n";
+
+$x = range(4, 10);
+$y = $x;
+foreach ($x as $v) {
+  echo key($x),",", current($x), " ";
+}
+echo "\n";
+
+$x = range(4, 10);
+$y = &$x;
+foreach ($x as $v) {
+  echo key($x),",", current($x), " ";
+}
+echo "\n";
+</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle16output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle16output01" style="display: none;">&gt; 1,5 1,5 1,5 1,5 1,5 1,5 1,5
+&gt; 0,4 0,4 0,4 0,4 0,4 0,4 0,4
+&gt; 1,5 2,6 3,7 4,8 5,9 6,10 , </pre>
+      </div>
+    </div>
+  </section>
+
   <section id="links">
     <div class="page-header">
       <h1>links</h1>
@@ -611,6 +670,11 @@ A::f1();
       <li><a href="http://wiki.theory.org/YourLanguageSucks#PHP_sucks_because%3A">http://wiki.theory.org/YourLanguageSucks</a></li>
       <li><a href="http://me.veekun.com/blog/2012/04/09/php-a-fractal-of-bad-design/">PHP: a fractal of bad design</a></li>
   </section>
+
+  <footer class="footer">
+    <p class="pull-right"><a href="#">Back to top</a></p>
+  </footer>
+
 </div>
 
 <script>
