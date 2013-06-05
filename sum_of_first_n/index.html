@@ -325,6 +325,9 @@ footer { padding-top: 40px; }
         <mi>n</mi>
         <mo>+</mo>
         <mn>1</mn>
+        <mspace width="1em"/><mtext mathsize="small">
+          (trivial to prove by induction)
+        </mtext>
       </math>
     </div><br/>
 
@@ -448,7 +451,7 @@ footer { padding-top: 40px; }
   </section>
 
   <section>
-    <div class="page-header"><h3>Method 4</h3></div>
+    <div class="page-header"><h3>Method 4: perturbation</h3></div>
     <p>
       Let's define the sum of the square of every number from <math><mn>1</mn></math> to
       <math><mi>n</mi></math>:</p>
@@ -601,6 +604,176 @@ footer { padding-top: 40px; }
     </div><br/>
 
     <p>Which leads to: <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><mfrac><mrow><mi>n</mi><mfenced separators=""><mi>n</mi><mo>+</mo><mn>1</mn></mfenced></mrow><mn>2</mn></mfrac></math>
+  </section>
+
+  <section>
+    <div class="page-header"><h3>Method 5: repertoire</h3></div>
+    <p>
+      The repertoire method helps solve general forms of equations, e.g.:
+    </p>
+    <div>
+      <math>
+        <mfenced open="{" separators="" close="">
+          <mtable>
+            <mtr>
+              <mtd columnalign="right"><msub><mi>S</mi><mi>0</mi></msub><mo>=</mo></mtd>
+              <mtd columnalign="left"><mi>&alpha;</mi></mtd>
+            </mtr>
+            <mtr>
+              <mtd columnalign="right"><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo></mtd>
+              <mtd columnalign="left">
+                <msub><mi>S</mi><mrow><mi>n</mi><mo>-</mo><mn>1</mn></mrow></msub>
+                <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+              </mtd>
+            </mtr>
+          </mtable>
+        </mfenced>
+      </math>
+    </div><br/>
+
+    <p>This method works when the solution has the form:</p>
+    <div>
+      <math>
+        <msub><mi>S</mi><mi>n</mi></msub><mo>=</mo>
+        <mi>A</mi><mfenced separators=""><mi>n</mi></mfenced><mo></mo><mi>&alpha;</mi><mo>+</mo>
+        <mi>B</mi><mfenced separators=""><mi>n</mi></mfenced><mo></mo><mi>&beta;</mi><mo>+</mo>
+        <mi>C</mi><mfenced separators=""><mi>n</mi></mfenced><mo></mo><mi>&gamma;</mi>
+      </math>
+    </div><br/>
+
+    <p>We first set <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><mn>1</mn></math>:</p>
+    <div>
+      <math>
+        <mfenced open="{" separators="" close="">
+          <mtable columnalign="left">
+            <mtr>
+              <mtd><mn>1</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+            </mtr>
+            <mtr>
+              <mtd><mn>1</mn><mo>=</mo><mn>1</mn>
+                <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+              </mtd>
+            </mtr>
+          </mtable>
+        </mfenced>
+      </math>
+    </div><br/>
+
+    <div>
+      <math>
+        <mo selected="true">&rArr;</mo>
+        <mi>&alpha;</mi><mo>=</mo><mn>1</mn>
+        <mtext>,&nbsp;</mtext><mi>&beta;</mi><mo>=</mo><mn>0</mn>
+        <mtext>,&nbsp;</mtext><mi>&gamma;</mi><mo>=</mo><mn>0</mn>
+      </math>
+    </div><br/>
+
+    <div>
+      <math>
+        <mo selected="true">&rArr;</mo>
+        <mi>A</mi><mfenced separators=""><mi>n</mi></mfenced><mo>=</mo><mn>1</mn>
+      </math>
+    </div><br/><br/>
+
+    <p>We then set <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><mi>n</mi></math>:</p>
+    <div>
+      <math>
+        <mfenced open="{" separators="" close="">
+          <mtable columnalign="left">
+            <mtr>
+              <mtd><mn>0</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+            </mtr>
+            <mtr>
+              <mtd><mi>n</mi><mo>=</mo><mi>n</mi><mo>-</mo><mn>1</mn>
+                <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+              </mtd>
+            </mtr>
+          </mtable>
+        </mfenced>
+      </math>
+    </div><br/>
+
+    <div>
+      <math>
+        <mo selected="true">&rArr;</mo>
+        <mi>&alpha;</mi><mo>=</mo><mn>0</mn>
+        <mtext>,&nbsp;</mtext><mi>&beta;</mi><mo>=</mo><mn>1</mn>
+        <mtext>,&nbsp;</mtext><mi>&gamma;</mi><mo>=</mo><mn>0</mn>
+      </math>
+    </div><br/>
+
+    <div>
+      <math>
+        <mo selected="true">&rArr;</mo>
+        <mi>B</mi><mfenced separators=""><mi>n</mi></mfenced><mo>=</mo><mi>n</mi>
+      </math>
+    </div><br/><br/>
+
+    <p>Finally, we set <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><msup><mi>n</mi><mn>2</mn></msup></math>:</p>
+    <div>
+      <math>
+        <mfenced open="{" separators="" close="">
+          <mtable columnalign="left">
+            <mtr>
+              <mtd><mn>0</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+            </mtr>
+            <mtr>
+              <mtd><msup><mi>n</mi><mn>2</mn></msup><mo>=</mo>
+                <msup><mfenced separators=""><mi>n</mi><mo>-</mo><mn>1</mn></mfenced><mn>2</mn></msup>
+                <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+              </mtd>
+            </mtr>
+          </mtable>
+        </mfenced>
+        <mo selected="true">&rArr;</mo>
+        <mfenced open="{" separators="" close="">
+          <mtable columnalign="left">
+            <mtr>
+              <mtd><mn>0</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+            </mtr>
+            <mtr>
+              <mtd><msup><mi>n</mi><mn>2</mn></msup><mo>=</mo>
+                <msup><mi>n</mi><mn>2</mn></msup><mo>-</mo>
+                <mn>2</mn><mo></mo><mi>n</mi><mo>+</mo>
+                <mn>1</mn>
+                <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+              </mtd>
+            </mtr>
+          </mtable>
+        </mfenced>
+      </math>
+    </div><br/>
+
+    <div>
+      <math>
+        <mo selected="true">&rArr;</mo>
+        <mi>&alpha;</mi><mo>=</mo><mn>0</mn>
+        <mtext>,&nbsp;</mtext><mi>&beta;</mi><mo>=</mo><mn>-1</mn>
+        <mtext>,&nbsp;</mtext><mi>&gamma;</mi><mo>=</mo><mn>2</mn>
+      </math>
+    </div><br/>
+
+    <div>
+      <math>
+        <mo selected="true">&rArr;</mo>
+        <mo>-</mo><mi>B</mi><mfenced separators=""><mi>n</mi></mfenced><mo>+</mo>
+        <mn>2</mn><mo></mo><mi>C</mi><mfenced separators=""><mi>n</mi></mfenced>
+        <mo>=</mo><msup><mi>n</mi><mn>2</mn></msup>
+      </math>
+    </div><br/><br/>
+
+    <p>Which results in the general solution:</p>
+
+    <div>
+      <math>
+        <msub><mi>S</mi><mi>n</mi></msub><mo>=</mo>
+        <mi>&alpha;</mi><mo>+</mo>
+        <mi>n</mi><mo></mo><mi>&beta;</mi><mo>+</mo>
+        <mfrac><mrow><msup><mi>n</mi><mn>2</mn></msup><mo>+</mo><mi>n</mi></mrow><mn>2</mn></mfrac><mo></mo>
+        <mi>&gamma;</mi>
+      </math>
+    </div><br/>
+
   </section>
 
   <section>
