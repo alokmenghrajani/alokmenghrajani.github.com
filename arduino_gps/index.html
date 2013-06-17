@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Alok Menghrajani's stuff | GPS on Arduino</title>
+  <meta property="fb:admins" content="536181839"/>
+  <meta name="author" content="Alok Menghrajani"/>
+  <link href="../bootstrap-2.3.1.min.css" rel="stylesheet"/>
+  <script type="text/javascript" src="../jquery-1.7.1.min.js"></script>
+  <link href="../prettify/prettify.css" type="text/css" rel="stylesheet"/>
+  <script type="text/javascript" src="../prettify/prettify.js"></script>
+<style>
+.menu {
+  top: 40px;
+  position: fixed;
+}
+.profile {
+  position: relative;
+  left: -170px;
+  overflow: visible;
+}
+.container-narrow {
+  margin: 0 auto;
+  width: 700px;
+}
+.jumbotron h1 {
+  font-size: 32px;
+}
+section {
+  padding-top: 20px;
+}
+body { margin-top: 40px; }
+section { padding-top: 20px; }
+footer { padding-top: 40px; }
+</style>
+</head>
+<body onload="prettyPrint()">
+<div class="container-narrow">
+  <div class="menu">
+    <div class="profile">
+      <p class="pull-right"><a href="../">&larr; Back to home</a></p>
+    </div>
+  </div>
+  <div class="jumbotron">
+    <h1>GPS on Arduino</h1>
+    <div class="lead">
+      <p>
+        Everybody knows that Arduinos are a great way to play around with microcontrollers.
+        In this article, I'm going to show how easy it was to interface a GPS receiver with
+        a LCD display.
+      </p>
+    </div>
+    <a href="overview.jpg"><img src="overview.jpg"/></a>
+  </div>
+
+  <section>
+    <div class="page-header"><h3>Hardware</h3></div>
+    <p>
+      I purchased an Ultimate Arduino Microcontroller Pack
+      (you can order the pack online at
+      <a href="http://blog.makezine.com/shed/ultimate-microcontroller-pack/">Makershed</a> or buy it
+      at your local <a href="http://www.radioshack.com/product/index.jsp?productId=12353398">RadioShack</a>).
+      The pack comes with an Arduino UNO and ton of components. It would probably be cheaper to
+      buy components as I need them for my projects, but I like the convenience
+      of a starter kit.
+    </p>
+    <p>
+      I also purchased a
+      <a href="http://www.digikey.com/product-search/en?WT.z_header=search_go&lang=en&site=us&keywords=28501PAR-ND&x=-1373&y=-51">GPS module</a>
+      from Digikey.com and a USB cable (it's too bad that
+      the pack does not include the USB cable). The GPS receiver has a built-in
+      antenna, but getting one with an external antenna would probably work best.
+    </p>
+    <p>
+      From the pack, I ended using the Arduino UNO, the mini breadboard, a few stackable
+      headers, jumper wires and the LCD screen.
+    </p>
+    <p>
+      The total hardware cost is around $175 (if you skip the pack and purchase the individual components,
+      you can probably get everything for ~$100):
+      <ul>
+        <li>Ultimate Arduino Microcontroller Pack ($130)</li>
+        <li>A USB cable (5$)</li>
+        <li>GPS receiver ($40)</li>
+      </ul>
+    </p>
+  </section>
+
+  <section>
+    <div class="page-header"><h3>making sure the Arduino works</h3></div>
+    <p>
+      The first step is to make sure the Arduino works. The exact
+      installation process is beyond the scope of this article. I connected the Arduino to
+      my laptop, installed the software and selected one of the samples (<a href="http://arduino.cc/en/Tutorial/blink">Blink</a>).
+      After uploading the code to the Arduino, I had a led that was blinking every second:
+    </p>
+    <a href="arduino_only.jpg"><img src="arduino_only.jpg"/></a>
+  </section>
+
+  <section>
+    <div class="page-header"><h3>connecting the LCD</h3></div>
+    <p>
+      The LCD screen is a Topway (P050001501) LMB162ABC. It can display 16 characters on two rows (16x2)
+      and is compatible with the Hitachi HD44780, so I simply connected the display as
+      explained on the <a href="http://arduino.cc/en/Tutorial/LiquidCrystal">Liquid Crystal tutorial</a>.
+      I did not want to add a potentiometer to control the contrast, so I grounded Vo.
+    </p>
+    <p>I uploaded the sample code to the Arduino and made sure the LCD worked and displayed "hello, world!".</p>
+    <a href="arduino_lcd.jpg"><img src="arduino_lcd.jpg"/></a>
+  </section>
+
+  <section>
+    <div class="page-header"><h3>connecting the GPS</h3></div>
+    <p>
+      The GPS receiver is a Parallax PMB-688. I got a little confused, because the specification
+      and the PCB disagree on the pin labeling. By looking at the cable colors, and a little bit
+      of trial and error, I was able to figure out that the spec is right (the PCB was misprinted?).
+    </p>
+    <p>
+      The GPS module transmits the information in serial TTL format. This makes it trivial to
+      interface with the Arduino: all we need to do is connect the GPS's TTL TX to the Arduino's
+      pin 0 (RX) and we are done. We don't need to write any code or built a circuit with resistors
+      and capacitors.
+    </p>
+    <p>
+      It's important to note that the Arduino's pins 0 and 1 (RX and TX) are also used to connect
+      to your computer with USB. This means you need to disconnect the GPS when uploading code
+      to the Arduino. It's pretty annoying. You can get around this by using an Arduino which has
+      more serial ports (e.g. <a href="http://arduino.cc/en/Main/ArduinoBoardMega2560">Arduino Mega</a>
+      or <a href="http://arduino.cc/en/Main/ArduinoBoardDue">Arduino Due</a>).
+    </p>
+    <p>
+      The GPS receiver contains a built-in battery. This means when we power it up, we'll sometimes
+      get the time right away, other times we'll have to wait for a few seconds, until the receiver
+      locates a satellite and computes the time/position information. The location position always
+      takes a few seconds to appea. I wasn't able to get any information
+      about the type of built-in, if it's capacitor based it can last for a few hours or days. If it's
+      a rechargeable battery, it can keep the time for a few years.
+    </p>
+    <p>
+      The GPS receiver has an onboard LED. When the LED is on, it indicates a valid signal. If it's flashing,
+      it indicates the device is powered on but hasn't yet acquired a signal.
+    </p>
+    <p>
+      If you are using a GPS with a built-in antenna, you should make
+      sure to be in a place where you can see plenty of sky (e.g. the
+      middle of a field works great).
+    </p>
+  </section>
+
+  <section>
+    <div class="page-header"><h3>schema</h3></div>
+    <p>
+      In case you are confused, the full schema:
+      <img src="schema.png"/>
+    </p>
+  </section>
+
+  <section>
+    <div class="page-header"><h3>the code</h3></div>
+    <p>
+      The GPS transmits information in a format called NMEA. We are interested in strings which begin with "$GPRMC".
+    </p>
+    <p>
+      The <a href="http://playground.arduino.cc/Tutorials/GPS">GPS tutorial</a> was also useful. I however rewrote the
+      code, because <code>linea[conta]</code> can potentially overflow,
+      as well as <code>indices[cont]</code>. The author also did not explain the origin of <code>+1</code>
+      in <code>Serial.print(linea[j+1]);</code> (it turns out, the +1 is due to the code detecting <code>byteGPS==13</code>
+      as the ending condition, instead of <code>byteGPS==10</code>).
+    </p>
+    <p>
+      Here is a sample output from the receiver:
+<pre style="height: 100px; overflow: auto;">
+$PSRFTXT,Version:  GSW3.5.0_3.5.00.00-SDK-3EP2.01 *46
+$PSRFTXT,PL-090709-NMEA4800_S_DM1_G1_CM205_KLP-LX*66
+$PSRFTXT,TOW:  88867*2C
+$PSRFTXT,WK:   1745*62
+$PSRFTXT,POS:  6378137 0 0*2A
+$PSRFTXT,CLK:  96250*25
+$PSRFTXT,CHNL: 12*73
+$PSRFTXT,Baud rate: 4800*65
+$GPGGA,004053.965,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4B
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004053.965,V,0000.0000,N,00000.0000,E,,,170613,,,N*7C
+$GPGGA,004054.906,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*49
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004054.906,V,0000.0000,N,00000.0000,E,,,170613,,,N*7E
+$GPGGA,004055.897,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004055.897,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004056.902,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4F
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004056.902,V,0000.0000,N,00000.0000,E,,,170613,,,N*78
+$GPGGA,004057.897,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*43
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,1,1,02,02,,,42,04,,,40*7F
+$GPRMC,004057.897,V,0000.0000,N,00000.0000,E,,,170613,,,N*74
+$GPGGA,004058.897,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4C
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004058.897,V,0000.0000,N,00000.0000,E,,,170613,,,N*7B
+$GPGGA,004059.902,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004059.902,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004100.897,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004100.897,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004101.897,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004101.897,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004102.902,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4F
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,1,1,03,02,,,41,04,,,39,24,,,34*72
+$GPRMC,004102.902,V,0000.0000,N,00000.0000,E,,,170613,,,N*78
+$GPGGA,004103.897,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*43
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004103.897,V,0000.0000,N,00000.0000,E,,,170613,,,N*74
+$GPGGA,004104.897,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004104.897,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004105.902,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*48
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004105.902,V,0000.0000,N,00000.0000,E,,,170613,,,N*7F
+$GPGGA,004104.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004104.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004105.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,37,02,53,006,33,08,47,166,,10,46,152,*70
+$GPGSV,3,2,12,28,34,089,36,09,22,310,,17,21,008,,26,21,221,*72
+$GPGSV,3,3,12,07,09,151,,15,04,253,,05,04,328,,24,-3,219,34*68
+$GPRMC,004105.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004106.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004106.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004107.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004107.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004108.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*48
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004108.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*7F
+$GPGGA,004109.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4D
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004109.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*7A
+$GPGGA,004110.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,36,02,53,006,33,08,47,166,,10,46,152,*71
+$GPGSV,3,2,12,28,34,089,35,09,22,310,30,17,21,008,,26,21,221,*72
+$GPGSV,3,3,12,07,09,151,,15,04,253,,05,04,328,,24,-3,219,35*69
+$GPRMC,004110.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004111.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004111.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004112.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004112.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004113.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004113.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004114.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004114.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004115.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,37,02,53,006,34,08,47,166,,10,46,152,*77
+$GPGSV,3,2,12,28,34,089,29,09,22,310,31,17,21,008,,26,21,221,*7E
+$GPGSV,3,3,12,07,09,151,,15,04,253,,05,04,328,,24,-3,219,36*6A
+$GPRMC,004115.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004116.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004116.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004117.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*46
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004117.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*71
+$GPGGA,004118.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4D
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004118.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*7A
+$GPGGA,004119.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*48
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004119.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*7F
+$GPGGA,004120.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,38,02,53,006,37,08,47,166,,10,46,152,*7B
+$GPGSV,3,2,12,28,34,089,28,09,22,310,31,17,21,008,32,26,21,221,*7E
+$GPGSV,3,3,12,07,09,151,,15,04,253,,05,04,328,,24,-3,219,35*69
+$GPRMC,004120.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004121.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004121.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004122.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004122.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004123.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004123.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004124.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004124.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004125.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,38,02,53,006,39,08,47,166,,10,46,152,*75
+$GPGSV,3,2,12,28,34,089,28,09,22,310,32,17,21,008,33,26,21,221,*7C
+$GPGSV,3,3,12,07,09,151,,15,04,253,,05,04,328,,24,-3,219,35*69
+$GPRMC,004125.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004126.767,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004126.767,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004127.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004127.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004128.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4B
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004128.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7C
+$GPGGA,004129.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4F
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004129.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*78
+$GPGGA,004130.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,38,02,53,006,39,08,47,166,,10,46,152,*75
+$GPGSV,3,2,12,28,34,089,33,09,22,310,32,17,21,008,33,26,21,221,*76
+$GPGSV,3,3,12,07,09,151,,15,04,253,,05,04,328,,24,-3,219,35*69
+$GPRMC,004130.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004131.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*46
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004131.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*71
+$GPGGA,004132.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004132.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004133.772,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004133.772,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004134.773,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004134.773,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004135.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,36,02,53,006,41,08,47,166,,10,46,152,*74
+$GPGSV,3,2,12,28,34,089,35,09,22,310,33,17,21,008,34,26,21,221,*76
+$GPGSV,3,3,12,07,09,151,,15,04,253,27,05,04,328,,24,-3,219,37*6E
+$GPRMC,004135.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004136.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004136.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004137.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004137.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004138.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4A
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004138.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7D
+$GPGGA,004139.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4B
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004139.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7C
+$GPGGA,004140.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,35,02,53,006,41,08,47,166,,10,46,152,*77
+$GPGSV,3,2,12,28,34,089,35,09,22,310,34,17,21,008,33,26,21,221,*76
+$GPGSV,3,3,12,07,09,151,,15,04,253,28,05,04,328,,24,-3,219,36*60
+$GPRMC,004140.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004141.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004141.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004142.773,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*43
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004142.773,V,0000.0000,N,00000.0000,E,,,170613,,,N*74
+$GPGGA,004143.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*46
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004143.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*71
+$GPGGA,004144.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004144.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004145.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,35,02,53,006,40,08,47,166,,10,46,152,*76
+$GPGSV,3,2,12,28,34,089,35,09,22,310,34,17,21,008,33,26,21,221,*76
+$GPGSV,3,3,12,07,09,151,,15,04,253,28,05,04,328,,24,-3,219,36*60
+$GPRMC,004145.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004146.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*43
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004146.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*74
+$GPGGA,004147.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004147.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004148.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4D
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004148.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7A
+$GPGGA,004149.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4C
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004149.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7B
+$GPGGA,004150.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,35,02,53,006,38,08,47,166,,10,46,152,*79
+$GPGSV,3,2,12,28,34,089,35,09,22,310,34,17,21,008,33,26,21,221,*76
+$GPGSV,3,3,12,07,09,151,,15,04,253,27,05,04,328,,24,-3,219,36*6F
+$GPRMC,004150.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004151.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004151.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004152.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*46
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004152.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*71
+$GPGGA,004153.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004153.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004154.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004154.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004155.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,35,02,53,006,37,08,47,166,,10,46,152,*76
+$GPGSV,3,2,12,28,34,089,35,09,22,310,34,17,21,008,33,26,21,221,*76
+$GPGSV,3,3,12,07,09,151,,15,04,253,28,05,04,328,,24,-3,219,36*60
+$GPRMC,004155.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004156.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004156.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004157.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*43
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004157.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*74
+$GPGGA,004158.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4C
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004158.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7B
+$GPGGA,004159.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4D
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004159.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7A
+$GPGGA,004200.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,35,02,53,006,36,08,47,166,,10,46,152,*77
+$GPGSV,3,2,12,28,34,089,35,09,22,310,26,17,21,008,33,26,21,221,*75
+$GPGSV,3,3,12,07,09,151,,15,04,253,28,05,04,328,,24,-3,219,36*60
+$GPRMC,004200.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004201.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*43
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004201.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*74
+$GPGGA,004202.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004202.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004203.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004203.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004204.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*46
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004204.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*71
+$GPGGA,004205.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,36,02,53,006,31,08,47,166,,10,46,152,*73
+$GPGSV,3,2,12,28,34,089,30,09,22,310,27,17,21,008,33,26,21,221,*71
+$GPGSV,3,3,12,07,09,151,,15,04,253,21,05,04,328,,24,-3,219,36*69
+$GPRMC,004205.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004206.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004206.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004207.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004207.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004208.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4A
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004208.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7D
+$GPGGA,004209.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4B
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004209.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7C
+$GPGGA,004210.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*43
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,37,02,53,006,34,08,47,166,,10,46,152,*77
+$GPGSV,3,2,12,28,34,089,29,09,22,310,36,17,21,008,32,26,21,221,*78
+$GPGSV,3,3,12,07,09,151,,15,04,253,31,05,04,328,,24,-3,219,36*68
+$GPRMC,004210.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*74
+$GPGGA,004211.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*42
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004211.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*75
+$GPGGA,004212.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*41
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004212.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*76
+$GPGGA,004213.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004213.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004214.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*47
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004214.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*70
+$GPGGA,004215.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*46
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,35,02,53,006,39,08,47,166,,10,46,152,*78
+$GPGSV,3,2,12,28,34,089,39,09,22,310,36,17,21,008,32,26,21,221,*79
+$GPGSV,3,3,12,07,09,151,,15,04,253,31,05,04,328,,24,-3,219,37*69
+$GPRMC,004215.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*71
+$GPGGA,004216.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*45
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004216.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*72
+$GPGGA,004217.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*44
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004217.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*73
+$GPGGA,004218.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4B
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004218.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7C
+$GPGGA,004219.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*4A
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPRMC,004219.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*7D
+$GPGGA,004220.777,0000.0000,N,00000.0000,E,0,00,,0.0,M,0.0,M,,0000*40
+$GPGSA,A,1,,,,,,,,,,,,,,,*1E
+$GPGSV,3,1,12,04,66,335,35,02,53,006,39,08,47,166,,10,46,152,*78
+$GPGSV,3,2,12,28,34,089,39,09,22,310,31,17,21,008,32,26,21,221,*7E
+$GPGSV,3,3,12,07,09,151,,15,04,253,37,05,04,328,,24,-3,219,36*6E
+$GPRMC,004220.777,V,0000.0000,N,00000.0000,E,,,170613,,,N*77
+$GPGGA,004221.775,3746.2580,N,12223.3552,W,1,04,2.1,-96.0,M,-25.3,M,,0000*7A
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004221.775,A,3746.2580,N,12223.3552,W,0.14,0.00,170613,,,A*73
+$GPGGA,004222.775,3746.2584,N,12223.3424,W,1,04,2.1,-46.9,M,-25.3,M,,0000*79
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004222.775,A,3746.2584,N,12223.3424,W,0.02,270.81,170613,,,A*7F
+$GPGGA,004223.775,3746.2582,N,12223.3408,W,1,04,2.1,-38.0,M,-25.3,M,,0000*70
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004223.775,A,3746.2582,N,12223.3408,W,0.14,35.22,170613,,,A*4B
+$GPGGA,004224.775,3746.2584,N,12223.3399,W,1,04,2.1,-33.6,M,-25.3,M,,0000*73
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004224.775,A,3746.2584,N,12223.3399,W,0.16,52.94,170613,,,A*4B
+$GPGGA,004225.775,3746.2587,N,12223.3426,W,1,04,2.1,-44.4,M,-25.3,M,,0000*70
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPGSV,3,1,12,04,56,134,28,24,56,287,35,02,38,177,39,28,17,099,39*79
+$GPGSV,3,2,12,09,67,256,31,05,55,318,,17,48,044,32,12,31,305,26*77
+$GPGSV,3,3,12,30,14,297,,15,10,234,38,20,,044,,48,,,38*4E
+$GPRMC,004225.775,A,3746.2587,N,12223.3426,W,0.08,353.05,170613,,,A*7F
+$GPGGA,004226.776,3746.2589,N,12223.3440,W,1,04,2.1,-49.7,M,-25.3,M,,0000*70
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004226.776,A,3746.2589,N,12223.3440,W,0.16,322.54,170613,,,A*7C
+$GPGGA,004227.776,3746.2589,N,12223.3445,W,1,04,2.1,-51.5,M,-25.3,M,,0000*7F
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004227.776,A,3746.2589,N,12223.3445,W,0.96,203.06,170613,,,A*75
+$GPGGA,004228.776,3746.2600,N,12223.3438,W,1,04,2.1,-49.6,M,-25.3,M,,0000*72
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004228.776,A,3746.2600,N,12223.3438,W,1.41,204.75,170613,,,A*7A
+$GPGGA,004229.776,3746.2612,N,12223.3428,W,1,04,2.1,-46.6,M,-25.3,M,,0000*7E
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004229.776,A,3746.2612,N,12223.3428,W,0.19,224.86,170613,,,A*7B
+$GPGGA,004230.776,3746.2639,N,12223.3405,W,1,04,2.1,-40.3,M,-25.3,M,,0000*73
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPGSV,3,1,12,04,56,134,35,24,56,287,35,02,38,177,26,28,17,099,39*7B
+$GPGSV,3,2,12,09,67,256,31,05,55,318,,17,48,044,32,12,31,305,26*77
+$GPGSV,3,3,12,30,14,297,,15,10,234,37,20,,044,,48,,,38*41
+$GPRMC,004230.776,A,3746.2639,N,12223.3405,W,0.18,333.04,170613,,,A*79
+$GPGGA,004231.776,3746.2660,N,12223.3386,W,1,04,2.1,-34.8,M,-25.3,M,,0000*7A
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004231.776,A,3746.2660,N,12223.3386,W,0.28,358.61,170613,,,A*75
+$GPGGA,004232.776,3746.2685,N,12223.3364,W,1,04,2.1,-28.3,M,-25.3,M,,0000*78
+$GPGSA,A,3,02,04,24,28,,,,,,,,,4.1,2.1,3.5*38
+$GPRMC,004232.776,A,3746.2685,N,12223.3364,W,0.34,16.39,170613,,,A*48
+$GPGGA,004233.776,3746.2724,N,12223.3307,W,1,07,1.1,-5.6,M,-25.3,M,,0000*4C
+$GPGSA,A,3,02,04,24,28,09,17,15,,,,,,2.0,1.1,1.6*36
+$GPRMC,004233.776,A,3746.2724,N,12223.3307,W,0.10,122.14,170613,,,A*79
+$GPGGA,004234.776,3746.2742,N,12223.3270,W,1,07,1.1,12.3,M,-25.3,M,,0000*54
+$GPGSA,A,3,02,04,24,28,09,17,15,,,,,,2.0,1.1,1.6*36
+$GPRMC,004234.776,A,3746.2742,N,12223.3270,W,0.14,146.22,170613,,,A*7C
+$GPGGA,004235.776,3746.2757,N,12223.3240,W,1,07,1.1,27.3,M,-25.3,M,,0000*54
+$GPGSA,A,3,02,04,24,28,09,17,15,,,,,,2.0,1.1,1.6*36
+$GPGSV,3,1,12,04,57,134,35,24,56,287,36,05,55,318,,17,41,046,32*7C
+$GPGSV,3,2,12,02,39,177,24,12,31,305,26,28,17,099,36,30,14,297,*74
+$GPGSV,3,3,12,09,10,157,31,15,10,234,36,20,,044,,48,44,197,37*73
+$GPRMC,004235.776,A,3746.2757,N,12223.3240,W,0.22,173.75,170613,,,A*7B
+$GPGGA,004236.776,3746.2770,N,12223.3217,W,1,07,1.1,39.9,M,-25.3,M,,0000*55
+$GPGSA,A,3,02,04,24,28,09,17,15,,,,,,2.0,1.1,1.6*36
+$GPRMC,004236.776,A,3746.2770,N,12223.3217,W,0.13,211.41,170613,,,A*7D
+$GPGGA,004237.776,3746.2779,N,12223.3198,W,1,07,1.2,50.6,M,-25.3,M,,0000*5A
+$GPGSA,A,3,02,04,24,28,09,17,15,,,,,,2.0,1.2,1.6*35
+$GPRMC,004237.776,A,3746.2779,N,12223.3198,W,0.16,173.46,170613,,,A*74
+</pre>
+    </p>
+    <p>
+      And here is the full Arduino code:
+    </p>
+<pre class="prettyprint linenums">
+/**
+ * Code to display the time & date from a GPS receiver on a LCD.
+ *
+ * This code was inspired by http://arduino.cc/en/Tutorial/LiquidCrystal and
+ * http://playground.arduino.cc/Tutorials/GPS
+ *
+ * For more information, see http://quaxio.com/arduino_gps/
+ */
+
+#include &lt;LiquidCrystal.h&gt;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+int rxPin = 0; // RX pin
+int txPin = 1; // TX pin
+int byteGPS=-1;
+char cmd[7] = "$GPRMC";
+int counter1 = 0; // counts how many bytes were received (max 300)
+int counter2 = 0; // counts how many commas were seen
+int offsets[13];
+char buf[300] = "";
+
+/**
+ * Setup display and gps
+ */
+void setup() {
+  pinMode(rxPin, INPUT);
+  pinMode(txPin, OUTPUT);
+  Serial.begin(4800);
+  lcd.begin(16, 2);
+  lcd.print("waiting for gps");
+  offsets[0] = 0;
+  reset();
+}
+
+void reset() {
+  counter1 = 0;
+  counter2 = 0;
+}
+
+int get_size(int offset) {
+  return offsets[offset+1] - offsets[offset] - 1;
+}
+
+int handle_byte(int byteGPS) {
+  buf[counter1] = byteGPS;
+  Serial.print((char)byteGPS);
+  counter1++;
+  if (counter1 == 300) {
+    return 0;
+  }
+  if (byteGPS == ',') {
+    counter2++;
+    offsets[counter2] = counter1;
+    if (counter2 == 13) {
+      return 0;
+    }
+  }
+  if (byteGPS == '*') {
+    offsets[12] = counter1;
+  }
+
+  // Check if we got a &lt;LF&gt;, which indicates the end of line
+  if (byteGPS == 10) {
+    // Check that we got 12 pieces, and that the first piece is 6 characters
+    if (counter2 != 12 || (get_size(0) != 6)) {
+      return 0;
+    }
+
+    // Check that we received $GPRMC
+    for (int j=0; j&lt;6; j++) {
+      if (buf[j] != cmd[j]) {
+        return 0;
+      }
+    }
+
+    // Check that time is well formed
+    if (get_size(1) != 10) {
+      return 0;
+    }
+
+    // Check that date is well formed
+    if (get_size(9) != 6) {
+      return 0;
+    }
+
+    // TODO: compute and validate checksum
+
+    // TODO: handle timezone offset
+
+    // print time
+    lcd.clear();
+    for (int j=0; j&lt;6; j++) {
+      lcd.print(buf[offsets[1]+j]);
+      if (j==1) {
+        lcd.print("h");
+      } else if (j==3) {
+        lcd.print("m");
+      } else if (j==5) {
+        lcd.print("s UTC");
+      }
+    }
+
+    // print date
+    lcd.setCursor(0, 1);
+    for (int j=0; j&lt;6; j++) {
+      lcd.print(buf[offsets[9]+j]);
+      if (j==1 || j==3) {
+        lcd.print(".");
+      }
+    }
+    return 0;
+  }
+  return 1;
+}
+
+/**
+ * Main loop
+ */
+void loop() {
+  byteGPS=Serial.read();         // Read a byte of the serial port
+  if (byteGPS == -1) {           // See if the port is empty yet
+    delay(100);
+  } else {
+    if (!handle_byte(byteGPS)) {
+      reset();
+    }
+  }
+}
+</pre>
+  </section>
+
+  <section>
+    <div class="page-header"><h3>Links</h3></div>
+    <ul>
+      <li><a href="http://www.makershed.com/Ultimate_Arduino_Microcontroller_Pack_p/msump1.htm">Ultimate Arduino Microcontroller Pack</a></li>
+      <li><a href="http://www.amazon.com/gp/product/B001MXLD4G/">USB cable</a></li>
+      <li><a href="http://www.digikey.com/product-search/en?WT.z_header=search_go&lang=en&site=us&keywords=28501PAR-ND&x=-1373&y=-51">PMB-688 SIRF Parallax GPS receiver</a></li>
+      <li><a href="http://www.topwaydisplay.com/Pub/Manual/LMB162ABC-Manual-Rev0.2.pdf">LCD (LMB162ABC) specification</a></li>
+      <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PMB-688_Specification_V0.1.pdf">GPS (PMB-688) specification</a></li>
+      <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PULSTAR_NMEA_commands.pdf">NMEA specification</a></li>
+      <li><a href="http://makezine.com/images/store/V2_Datasheet.pdf">Ultimate Arduino Microcontroller Pack datasheet</a></li>
+    </ul>
+  </section>
+
+  <footer class="footer">
+    <p class="pull-right"><a href="#">Back to top &uarr;</a></p>
+  </footer>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-2373559-12', 'quaxio.com');
+  ga('send', 'pageview');
+</script>
+
+</body>
+</html>
