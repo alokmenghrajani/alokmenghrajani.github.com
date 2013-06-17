@@ -475,7 +475,7 @@ foo(new Stringy());</pre>
     </div>
     <p>
       Reference counting based garbage collectors have lots of pros and some cons. The pros are that it's usually
-      simpler to implement and runs faster. The cons can usually be worked around & ignored in the context
+      simpler to implement and runs faster. The cons can usually be worked around &amp; ignored in the context
       of web applications.
     </p>
     <p>
@@ -537,6 +537,32 @@ echo $d[0], "\n";</pre>
         <a onclick="$(event.target).hide();$('#turtle13output02').fadeIn()">(click to see output)</a>
         <pre id="turtle13output02" style="display: none;">&gt; 42
 &gt; 1</pre>
+      </div>
+    </div>
+
+    <p>And another case where the fact that $a is pointed to leaks:</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+$a = array(); $b = array();
+$c = &$b;
+$a[] = 1; $b[] = 1;
+unset($a[0]); unset($b[0]);
+$c = $a; $c = $b;
+$a[] = 2; $b[] = 2;
+print_r($a); print_r($b);
+</pre>
+        <a onclick="$(event.target).hide();$('#turtle13output03').fadeIn()">(click to see output)</a>
+        <pre id="turtle13output03" style="display: none;">&gt; Array
+&gt; (
+&gt;    [1] => 2
+&gt; )
+&gt; Array
+&gt; (
+&gt;    [0] => 2
+&gt; )</pre>
       </div>
     </div>
   </section>
