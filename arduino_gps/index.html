@@ -163,9 +163,9 @@ footer { padding-top: 40px; }
     <p>
       The <a href="http://playground.arduino.cc/Tutorials/GPS">GPS tutorial</a> was also useful. I however rewrote the
       code, because <code>linea[conta]</code> can potentially overflow,
-      as well as <code>indices[cont]</code>. The author also did not explain the origin of <code>+1</code>
-      in <code>Serial.print(linea[j+1]);</code> (it turns out, the +1 is due to the code detecting <code>byteGPS==13</code>
-      as the ending condition, instead of <code>byteGPS==10</code>).
+      as well as <code>indices[cont]</code>. The author also did not explain the origin of <code>int i=1</code>
+      in <code>for (int i=1;i<7;i++){</code> (it turns out, the 1 is due to the code detecting <code>byteGPS==13</code>
+      as the transmission ending condition, instead of <code>byteGPS==10</code>).
     </p>
     <p>
       Here is a sample output from the receiver:
