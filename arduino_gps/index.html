@@ -148,6 +148,30 @@ footer { padding-top: 40px; }
   </section>
 
   <section>
+    <div class="page-header"><h3>generating a Google maps url</h3></div>
+    <p>
+      The GPS data is in hours/minutes/seconds format. The Google maps for a given position can be
+      render by going to <code>https://maps.google.com/?ll=&lt;LAT&gt;,&ltLONG&gt;</code>, where the latitude and
+      longitude are in decimal format. The output from the GPS can be converted to decimal format by taking the
+      last 6 digits and dividing by 60. South and West coordinates need to be multiplied by -1.
+    </p>
+    <p>
+      For e.g. "3746.2779,N,12223.3198,W" becomes 37+(46.2779/60),-1*(122+(23.3198/60))=37.7713,-122.3887:
+    </p>
+    <img src="http://maps.googleapis.com/maps/api/staticmap?center=37.7713,-122.3887&zoom=12&format=png&sensor=false&size=700x200&maptype=satellite"/>
+  </section>
+
+  <section>
+    <div class="page-header"><h3><b>update:</b> logic analyzer</h3></div>
+    <p>
+      Matt and I connected the GPS module to a <a href="http://www.saleae.com/logic">Salae</a> logic analyzer. The device rendered a nice
+      output of the GPS signal and also automatically decoded it. It's a cheap device ($149) and can save lots of time when
+      debugging hardware projects.
+    </p>
+    <a href="saleae_logic_analyzer.png"><img src="saleae_logic_analyzer.png"/></a>
+  </section>
+
+  <section>
     <div class="page-header"><h3>schema</h3></div>
     <p>
       In case you are confused, the full schema:
@@ -704,6 +728,7 @@ void loop() {
       <li><a href="http://www.makershed.com/Ultimate_Arduino_Microcontroller_Pack_p/msump1.htm">Ultimate Arduino Microcontroller Pack</a></li>
       <li><a href="http://www.amazon.com/gp/product/B001MXLD4G/">USB cable</a></li>
       <li><a href="http://www.digikey.com/product-search/en?WT.z_header=search_go&lang=en&site=us&keywords=28501PAR-ND&x=-1373&y=-51">PMB-688 SIRF Parallax GPS receiver</a></li>
+      <li><a href="http://www.saleae.com/logic">Salae Logic</a>
       <li><a href="http://www.topwaydisplay.com/Pub/Manual/LMB162ABC-Manual-Rev0.2.pdf">LCD (LMB162ABC) specification</a></li>
       <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PMB-688_Specification_V0.1.pdf">GPS (PMB-688) specification</a></li>
       <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PULSTAR_NMEA_commands.pdf">NMEA specification</a></li>
