@@ -51,6 +51,7 @@ footer { margin-top: 40px; }
         <li><a href="#turtle14">error messages</a></li>
         <li><a href="#turtle15">protected, not really</a></li>
         <li><a href="#turtle16">hard to predict iterators</a></li>
+        <li><a href="#turtle17">unstable sort</a></li>
         <li><a href="#links">more stuff...</a></li>
       </ol>
     </div>
@@ -681,6 +682,47 @@ echo "\n";
         <pre id="turtle16output01" style="display: none;">&gt; 1,5 1,5 1,5 1,5 1,5 1,5 1,5
 &gt; 0,4 0,4 0,4 0,4 0,4 0,4 0,4
 &gt; 1,5 2,6 3,7 4,8 5,9 6,10 , </pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="turtle17">
+    <div class="page-header">
+      <h1>turtle 17: unstable sort</h1>
+    </div>
+    <p>
+      PHP's <a href="http://php.net/manual/en/function.sort.php">sort</a> documentation warns about
+      sorting arrays with mixed types. Usually, languages implement sort in a stable way,
+      so sorting collections with mixed types does not lead to any surprises. This is however not the
+      case for PHP:
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+function is_sorted($a) {
+  $t = $a;
+  sort($a);
+  return $t === $a;
+}
+
+function is_really_sorted($a) {
+  $t = $a;
+  sort($a);
+  sort($a);
+  return $t === $a;
+}
+
+$a = array('a', 0);
+sort($a);
+echo (int)is_sorted($a), "\n";
+echo (int)is_really_sorted($a), "\n";
+</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle17output01').fadeIn()">(click to see output)</a>
+        <pre id="turtle17output01" style="display: none;">&gt; 0
+&gt; 1</pre>
       </div>
     </div>
   </section>
