@@ -513,6 +513,7 @@ echo $b[0], "\n";</pre>
 &gt; 2</pre>
       </div>
     </div>
+    <br/>
     <p>Similarly, the following code's output is hard to predict:</p>
     <p>credits: julienv</p>
     <div>
@@ -587,6 +588,7 @@ print_r($a); print_r($b);
         <pre id="turtle14output01" style="display: none;">&gt; Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM&hellip;</pre>
       </div>
 
+      <br/>
       <div>
         <pre class="prettyprint linenums">&lt;?php
 
@@ -598,6 +600,7 @@ foo("hello world");</pre>
         <pre id="turtle14output02" style="display: none;">&gt; Catchable fatal error: Argument 1 passed to foo() must be an instance of string, string given&hellip;</pre>
       </div>
 
+      <br/>
       <div>
         <pre class="prettyprint linenums">&lt;?php
 $x =
@@ -723,6 +726,30 @@ echo (int)is_really_sorted($a), "\n";
         <a onclick="$(event.target).hide();$('#turtle17output01').fadeIn()">(click to see output)</a>
         <pre id="turtle17output01" style="display: none;">&gt; 0
 &gt; 1</pre>
+      </div>
+    </div>
+    <br/>
+    <p>
+      Another, simpler, example:
+    </p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+$a  = array('a', 0, 'a', 0);
+sort($a);
+print_r($a);
+</pre>
+
+        <a onclick="$(event.target).hide();$('#turtle17output02').fadeIn()">(click to see output)</a>
+        <pre id="turtle17output02" style="display: none;">&gt; Array
+&gt; (
+&gt;     [0] => 0
+&gt;     [1] => a
+&gt;     [2] => 0
+&gt;     [3] => a
+&gt; )</pre>
       </div>
     </div>
   </section>
