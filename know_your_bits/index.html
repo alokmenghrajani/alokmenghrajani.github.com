@@ -104,9 +104,11 @@ footer { padding-top: 40px; }
       <tr><td><code>x&gt;&gt;&gt;n</code> (logical shift right):</td><td>Shifts the bits in x to the right, by n bits. Zeros are filled in from the left.</td></tr>
     </table>
     </p>
-    <p>A useful trick is <code>-x=~x+1</code>!</p>
     <p>
-      Note: JavaScript is a funny beast, the language does not really expose
+      Note: A useful trick is <code>-x = ~x+1</code>!
+    </p>
+    <p>
+      Fun fact: JavaScript is a funny beast, the language does not really expose
       integers (all math operators return numerical values).
       The language does implement these various bit manipulation operators, which
       treat their operands as 32 bits (and return a numerical value).
