@@ -30,6 +30,54 @@ section {
 body { margin-top: 40px; }
 section { padding-top: 20px; }
 footer { padding-top: 40px; }
+#line-error {
+  float: left;
+  font-family: courier;
+  font-size: 14px;
+  white-space: pre;
+  color: white;
+}
+#cmd {
+  font-family: courier;
+  font-size: 14px;
+  background: black;
+  color: #21f838;
+  padding: 5px;
+  padding-left: 30px;
+  height: 300px;
+}
+#cmd span {
+  padding-left: 0;
+  white-space: pre;
+}
+#cursor {
+  width: 2px;
+  margin-left: -1px;
+  margin-right: -1px;
+  height: 14px;
+  background: #21f838;
+  display: inline-block;
+}
+#highlight {
+  background: #01a808;
+}
+#text-placeholder {
+  position: absolute;
+}
+#line-error {
+  padding-top: 4px;
+}
+#text {
+  position: relative;
+  float: left;
+  font-family: courier;
+  font-size: 14px;
+  opacity: 0;
+  top: 60px;
+  left: 21px;
+  width: 660px;
+  height: 240px;
+}
 </style>
 </head>
 <body>
@@ -76,12 +124,19 @@ footer { padding-top: 40px; }
     </p>
     <p>Go ahead, and write your code below. Hit validate when you are done!</p>
 
-<pre>function one_bit(x) {
- <textarea id="input" style="width: 600px; height: 200px">// write your code here
-// end it with a return statement
-</textarea>
-}</pre>
+    <div id="line-error"></div>
+    <div id="text-placeholder"><textarea id="text"></textarea></div>
+    <div id="cmd" onclick="$('#text').focus()" onload="$(this).focus()">
+      <span>function one_bit(x) {
+  // write your code here
+  // end it with a return statement
+</span>
+      <span id="before"></span><span id="cursor" style="visibility:hidden"></span><span id="highlight"></span><span id="after"></span>
+      <span>
+}</span>
+    </div>
 
+    <br/>
     <div class="alert alert-error" id="error" style="display: none"></div>
     <div class="alert alert-success" id="score" style="display: none"></div>
 
@@ -130,6 +185,41 @@ footer { padding-top: 40px; }
 </div>
 
 <script>
+function f() {
+  var cursor;
+  $('#text').focus(function() {
+    $('#cursor').css({ visibility: 'visible' });
+    cursor = window.setInterval(function() {
+      if ($('#cursor').css('visibility') === 'visible') {
+        $('#cursor').css({ visibility: 'hidden' });
+      } else {
+        $('#cursor').css({ visibility: 'visible' });
+      }
+    }, 500);
+  });
+$('#text').keyup(function() {
+  var start = $('#text')[0].selectionStart;
+  var end = $('#text')[0].selectionEnd;
+  var text = $(this).val();
+  $('#before').text(text.substr(0, start));
+  $('#highlight').text(text.substr(start, end-start));
+  $('#after').text(text.substr(end));
+});
+$('#text').click(function() {
+  var start = $('#text')[0].selectionStart;
+  var end = $('#text')[0].selectionEnd;
+  var text = $(this).val();
+  $('#before').text(text.substr(0, start));
+  $('#highlight').text(text.substr(start, end-start));
+  $('#after').text(text.substr(end));
+});
+$('#text').blur(function() {
+  clearInterval(cursor);
+  $('#cursor').css({visibility: 'hidden'});
+});
+}
+f();
+
 function validate_operator(op) {
   if (op == "return") { return 0; }
   if (op == "=") { return 0; }

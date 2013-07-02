@@ -42,8 +42,9 @@ function render_score(score, best) {
 
 function validate(best, variables) {
   // step 1: parse the input
-  var input = $('#input')[0].value + "\n";
+  var input = $('#text').val() + "\n";
   $('#error').hide();
+  $('#line-error').text("");
   $('#score').hide();
   try {
     var r = myparser.parse(input);
@@ -58,6 +59,9 @@ function validate(best, variables) {
     $('#score').text(score).show();
   } catch (e) {
     $('#error').text(e.message).show();
+    if (e.line != undefined) {
+      $('#line-error').text(Array(3+e.line).join("\n")+"-->");
+    }
   }
 }
 
