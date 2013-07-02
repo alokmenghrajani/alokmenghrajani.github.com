@@ -35,13 +35,12 @@ footer { padding-top: 40px; }
   font-family: courier;
   font-size: 14px;
   white-space: pre;
-  color: white;
+  color: red;
 }
 #cmd {
   font-family: courier;
   font-size: 14px;
-  background: black;
-  color: #21f838;
+  border: 1px solid black;
   padding: 5px;
   padding-left: 30px;
   height: 300px;
@@ -55,7 +54,7 @@ footer { padding-top: 40px; }
   margin-left: -1px;
   margin-right: -1px;
   height: 14px;
-  background: #21f838;
+  background: black;
   display: inline-block;
 }
 #highlight {
@@ -111,7 +110,7 @@ footer { padding-top: 40px; }
 
   <section>
     <div class="page-header"><h3>Return true iff x contains exactly one bit set to 1</h3></div>
-    <div>Allowed operators: <code>! &tilde; &amp; ^ | + &lt;&lt; &gt;&gt; &gt;&gt;&gt;</code></div>
+    <div>Allowed operators: <code>&tilde; &amp; ^ | + &lt;&lt; &gt;&gt; &gt;&gt;&gt;</code></div>
     <br/>
     <p>
       Write a function which returns 1 if x contains exactly one bit set to 1. It should return
@@ -140,7 +139,7 @@ footer { padding-top: 40px; }
     <div class="alert alert-error" id="error" style="display: none"></div>
     <div class="alert alert-success" id="score" style="display: none"></div>
 
-    <button onclick="validate(7, {x:1})">validate</button>
+    <button onclick="validate(12, {x:1})">validate</button>
   </section>
 
   <section>
@@ -148,7 +147,6 @@ footer { padding-top: 40px; }
     <p>Here is some information on what each operator does:</p>
     <p>
     <table>
-      <tr><td><code>!x</code> (logical not):</td><td>Returns 1 if x is 0. Returns 0 is x is != 0.</td></tr>
       <tr><td><code>&tilde;x</code> (bitwise not):</td><td>Flips all the bits in x.</td>
       <tr><td><code>x&amp;y</code> (bitwise and):</td><td>For each bit in x,y, sets the result's bit to 1 if both x and y have their bit set.</td></tr>
       <tr><td><code>x^y</code> (bitwise xor):</td><td>For each bit in x,y, sets the result's bit to 1 if x or y, but not both, have their bit set.</td></tr>
@@ -223,7 +221,7 @@ f();
 function validate_operator(op) {
   if (op == "return") { return 0; }
   if (op == "=") { return 0; }
-  if (["!", "~", "&", "^", "|", "+", "<<", ">>", ">>>"].indexOf(op) == -1) {
+  if (["~", "&", "^", "|", "+", "<<", ">>", ">>>"].indexOf(op) == -1) {
     throw {message:"You are using an invalid operator: "+op};
   }
   return 1;
