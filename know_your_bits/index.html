@@ -64,7 +64,7 @@ footer { padding-top: 40px; }
   position: absolute;
 }
 #line-error {
-  padding-top: 4px;
+  padding-top: 5px;
 }
 #text {
   position: relative;
@@ -218,11 +218,11 @@ $('#text').blur(function() {
 }
 f();
 
-function validate_operator(op) {
-  if (op == "return") { return 0; }
-  if (op == "=") { return 0; }
-  if (["~", "&", "^", "|", "+", "<<", ">>", ">>>"].indexOf(op) == -1) {
-    throw {message:"You are using an invalid operator: "+op};
+function validate_operator(e) {
+  if (e.op == "return") { return 0; }
+  if (e.op == "=") { return 0; }
+  if (["~", "&", "^", "|", "+", "<<", ">>", ">>>"].indexOf(e.op) == -1) {
+    throw {message:"You are using an invalid operator: "+e.op, line:e.line};
   }
   return 1;
 }

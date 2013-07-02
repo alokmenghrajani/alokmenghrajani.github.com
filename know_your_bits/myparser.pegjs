@@ -17,25 +17,25 @@ comments "comment" =
     _ "//" [^\n]* "\n" { return {} }
 
 assignments "assignment" =
-    _ lvalue:variable _ "=" _ expr:expr (ws / ";") { return {left:lvalue, op:"=", right:expr} }
+    _ lvalue:variable _ "=" _ expr:expr (ws / ";") { return {left:lvalue, op:"=", right:expr, line:line} }
 
 return "return statement" =
-    _ "return" ws expr:expr (ws / ";") { return {left: {}, op:"return", right:expr} }
+    _ "return" ws expr:expr (ws / ";") { return {left: {}, op:"return", right:expr, line:line} }
 
 expr =
-    left:primary _ op:bin_op _ right:expr { return {left:left, op:op, right:right} }
-  / op:unary_op _ right:expr { return {left: {}, op:op, right:right} }
+    left:primary _ op:bin_op _ right:expr { return {left:left, op:op, right:right, line:line} }
+  / op:unary_op _ right:expr { return {left: {}, op:op, right:right, line:line} }
   / primary
 
 bin_op = "|" / "^" / "&" / "+" / "<<" / ">>>" / ">>"
 unary_op = "!" / "~"
 
 primary =
-    constant
-  / variable
+    constant:constant { return {constant: constant, line: line} }
+  / variable:variable { return {variable: variable, line: line} }
   / "(" _ expr:expr _ ")" { return expr }
 
-constant = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
+constant = digits:[0-9]+ { return parseInt(digits.join(""), 10) }
 variable "variable" = letters:([a-zA-Z$_][a-zA-Z0-9$_]*) { return letters.join("") }
 
 _ "whitespace" = [ \t\n\r]*

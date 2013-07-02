@@ -7,18 +7,19 @@ function validate_expressions(ll, variables) {
 }
 
 function validate_expression(e, variables) {
-  if (typeof(e) == "number") {
-    if (e > 255) {
-      throw {message:"You may only use constants between 0 and 255"};
+  if (e.constant != undefined) {
+    if (e.constant > 255) {
+      console.log(e);
+      throw {message:"You may only use constants between 0 and 255", line:e.line};
     }
-  } else if (typeof(e) == "string") {
-    if (!variables[e]) {
-      throw {message:"You are using an undefined variable: "+e};
+  } else if (e.variable != undefined) {
+    if (!variables[e.variable]) {
+      throw {message:"You are using an undefined variable: "+e.variable, line:e.line};
     }
   }
   var score = 0;
-  if ((typeof(e) == "object") && !jQuery.isEmptyObject(e)) {
-    score += validate_operator(e.op);
+  if (e.op != undefined) {
+    score += validate_operator(e);
     score += validate_expression(e.right, variables);
     if (e.op == "=") {
       variables[e.left] = 1;
@@ -60,7 +61,7 @@ function validate(best, variables) {
   } catch (e) {
     $('#error').text(e.message).show();
     if (e.line != undefined) {
-      $('#line-error').text(Array(3+e.line).join("\n")+"-->");
+      $('#line-error').text(Array(3+e.line).join("\n")+"  >");
     }
   }
 }

@@ -342,7 +342,7 @@ myparser = (function(){
           pos = clone(pos1);
         }
         if (result0 !== null) {
-          result0 = (function(offset, line, column, lvalue, expr) { return {left:lvalue, op:"=", right:expr} })(pos0.offset, pos0.line, pos0.column, result0[1], result0[5]);
+          result0 = (function(offset, line, column, lvalue, expr) { return {left:lvalue, op:"=", right:expr, line:line} })(pos0.offset, pos0.line, pos0.column, result0[1], result0[5]);
         }
         if (result0 === null) {
           pos = clone(pos0);
@@ -412,7 +412,7 @@ myparser = (function(){
           pos = clone(pos1);
         }
         if (result0 !== null) {
-          result0 = (function(offset, line, column, expr) { return {left: {}, op:"return", right:expr} })(pos0.offset, pos0.line, pos0.column, result0[3]);
+          result0 = (function(offset, line, column, expr) { return {left: {}, op:"return", right:expr, line:line} })(pos0.offset, pos0.line, pos0.column, result0[3]);
         }
         if (result0 === null) {
           pos = clone(pos0);
@@ -462,7 +462,7 @@ myparser = (function(){
           pos = clone(pos1);
         }
         if (result0 !== null) {
-          result0 = (function(offset, line, column, left, op, right) { return {left:left, op:op, right:right} })(pos0.offset, pos0.line, pos0.column, result0[0], result0[2], result0[4]);
+          result0 = (function(offset, line, column, left, op, right) { return {left:left, op:op, right:right, line:line} })(pos0.offset, pos0.line, pos0.column, result0[0], result0[2], result0[4]);
         }
         if (result0 === null) {
           pos = clone(pos0);
@@ -490,7 +490,7 @@ myparser = (function(){
             pos = clone(pos1);
           }
           if (result0 !== null) {
-            result0 = (function(offset, line, column, op, right) { return {left: {}, op:op, right:right} })(pos0.offset, pos0.line, pos0.column, result0[0], result0[2]);
+            result0 = (function(offset, line, column, op, right) { return {left: {}, op:op, right:right, line:line} })(pos0.offset, pos0.line, pos0.column, result0[0], result0[2]);
           }
           if (result0 === null) {
             pos = clone(pos0);
@@ -613,9 +613,23 @@ myparser = (function(){
         var result0, result1, result2, result3, result4;
         var pos0, pos1;
         
+        pos0 = clone(pos);
         result0 = parse_constant();
+        if (result0 !== null) {
+          result0 = (function(offset, line, column, constant) { return {constant: constant, line: line} })(pos0.offset, pos0.line, pos0.column, result0);
+        }
         if (result0 === null) {
+          pos = clone(pos0);
+        }
+        if (result0 === null) {
+          pos0 = clone(pos);
           result0 = parse_variable();
+          if (result0 !== null) {
+            result0 = (function(offset, line, column, variable) { return {variable: variable, line: line} })(pos0.offset, pos0.line, pos0.column, result0);
+          }
+          if (result0 === null) {
+            pos = clone(pos0);
+          }
           if (result0 === null) {
             pos0 = clone(pos);
             pos1 = clone(pos);
@@ -709,7 +723,7 @@ myparser = (function(){
           result0 = null;
         }
         if (result0 !== null) {
-          result0 = (function(offset, line, column, digits) { return parseInt(digits.join(""), 10); })(pos0.offset, pos0.line, pos0.column, result0);
+          result0 = (function(offset, line, column, digits) { return parseInt(digits.join(""), 10) })(pos0.offset, pos0.line, pos0.column, result0);
         }
         if (result0 === null) {
           pos = clone(pos0);
