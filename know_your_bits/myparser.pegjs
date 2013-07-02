@@ -4,7 +4,7 @@
  * b = (a | 20) & 4
  * return b ^ ~0
  *
- * The list of operators are: ! ~ + << >> >>> & ^ |
+ * The list of operators are: ~ + << >> >>> & ^ |
  * This grammar is incorrect because operator precedence is ignored.
  *
  * Compile this grammar with:
@@ -28,7 +28,7 @@ expr =
   / primary
 
 bin_op = "|" / "^" / "&" / "+" / "<<" / ">>>" / ">>"
-unary_op = "!" / "~"
+unary_op = "~"
 
 primary =
     constant:constant { return {constant: constant, line: line} }

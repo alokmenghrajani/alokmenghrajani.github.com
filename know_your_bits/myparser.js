@@ -586,24 +586,13 @@ myparser = (function(){
       function parse_unary_op() {
         var result0;
         
-        if (input.charCodeAt(pos.offset) === 33) {
-          result0 = "!";
+        if (input.charCodeAt(pos.offset) === 126) {
+          result0 = "~";
           advance(pos, 1);
         } else {
           result0 = null;
           if (reportFailures === 0) {
-            matchFailed("\"!\"");
-          }
-        }
-        if (result0 === null) {
-          if (input.charCodeAt(pos.offset) === 126) {
-            result0 = "~";
-            advance(pos, 1);
-          } else {
-            result0 = null;
-            if (reportFailures === 0) {
-              matchFailed("\"~\"");
-            }
+            matchFailed("\"~\"");
           }
         }
         return result0;
