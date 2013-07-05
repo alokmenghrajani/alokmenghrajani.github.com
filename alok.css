@@ -1,7 +1,22 @@
-visible-desktop .container-narrow {
-  margin: 0 auto;
-  width: 700px;
+@media (min-width: 768px) {
+  .container-narrow {
+    margin: 0 auto;
+    width: 700px;
+  }
 }
+
+@media (max-width: 767px) {
+  .smart_list {
+    list-style-type: none;
+  }
+  .smart_list span {
+    display: block;
+  }
+  .smart_list li {
+    padding-top: 10px;
+  }
+}
+
 .jumbotron h1 {
   font-size: 32px;
 }
