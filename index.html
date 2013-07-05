@@ -7,40 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="bootstrap-responsive.min.css" rel="stylesheet">
   <link href="bootstrap.min.css" rel="stylesheet"/>
+  <link href="alok.css" rel="stylesheet"/>
   <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
-<style>
-.container-narrow {
-  margin: 0 auto;
-  width: 700px;
-}
-.jumbotron h1 {
-  font-size: 32px;
-}
-section {
-  padding-top: 20px;
-}
-.page-header {
-  padding-bottom: 0px;
-  margin-bottom: 20px;
-}
-h3 {
-  margin-bottom: 0px;
-}
-.menu {
-  top: 40px;
-  position: fixed;
-}
-.profile {
-  position: relative;
-  left: -170px;
-  overflow: visible;
-}
-li span {
-  font-size: small;
-  color: gray;
-}
-body { margin-top: 40px; }
-</style>
 </head>
 <body>
 <div class="container-narrow">
@@ -67,7 +35,7 @@ body { margin-top: 40px; }
     <p>
       I currently live in San Francisco and work at Facebook as an engineer.
       You can contact me by
-      <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues">opening an issue</a>.
+      <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues/new">opening an issue</a>.
     </p>
     <p>
       I truly believe in the benefits of open source. I use many open source
@@ -108,6 +76,11 @@ body { margin-top: 40px; }
       <li><a href="wtf/php.html">PHP turtles</a>: a list of things you might not know about PHP.</li>
       <li><a href="wtf/flash.html">Adobe Flash</a>: a quirk in TextFields.</li>
       <li><a href="wtf/jquery.html">jquery</a></li>
+      <li>
+        <a class="external" href="https://docs.google.com/presentation/d/1h49gY3TSiayLMXYmRMaAEMl05FaJ-Z6jDOWOz3EsqqQ/preview#slide=id.p">
+          Some dark corners of C (Rob Kendrick)
+        </a>
+      </li>
     </ul>
   </section>
 
@@ -136,7 +109,12 @@ body { margin-top: 40px; }
   </section>
 
   <footer class="footer">
-    <p class="pull-right visible-desktop"><a href="#">Back to top &uarr;</a></p>
+    <div style="float: left" class="fb-like" data-href="http://quaxio.com/" data-send="false" data-width="450" data-show-faces="false"></div>
+    <p class="pull-right visible-desktop">
+      <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues/new">contact me</a>
+      <span class="vbar"></span>
+      <a href="#">back to top &uarr;</a>
+    </p>
   </footer>
 
 <script>
@@ -148,6 +126,14 @@ body { margin-top: 40px; }
   ga('create', 'UA-2373559-12', 'quaxio.com');
   ga('send', 'pageview');
 </script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=202717489767277";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 </body>
 </html>
