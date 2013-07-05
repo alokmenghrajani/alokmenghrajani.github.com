@@ -39,10 +39,13 @@ footer {
   margin-top: 40px;
 }
 .page-header {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ccc !important;
 }
 .vbar {
   border-left: 1px solid #ccc;
   margin-left: 2px;
   margin-right: 5px;
+}
+.hero-unit {
+  margin-top: 20px !important;
 }
