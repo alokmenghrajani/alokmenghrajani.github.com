@@ -11,7 +11,7 @@
  * npm install -g pegjs
  * pegjs -e myparser --track-line-and-column myparser.pegjs
  */
-start = ll:(assignments / comments)* e:return comments* _ { ll.push(e); return ll }
+start = _ "function" _ "one_bit" _ "(" _ "x" _ ")" _ "{" ll:(assignments / comments)* e:return comments* _ "}" _ { ll.push(e); return ll }
 
 comments "comment" =
     _ "//" [^\n]* "\n" { return {} }

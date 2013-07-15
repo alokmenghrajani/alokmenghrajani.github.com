@@ -30,52 +30,12 @@ section {
 body { margin-top: 40px; }
 section { padding-top: 20px; }
 footer { padding-top: 40px; }
-#line-error {
-  float: left;
-  font-family: courier;
-  font-size: 14px;
-  white-space: pre;
-  color: red;
-}
-#cmd {
-  font-family: courier;
-  font-size: 14px;
+#editor {
   border: 1px solid black;
-  padding: 5px;
-  padding-left: 30px;
   height: 300px;
 }
-#cmd span {
-  padding-left: 0;
-  white-space: pre;
-}
-#cursor {
-  width: 2px;
-  margin-left: -1px;
-  margin-right: -1px;
-  height: 14px;
-  background: black;
-  display: inline-block;
-}
-#highlight {
-  background: #01a808;
-}
-#text-placeholder {
-  position: absolute;
-}
-#line-error {
-  padding-top: 5px;
-}
-#text {
-  position: relative;
-  float: left;
-  font-family: courier;
-  font-size: 14px;
-  opacity: 0;
-  top: 60px;
-  left: 21px;
-  width: 660px;
-  height: 240px;
+.ace_active-line {
+  background: red !important;
 }
 </style>
 </head>
@@ -127,23 +87,16 @@ footer { padding-top: 40px; }
     </p>
     <p>Go ahead, and write your code below. Hit validate when you are done!</p>
 
-    <div id="line-error"></div>
-    <div id="text-placeholder"><textarea id="text"></textarea></div>
-    <div id="cmd" onclick="$('#text').focus()" onload="$(this).focus()">
-      <span>function one_bit(x) {
+    <div id="editor">function one_bit(x) {
   // write your code here
   // end it with a return statement
-</span>
-      <span id="before"></span><span id="cursor" style="visibility:hidden"></span><span id="highlight"></span><span id="after"></span>
-      <span>
-}</span>
-    </div>
+}</div>
 
     <br/>
     <div class="alert alert-error" id="error" style="display: none"></div>
     <div class="alert alert-success" id="score" style="display: none"></div>
 
-    <button onclick="validate(12, {x:1})">validate</button>
+    <button onclick="validate(editor, 12, {x:1})">validate</button>
   </section>
 
   <section>
@@ -186,48 +139,34 @@ footer { padding-top: 40px; }
   </footer>
 </div>
 
+<script src="ace.js" type="text/javascript"></script>
 <script>
-function f() {
-  var cursor;
-  $('#text').focus(function() {
-    $('#cursor').css({ visibility: 'visible' });
-    cursor = window.setInterval(function() {
-      if ($('#cursor').css('visibility') === 'visible') {
-        $('#cursor').css({ visibility: 'hidden' });
-      } else {
-        $('#cursor').css({ visibility: 'visible' });
-      }
-    }, 500);
-  });
-$('#text').keyup(function() {
-  var start = $('#text')[0].selectionStart;
-  var end = $('#text')[0].selectionEnd;
-  var text = $(this).val();
-  $('#before').text(text.substr(0, start));
-  $('#highlight').text(text.substr(start, end-start));
-  $('#after').text(text.substr(end));
+var editor = ace.edit("editor");
+editor.setHighlightActiveLine(false);
+editor.setShowPrintMargin(false);
+editor.setShowFoldWidgets(false);
+editor.on("change", function() {
+  for (var i in editor.getSession().getMarkers()) {
+    editor.getSession().removeMarker(i);
+  }
 });
-$('#text').click(function() {
-  var start = $('#text')[0].selectionStart;
-  var end = $('#text')[0].selectionEnd;
-  var text = $(this).val();
-  $('#before').text(text.substr(0, start));
-  $('#highlight').text(text.substr(start, end-start));
-  $('#after').text(text.substr(end));
+// disable backspace
+$(document).keydown(function(e) {
+  var nodeName = e.target.nodeName.toLowerCase();
+  if (e.which === 8) {
+    if ((nodeName === 'input' && e.target.type === 'text') ||
+      nodeName === 'textarea') {
+      // do nothing
+    } else {
+      e.preventDefault();
+    }
+  }
 });
-$('#text').blur(function() {
-  clearInterval(cursor);
-  $('#cursor').css({visibility: 'hidden'});
-});
-}
-f();
-
 function validate_operator(e) {
   if (e.op == "return") { return 0; }
   if (e.op == "=") { return 0; }
   return 1;
 }
-
 function validate_correctness(input) {
   eval("var f1=function(x){"+input+"};");
   var f2 = function(x) {

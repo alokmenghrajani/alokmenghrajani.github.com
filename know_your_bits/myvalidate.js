@@ -41,11 +41,11 @@ function render_score(score, best) {
   return r;
 }
 
-function validate(best, variables) {
+function validate(editor, best, variables) {
+  var input = editor.getValue() + "\n";
+
   // step 1: parse the input
-  var input = $('#text').val() + "\n";
   $('#error').hide();
-  $('#line-error').text("");
   $('#score').hide();
   try {
     var r = myparser.parse(input);
@@ -61,7 +61,8 @@ function validate(best, variables) {
   } catch (e) {
     $('#error').text(e.message).show();
     if (e.line != undefined) {
-      $('#line-error').text(Array(3+e.line).join("\n")+"  >");
+      var range = new (ace.require('./range').Range)(e.line-1, 1, e.line-1, Infinity);
+      editor.getSession().addMarker(range, "ace_active-line", "screenLine");
     }
   }
 }
