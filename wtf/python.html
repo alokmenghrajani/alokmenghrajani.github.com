@@ -1,0 +1,8 @@
+* Python's default parameters don't get deep copied at call time:
+
+  def myfun(data=[]):
+    data.append(1)
+    return data
+
+  print myfun()
+  print myfun()
