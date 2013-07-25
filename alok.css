@@ -64,3 +64,8 @@ footer {
 .hero-unit {
   margin-top: 20px !important;
 }
+.mythumbnail {
+  margin: 40px 20px 40px 20px;
+  float: left;
+  width: 300px;
+}
