@@ -13,7 +13,7 @@ var Cell = React.createClass({
   },
   render: function() {
     if (this.props.player == 0) {
-      return <td onClick={this.handleClick}></td>;
+      return <td><button onClick={this.handleClick}></button></td>;
     } else {
       return <td>{Cell.getXorO(this.props.player)}</td>;
     }
