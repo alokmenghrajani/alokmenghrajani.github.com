@@ -83,7 +83,7 @@ var TicTacToe = React.createClass({
       s.grid = grid;
       s.game_state = -this.state.game_state;
       s.move_number = this.state.move_number+1;
-      s = this.checkGameEnd(s);
+      this.checkGameEnd(s);
       if (this.state.firebase) {
         this.state.firebase.update(s);
       }
@@ -98,6 +98,7 @@ var TicTacToe = React.createClass({
    */
   checkGameEnd: function(state) {
     // check if either player won
+    var i, j;
     var sums = [0, 0, 0, 0, 0, 0, 0, 0];
     for (i=0; i<3; i++) {
       // diag1
@@ -106,15 +107,16 @@ var TicTacToe = React.createClass({
       sums[7] += state.grid[i-3*i+6];
       for (j=0; j<3; j++) {
         // rows
-        sums[i] + state.grid[i+3*j];
+        sums[i] += state.grid[i+3*j];
         // cols
         sums[3+i] += state.grid[3*i+j];
       }
     }
+    console.log(sums);
     for (i=0; i<8; i++) {
       if (Math.abs(sums[i]) == 3) {
         state.game_state = sums[i];
-        return state;
+        return;
       }
     }
 
@@ -122,7 +124,7 @@ var TicTacToe = React.createClass({
     if (state.move_number == 9) {
       state.game_state = 4;
     }
-    return state;
+    return;
   },
 
   /**

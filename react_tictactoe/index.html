@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Alok Menghrajani's stuff | React TicTacToe &amp; Chat</title>
+  <title>Alok Menghrajani's stuff | Combining React and Firebase: sample TicTacToe game &amp; chat widget</title>
   <meta property="fb:admins" content="536181839"/>
   <meta name="author" content="Alok Menghrajani"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -95,12 +95,12 @@
     </div>
 
     <div class="jumbotron">
-      <h1>React based TicTacToe &amp; Chat</h1>
+      <h1>Combining React and Firebase <div><small>sample TicTacToe game &amp; chat widget</small></div></h1>
       <div class="lead">
         <p>
           I thought that it would be fun to experiment with <a href="http://facebook.github.io/react/index.html" class="external">React</a>
-          and <a href="https://www.firebase.com/index.html" class="external">Firebase</a>. I therefore implemented a TicTacToe &amp; a Chat. Each
-          person who is viewing this page is matched up against another random visitor.
+          and <a href="https://www.firebase.com/index.html" class="external">Firebase</a>. I therefore implemented a TicTacToe game and a simple Chat widget.
+          Each person who is viewing this page is matched up against another random visitor.
         </p>
       </div>
     </div>
@@ -235,7 +235,7 @@
             console.log("onDisconnect failed: "+err);
             throw err;
           }
-          var status = path.set(document.webkitHidden);
+          var status = path.set(true);
           var id = path.name();
 
           // leak these for debugging purpose
