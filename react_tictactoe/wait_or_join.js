@@ -20,7 +20,7 @@
  */
 function WaitOrJoin(id, firebase, onConnect, onDisconnect) {
   this.id = id;
-  this.connected = 0;
+  this.connected = false;
   this.onConnect = onConnect;
   this.onDisconnect = onDisconnect;
   this.firebase = firebase;
@@ -58,10 +58,9 @@ WaitOrJoin.prototype.init = function() {
                 console.log("onDisconnect failed");
                 throw err;
               }
-              this.connected = 1;
               this.node.update(
                 {
-                  "state": 0,
+                  "existed": true,
                   "player1": this.id,
                 },
                 function(err) {
@@ -72,11 +71,6 @@ WaitOrJoin.prototype.init = function() {
                   this.node.on("value", this.change.bind(this));
                 }.bind(this)
               );
-              // I was running into cases where player2 would never
-              // notice that the game had started. I can't repro
-              // for player 1, but I'm just including this code here in case
-              // it happens?
-              this.node.once("value", this.change.bind(this));
             }.bind(this)
           );
         } else {
@@ -89,7 +83,6 @@ WaitOrJoin.prototype.init = function() {
                 console.log("onDisconnect failed");
                 throw err;
               }
-              this.connected = 1;
               this.node.update({"player2": this.id},
                 function(err) {
                   if (err) {
@@ -99,10 +92,6 @@ WaitOrJoin.prototype.init = function() {
                   this.node.on("value", this.change.bind(this));
                 }.bind(this)
               );
-              // I was running into cases where player2 would never
-              // notice that the game had started. Doing a node.once seems to
-              // help. I haven't fully understood why...
-              this.node.once("value", this.change.bind(this));
             }.bind(this)
           );
         }
@@ -118,37 +107,30 @@ WaitOrJoin.prototype.change = function(data) {
   console.log("WaitOrJoin: change");
   var val = data.val();
 
-  if (this.connected == 0) {
-    // Because of my hack to call once() at line 80,
-    // we need to handle the case where this gets called
-    // twice.
-    // We also want to make sure we only fire this.onConnect once.
-    return;
-  }
   if (val == null) {
     // everything got deleted
     console.log("all the data is gone...");
-    this.connected = 0;
+    this.connected = false;
     this.node.off();
     this.onDisconnect();
   } else {
-    if (val.state == undefined) {
+    if (val.existed == undefined) {
       console.log("player2 is ahead of player1");
       // player2 sees this when player1's update hasn't yet arrived.
-      // This can be triggered by adding a timeout around line 64
+      // This can be triggered by adding a timeout around line 61
       // we simply need to wait, nothing else needs to happen.
       return;
     }
-    if ((this.connected == 1) && (val.player1) && (val.player2)) {
+    if (!this.connected && val.player1 && val.player2) {
       console.log(val.player1 + " and " + val.player2 + " should be connected");
       // we are done!
-      this.connected = 2;
+      this.connected = true;
       this.onConnect(this.node, this.id == val.player1);
-    } else if ((this.connected == 1) && !val.player1) {
+    } else if (!this.connected && !val.player1) {
       // this happens if player2 joins a game, but player1 already left.
       // we can silently start the WaitOrJoin dance over.
+      // Hitting refresh a few times in a tab causes this condition.
       console.log("player2 joined but player1 had left.");
-      this.connected = 0;
       this.node.off()
       this.node.remove(
         function(err) {
@@ -159,9 +141,9 @@ WaitOrJoin.prototype.change = function(data) {
           this.init();
         }.bind(this)
       );
-    } else if ((this.connected == 2) && (!val.player1 || !val.player2)) {
+    } else if (this.connected && (!val.player1 || !val.player2)) {
       console.log("a player quit");
-      this.connected = 0;
+      this.connected = false;
       this.node.off();
       this.onDisconnect();
     }
