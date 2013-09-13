@@ -146,9 +146,10 @@ WaitOrJoin.prototype.change = function(data) {
         }.bind(this)
       );
     } else if ((val.state == 1) && (!val.player1 || !val.player2)) {
-      console.log("a player quit, let's delete this game");
+      console.log("a player quit");
       // remove() will trigger off() + onDisconnect()
-      this.node.remove();
+      this.node.off();
+      this.onDisconnect();
     }
   }
 }
