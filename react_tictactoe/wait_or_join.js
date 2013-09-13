@@ -70,6 +70,11 @@ WaitOrJoin.prototype.init = function() {
                   this.node.on("value", this.change.bind(this));
                 }.bind(this)
               );
+              // I was running into cases where player2 would never
+              // notice that the game had started. I can't repro
+              // for player 1, but I'm just including this code here in case
+              // it happens?
+              this.node.once("value", this.change.bind(this));
             }.bind(this)
           );
         } else {
@@ -91,6 +96,10 @@ WaitOrJoin.prototype.init = function() {
                   this.node.on("value", this.change.bind(this));
                 }.bind(this)
               );
+              // I was running into cases where player2 would never
+              // notice that the game had started. Doing a node.once seems to
+              // help. I haven't fully understood why...
+              this.node.once("value", this.change.bind(this));
             }.bind(this)
           );
         }
@@ -107,6 +116,7 @@ WaitOrJoin.prototype.change = function(data) {
   if (val == null) {
     // everything got deleted
     console.log("all the data is gone...");
+    this.node.off();
     this.onDisconnect();
   } else {
     if (val.state == undefined) {
@@ -125,6 +135,7 @@ WaitOrJoin.prototype.change = function(data) {
       // this happens if player2 joins a game, but player1 already left.
       // we can silently start the WaitOrJoin dance over.
       console.log("player2 joined but player1 had left.");
+      this.node.off()
       this.node.remove(
         function(err) {
           if (err) {
@@ -136,7 +147,7 @@ WaitOrJoin.prototype.change = function(data) {
       );
     } else if ((val.state == 1) && (!val.player1 || !val.player2)) {
       console.log("a player quit, let's delete this game");
-      this.onDisconnect();
+      // remove() will trigger off() + onDisconnect()
       this.node.remove();
     }
   }

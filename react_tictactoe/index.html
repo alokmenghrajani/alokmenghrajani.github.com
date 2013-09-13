@@ -192,8 +192,7 @@
         var status = path.set(true);
         var id = path.name();
         var game = React.renderComponent(<Game id={id}/>, document.getElementById('game'));
-        alok = game;
-        new WaitOrJoin(
+        alok = new WaitOrJoin(
           id,
           firebase,
           game.onConnect.bind(game),
