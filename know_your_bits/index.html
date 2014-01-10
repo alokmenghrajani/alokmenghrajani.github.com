@@ -172,7 +172,7 @@ function validate_operator(e) {
   return 1;
 }
 function validate_correctness(input) {
-  eval("var f1=function(x){"+input+"};");
+  eval(input);
   var f2 = function(x) {
     var c = 0;
     for (var i=0; i<32; i++) {
@@ -186,7 +186,7 @@ function validate_correctness(input) {
     x.push(((Math.random()* 4294967296)-2147483648) & 0xffffffff);
   }
   for (var i=0; i<x.length; i++) {
-    r1 = f1(x[i]) & 0xffffffff;
+    r1 = one_bit(x[i]) & 0xffffffff;
     r2 = f2(x[i]) & 0xffffffff;
     if (r1 != r2) {
       throw {message: "Solution did not return correct output for x="+x[i]+
