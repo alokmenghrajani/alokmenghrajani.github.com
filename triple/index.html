@@ -832,9 +832,10 @@ B = ( A1 0* | A2 0* 2 0* ) ( 1 0* 2 0* )*</pre>
     </p>
     <p>
       We can now substitute B:
-<pre>A = (0* |
-     ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 2 0* |
-     ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 1 0* 1 0*
+<pre>A = (
+      0* |
+      ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 2 0* |
+      ( A1 0* | A2 0* 2 0* ) (1 0* 2 0* )* 1 0* 1 0*
     ) (2 0* 1 0* )*</pre>
 <pre>A = 0* ( 2 0* 1 0* )* |
     A1 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
@@ -843,17 +844,30 @@ B = ( A1 0* | A2 0* 2 0* ) ( 1 0* 2 0* )*</pre>
     A2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )*</pre>
     </p>
     <p>
-      At this point, we have something like <code>X = a* | Xb | Xc</code>,
-      which can be expressed as <code>X = (a | b | c)*</code>:
-<pre>A = ( 0* ( 2 0* 1 0* )* |
+      At this point, we have something like <code>X = a | Xb | Xc</code>,
+      which can be expressed as <code>X = a (b | c)*</code>:
+<pre>A = 0* ( 2 0* 1 0* )* (
       1 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
       2 0* 2 0* ( 1 0* 2 0* )* 2 0* ( 2 0* 1 0* )* |
       1 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* |
-      2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )* )*</pre>
+      2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0* ( 2 0* 1 0* )*
+    )*</pre>
     </p>
     <p>
-      We found a solution, this rule can be converted to a regular expression! We can however simplify it a little:
-<pre>A = ( 0 |
+      We found a solution, this rule can be converted to a regular expression! We can however simplify it a little.
+      <code>a* ( b a* )*</code> becomes <code>( a | b )*</code>:
+<pre>A = 0* (
+      2 0* 1 0* |
+      1 0* ( 1 0* 2 0* )* 2 0* |
+      2 0* 2 0* ( 1 0* 2 0* )* 2 0* |
+      1 0* ( 1 0* 2 0* )* 1 0* 1 0* |
+      2 0* 2 0* ( 1 0* 2 0* )* 1 0* 1 0*
+    )*</pre>
+    </p>
+    <p>
+      Using the same rule again:
+<pre>A = (
+      0* |
       2 0* 1 |
       1 ( 0 | 1 0* 2 )* 2 |
       2 0* 2 ( 0 | 1 0* 2 )* 2 |
@@ -927,11 +941,12 @@ B = ( A1 0* | A2 0* 2 0* ) ( 1 0* 2 0* )*</pre>
     <ul>
       <li>erling for challenging me with this stuff :)</li>
       <li>joel for finding a shorter solution: <code>/^(0|20*1|(1|20*2)(0|10*2)*(2|10*1))*$/</code></li>
+      <li>camitz for pointing out <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues/8">a mistake</a></li>
     </ul>
   </section>
 
   <footer class="footer">
-    <p class="pull-right"><a href="#">Back to top</a></p>
+    <p class="pull-right"><a href="#">Back to top &uarr;</a></p>
   </footer>
 
 <script>
