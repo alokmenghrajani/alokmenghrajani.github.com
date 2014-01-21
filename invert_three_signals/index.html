@@ -197,9 +197,8 @@ not(c) = and(or(a,x),or(and(a,x),and(or(b,x),or(and(b,x),y))))
         a few situations where Prolog can be handy.
       </p>
       <p>
-        At Facebook, we created a Prolog database of our source code. Engineers can write their own complicated queries. E.g.
-        an engineer might want to query for "who calls this method", while another person might be interested in "who inherits from
-        this set of classes" or something even more complicated.
+        At Facebook, we maintain a Prolog representation of our source code. Engineers can write queries such as
+        "who calls this method", "who inherits from a given set of classes" or something more complicated.
         These questions are useful when refactoring code or studying the general architecture of the codebase.
       </p>
       <p>
