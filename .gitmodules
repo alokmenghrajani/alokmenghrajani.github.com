@@ -1,0 +1,3 @@
+[submodule "2048"]
+	path = 2048
+	url = git@github.com:alokmenghrajani/2048.git
