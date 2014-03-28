@@ -1,6 +1,24 @@
 <html>
 <body>
 <p>A minor WTF in openssl. The fix should be pretty trivial...</p>
+<p>A sane library should fail at EVP_DecryptUpdate. Running this code (openssl 1.0.1) however results in:</p>
+<pre>
+Encrypting:
+-&gt; everything is fine, let's move on...
+
+Decrypting, correctly:
+plain text: hello world
+-&gt; everything is fine, let's move on...
+
+Decrypting a subset, with EVP_EncryptInit_ex
+plain text: hello wor
+-&gt; everything is fine, let's move on...
+
+Decrypting a subset, with EVP_DecryptInit_ex
+plain text: hello wor
+EVP_DecryptFinal_ex failed!
+</pre>
+<p>Source:</p>
 <pre>
 /**
  * openssl's EVP library does not prevent you from mixing encryption & decryption functions on a given
