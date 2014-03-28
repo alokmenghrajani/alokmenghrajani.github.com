@@ -1,3 +1,7 @@
+<html>
+<body>
+<p>A minor WTF in openssl. The fix should be pretty trivial...</p>
+<pre>
 /**
  * openssl's EVP library does not prevent you from mixing encryption & decryption functions on a given
  * ctx. This can lead to subtle bugs, where data gets decrypted but not authenticated!
@@ -6,10 +10,10 @@
  * gcc -o openssl_wtf openssl_wtf.c -L/usr/lib/x86_64-linux-gnu/ -lssl -lcrypto
  * ./openssl_wtf
  */
-#include <stdio.h>
-#include <strings.h>
-#include <openssl/bio.h>
-#include <openssl/evp.h>
+#include &lt;stdio.h&gt;
+#include &lt;strings.h&gt;
+#include &lt;openssl/bio.h&gt;
+#include &lt;openssl/evp.h&gt;
 
 void assert(int exp, char *msg) {
   if (!exp) {
@@ -29,7 +33,7 @@ int main(int argc, char **argv) {
   unsigned char pt1[] = {'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'};
   unsigned char ct[sizeof(pt1)];
   unsigned char pt2[sizeof(pt1)];
-  
+
   EVP_CIPHER_CTX ctx;
   int ct_offset, pt2_offset, t, r;
 
@@ -55,17 +59,17 @@ int main(int argc, char **argv) {
 
   /* Save tag */
   EVP_CIPHER_CTX_ctrl(&ctx, EVP_CTRL_GCM_GET_TAG, sizeof(tag), tag);
-  
+
   EVP_CIPHER_CTX_cleanup(&ctx);
 
-  printf("-> everything is fine, let's move on...\n\n");
+  printf("-&gt; everything is fine, let's move on...\n\n");
 
 
   /* Decrypt the cipher text */
   printf("Decrypting, correctly:\n");
   bzero(pt2, sizeof(pt1));
   EVP_CIPHER_CTX_init(&ctx);
-  
+
   r = EVP_DecryptInit_ex(&ctx, EVP_aes_256_gcm(), NULL, key, iv);
   assert(r == 1, "EVP_DecryptInit_ex failed!");
 
@@ -84,19 +88,19 @@ int main(int argc, char **argv) {
   assert(pt2_offset == sizeof(pt1), "unexpected pt2 len");
 
   printf("plain text: %s\n", pt2);
-  for (t=0; t<sizeof(pt1); t++) {
+  for (t=0; t&lt;sizeof(pt1); t++) {
     assert(pt1[t] == pt2[t], "pt2 != p1");
   }
   EVP_CIPHER_CTX_cleanup(&ctx);
 
-  printf("-> everything is fine, let's move on...\n\n");
+  printf("-&gt; everything is fine, let's move on...\n\n");
 
 
   /* Decrypt a subset */
   printf("Decrypting a subset, with EVP_EncryptInit_ex\n");
   bzero(pt2, sizeof(pt1));
   EVP_CIPHER_CTX_init(&ctx);
-  
+
   r = EVP_EncryptInit_ex(&ctx, EVP_aes_256_gcm(), NULL, key, iv);
   assert(r == 1, "EVP_DecryptInit_ex failed!");
 
@@ -116,14 +120,14 @@ int main(int argc, char **argv) {
 
   EVP_CIPHER_CTX_cleanup(&ctx);
 
-  printf("-> everything is fine, let's move on...\n\n");
+  printf("-&gt; everything is fine, let's move on...\n\n");
 
 
   /* Decrypt a subset */
   printf("Decrypting a subset, with EVP_DecryptInit_ex\n");
   bzero(pt2, sizeof(pt1));
   EVP_CIPHER_CTX_init(&ctx);
-  
+
   r = EVP_DecryptInit_ex(&ctx, EVP_aes_256_gcm(), NULL, key, iv);
   assert(r == 1, "EVP_DecryptInit_ex failed!");
 
@@ -143,5 +147,8 @@ int main(int argc, char **argv) {
 
   EVP_CIPHER_CTX_cleanup(&ctx);
 
-  printf("-> everything is fine, let's move on...\n\n"); 
+  printf("-&gt; everything is fine, let's move on...\n\n");
 }
+</pre>
+</body>
+</html>
