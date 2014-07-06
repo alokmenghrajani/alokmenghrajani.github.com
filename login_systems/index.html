@@ -55,6 +55,20 @@
     </section>
 
     <section>
+      <div class="page-header"><h3>Compromise vectors</h3></div>
+      <ul>
+        <li>Weak passwords.</li>
+        <li>Password sharing across many sites.</li>
+        <li>Malicious employee forging a session.</li>
+        <li>Malicious employee adding a backdoor (e.g. adding a security question).</li>
+        <li>Password database leak.</li>
+        <li>Compromised email address &rarr; password reset flow.</li> 
+        <li>Phishing sites.</li> 
+        <li>Malware (in the browser &rarr; malicous plugin, OS &rarr; virus, physical &rarr; keylogger)</li> 
+      </ul>
+    </section> 
+
+    <section>
       <div class="page-header"><h3>Sign up flow</h3></div>
       <p>
         Before a user can log in, they need to create an account.
@@ -194,7 +208,7 @@
         both accounts will get compromised at the same time!
       </p>
       <ul>
-        <li>Security question. Do you do fuzzy matching?</li>
+        <li>Security question. If you do fuzzy matching, you need to store the security answer in plaintext :(</li>
         <li>Require multiple codes, i.e. two factor authentication + email reset link.</li>
         <li>Have pre-vetted friends (aka guardians) receive a piece of the reset code. (see ssss).</li>
         <li>Micro transactions of random amounts, e.g. $0.02 &amp; $0.42 on user's credit card / bank account.</li>
@@ -210,6 +224,9 @@
         <li>
           cookie refreshing: you get the machine cookie, but not the expiry value. Make the machine cookie == timestamp + id, you can
           refresh the cookie before it expires.
+        </li>
+        <li>
+          Knowing that multiple people share a computer &rarr; don't give persistent cookie (or remember higher risk of compromise).
         </li>
         <li>
           Potential privacy issue: ability to tell that two accounts share a computer. In the backend you can store Hash(machine cookie,
