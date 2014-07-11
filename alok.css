@@ -32,6 +32,7 @@ h3 {
 }
 .menu {
   top: 40px;
+  width: 0px;
   position: fixed;
 }
 .profile {
