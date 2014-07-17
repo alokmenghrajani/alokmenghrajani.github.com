@@ -38,6 +38,7 @@ h3 {
 .profile {
   position: relative;
   left: -170px;
+  width: 140px;
   overflow: visible;
 }
 li span {
