@@ -18,7 +18,7 @@ function run() {
 }
 
 function load_hello_world() {
-  $('#input').text(
+  $('#input').val(
 "{ \n\
   \"=str.append\": { \n\
     \"s1\": \"hello\", \n\
@@ -31,7 +31,7 @@ function load_hello_world() {
 }
 
 function load_fact() {
-  $('#input').text(
+  $('#input').val(
 "{ \n\
   \"fact\": { \n\
     \"=if\": { \n\
@@ -48,7 +48,7 @@ function load_fact() {
 }
 
 function load_fib() {
-  $('#input').text(
+  $('#input').val(
 "{ \n\
   \"fib\": { \n\
     \"n_minus_one\": {\"=-\": {\"in1\":\"=n\", \"in2\":1}}, \n\
@@ -68,7 +68,7 @@ function load_fib() {
 }
 
 function load_sort() {
-  $('#input').text(
+  $('#input').val(
 "{ \n\
   \"tail\": { \n\
     \"tail_\": { \n\
