@@ -1,0 +1,65 @@
+==================================================================
+https://keybase.io/alokmenghrajani
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://quaxio.com
+  * I am alokmenghrajani (https://keybase.io/alokmenghrajani) on keybase.
+  * I have a public key with fingerprint 8AF7 C613 4A04 E421 0208  76C2 D257 8FEB 2793 D637
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "8af7c6134a04e421020876c2d2578feb2793d637",
+            "host": "keybase.io",
+            "key_id": "d2578feb2793d637",
+            "uid": "2e9df1064b6aaeaea1197a80a0dd4500",
+            "username": "alokmenghrajani"
+        },
+        "service": {
+            "hostname": "quaxio.com",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1406227511,
+    "expire_in": 157680000,
+    "prev": "fbfe051c6035099238f38124130a94e7fda4457d1bb47257b833dd7477ad8c4f",
+    "seqno": 3,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1
+
+owFtkW1IFEEYx+/OFBMrA6MSK9owS8T2ffYuK1AuFQOPUuQSPGZ3Z89Nb/fcW/XU
+BOmysBJLOxELsgzTEgIrUogIKtMiSi0jhAwqhPoQ9Cb1xWbFvjXzYZjn+f3/8zzz
+nF0VY3PYp0rbv6R3zgD7swcLou3QZHF2IyHqcj3haiQq0dKhqJofGUFD1UzCRQhQ
+ARJPMSwkWcTSFEmTAuAlWqY5IChIpIGTkXkGEJlEhR6yFNhGhCGUpeo4hi8+VcbR
+//A1SwkaOWWFInlW5CFEeFOUE0CBhKQssxxJWmAIGRoMIEzDKr0ygDR/hQGPQE0l
+mjIJnKxVJWSVblWwDFbXwLCqZ0l6ABsEDd3UJb0KxytMM+iyZGZ90OLqkOhbdvCJ
+qibj5rGgFhkhVdcIF4VJyVQtS4oleZoGHEVlEigcVA3kUy2CA7xA4mU9g2qxpSIq
+iOQoiScZjnQ6aUZQGIGiWYohoZNFQJEhy3JApkSRBfhbRIFhZBmwAEBZkFiFsHqq
+1nTCxeAyoR9bhlS/Bs0aAxFNCa321BU2u8MWF+uw5mdLWJn0b6odjnjbjeTtr96G
+72w4XunJPf30ZfNq+VPux6KSxObhzyPvvTvMPb/Bvfaxke/Xim9muMiv23KmZH3R
+PfxirH78z/mM6lH+frGnPMm19uCa/VsjnYMtv0KPpyd2erkTdbdTTU/0arhnLsXd
+f6DQG1uUnxZ7saBhIfKw60m4Y576EJjwgsFpW6tjrvdYXkx70tBkQ51I9JX8bDoT
+7T6aPCQy3WlT+dfb7O5TJ3tb15fmHK5Ke4T6x8p2F1z2SAPxUX3wW+qFrkjb5pZ3
+0YEe5VxG9mgwsnfd82hK0fjsjHCpvyFxYouet7grOe5uy5vJ9F6OdF/Z9Lq8rG9x
+n3fj91vzP2YL/wI=
+=xN1L
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/alokmenghrajani
+
+==================================================================
+
