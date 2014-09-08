@@ -36,19 +36,31 @@
         </p>
         <pre>
 Encrypting:
--&gt; everything is fine, let's move on...
+  assertion ok: EVP_EncryptInit_ex
+  assertion ok: EVP_EncryptUpdate
+  assertion ok: EVP_EncryptFinal_ex
+  assertion ok: check ct1 len
+cipher text: eb87ad64ea2696370c99e6e7
 
-Decrypting, correctly:
+Decrypting:
+  assertion ok: EVP_DecryptInit_ex
+  assertion ok: EVP_DecryptUpdate
+  assertion ok: EVP_DecryptFinal_ex
+  assertion ok: check pt2 len
+  assertion ok: pt2 == pt1
 plain text: hello world
--&gt; everything is fine, let's move on...
 
 Decrypting a subset, with EVP_EncryptInit_ex
-plain text: hello wor
--&gt; everything is fine, let's move on...
+  assertion ok: EVP_DecryptInit_ex
+  assertion ok: EVP_DecryptUpdate
+  assertion ok: EVP_DecryptFinal_ex
+plain text: hello worl
 
 Decrypting a subset, with EVP_DecryptInit_ex
-plain text: hello wor
-EVP_DecryptFinal_ex failed!
+  assertion ok: EVP_DecryptInit_ex
+  assertion ok: EVP_DecryptUpdate
+  ASSERTION FAILURE: EVP_DecryptFinal_ex
+plain text: hello worl
 </pre>
       </div>
     </div>
@@ -70,142 +82,146 @@ EVP_DecryptFinal_ex failed!
 #include &lt;strings.h&gt;
 #include &lt;openssl/bio.h&gt;
 #include &lt;openssl/evp.h&gt;
+#include &lt;openssl/rand.h&gt;
 
 void assert(int exp, char *msg) {
   if (!exp) {
-    printf("%s\n", msg);
-    exit(-1);
+    printf("  ASSERTION FAILURE: %s\n", msg);
+  } else {
+    printf("  assertion ok: %s\n", msg);
   }
 }
 
 int main(int argc, char **argv) {
-  unsigned char *key = "blah";
-
-  unsigned char iv[] = {
-    0x0d, 0x18, 0xe0, 0x6c, 0x7c, 0x72, 0x5a, 0xc9,
-    0xe3, 0x62, 0xe1, 0xce
-  };
+  unsigned char *key = (unsigned char *)"blah";
+ 
+  unsigned char iv[12] = { 0x00 };
   unsigned char tag[16] = { 0x00 };
   unsigned char pt1[] =
-    {'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'};
-  unsigned char ct[sizeof(pt1)];
+    {'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', 0};
+  unsigned char ct1[sizeof(pt1)];
+  unsigned char ct2[sizeof(pt1) - 2];
   unsigned char pt2[sizeof(pt1)];
-
+ 
   EVP_CIPHER_CTX ctx;
   int ct_offset, pt2_offset, t, r;
+ 
+  EVP_CIPHER_CTX_init(&amp;ctx);
+ 
+  /* Initialize IV, don't use pseudo_bytes in real code */
+  RAND_pseudo_bytes(iv, sizeof(iv));
 
-  EVP_CIPHER_CTX_init(&ctx);
-
-
-  /* Encrypt plain text */
+  /* Encrypt the plain text */
   printf("Encrypting:\n");
-  bzero(ct, sizeof(pt1));
-  r = EVP_EncryptInit_ex(&ctx, EVP_aes_256_gcm(), NULL, key, iv);
-  assert(r == 1, "EVP_EncryptInit_ex failed!");
-
+  bzero(ct1, sizeof(ct1));
+  r = EVP_EncryptInit_ex(&amp;ctx, EVP_aes_256_gcm(), NULL, key, iv);
+  assert(r == 1, "EVP_EncryptInit_ex");
+ 
   ct_offset = 0;
-
-  r = EVP_EncryptUpdate(&ctx, ct + ct_offset, &t, pt1, sizeof(pt1));
+ 
+  r = EVP_EncryptUpdate(&amp;ctx, ct1 + ct_offset, &amp;t, pt1, sizeof(pt1));
   ct_offset += t;
-  assert(r == 1, "EVP_EncryptUpdate failed!");
-
-  r = EVP_EncryptFinal_ex(&ctx, ct + ct_offset, &t);
+  assert(r == 1, "EVP_EncryptUpdate");
+ 
+  r = EVP_EncryptFinal_ex(&amp;ctx, ct1 + ct_offset, &amp;t);
   ct_offset += t;
-  assert(r == 1, "EVP_EncryptFinal_ex failed!");
-
-  assert(ct_offset == sizeof(pt1), "unxpected ct len");
-
+  assert(r == 1, "EVP_EncryptFinal_ex");
+ 
+  assert(ct_offset == sizeof(ct1), "check ct1 len");
+ 
   /* Save tag */
-  EVP_CIPHER_CTX_ctrl(&ctx, EVP_CTRL_GCM_GET_TAG, sizeof(tag), tag);
+  EVP_CIPHER_CTX_ctrl(&amp;ctx, EVP_CTRL_GCM_GET_TAG, sizeof(tag), tag);
 
-  EVP_CIPHER_CTX_cleanup(&ctx);
-
-  printf("-&gt; everything is fine, let's move on...\n\n");
-
-
-  /* Decrypt the cipher text */
-  printf("Decrypting, correctly:\n");
-  bzero(pt2, sizeof(pt1));
-  EVP_CIPHER_CTX_init(&ctx);
-
-  r = EVP_DecryptInit_ex(&ctx, EVP_aes_256_gcm(), NULL, key, iv);
-  assert(r == 1, "EVP_DecryptInit_ex failed!");
-
-  EVP_CIPHER_CTX_ctrl(&ctx, EVP_CTRL_GCM_SET_TAG, sizeof(tag), tag);
-
-  pt2_offset = 0;
-
-  r = EVP_DecryptUpdate(&ctx, pt2 + pt2_offset, &t, ct, sizeof(ct));
-  pt2_offset += t;
-  assert(r == 1, "EVP_DecryptUpdate failed!");
-
-  r = EVP_DecryptFinal_ex(&ctx, pt2 + pt2_offset, &t);
-  pt2_offset += t;
-  assert(r == 1, "EVP_DecryptFinal_ex failed!");
-
-  assert(pt2_offset == sizeof(pt1), "unexpected pt2 len");
-
-  printf("plain text: %s\n", pt2);
-  for (t=0; t&lt;sizeof(pt1); t++) {
-    assert(pt1[t] == pt2[t], "pt2 != p1");
+  /* Clean up */
+  EVP_CIPHER_CTX_cleanup(&amp;ctx);
+ 
+  printf("cipher text: ");
+  for (t=0; t&lt;sizeof(ct1); t++) {
+    printf("%02x", ct1[t]);
   }
-  EVP_CIPHER_CTX_cleanup(&ctx);
-
-  printf("-&gt; everything is fine, let's move on...\n\n");
-
+  printf("\n\n");
+ 
+  /* Decrypt the cipher text */
+  printf("Decrypting:\n");
+  bzero(pt2, sizeof(pt1));
+  EVP_CIPHER_CTX_init(&amp;ctx);
+ 
+  r = EVP_DecryptInit_ex(&amp;ctx, EVP_aes_256_gcm(), NULL, key, iv);
+  assert(r == 1, "EVP_DecryptInit_ex");
+ 
+  EVP_CIPHER_CTX_ctrl(&amp;ctx, EVP_CTRL_GCM_SET_TAG, sizeof(tag), tag);
+ 
+  pt2_offset = 0;
+ 
+  r = EVP_DecryptUpdate(&amp;ctx, pt2 + pt2_offset, &amp;t, ct1, sizeof(ct1));
+  pt2_offset += t;
+  assert(r == 1, "EVP_DecryptUpdate");
+ 
+  r = EVP_DecryptFinal_ex(&amp;ctx, pt2 + pt2_offset, &amp;t);
+  pt2_offset += t;
+  assert(r == 1, "EVP_DecryptFinal_ex");
+ 
+  assert(pt2_offset == sizeof(pt1), "check pt2 len");
+ 
+  r = 1;
+  for (t=0; t&lt;sizeof(pt1); t++) {
+    r = r &amp;&amp; (pt1[t] == pt2[t]);
+  }
+  assert(r == 1, "pt2 == pt1");
+  printf("plain text: %s\n", pt2);  
+  EVP_CIPHER_CTX_cleanup(&amp;ctx);
+  printf("\n"); 
+ 
+  /* Truncate the cipher text */
+  for (t=0; t&lt;sizeof(ct2); t++) {
+    ct2[t] = ct1[t];
+  }
 
   /* Decrypt a subset */
   printf("Decrypting a subset, with EVP_EncryptInit_ex\n");
-  bzero(pt2, sizeof(pt1));
-  EVP_CIPHER_CTX_init(&ctx);
-
-  r = EVP_EncryptInit_ex(&ctx, EVP_aes_256_gcm(), NULL, key, iv);
-  assert(r == 1, "EVP_DecryptInit_ex failed!");
-
-  EVP_CIPHER_CTX_ctrl(&ctx, EVP_CTRL_GCM_SET_TAG, sizeof(tag), tag);
-
+  bzero(pt2, sizeof(pt2));
+  EVP_CIPHER_CTX_init(&amp;ctx);
+ 
+  r = EVP_EncryptInit_ex(&amp;ctx, EVP_aes_256_gcm(), NULL, key, iv);
+  assert(r == 1, "EVP_DecryptInit_ex");
+ 
+  EVP_CIPHER_CTX_ctrl(&amp;ctx, EVP_CTRL_GCM_SET_TAG, sizeof(tag), tag);
+ 
   pt2_offset = 0;
-
-  r = EVP_DecryptUpdate(&ctx, pt2 + pt2_offset, &t, ct, sizeof(ct) - 2);
+ 
+  r = EVP_DecryptUpdate(&amp;ctx, pt2 + pt2_offset, &amp;t, ct2, sizeof(ct2));
   pt2_offset += t;
-  assert(r == 1, "EVP_DecryptUpdate failed!");
-
-  r = EVP_DecryptFinal_ex(&ctx, pt2 + pt2_offset, &t);
-  pt2_offset += t;
+  assert(r == 1, "EVP_DecryptUpdate");
+ 
+  r = EVP_DecryptFinal_ex(&amp;ctx, pt2 + pt2_offset, &amp;t);
+  pt2_offset += t; 
+  assert(r == 1, "EVP_DecryptFinal_ex");
   printf("plain text: %s\n", pt2);
-
-  assert(r == 1, "EVP_DecryptFinal_ex failed!");
-
-  EVP_CIPHER_CTX_cleanup(&ctx);
-
-  printf("-&gt; everything is fine, let's move on...\n\n");
-
-
-  /* Decrypt a subset */
+  EVP_CIPHER_CTX_cleanup(&amp;ctx);
+  printf("\n");
+ 
+ 
+  /* Decrypt a subset, correctly this time */
   printf("Decrypting a subset, with EVP_DecryptInit_ex\n");
-  bzero(pt2, sizeof(pt1));
-  EVP_CIPHER_CTX_init(&ctx);
-
-  r = EVP_DecryptInit_ex(&ctx, EVP_aes_256_gcm(), NULL, key, iv);
-  assert(r == 1, "EVP_DecryptInit_ex failed!");
-
-  EVP_CIPHER_CTX_ctrl(&ctx, EVP_CTRL_GCM_SET_TAG, sizeof(tag), tag);
-
+  bzero(pt2, sizeof(pt2));
+  EVP_CIPHER_CTX_init(&amp;ctx);
+ 
+  r = EVP_DecryptInit_ex(&amp;ctx, EVP_aes_256_gcm(), NULL, key, iv);
+  assert(r == 1, "EVP_DecryptInit_ex");
+ 
+  EVP_CIPHER_CTX_ctrl(&amp;ctx, EVP_CTRL_GCM_SET_TAG, sizeof(tag), tag);
+ 
   pt2_offset = 0;
-
-  r = EVP_DecryptUpdate(&ctx, pt2 + pt2_offset, &t, ct, sizeof(ct) - 2);
+ 
+  r = EVP_DecryptUpdate(&amp;ctx, pt2 + pt2_offset, &amp;t, ct2, sizeof(ct2));
   pt2_offset += t;
-  assert(r == 1, "EVP_DecryptUpdate failed!");
-
-  r = EVP_DecryptFinal_ex(&ctx, pt2 + pt2_offset, &t);
+  assert(r == 1, "EVP_DecryptUpdate");
+ 
+  r = EVP_DecryptFinal_ex(&amp;ctx, pt2 + pt2_offset, &amp;t);
   pt2_offset += t;
-  printf("plain text: %s\n", pt2);
-
-  assert(r == 1, "EVP_DecryptFinal_ex failed!");
-
-  EVP_CIPHER_CTX_cleanup(&ctx);
-
-  printf("-&gt; everything is fine, let's move on...\n\n");
+  assert(r == 1, "EVP_DecryptFinal_ex");
+  printf("plain text: %s\n", pt2); 
+  EVP_CIPHER_CTX_cleanup(&amp;ctx);
 }
 </pre>
 
