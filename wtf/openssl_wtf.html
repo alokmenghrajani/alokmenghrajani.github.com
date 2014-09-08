@@ -30,11 +30,11 @@
           does not result in an error. This can lead to subtle security bugs if the
           code is poorly written.
         </p>
+        <p><small>(<a href="https://github.com/openssl/openssl/pull/172" class="external">Pull request</a> to address this issue)</small></p>
         <p>
           A sane library should fail at the EVP_DecryptUpdate on line 123. Running
           this code (openssl 1.0.1) however results in:
         </p>
-        <small><a href="https://github.com/openssl/openssl/pull/172" class="external">Pull request</a> to address this issue</small>
         <pre>
 Encrypting:
   assertion ok: EVP_EncryptInit_ex
