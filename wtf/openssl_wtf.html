@@ -51,7 +51,7 @@ Decrypting:
 plain text: hello world
 
 Decrypting a subset, with EVP_EncryptInit_ex
-  assertion ok: EVP_DecryptInit_ex
+  assertion ok: EVP_EncryptInit_ex
   assertion ok: EVP_DecryptUpdate
   assertion ok: EVP_DecryptFinal_ex
 plain text: hello worl
@@ -183,7 +183,7 @@ int main(int argc, char **argv) {
   EVP_CIPHER_CTX_init(&amp;ctx);
  
   r = EVP_EncryptInit_ex(&amp;ctx, EVP_aes_256_gcm(), NULL, key, iv);
-  assert(r == 1, "EVP_DecryptInit_ex");
+  assert(r == 1, "EVP_EncryptInit_ex");
  
   EVP_CIPHER_CTX_ctrl(&amp;ctx, EVP_CTRL_GCM_SET_TAG, sizeof(tag), tag);
  
