@@ -168,6 +168,8 @@
         <li>If you have persistent cookies, you need a termination flow.</li>
         <li>Make sure session is purged from database + cookie is deleted in browser.</li>
         <li>Do you terminate all sessions or only current session? Some services implement "single sign on", but not "single sign off" :/</li>
+        <li>Make sure back button doesn't give you back a session (cache invalidation). Make sure back button to login page doesn't submit
+          the login form (does the IE bug + double redirect hack still apply?).
       </ol>
     </section>
 
