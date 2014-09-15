@@ -100,6 +100,11 @@
             Normally, you want the sign up flow to end with a session. I.e. don't require the user to login right after
             they created an account.
           </li>
+          <li>
+            If the user fails one piece of the registration flows, sites often require the user to re-enter the password. This
+            can be very annoying if the user only failed the captcha (which are sometimes hard to pass on the first try).
+            Various fixes are possible: do not re-request the password if the captcha failed, do validation in javascript/ajax
+            so that the page does not go through a reload, etc.
         </ol>
       </p>
     </section>
