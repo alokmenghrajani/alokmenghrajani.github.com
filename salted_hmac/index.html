@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Alok Menghrajani's stuff | A less error prone HMAC-based hash construction</title>
+  <meta property="fb:admins" content="536181839"/>
+  <meta name="author" content="Alok Menghrajani"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="../bootstrap-2.3.1.min.css" rel="stylesheet"/>
+  <link href="../alok.css" rel="stylesheet"/>
+  <script type="text/javascript" src="../jquery-1.7.1.min.js"></script>  
+  <link href="../prettify/prettify.css" type="text/css" rel="stylesheet"/>
+  <script type="text/javascript" src="../prettify/prettify.js"></script>  
+</head>
+<body onload="prettyPrint()">
+  <div class="container-narrow">
+    <div class="menu visible-desktop">
+      <div class="profile">
+        <p class="pull-right"><a href="../">&larr; Back to home</a></p>
+      </div>
+    </div>
+
+    <div class="jumbotron">
+      <h1>A less error prone HMAC-based hash construction<br/><small>or how to avoid shooting yourself in the foot with HMAC</small></h1>
+      <div class="lead">
+        <p>
+          HMAC is a cryptographic construction that combines a hash function (e.g. md5 or sha256) and a key. The result of an HMAC function cannot be guessed by an attacker. Web applications therefore typically use HMACs for tokens in emails, tamper proof sessions or hidden form values, csrf protection nounces, OTP, etc.
+        </p>
+        <p>
+          Over the years, I have seen three common types of mistakes when computing/validating HMACs. I will go over each one of these mistakes and propose a construction which is less error prone when used by engineers with insufficient security knowledge.
+        </p>
+      </div>
+    </div>
+
+    <section>
+      <div class="page-header"><h3>Why use HMAC in the first place?</h3></div>
+      <p>
+        I have seen keyed hashes being built with code like <code>hash = md5(secret + data)</code>, which
+        is prone to length extension attacks. Marginally better is <code>hash = md5(secret + ':' + data + ':' + secret)</code> at
+        which point why not just use an HMAC and benefit from the years of cryptographic research that has gone into
+        trying to break the hash construction?
+      </p>
+    </section>
+
+    <section>
+      <div class="page-header"><h3>Non-constant time comparison</h3></div>
+      <p>
+        The most common error I have seen is code using string comparison to validate the HMAC: <code>if (input.hash != hmac(algo, secret, input.data) { throw some exception }</code>.
+      </p>
+      <p>
+        The problem with using a string comparison function is that it does not run in constant time and leaks knowledge about how many bytes in the hash are correct. An attacker can deduct the value for the HMAC by sending a handful of requests to the web server.
+      </p>
+    </section>
+
+    <section>
+      <div class="page-header"><h3>Weakly typed programming languages</h3></div>
+      <p>
+        There are cases where an attacker can control the type of the hash. The simplest case is when the hash is extracted from a piece of JSON data: <code>{"hash":"fc4696cc79...","data":"hello world"}</code>. An attacker can trick the web application to treat the hash as an integer, boolean, or other data types by sending: <code>{"hash":0,"data":"hello world"}</code>.
+      </p>
+      <p>
+        In some weakly typed programming languages (e.g. PHP), when a string is compared to a boolean, the string is converted to a boolean (in PHP, most strings are true). An attacker could therefore simply provide <code>{"hash":true,...}</code> and bypass whatever was being protected by the HMAC.
+      </p>
+      <p>
+        Weakly typed languages usually offer a type preserving comparison function (e.g. === in PHP).
+      </p>
+    </section>
+
+    <section>
+      <div class="page-header"><h3>Difficulty to manage keys</h3></div>
+      <p>
+        The third issue is not a security issue, but if at some point you want to rotate the keys used to generate HMACs, it is not easy to tell which calls to HMAC are being used to generate hashes vs which ones are being used to validate them.
+      </p>
+    </section>
+
+    <section>
+      <div class="page-header"><h3>Creating a pair of keyed-hash functions</h3></div>
+      <p>
+        Here is a proposal for a pair of keyed-hash functions (one function to generate the hash, the other to validate it). The pair of functions does not suffer from the three issues mentioned above. The idea is to salt the HMAC function and fail any attempt to use a string comparison function (with a probability of 99.6%). A nice side effect of using a pair of functions is to contain the hash validation logic in a single place, instead of having potential string comparisons in multiple places in the codebase.
+      </p>
+      <pre class="prettyprint linenums lang-c">
+/**
+ * Generates a salted HMAC for a given piece of data.
+ *
+ * Note: the string returned by this function is one byte longer
+ *       than the result of hmac.
+ */
+function generate_salted_hmac(algo, key, data) {
+  h = hmac(algo, key, data);
+  // Use an IV to "salt" the hmac result
+  iv = random(0, 255);
+  r = String.fromCharCode(iv);
+  for (i=0; i&lt;h.length; i++) {
+    r += String.fromCharCode(h.charCodeAt(i) ^ iv);
+  }
+  return r;
+}
+
+/**
+ * Validates if a given piece of data and its
+ * salted HMACs have been tampered with.
+ */
+function validate_salted_hmac(algo, key, data, hash) {
+  // Recreate the expected HMAC value
+  h = hmac(algo, key, data);
+  iv = hash.charCodeAt(0);
+  r = String.fromCharCode(iv);
+  for (i=0; i&lt;h.length; i++) {
+    r += String.fromCharCode(h.charCodeAt(i) ^ iv);
+  }
+  // Compare r with hash in constant time
+  if (hash.length != r.length) {
+    return false;
+  }
+  ok = 0;
+  for (i=0; i&lt;r.length; i++) {
+    ok = ok | r.charCodeAt(i) ^ hash.charCodeAt(i);
+  }
+  return ok == 0;
+}
+</pre>      
+    </section>
+
+    <section>
+      <h3>Links</h3>
+      <ul>
+        <li><a href="http://en.wikipedia.org/wiki/Hash-based_message_authentication_code" class="external">Wikipedia page</a> about HMAC</li>
+        <li><a href="http://en.wikipedia.org/wiki/Length_extension_attack" class="external">Wikipedia page</a> about hash length extension attacks</li>
+        <li><a href="http://www.cs.rice.edu/~dwallach/pub/crosby-timing2009.pdf" class="external">Opportunities and Limits of Remote
+Timing Attacks</a> by Scott A. Crosby, Dan S. Wallach and Rudolf H. Riedi (Rice University, 2009)</li>
+        <li><a href="http://php.net/manual/en/types.comparisons.php#types.comparisions-loose" class="external">PHP's loose comparison table</a></li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <div style="float: left" class="fb-like" data-send="false" data-width="450" data-show-faces="false"></div>
+      <p class="pull-right visible-desktop">
+        <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues/new">contact me</a>
+        <span class="vbar"></span>
+        <a href="#">back to top &uarr;</a>
+      </p>
+    </footer>
+  </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-2373559-12', 'quaxio.com');
+  ga('send', 'pageview');
+</script>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=202717489767277";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+  </body>
+</html>
