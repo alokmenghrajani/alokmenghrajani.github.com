@@ -36,8 +36,7 @@
           page is exposing access to the message board!
         </p>
         <p>
-          Note: I tested this page with Chrome. Getting things to work on all
-          browsers wasn't my priority. Pull requests welcome :)
+          <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/blob/master/message_board_over_pgp_key_servers.html">Pull requests</a> welcome :)
         </p>
       </div>
 
@@ -45,12 +44,12 @@
         <h2>Leave a message <small>(will be publicly visible)</small></h2>
         <textarea id="msg" placeholder="Your message"></textarea>
         <button onclick="save(); return false">Submit</button>
-        <img id="saveSpinner" src="">
+        <img id="saveSpinner" src="data:image/gif;base64,R0lGODlhAQABAIAAAC9hbG9rACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
         <p id="saveError" class="error"></p>
         <br/><br/>
         <p>
           <a href="#" onclick="load(); return false">
-            Fetch and decrypt all the messages <img id="loadSpinner" src="">
+            Fetch and decode all messages <img id="loadSpinner" src="data:image/gif;base64,R0lGODlhAQABAIAAAC9hbG9rACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
           </a>
         </p>
         <p id="loadError" class="error"></p>
@@ -136,7 +135,7 @@
         if (e.currentTarget.readyState == 4) {
           var keyWithSignatures = readArmored(e.currentTarget.response);
           var packets = keyWithSignatures.toPacketlist();
-          load_(packets, 0, loadFail);
+          load_(packets, packets.length-1, loadFail);
         }
       };
       xhr.onerror = loadFail;
@@ -145,7 +144,7 @@
     }
 
     function load_(packets, offset, onFailure) {
-      if (offset >= packets.length) {
+      if (offset < 0) {
         // We are done
         onFailure("");
         return;
@@ -154,14 +153,14 @@
       // Find signatures. It seems like we need to use a little hack :(
       var packet = packets[offset];
       if (packet.tag !=2) {
-        return load_(packets, offset+1, onFailure);
+        return load_(packets, offset-1, onFailure);
       }
       var keyId = packet.issuerKeyId.toHex();
       if (keyId == publicKeyFingerprint) {
-        return load_(packets, offset+1, onFailure);
+        return load_(packets, offset-1, onFailure);
       }
       if (fetched[keyId]) {
-        return load_(packets, offset+1, onFailure);
+        return load_(packets, offset-1, onFailure);
       }
       console.log("Loading " + keyId);
 
@@ -170,12 +169,12 @@
       xhr.onreadystatechange = function(e) {
         if (e.currentTarget.readyState == 4) {
           load__(e.currentTarget.response, keyId, date);
-          load_(packets, offset+1, onFailure);
+          load_(packets, offset-1, onFailure);
         }
       }
       xhr.onerror = function(err) {
         load__(err.message, keyId, sortKey);
-        load_(packets, offset+1, onFailure);
+        load_(packets, offset-1, onFailure);
       }
       xhr.open("GET", "http://" + server + "/pks/lookup?op=get&options=mr&search=0x"+keyId);
       xhr.send();
