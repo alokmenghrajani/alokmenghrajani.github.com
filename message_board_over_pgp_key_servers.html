@@ -104,8 +104,12 @@
     var publicKey = readArmored(publicKeyData);
     var publicKeyFingerprint = getFingerprint(publicKey);
 
-    //var servers = ['a.keyserver.pki.scientia.net','ams.sks.heypete.com','gpg.n1zyy.com','key.bbs4.us','key.ip6.li','keys-01.licoho.de','keys.alderwick.co.uk','keys.andreas-puls.de','keys.connectical.com','keys.digitalis.org','keys.fedoraproject.org','keys.i2p-projekt.de','keys.internet-sicherheit.de','keys.itunix.eu','keys.jhcloos.com','keys.klaus-uwe.me','keys.nerds.lu','keys.niif.hu','keys.riverwillow.net.au','keys.sflc.info','keys2.alderwick.co.uk','keyserver.adamas.ai','keyserver.bdr.net.pl','keyserver.blupill.com','keyserver.br.nucli.net','keyserver.cbaines.net','keyserver.codinginfinity.com','keyserver.compbiol.bio.tu-darmstadt.de','keyserver.computer42.org','keyserver.durcheinandertal.ch','keyserver.kjsl.com','keyserver.kolosowscy.pl','keyserver.linuxpro.nl','keyserver.lsuhscshreveport.edu','keyserver.matteoswelt.de','keyserver.mattrude.com','keyserver.mesh.deuxpi.ca','keyserver.metalgamer.eu','keyserver.nausch.org','keyserver.nucli.net','keyserver.pkern.at','keyserver.secretresearchfacility.com','keyserver.secure-u.de','keyserver.stack.nl','keyserver.synack.com','keyserver.witopia.net','keyserver.za.nucli.net','keyserver.zap.org.au','keyserver2.computer42.org','keysrv.technl.net','klucze.achjoj.info','pgp.archreactor.org','pgp.benny-baumann.de','pgp.h-ix.net','pgpkey.org','pgpkeys.co.uk','pgpkeys.eu','pgpkeys.mallos.nl','pks.aaiedu.hr','pks.ms.mff.cuni.cz','sks.alpha-labs.net','sks.bootc.eu','sks.disunitedstates.com','sks.es.net','sks.fidocon.de','sks.karotte.org','sks.labs.nic.cz','sks.mrball.net','sks.muc.drweb-av.de','sks.openpgp-keyserver.de','sks.pkqs.net','sks.powdarrmonkey.net','sks.rainydayz.org','sks.research.nxfifteen.me.uk','sks.spodhuis.org','sks.static.lu','sks.undergrid.net','vanunu.calyxinstitute.org','vm-keyserver.spline.inf.fu-berlin.de','zimmermann.mayfirst.org'];
-    var servers = ['pks.ms.mff.cuni.cz'];
+    var servers = [
+      'keys-01.licoho.de',
+      'keys.andreas-puls.de',
+      'pks.ms.mff.cuni.cz',
+      'sks.static.lu'
+    ];
     var server = servers[Math.random()*servers.length|0];
     var fetched = {};
 
