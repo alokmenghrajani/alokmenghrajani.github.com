@@ -203,7 +203,7 @@
       var nodes = messages.childNodes;
       var done = false;
       for (var i=0; i<nodes.length; i++) {
-        if (nodes[i].getAttribute('data-sort') > div.getAttribute('data-sort')) {
+        if (nodes[i].getAttribute('data-sort') < div.getAttribute('data-sort')) {
           messages.insertBefore(div, nodes[i]);
           done = true;
           break;
@@ -231,8 +231,6 @@
         userId: message
       })
       key.then(function(key) {
-        alok = key;
-
         console.log("new key fingerprint: " + getFingerprint(key.toPublic()));
 
         // Sign the public key
@@ -243,7 +241,8 @@
           key,
           function(){
             uploadKey(newPublicKey, function(){
-              saveFail("data saved")
+              saveFail("data saved");
+              load();
             })
           });
       }).catch(function(err) {
