@@ -1,0 +1,90 @@
+<html>
+<body onload="webGLStart();">
+<h1>Work in progress...</h1>
+<p>I'm designing a chess set with the Square logo as the base for the pieces
+(instead of a circle). I'm doing almost everything in JavaScript, exploring ways
+to create 3D objects from 2D curves.</p>
+<p>The simple case is creating a vase by rotating a curve around an axis. I however
+think we can do more interesting things, e.g. rotating a curve around another.</p>
+<p>I'm also trying to do everything from scratch. I.e. I came up with a way
+to combine Bezier curves to build solids, convert curves into points, etc.</p>
+<p>I used Inkscape to draw the base and profiles. I then imported the Inkscape
+data as &lt;svg&gt;.</p>
+<p>The next step was to build the solid (using custom mathematical functions)
+and render the output in WebGL.</p>
+<p>I used Evan Wallace's CSG library for some parts.</p>
+<p>Once I was happy with the result, I used the experimental "save to file"
+feature in Chrome to save the STL data.</p>
+
+<a href="#" onclick="new Piece().loadPawn(); return false">pawn</a> |
+<a href="#" onclick="new Piece().loadKing(); return false">king</a> |
+<a href="#" onclick="new Piece().loadRook(); return false">rook</a> |
+<a href="#" onclick="new Piece().loadBishop(); return false">bishop</a> |
+<a href="#" onclick="new Piece().loadQueen(); return false">queen</a> |
+<a href="#" onclick="new Piece().loadKnight(); return false">knight</a><br/><br/>
+
+<script type="text/javascript" src="csg.js"></script>
+<script type="text/javascript" src="../glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="../webgl-utils.js"></script>
+
+<!-- WebGL boilerplate -->
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec3 vLighting;
+
+    void main(void) {
+      gl_FragColor = vec4(vLighting, 1.0);
+    }
+</script>
+
+<!-- more WebGL boilerplate -->
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexNormal;
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    varying vec3 vLighting;
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        //x = uPMatrix * uMVMatrix * vec4(aVertexNormal.xyz, 1.0);
+        vec3 directionalVector = vec3(0.7, 0.8, 0.75);
+
+        float directional = min(max(dot(aVertexNormal.xyz, directionalVector), 0.0), 0.95);
+
+        vLighting = vec3(directional, directional, directional);
+    }
+</script>
+
+<!-- This div will contain the various curves -->
+<div style="float: left; margin-right: 10px; height: 100%">
+  <svg
+     xmlns="http://www.w3.org/2000/svg"
+     width="200"
+     height="200"
+     style="border: 1px solid black;">
+    <path
+      id="base_path"
+      style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+      d=""/>
+    <path
+      id="profile_path"
+      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+      d=""/>
+  </svg>
+</div>
+
+<!-- This div will contain the canvas where WebGL will render the pieces -->
+<div>
+  <canvas id="canvas" width="300" height="300" style="border: 1px solid black"></canvas>
+  <br/>
+  <i>use your mouse to rotate the piece</i></br>
+  <p>-- Alok</p>
+</div>
+<script type="text/javascript" src="path_to_points.js"></script>
+<script type="text/javascript" src="index.js"></script>
+<script type="text/javascript" src="piece_data.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+---
+layout: post
+title:  '3D printed chess set'
+permalink: '/3d_printed_chess_set/'
+tags: ['3d printing', 'bezier curves', 'experimental user interface']
+---
+<p>I experimented with a novel way to combine code and bezier curves. The goal
+was to make 3d modeling easier, but there's probably a wide range of applications.</p>
+<p>I started by thinking of a bezier curve as a function which takes a <code>t</code>
+parameter and returns a pair of coordinates (<code>f(t) -> (x, y)</code>). I then
+experiemented with combining bezier curves and code (I picked javascript, an
+arbitrary choice). For example, a curve could be used to specify a color, or
+rotation or scale transformation.</p>
+<p>My vision for the whole code &amp; curve manipulation is to feel like
+Bret Taylor's user interface (from "Inventing on Principle"). In order to get
+there, I implemented my own bezier curve editor, a CSG (constructive solid
+geometry) library and started working on a code editor.</p>
+<p>I ran into some numerical stability issues, but some of my early results
+(I combined a chess piece profile with Square's logo) looked promising:</p>
+
+<a href="#" onclick="new Piece().loadPawn(); return false">pawn</a> |
+<a href="#" onclick="new Piece().loadKing(); return false">king</a> |
+<a href="#" onclick="new Piece().loadRook(); return false">rook</a> |
+<a href="#" onclick="new Piece().loadBishop(); return false">bishop</a> |
+<a href="#" onclick="new Piece().loadQueen(); return false">queen</a><br/><br/>
+
+<script type="text/javascript" src="/files/2017/3d_printed_chess_set/csg.js"></script>
+<script type="text/javascript" src="/files/2017/3d_printed_chess_set/glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="/files/2017/3d_printed_chess_set/webgl-utils.js"></script>
+
+<!-- WebGL boilerplate -->
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec3 vLighting;
+
+    void main(void) {
+      gl_FragColor = vec4(vLighting, 1.0);
+    }
+</script>
+
+<!-- more WebGL boilerplate -->
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexNormal;
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    varying vec3 vLighting;
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        //x = uPMatrix * uMVMatrix * vec4(aVertexNormal.xyz, 1.0);
+        vec3 directionalVector = vec3(0.7, 0.8, 0.75);
+
+        float directional = min(max(dot(aVertexNormal.xyz, directionalVector), 0.0), 0.95);
+
+        vLighting = vec3(directional, directional, directional);
+    }
+</script>
+
+<!-- This div will contain the canvas where WebGL will render the pieces -->
+<div>
+  <canvas id="canvas" width="300" height="300" style="border: 1px solid black"></canvas>
+  <br/>
+  <i>use your mouse to rotate the piece</i></br>
+</div>
+<script type="text/javascript" src="/files/2017/3d_printed_chess_set/path_to_points.js"></script>
+<script type="text/javascript" src="/files/2017/3d_printed_chess_set/index.js"></script>
+<script type="text/javascript" src="/files/2017/3d_printed_chess_set/piece_data.js"></script>
+<script>
+window.onload = webGLStart;
+</script>
+</body>
+</html>
