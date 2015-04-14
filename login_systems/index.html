@@ -175,6 +175,7 @@
         <li>Do you terminate all sessions or only current session? Some services implement "single sign on", but not "single sign off" :/</li>
         <li>Make sure back button doesn't give you back a session (cache invalidation). Make sure back button to login page doesn't submit
           the login form (does the IE bug + double redirect hack still apply?).
+        <li>Password change should trigger session termination. Alternatively, there should be a way to view active sessions and terminate "other" sessions.</li>
       </ol>
     </section>
 
@@ -211,6 +212,7 @@
         as well as password change should require a re-authentication to prevent account hijacking.</li>
         <li>Such changes should trigger an email/sms notification.</li>
         <li>Such changes should be reversable (e.g. link or flow to revert the change).</li>
+        <li>The re-auth flow should have the same rate limiting check as a normal login flow.</li>
       </p>
     </section>  
 
