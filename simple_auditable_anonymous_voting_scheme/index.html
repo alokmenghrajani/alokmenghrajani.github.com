@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Alok Menghrajani's stuff | A simple auditable and anonymous voting scheme</title>
+  <meta property="fb:admins" content="536181839"/>
+  <meta name="author" content="Alok Menghrajani"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="../bootstrap-2.3.1.min.css" rel="stylesheet"/>
+  <link href="../alok.css" rel="stylesheet"/>
+</head>
+<body>
+  <div class="container-narrow">
+    <div class="menu visible-desktop">
+      <div class="profile">
+        <p class="pull-right"><a href="../">&larr; Back to home</a></p>
+      </div>
+    </div>
+
+    <div class="jumbotron">
+      <h1>A simple auditable &amp; anonymous voting scheme</h1>
+      <div class="lead">
+        <p>
+          Intuitively, many people think that you cannot have an electronic
+          voting scheme which is auditable (i.e. everyone can count the votes)
+          while preserving privacy (i.e. each individual vote is secret).
+        </p>
+        <p>
+          <a href="http://en.wikipedia.org/wiki/David_Chaum" class="external">David Chaum</a> solved this problem more than 30 years ago using
+          <a href="http://en.wikipedia.org/wiki/Blind_signature" class="external">blind signature</a>.
+          His solution can however be difficult to understand as it involves
+          mathematics and cryptography.
+        </p>
+        <p>
+          I have come up with a much simpler scheme to show that these two
+          properties are not mutually exclusive. If you want to actually
+          implement such a scheme, you probably want to read David Chaum's work.
+        </p>
+        <p>
+          Credits to Manish Jethani and Shaanan Cohney for helping me put all
+          this together.
+        </p>
+      </div>
+    </div>
+
+    <section>
+      <h3>A few assumptions</h3>
+      <ul>
+        <li>
+          We have N people who want to cast a vote on a given matter, e.g.
+          "which color should we paint the bike shed?".
+        </li>
+        <li>
+          Every user has a public-private key pair, which can be used to
+          digitally sign messages. I'm going to skip the process to acquire
+          these keys and how the trust is established.
+        </li>
+        <li>
+          The communication medium is a public forum, e.g. an irc channel or
+          web application. The scheme can be adapted for peer-to-peer networks.
+        </li>
+        <li>
+          Everyone is communicating annonymously using a technology like tor.
+          The scheme can be adapted to not require tor.
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Two phase scheme</h3>
+      <p>
+        The voting process involves two phases.
+      </p>
+      <ol>
+        <li>
+          <p>
+            In the first phase, everyone chooses a random number and casts a vote of
+            the form <code>(random_number, vote)</code>. E.g.
+            <code>(1912, blue)</code>, <code>(7821, red)</code>, etc.
+          </p>
+        </li>
+        <li>
+          <p>
+            Once exactly N votes have been cast, everyone checks that the votes
+            contains their unique <code>(random number, vote)</code> pair and sends
+            <code>signed(privkey, [vote1, vote2, ..., voteN])</code>.
+          </p>
+        </li>
+      </ol>
+      <p>
+        After N people have signed the votes, the process is over.
+        Everyone has confirmed that their vote was included, everyone can
+        compute the outcome of the vote and nobody reveals their individual
+        vote.
+      </p>
+      <p>
+        If somebody votes more than once, either the number of signatures will
+        not match up or there will be more than N votes, in which case the
+        process ends without any result.
+      </p>
+      <p>
+        Keep in mind that this very simple scheme has a caveat: any participant
+        can "jam" the system by continuously casting multiple votes. This
+        is similar to the issue discussed on <a href="http://en.wikipedia.org/wiki/Dining_cryptographers_problem" class="external">dining
+        cryptographers problem</a>.
+      </p>
+    </section>
+
+    <section>
+      <h3>Other approaches</h3>
+      <p>
+        Besides this simple scheme, it is possible to leverage blinding
+        signatures, polynomial computation or homomorphic cryptography
+        to achieve the same properties.
+      </p>
+      <p>
+        I'll let Shaanan write up his solution.
+      </p>
+    </section>
+
+    <section>
+      <h3>Links</h3>
+      <ul>
+        <li><a href="http://en.wikipedia.org/wiki/End-to-end_auditable_voting_systems" class="external">End-to-end auditable voting systems</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/David_Chaum" class="external">
+        David Chaum</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Blind_signature" class="external">Blind signature</a></li>
+        <li><a href="http://crypto.stackexchange.com/questions/3474/approach-towards-anonymous-e-voting" class="external">Approach towards anonymous e-voting</a></li>
+        <li><a href="http://politics.stackexchange.com/questions/17/what-challenges-remain-for-online-voting" class="external">What challenges remain for online voting?</a></li>
+        <li><a href="http://politics.stackexchange.com/questions/24/is-it-possible-to-implement-an-electronic-voting-system-which-is-as-secure-as-pe" class="external">Is it possible to implement an electronic voting system which is as secure as pen-and-paper voting?</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Dining_cryptographers_problem" class="external">Dining cryptographers problem</a></li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <div style="float: left" class="fb-like" data-send="false" data-width="450" data-show-faces="false"></div>
+      <p class="pull-right visible-desktop">
+        <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues/new">contact me</a>
+        <span class="vbar"></span>
+        <a href="#">back to top &uarr;</a>
+      </p>
+    </footer>
+  </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-2373559-12', 'quaxio.com');
+  ga('send', 'pageview');
+</script>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=202717489767277";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+  </body>
+</html>
