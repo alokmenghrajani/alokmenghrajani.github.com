@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Alok Menghrajani's stuff | (legally) Hacking my manager's Facebook account</title>
+  <meta property="fb:admins" content="536181839"/>
+  <meta name="author" content="Alok Menghrajani"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="../bootstrap-2.3.1.min.css" rel="stylesheet"/>
+  <link href="../alok.css" rel="stylesheet"/>
+  <link rel="shortcut icon" href="../favicon.ico">
+</head>
+<body>
+  <div class="container-narrow">
+    <div class="menu visible-desktop">
+      <div class="profile">
+        <p class="pull-right"><a href="../">&larr; Back to home</a></p>
+      </div>
+    </div>
+
+    <div class="jumbotron">
+      <h1>(legally) Hacking into my manager's Facebook account</h1>
+      <div class="lead">
+        <p>
+          <a href="https://www.facebook.com/pedram" class="external">Pedram</a>,
+          the head of the Site Integrity team at Facebook, challenged his team
+          to hack into his account.
+        </p>
+        <p>
+          The Site Integrity team is the team responsible for protecting
+          Facebook's user data. The purpose of the challenge was to be a fun
+          team building exercice, make us think outside the box and
+          learn about techniques malicious people might use against us.
+        </p>
+        <p>
+          Our exact goal was to gain his Facebook password using any method that
+          a non-employee might be able to leverage.
+        </p>
+        <p>
+          I worked with <a href="https://www.facebook.com/dan.muriello">Dan
+          Muriello</a>, and we eventually managed to break into
+          his account. It did require me to camp outside his home for almost two
+          months!
+        </p>
+      </div>
+    </div>
+
+    <section>
+      <h3>Typical (and not so typical) phishing techniques</h3>
+      <p>
+        Various team members initially tried to <a href="http://en.wikipedia.org/wiki/Phishing"
+        class="external">phish</a> him by sending emails or links which would
+        prompt for his Facebook password.
+      </p>
+      <p>
+        This kind of social engineering attacks work when done at a large scale,
+        but is not effective against a specific well informed person. In
+        addition, since Pedram asked us to break into his account, he was
+        always being more careful than the average person.
+      </p>
+      <p>
+        Some people even tried sophisticated tricks, such as
+        <a href="../tab_nabbing/">tab nabbing</a> with no luck.
+      </p>
+    </section>
+
+    <section>
+      <h3>Finding a weak link</h3>
+      <p>
+        Dan and I decided to drive up to Pedram's home and check out his
+        wifi network. The "ether" is inherently a broadcast medium: if you
+        can get on the wireless network, you can potentially see all the
+        communications, which includes sensitive information like passwords.
+      </p>
+      <p>
+        We gathered some basic equipment: a laptop, a wifi card with an external
+        antenna, a magnetic mount antenna for the car, etc. When we arrived
+        outside his home, we discovered a few access points. We identified
+        his network and it was encrypted using <a href="http://en.wikipedia.org/wiki/Wired_Equivalent_Privacy" class="external">WEP</a>, a very weak
+        protocol which was deprecated since 2004.
+      </p>
+      <p>
+        At this point, we thought it was going to be easy (and that we would
+        be done in a few hours). In order to go unnoticed, we stayed a block
+        away from his home. Our signal quality was therefore poor and we didn't
+        grasp what this implied right away.
+      </p>
+      <p>
+        In hindsight we should have probably postponed our work and returned
+        with a larger, perhaps directional antenna. We were stubborn and we
+        decided to stick with the equipment we had. Also, hindsight is always
+        20/20.
+      </p>
+      <p>
+        The known weaknesses in WEP requires capturing a lot of packets,
+        which can be achieved by either waiting for a while or triggering an
+        amplification attack. We had the tools to perform the amplification
+        attack, which involves capturing a specific packet and then replaying
+        it.
+      </p>
+      <p>
+        About an hour later we had enough weak IVs and the wireless password
+        showed up on our screen: we were inside the network!
+      </p>
+    </section>
+
+    <section>
+      <h3>Intercepting the login</h3>
+      <p>
+        Once inside his network we could see his internet traffic but there
+        was a problem: the Facebook login page was served over http but the
+        login form was sent over https, which implies the data is encrypted with
+        SSL/TLS.
+      </p>
+      <p>
+        Thankfully for the internet, SSL/TLS cannot be cracked as easily as
+        WEP. The process of serving the initial page over http is however
+        prone to ssl stripping. If you can modify the traffic, you can
+        remove the https part from the form.
+      </p>
+      <p>
+        Once you are on a network, there are various ways to force all the
+        traffic to flow through your computer: you can spoof dhcp, spoof arp,
+        send fake dns responses, hijack tcp connections, etc. These are all core
+        networking protocols which were designed with the assumption that the
+        underlying network is secure.
+      </p>
+      <p>
+        We decided to write our own ARP spoofing tool in python. We also wrote
+        a proxy which strips the https from the login screen. We could have
+        used various off-the-shelf tools, but we wanted to be careful to only
+        grab the Facebook credentials and no other sensitive information.
+      </p>
+    </section>
+
+    <section>
+      <h3>It's not yet game over</h3>
+      <p>
+        At this point, you might think the game is over. Unfortunately for us,
+        Pedram was mostly using Facebook on his phone and tablet. Our mobile
+        application had hardcoded that the login credentials must be sent over
+        https. It also seems that he was often using a VPN.
+      </p>
+      <p>
+        We decided to simply wait it out, we were convinced he was going
+        to use his laptop without the VPN at some point. We also wrote some
+        software to do things like drop his VPN connection. This would trick
+        him to connect to the network without the VPN (to figure out if the VPN
+        was causing issues or if it was his network), which would give us an
+        opportunity to grab the credentials.
+      </p>
+      <p>
+        In order to remain on his network, we decided to purchase a boat
+        battery. The first few days, I slept in my car. The boat battery gave
+        us a few hours of power but we were able to tune our linux kernel to
+        reduce our power usage: we switched off any service we didn't need,
+        such as the screen. We also moved the operating system and all our
+        files to a usb drive and disabled the hard drive.
+      </p>
+      <p>
+        We scanned the network for any device which we might be able to
+        compromise with no luck. For two months, I would go to work in the
+        morning (charging the boat battery under my desk), drive to Pedram's
+        home in the evening and either sleep in the car or get Dan to drive me
+        home.
+      </p>
+      <p>
+        Pedram did ask us at one point if we were still trying to hack into his
+        account. I told him yes and that we were right outside his door step.
+        He never thought that I meant it literally!
+      </p>
+      <p>
+        <img src="wireless_hacking_gear.jpg">
+      </p>
+    </section>
+
+    <section>
+      <h3>ARP, wireless networks and race conditions</h3>
+      <p>
+        One problem with ARP attacks is race conditions: the original router
+        and our laptop were both competing to route the traffic. Given that
+        our wireless signal was weak, we were mostly losing this race.
+        We eventually found some clever tricks around this issue.
+      </p>
+      <p>
+        This race condition also had another side effect: the firewall would
+        see connections from different internal IP addresses and would drop
+        connections. We knew we had to be careful and not make too many
+        mistakes: Pedram started complaining about network issues and he
+        told us that he was about to go buy a new router!
+      </p>
+    </section>
+
+    <section>
+      <h3>Finally getting the credentials</h3>
+      <p>
+        On June 1st, 2010 we finally stole Pedram's password. We logged into
+        his account and changed his profile picture to a cute fish:
+      </p>
+      <p>
+        <img src="fish.jpg">
+      </p>
+      <p>
+        We then triggered an emergency alert on our IRC channel with a message
+        that boiled down to "check your profile picture and also look outside
+        your window". Pedram came out with a flash light and we all had a great
+        laugh:
+      </p>
+      <p><img src="the_end.jpg"></p>
+    </section>
+
+    <section>
+      <h3>Afterwards...</h3>
+      <ul>
+        <li>
+          <p>
+            To thank us for our hard work, we got to have dinner with
+            <a href="http://en.wikipedia.org/wiki/Clifford_Stoll" class="external">Cliff
+            Stoll</a>. Cliff is a legend in the field of computer security, it's the
+            best gift we could have dreamed of!
+          </p>
+          <p>
+            <img src="cliff_stoll.jpg">
+          </p>
+        </li>
+        <li>
+          <p>
+            Alex Rice, Scott Renfro, a few other engineers and I worked to enable
+            100% https for our users:
+            <a href="https://www.facebook.com/notes/facebook/a-continued-commitment-to-security/486790652130" class="external">A Continued Commitment to Security</a>
+            and made it the default for all users a few years later:
+            <a href="https://www.facebook.com/notes/facebook-engineering/secure-browsing-by-default/10151590414803920" class="external">Secure browsing by default</a>.
+          </p>
+        </li>
+        <li>
+          <p>Pedram ended up buying a new router.</p>
+          <p><img src="new_router.jpg"></p>
+        </li>
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <div style="float: left" class="fb-like" data-send="false" data-width="450" data-show-faces="false"></div>
+      <p class="pull-right visible-desktop">
+        <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues/new">contact me</a>
+        <span class="vbar"></span>
+        <a href="#">back to top &uarr;</a>
+      </p>
+    </footer>
+  </div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-2373559-12', 'quaxio.com');
+  ga('send', 'pageview');
+</script>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=202717489767277";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+  </body>
+</html>
