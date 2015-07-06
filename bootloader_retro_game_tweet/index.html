@@ -29,8 +29,8 @@
           I decided to revisit one such piece of code (nibbles.asm) but turn
           it into a bootable image which can fit in a tweet (140 characters):
         </p>
-        <pre style="code">perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hIS
-HIFLAJrwLCJwgHWtQa4AwvNEOL8JjAke9nrw','A'x587,'Vao='"|base64 -D>f.img</pre>
+        <pre style="code">perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hISH
+IFLAJrwLCJwgHWtQa0C80Q4vwmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img</pre>
       </div>
       <p>
         * Technically, my code isn't a bootloader. A real bootloader does things
@@ -67,8 +67,8 @@ HIFLAJrwLCJwgHWtQa4AwvNEOL8JjAke9nrw','A'x587,'Vao='"|base64 -D>f.img</pre>
 <pre style="code">
 ; floppy.asm: a bootloader(*) + retro game which fits in a tweet:
 ;
-; perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hIS
-; HIFLAJrwLCJwgHWtQa4AwvNEOL8JjAke9nrw','A'x587,'Vao='"|base64 -D>f.img
+; perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hISH
+; IFLAJrwLCJwgHWtQa0C80Q4vwmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img
 ;
 ; to compile and run:
 ; nasm floppy.asm -o floppy.img
@@ -135,7 +135,7 @@ kb_handle_end:
           ; the vertical retrace. Today's computers are however too fast, so
           ; we wrap things in a loop ~1500 times.
           mov       ch, 0x6
-          mov       ax, 0x0b03
+          mov       ah, 0x0b
 wait_loop:
           int 10h
           loop wait_loop
@@ -160,7 +160,7 @@ dw 0xaa55                              ; Boot signature at the end of bootloader
       <img src="screenshot.png">
       <div style="width: 75%; margin: auto">
         <small>
-        The code in the tweet creates a bootable file <code>f.img</code>. You
+        The code in the tweet creates a bootable file <code>boot.img</code>. You
         can boot the code in qemu, virtual box or your favorite virtualization
         software and play with the arrow keys.
         </small>
