@@ -5,6 +5,7 @@
   <meta property="fb:admins" content="536181839"/>
   <meta name="author" content="Alok Menghrajani"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="php, wtf, turtles">
   <link href="../bootstrap-responsive.min.css" rel="stylesheet">
   <link href="../bootstrap.min.css" rel="stylesheet"/>
   <link href="../alok.css" rel="stylesheet"/>
@@ -22,7 +23,7 @@
 
   <div class="hero-unit">
     <h1>PHP turtles</h1>
-    <p>Turtles all the way down</p>
+    <p>Turtles all the way down.</p>
     <div>
       <ol>
         <li><a href="#turtle01">operator precedence</a></li>
@@ -555,6 +556,32 @@ print_r($a); print_r($b);
 &gt; )</pre>
       </div>
     </div>
+    
+    <p>You can accidentally run into this when using foreach loops:</p>
+    <div>
+      <h3>PHP code</h3>
+      <div>
+        <pre class="prettyprint linenums">&lt;?php
+
+$a = array(1); $b = array(1);
+
+foreach ($a as $value) {}
+foreach ($b as &$value) {}
+$x = $a; $y = $b;
+$x[0] = 'a'; $y[0] = 'a';
+print_r($a); print_r($b);
+</pre>
+        <a onclick="$(event.target).hide();$('#turtle13output04').fadeIn()">(click to see output)</a>
+        <pre id="turtle13output04" style="display: none;">&gt; Array
+&gt; (
+&gt;     [0] => 1
+&gt; )
+&gt; Array
+&gt; (
+&gt;     [0] => a
+&gt; )</pre>
+      </div>
+    </div>    
   </section>
 
   <section id="turtle14">
