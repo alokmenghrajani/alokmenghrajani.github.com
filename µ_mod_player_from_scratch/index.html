@@ -12,8 +12,9 @@
   <button onclick="playHappyBirthday()">play happy birthday</button>
   <button onclick="playPopcorn()">play popcorn</button>
   <button onclick="stop()">stop</button>
-  <span>(might only work in some browsers)</span>
 </div>
+
+<canvas id="viz" height="50" style="width: 600; border: 1px solid black"></canvas>
 
 <p>In the 70s and 80s, people were writing the first computer programs that
   played music. In 1987, Amiga programmers invented a file format called mod
@@ -29,6 +30,9 @@ Today, mod files continue to exist, mostly in the chiptune/demoscene culture.</p
 skeleton of a simple player from scratch</a>. After a few hours of coding, I was
 able to parse the patterns and play the notes using the Web Audio API and a
 square wave.</p>
+
+<p>A little later I had a nice visualizer too. The Web Audio API is really
+fun to play with.</p>
 
 <p>I am only playing a single channel without any effects. The next steps
 would be to implement the different types of effects (volume, arpeggio, slides,
@@ -67,6 +71,31 @@ var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 var gain = audioCtx.createGain();
 gain.connect(audioCtx.destination);
 var is_playing = false;
+var visualizer = new Visualizer(viz, gain, 256);
+
+function Visualizer(canvas, gain, size) {
+  this.canvas = canvas;
+  this.analyser = audioCtx.createAnalyser();
+  this.analyser.smoothingTimeConstant = 0.3;
+  this.analyser.fftSize = size;
+  this.data = new Uint8Array(this.analyser.frequencyBinCount);
+  gain.connect(this.analyser);
+  this.ctx = canvas.getContext('2d');
+}
+
+Visualizer.prototype.render = function() {
+  this.analyser.getByteFrequencyData(this.data);
+  var width = this.canvas.width;
+  var height = this.canvas.height;
+  var l = this.data.length;
+  var w = Math.floor(width/l);
+  this.ctx.clearRect(0, 0, width, height);
+  for (var i=0; i<l; i++) {
+    var h = this.data[i]/256*height;
+    this.ctx.fillStyle = 'rgb(50,50,' + (i*256/l) + ')';
+    this.ctx.fillRect(i*w*2, height-h, w, h);
+  }
+}
 
 function Mod(data) {
   this.pos = 0;
@@ -154,11 +183,15 @@ Mod.prototype.parse = function() {
 }
 
 Mod.prototype.scheduleNote = function(channel) {
-  var duration = 1/16;
-  var scheduleAhead = 2; // schedule 2 seconds
   if (!is_playing) {
     return;
   }
+
+  // render visualizer
+  visualizer.render();
+
+  var duration = 1/16;
+  var scheduleAhead = 2; // schedule 2 seconds
   while(1) {
     if (this.next_note > audioCtx.currentTime + scheduleAhead) {
       // too early
