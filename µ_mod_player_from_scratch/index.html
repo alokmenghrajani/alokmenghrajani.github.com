@@ -2,6 +2,13 @@
 <head>
   <style>
   * {font-family: monospace}
+  span { width: 100px; display: inline-block;}
+  .highlight { border: 1px solid black; }
+  #tracker {
+    display: block;
+    height: 11em;
+    overflow: hidden;
+  }
   </style>
 </head>
 <body>
@@ -15,6 +22,7 @@
 </div>
 
 <canvas id="viz" height="50" style="width: 600; border: 1px solid black"></canvas>
+<div id="tracker"></div>
 
 <p>In the 70s and 80s, people were writing the first computer programs that
   played music. In 1987, Amiga programmers invented a file format called mod
@@ -140,10 +148,10 @@ Mod.prototype.parse = function() {
   this.byte();
 
   // 128 bytes: pattern order
-  var total_patterns = 0;
+  this.total_patterns = 0;
   for (var i=0; i<128; i++) {
     this.order[i] = this.byte();
-    total_patterns = Math.max(total_patterns, this.order[i]);
+    this.total_patterns = Math.max(this.total_patterns, this.order[i]);
   }
   this.magic = this.str(4);
   var magic_to_channels = {
@@ -160,23 +168,47 @@ Mod.prototype.parse = function() {
   this.channels = magic_to_channels[this.magic]||15;
 
   // read the patterns
-  for (var i = 0; i <= total_patterns; i++) {
+  for (var i = 0; i <= this.total_patterns; i++) {
     var p=[];
+    var tracker_pattern = document.createElement('div');
+    tracker_pattern.setAttribute('id', i);
+    tracker_pattern.style.setProperty('display', 'none')
+
     // each pattern has 64 rows
     for (var r=0; r<64; r++) {
       var row = [];
+      var tracker_row = document.createElement('div');
+      tracker_row.setAttribute('id', i+'_'+r);
+      var s = document.createElement('span');
+      s.textContent = r;
+      tracker_row.appendChild(s);
+
       // each row has this.channels notes
       for (var c=0; c<this.channels; c++) {
         // each note is 4 bytes
         var period = ((this.byte() & 0xf) << 8) | this.byte();
         this.byte();
         this.byte();
-        row.push({period: period})
+
+        // we could compute this table, but I'm being lazy so I'll hardcode it
+        var periods = {
+          856: "C1",808:"C#1",762:"D1",720:"D#1",678:"E1",640:"F1",604:"F#1",570:"G1",538:"G#1",508:"A1", 480:"A#1",453:"B1",
+          428:"C2",404:"C#2",381:"D2",360:"D#2",339:"E2",320:"F2",302:"F#2",285:"G2",269:"G#2",254:"A2",240:"A#2",226:"B2",
+          214:"C3",202:"C#3",190:"D3",180:"D#3",170:"E3",160:"F3",151:"F#3",143:"G3",135:"G#3",127:"A3",120:"A#3",113:"B3"
+        }
+        var span = document.createElement('span')
+        span.textContent = periods[period]||"";
+        tracker_row.appendChild(span);
+
+        row.push({period: period});
       }
+      tracker_pattern.appendChild(tracker_row);
       p.push(row);
     }
+    tracker.appendChild(tracker_pattern);
     this.patterns.push(p);
   }
+
 
   // free memory
   this.data = "";
@@ -191,7 +223,7 @@ Mod.prototype.scheduleNote = function(channel) {
   visualizer.render();
 
   var duration = 1/16;
-  var scheduleAhead = 2; // schedule 2 seconds
+  var scheduleAhead = 0; // scheduling screws up tracker
   while(1) {
     if (this.next_note > audioCtx.currentTime + scheduleAhead) {
       // too early
@@ -200,6 +232,23 @@ Mod.prototype.scheduleNote = function(channel) {
 
     var p = this.order[this.currentPattern];
     var row = this.patterns[p][this.currentRow];
+    for (var t=0; t<this.total_patterns; t++) {
+      var pattern = document.getElementById(t);
+      if (t == p) {
+        pattern.style.setProperty('display', '')
+      } else {
+        pattern.style.setProperty('display', 'none')
+      }
+    }
+    for (var t=0; t<64; t++) {
+      pattern = document.getElementById(p + "_" + t);
+      if ((t < this.currentRow) || (t > (this.currentRow + 8))) {
+        pattern.style.setProperty('display', 'none')
+      } else {
+        pattern.style.setProperty('display', '')
+      }
+    }
+
     this.currentRow++;
     this.next_note += duration * 2;
     if (this.currentRow == 64) {
@@ -266,6 +315,9 @@ function playHappyBirthday() {
 function stop() {
   gain.gain.value = 0;
   is_playing = false;
+  while (tracker.firstChild) {
+    tracker.removeChild(tracker.firstChild);
+  }
 }
 </script>
 <script src="popcorn.js"></script>
