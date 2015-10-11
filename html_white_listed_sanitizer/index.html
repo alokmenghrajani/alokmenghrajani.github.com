@@ -226,7 +226,7 @@ HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
     // text nodes are always safe
     return node;
   }
-  if (typeof(this.allowedTags[node_name]) == 'undefined') {
+  if (!this.allowedTags.hasOwnProperty(node_name)) {
     // this node isn't allowed
     console.log("forbidden node: " + node_name);
     if (this.escape) {
@@ -241,7 +241,7 @@ HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
   // copy the whitelist of attributes using the per-attribute sanitizer
   for (var n_attr=0; n_attr &lt; node.attributes.length; n_attr++) {
     var attr = node.attributes.item(n_attr).name;
-    if (typeof(this.allowedTags[node_name][attr]) != 'undefined') {
+    if (this.allowedTags[node_name].hasOwnProperty(attr)) {
       var sanitizer = this.allowedTags[node_name][attr];
       copy.setAttribute(attr, sanitizer(node.getAttribute(attr)));
     }
@@ -371,12 +371,14 @@ HtmlWhitelistedSanitizer.prototype.sanitizeString = function(input) {
 }
 
 HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
+  // Note: <form> can have it's nodeName overriden by a child node. It's
+  // not a big deal here, so we can punt on this.
   var node_name = node.nodeName.toLowerCase();
   if ((node_name == '#text') || (node_name == '#comment')) {
     // text nodes are always safe
     return node;
   }
-  if (typeof(this.allowedTags[node_name]) == 'undefined') {
+  if (!this.allowedTags.hasOwnProperty(node_name)) {
     // this node isn't allowed
     console.log("forbidden node: " + node_name);
     if (this.escape) {
@@ -391,7 +393,7 @@ HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
   // copy the whitelist of attributes using the per-attribute sanitizer
   for (var n_attr=0; n_attr < node.attributes.length; n_attr++) {
     var attr = node.attributes.item(n_attr).name;
-    if (typeof(this.allowedTags[node_name][attr]) != 'undefined') {
+    if (this.allowedTags[node_name].hasOwnProperty(attr)) {
       var sanitizer = this.allowedTags[node_name][attr];
       copy.setAttribute(attr, sanitizer(node.getAttribute(attr)));
     }
