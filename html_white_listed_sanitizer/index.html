@@ -222,9 +222,13 @@ HtmlWhitelistedSanitizer.prototype.sanitizeString = function(input) {
 
 HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
   var node_name = node.nodeName.toLowerCase();
-  if ((node_name == '#text') || (node_name == '#comment')) {
+  if (node_name == '#text') {
     // text nodes are always safe
     return node;
+  }
+  if (node_name == '#comment') {
+    // always strip comments
+    return document.createTextNode('');
   }
   if (!this.allowedTags.hasOwnProperty(node_name)) {
     // this node isn't allowed
@@ -374,9 +378,13 @@ HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
   // Note: <form> can have it's nodeName overriden by a child node. It's
   // not a big deal here, so we can punt on this.
   var node_name = node.nodeName.toLowerCase();
-  if ((node_name == '#text') || (node_name == '#comment')) {
+  if (node_name == '#text') {
     // text nodes are always safe
     return node;
+  }
+  if (node_name == '#comment') {
+    // always strip comments
+    return document.createTextNode('');
   }
   if (!this.allowedTags.hasOwnProperty(node_name)) {
     // this node isn't allowed
