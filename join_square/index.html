@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Interested to work at Square?</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+          body{color:#222; font-family:Concourse; position:relative;
+            width:100%; max-width:800px; margin:0 auto; padding:0 20px;
+            box-sizing:border-box}
+          a{color:#2996cc; text-decoration: none}
+          h1{margin-top:6rem; text-align: center}
+    </style>
+  </head>
+  <body>
+    <h1>Interested to work at <a href="https://squareup.com/careers">Square</a>?</h1>
+    <p>
+      I am an engineer on the infosec team. If you are interested in any aspect
+      of computer security (from hardware/low level stuff to backend infrastructure,
+      writing secure web application or working on Android/iOS) you should
+      really consider talking to our team!
+    </p>
+    <p>
+      I love working at Square. I'm helping people grow their businesses.
+      More important for me, I find my peers to be very altruistic: you can walk up to any engineer and ask them questions or schedule a pair-programming session with them,
+      bounce ideas off each other, etc. I have never seen this kind of healthy
+      engineering culture at any other tech company, we have something special going on.
+    </p>
+    <p>
+      Square has a strong open source culture and the infosec team has contributed
+      several projects over the years. For example:
+      <ul>
+        <li><a href="https://github.com/square/keywhiz">keywhiz</a></li>
+        <li><a href="https://github.com/square/go-jose">go-jose</a></li>
+        <li><a href="https://github.com/square/js-jose">js-jose</a></li>
+        <li><a href="https://github.com/square/ghostunnel">ghostunnel</a></li>
+      </ul>
+    </p>
+    <p>
+      Drop me <a href="../contact_me.html">an email</a> if you are interested!
+    </p>
+    <p>P.S.
+      <ol>
+        <li>Many other teams at Square are also hiring. If you want to learn more
+          about various teams, your best
+          resource is <a href="https://squareup.com/careers">our career's page</a>.
+          Remember I'm not a recruiter.</li>
+        <li>Contacting me requires solving a little puzzle. It's a <a href="https://en.wikipedia.org/wiki/Crackme">crackme</a>, written in JavaScript.</li>
+      </ol>
+    </p>
+<script>
+function validate(input) {
+  var a = [101, 97, 115, 121];
+  var b = input+'';
+  var c = b.split('').map(x => x|0);
+  var d = c.map(x => x^x);
+  var e = d.map((x, y) => x + c.map(x => x==y).reduce((x, y) => x+y));
+  var f = e.map((x, y) => x^c[y%c.length]^a[y%a.length]);
+  var g = crypto.subtle.digest('sha-1', new Uint8Array(f));
+  g.then(x => {
+    var g = f.reduce((x, y) => String.fromCharCode(y)+x, '-')
+      + new Uint8Array(x).join('').substr(-10);
+    if (g != 'eysaeysae-9205140152') {
+      throw 'sorry, try again';
+    }
+    alert('success!');
+  }).catch(e => alert(e));
+}
+</script>
+  </body>
+</html>
