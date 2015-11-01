@@ -175,24 +175,30 @@ footer a {
     font-weight: 100;
     margin-top: 4rem;
   }
-  &-post-title {
-    margin-bottom: .25rem;
-    font-weight: 300;
-    a {
-      color: $text-color;
-      
-      &:hover,
-      &:focus {
-        color: $link-color;
-        text-decoration: none;
-        border-bottom: 1px solid $link-color;
-      }
-    }    
-  }  
-  &-post-date {
-    margin-bottom: 2rem;
-    font-size: .75rem;
-    color: $grey-color;
+  &-post {
+    margin-bottom: 2rem;  
+    &-title {
+      margin-bottom: .25rem;
+      font-weight: 300;
+      a {
+        color: $text-color;
+        
+        &:hover,
+        &:focus {
+          color: $link-color;
+          text-decoration: none;
+          border-bottom: 1px solid $link-color;
+        }
+      }    
+    }  
+    &-date {
+      font-size: .75rem;
+      color: $grey-color;
+    }
+    &-tags {
+      font-size: .75rem;
+      color: $grey-color;    
+    }
   }
 }
 
@@ -219,14 +225,20 @@ footer a {
       margin-bottom: 0;
     }
   }
-  &-title {
-    margin-bottom: .25rem;
-  }
-  &-date {
-    margin-bottom: 2rem;
-    font-size: .75rem;
-    color: $grey-color;
+  &-metadata {
     border-bottom: 1px solid $grey-color-light;
+    margin-bottom: 2rem;
+    &-title {
+      margin-bottom: .25rem;
+    }
+    &-date {
+      font-size: .75rem;
+      color: $grey-color;
+    }
+    &-tags {
+      font-size: .75rem;      
+      color: $grey-color;
+    }
   }
   &-nav {
     padding-top: 2em;

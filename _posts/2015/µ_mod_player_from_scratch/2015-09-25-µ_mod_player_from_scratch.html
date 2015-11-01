@@ -1,27 +1,27 @@
-<html>
-<head>
-  <style>
-  * {font-family: monospace}
-  span { width: 100px; display: inline-block;}
-  .highlight { border: 1px solid black; }
+---
+layout: post
+title:  '&#xb5; mod player from scratch'
+permalink: '%c2%b5_mod_player_from_scratch/'
+tags: ['demo scene', 'mod file format', 'music', 'javascript']
+---
+<style>
   #tracker {
+    font-family: monospace;
+    font-size: 1rem;
     display: block;
-    height: 11em;
+    height: 11rem;
     overflow: hidden;
   }
-  </style>
-</head>
-<body>
-<h1>&#xb5; mod player from scratch
-<p style="font-size: x-small">tags: demo scene, mod, music, javascript</p></h1>
-
+  #tracker span {width: 100px; display: inline-block;}
+  canvas {width: 600px; height: 100px; border: 1px solid black;}
+</style>
 <div>
   <button onclick="playHappyBirthday()">play happy birthday</button>
   <button onclick="playPopcorn()">play popcorn</button>
   <button onclick="stop()">stop</button>
 </div>
 
-<canvas id="viz" height="50" style="width: 600; border: 1px solid black"></canvas>
+<canvas id="viz"></canvas>
 <div id="tracker"></div>
 
 <p>In the 70s and 80s, people were writing the first computer programs that
@@ -320,7 +320,7 @@ function stop() {
   }
 }
 </script>
-<script src="popcorn.js"></script>
-<script src="happy_birthday.js"></script>
+<script src="/files/2015/%c2%b5_mod_player_from_scratch/popcorn.js"></script>
+<script src="/files/2015/%c2%b5_mod_player_from_scratch/happy_birthday.js"></script>
 </body>
 </html>
