@@ -1,29 +1,45 @@
 ---
 layout: quaxio
 ---
-<header>
-  <img src="{{ site.baseurl }}/alok.jpg">
-  <h1><a href="{{ site.baseurl }}/">Alok Menghrajani</a></h1>
-  <p>Security engineer at Square. Previously co-author of Hacklang and
-    pushed for adoption of 100% https at Facebook.</p>
-  <p>
-    <a href="https://github.com/alokmenghrajani?tab=repositories">Github</a> |
-    <a href="https://twitter.com/alokmenghrajani">Twitter</a> |
-    <a href="https://facebook.com/alok">Facebook</a>
-  </p>
-</header>
 <div class="index">
-  {% for year in site.data.old_posts %}
-    <h2 class="index-year">{{ year.year }}</h2>
-    {% for post in year.posts %}
-      <div class="index-post">
-        <h3 class="index-post-title">
-          <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
-        </h3>
-        <div class="index-post-date">
-          <time>{{ post.date }}</time>
+  <header>
+    <img src="{{ site.baseurl }}/alok.jpg">
+    <div>
+      <h1><a href="{{ site.baseurl }}/">Alok Menghrajani</a></h1>
+      <p>Security engineer at Square. Previously co-author of Hacklang and
+        pushed for adoption of 100% https at Facebook.</p>
+      <p>
+        <a href="https://github.com/alokmenghrajani?tab=repositories">Github</a> |
+        <a href="https://twitter.com/alokmenghrajani">Twitter</a> |
+        <a href="https://facebook.com/alok">Facebook</a>
+      </p>
+    </div>
+  </header>
+  <div>
+    {% for year in site.data.old_posts %}
+      <h2 class="index-year">{{ year.year }}</h2>
+      {% for post in site.posts %}
+        {{% if post.date.year == year.year %}}
+          <div class="index-post">
+            <h3 class="index-post-title">
+              <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+            </h3>
+            <div class="index-post-date">
+              <time>{{ post.date | date: '%b %d, %Y' }}</time>
+            </div>
+          </div>
+        {{ %endif }}
+      {% endfor %}
+      {% for post in year.posts %}
+        <div class="index-post">
+          <h3 class="index-post-title">
+            <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+          </h3>
+          <div class="index-post-date">
+            <time>{{ post.date }}</time>
+          </div>
         </div>
-      </div>
+      {% endfor %}
     {% endfor %}
-  {% endfor %}
+  </div>
 </div>

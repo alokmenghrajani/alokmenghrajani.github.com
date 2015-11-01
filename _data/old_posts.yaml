@@ -1,9 +1,5 @@
 - year: 2015
   posts:
-    - title: 'Interested to work at Square?'
-      date: Oct 27, 2015
-      url: join_square/index.html
-
     - title: 'A simple yet robust approach to sanitizing user supplied HTML and CSS'
       date: Oct 11, 2015
       url: html_white_listed_sanitizer/
@@ -128,6 +124,10 @@
       date: Sep 13, 2013
       url: react_tictactoe/
 
+    - title: 'Secure browsing by default'
+      date: Jul 31, 2013
+      url: https://www.facebook.com/notes/facebook-engineering/secure-browsing-by-default/10151590414803920
+
     - title: 'Piet: a language where the programs are works of modern art'
       date: Jul 24, 2013
       url: piet/
@@ -226,9 +226,13 @@
       date: Apr 8, 2011
       url: raytracer/
 
+    - title: 'A Continued Commitment to Security'
+      date: Jan 26, 2011
+      url: https://www.facebook.com/notes/486790652130/
+
     - title: 'LinearML: write safe, fast, parallel program without any garbage collector'
       date: Jan 4, 2011
-      url: https://github.com/pikatchu/LinearML/blob/b1a49f153e02f3cffb32784f2eeb7fca017b2791/README" class="external
+      url: https://github.com/pikatchu/LinearML/blob/b1a49f153e02f3cffb32784f2eeb7fca017b2791/README
 
     - title: "(legally) Hacking my manager's Facebook account"
       date: Jun 2010

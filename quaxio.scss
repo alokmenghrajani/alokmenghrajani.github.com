@@ -1,12 +1,20 @@
 ---
 ---
 
+/**
+ * Some variables
+ */
+
 $text-color:       #333;
 $link-color:       #268bd2;
 $grey-color:       #828282;
 $grey-color-light: lighten($grey-color, 40%);
 $grey-color-dark:  darken($grey-color, 25%);
 $spacing-unit:     30px;
+
+/**
+ * Standard stuff. One column, center.
+ */
 
 * {
   -webkit-box-sizing: border-box;
@@ -32,12 +40,27 @@ body {
       -ms-text-size-adjust: 100%;
 }
 
+.container {
+  max-width: 38rem;
+  padding: 2rem 1.5rem;
+  margin-left:  auto;
+  margin-right: auto;
+  
+  @media (min-width: 38rem){
+    padding: 5rem 1rem;
+  }
+}
+
+/**
+ * Use border-bottom to highlight links. Put icon next to links which take you
+ * to other sites.
+ */
+
 a {
-  color: #268bd2;
+  color: $link-color;
   text-decoration: none;
   
-  &:hover,
-  &:focus {
+  &:hover, &:focus {
     color: $link-color;
     text-decoration: none;
     border-bottom: 1px solid $link_color;
@@ -48,6 +71,10 @@ a[href*=http] {
   padding-right: 13px;
   background: center right no-repeat url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=');
 }
+
+/**
+ * Headers
+ */
 
 h1, h2, h3 {
   margin-top: 0;
@@ -73,32 +100,182 @@ h3 {
   font-weight: 400;
 }
 
-section {
-  margin-top: 2em;
+/**
+ * Common stuff
+ */
+header {
+  padding-bottom: 2rem;
+
+  h1 {
+    font-weight: 300;
+    a {
+      color: $text-color;    
+    }
+  }
+  a {
+    background: none !important;
+    padding-right: 0px !important;
+
+    &:hover, &:focus {
+      text-decoration: none;
+      border-bottom: 0;
+    }
+  }
+  span {
+    margin-bottom: .75rem;
+    font-size: 75%;
+    font-weight: 300; 
+  }  
 }
 
 footer {
   text-align: center
 }
-
 footer a {
-  vertical-align: top;
-  display: inline-block;
-  text-align: center;
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+    background: none !important;
+    padding-right: 0px !important;
+
+    &:hover,
+    &:focus {
+      border-bottom: 0;
+      span { color: $link-color; }
+      svg { fill: $link-color; }
+    }
+    span {
+      width: 70px;
+      overflow: visible;
+      color: #fff;
+      display: block;
+    }
+    svg {
+      width: 35px;
+      margin: 0 20px;
+      fill: $grey-color;
+    }
+}
+
+/**
+ * Index page
+ */
+
+.index {
+  header {
+    img {
+      float: left;
+      margin-right: 50px;
+    }
+    div {
+      padding-left: 200px;
+    }
+  }
+  &-year {
+    font-weight: 100;
+    margin-top: 4rem;
+  }
+  &-post-title {
+    margin-bottom: .25rem;
+    font-weight: 300;
+    a {
+      color: $text-color;
+      
+      &:hover,
+      &:focus {
+        color: $link-color;
+        text-decoration: none;
+        border-bottom: 1px solid $link-color;
+      }
+    }    
+  }  
+  &-post-date {
+    margin-bottom: 2rem;
+    font-size: .75rem;
+    color: $grey-color;
+  }
+}
+
+/**
+ * Posts
+ */
+
+.post {
+  header {
+    margin-bottom: 0;
+    img {
+      float: left;
+      margin-right: 20px;
+    }
+    div {
+      padding-left: 70px;
+    }
+    h1 {
+      font-size: 150%;
+
+    }
+    p {
+      font-size: 80%;
+      margin-bottom: 0;
+    }
+  }
+  &-title {
+    margin-bottom: .25rem;
+  }
+  &-date {
+    margin-bottom: 2rem;
+    font-size: .75rem;
+    color: $grey-color;
+    border-bottom: 1px solid $grey-color-light;
+  }
+  &-nav {
+    padding-top: 2em;
+    border-bottom: 1px solid $grey-color-light;
+  }
+}
+
+.nav-previous {
+  border: 1px solid $grey-color;
+  padding: 15px 25px;
+  margin: 20px 0;
+  color: $text-color;
+  font-weight: 800;
+  font-size: 75%;
+  float: left;
 
   &:hover,
   &:focus {
-    border-bottom: 0;
-    span { color: $link-color; }
-    svg { fill: $link-color; }
-  }
-  span { color: #fff; }
-  svg {
-    width: 35px;
-    margin: 0 20px;
-    fill: $grey-color;
+    background-color: $link-color;
+    color: #fff;
+    text-decoration: none;
   }  
 }
+
+.nav-next {
+  border: 1px solid $grey-color;
+  padding: 15px 25px;
+  margin: 20px 0;
+  color: $text-color;
+  font-weight: 800;
+  font-size: 75%;
+  float: right;
+  &:hover,
+  &:focus {
+    background-color: $link-color;
+    color: #fff;
+    text-decoration: none;
+  }    
+}
+
+
+/**
+ * Other stuff (TODO: cleanup)
+ */
+
+section {
+  margin-top: 2em;
+}
+
 
 p {
   margin: 0 0 1rem;
@@ -291,105 +468,6 @@ tbody tr:nth-child(odd) th {
 .lead {
   font-size: 1.25rem;
 }
-
-.container {
-  max-width: 38rem;
-  padding: 2rem 1.5rem;
-  margin-left:  auto;
-  margin-right: auto;
-  
-  @media (min-width: 38rem){
-    padding: 5rem 1rem;
-  }
-}
-
-header {
-  padding-bottom: 2rem;
-
-  img {
-    float: left;
-    margin-right: 50px;
-  }
-
-  h1 {
-    font-weight: 300;
-
-    a {
-      color: $text-color;
-
-      &:hover, &:focus {
-        text-decoration: none;
-        border-bottom: 0;
-      }
-    }
-  }
-}
-
-header span {
-  margin-bottom: .75rem;
-  font-size: 75%;
-  font-weight: 300; 
-}
-
-.index {
-  &-year {
-    font-weight: 100;
-    margin-top: 4rem;
-  }
-  &-post-title {
-    margin-bottom: .25rem;
-    font-weight: 300;
-  }  
-  &-post-date {
-    margin-bottom: 2rem;
-    font-size: .75rem;
-    color: $grey-color;
-  }
-  a {
-    color: $text-color;
-    
-    &:hover,
-    &:focus {
-      color: $link-color;
-      text-decoration: none;
-      border-bottom: 1px solid $link-color;
-    }
-  }
-}
-
-.nav-previous {
-  border: 1px solid $grey-color;
-  padding: 15px 25px;
-  margin: 20px 0;
-  color: $text-color;
-  font-weight: 800;
-  font-size: 75%;
-  float: left;
-
-  &:hover,
-  &:focus {
-    background-color: $link-color;
-    color: #fff;
-    text-decoration: none;
-  }  
-}
-
-.nav-next {
-  border: 1px solid $grey-color;
-  padding: 15px 25px;
-  margin: 20px 0;
-  color: $text-color;
-  font-weight: 800;
-  font-size: 75%;
-  float: right;
-  &:hover,
-  &:focus {
-    background-color: $link-color;
-    color: #fff;
-    text-decoration: none;
-  }    
-}
-
 
 .highlight .hll { background-color: #ffffcc }
 .highlight .c { color: #999988; font-style: italic } /* Comment */
