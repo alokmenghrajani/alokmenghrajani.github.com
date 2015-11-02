@@ -1,0 +1,191 @@
+---
+layout: post
+title:  'Some math puzzles'
+permalink: '/some_math_puzzles/'
+tags: ['math', 'puzzle', 'ibm ponder this']
+---
+<script src="/jquery-1.7.1.min.js"></script>
+<style>
+.hint {
+  font-style: italic;
+}
+</style>
+<div class="lead">
+    <p>
+      Over the years, I have collected a number of math puzzles. My first
+      website was actually just links to such puzzles.
+    </p>
+    <p>
+      This page contains a few of my favorite ones. I have included hints
+      or solutions in some cases.
+    </p>
+    <p>
+      If you enjoy these puzzles, make sure to checkout IBM's
+      <a href="https://www.research.ibm.com/haifa/ponderthis/" class="external">ponder this</a>.
+      IBM has been publishing a fun math puzzle every month since
+      1998. If you email the correct solution they'll add your name
+      to the list of people who have answered correctly. Solutions are
+      posted at the end of every month.
+    </p>
+  </div>
+</div>
+
+<section>
+  <h3>Four corners</h3>
+  <p>
+    There are four towns at the corners of a perfect square with a side of
+    1. Your task is to connect these towns through a railroad such that all
+    the four towns are connected and the length of the railroad is the
+    smallest.
+  </p>
+  <p>
+    As an example, if you connect all the four sides of the square, then the
+    length of the railroad is 4. If you connect any three sides, all the
+    four towns are still connected, and the length is 3. Can you do better?
+  </p>
+  <a onclick="$(event.target).hide();$('#cornershint').fadeIn()">(hint)</a>
+  <p class="hint" id="cornershint" style="display: none;">you can do better than 2 sqrt(2).</p>
+</section>
+
+<section>
+  <h3>Two ropes</h3>
+  <p>
+    We have two ropes made of non-homogeneous material. Each rope takes
+    eactly one hour to burn.
+  </p>
+  <p>
+    How can you measure 45 minutes?
+  </p>
+  <a onclick="$(event.target).hide();$('#tworopeshint').fadeIn()">(hint)</a>
+  <p class="hint" id="tworopeshint" style="display: none;">you can't cut a rope in 3/4
+    and burn it as the ropes are nothomogeneous. Instead, can you think of a way to burn the rope twice
+    as fast?</p>
+</section>
+
+<section>
+  <h3>The traveling bee</h3>
+  <p>
+    Two trains are travelling towards each other at speeds of 30 km/h and
+    20mk/h. When they are 50 km apart, a bee starts flying from one train
+    to the other at an astoundishing speed of 50 km/h. When the bee reaches
+    the other train, it turns around and heads back towards the first train.
+    Then it turns around again, etc. until the trains meet.
+  </p>
+  <p>What is the total distance covered by the bee?</p>
+</section>
+
+<section>
+  <h3>Ages of the three daughters</h3>
+  <p>Two friends meet after a long time. The first one says "I now have
+    3 daughters". The second one asks their age.</p>
+  <p>First person: The product of their ages is 36.</p>
+  <p>Second person: I need some more information.</p>
+  <p>First person: The sum of their ages is the same as the number of that
+    house.</p>
+  <p>Second person: I still can't calculate their ages.</p>
+  <p>First person: Ah right, the eldest is blonde.</p>
+  <p>Second person: I now know their ages.</p>
+  <p>How old are the three girls?</p>
+</section>
+
+<section>
+  <h3>Next number in the series</h3>
+  <p>What is the next number in this series?</p>
+<pre>1
+11
+21
+1211
+111221
+312211
+13112221</pre>
+  <a onclick="$(event.target).hide();$('#nextnumsolution').fadeIn()">(solution)</a>
+  <p class="hint" id="nextnumsolution" style="display: none;">each number "describes" the previous one. The next
+       one is 1113213211.</p>
+</section>
+
+<section>
+  <h3>The farmers</h3>
+  <p>Two farmers share a cow herd. One day, they sell their cows and get as
+    many dollars per cow as the total number of cows they sold.</p>
+  <p>With this money, they buy some sheeps. They pay 10 dollars per sheep,
+    and they buy a lamb with the remaining money.</p>
+  <p>One of the farmers gets the lamb, and the other one gets an extra
+    sheep. The one who gets the sheep must also pay some money to his
+    friend.</p>
+  <p>How much money does he need to pay in order for the trade to be fair?
+    (assuming the amount is an integer)</p>
+  <a onclick="$(event.target).hide();$('#farmershint').fadeIn()">(hint)</a>
+  <p class="hint" id="farmershint" style="display: none;">the solution is unique</p>
+</section>
+
+<section>
+  <h3>Water jugs</h3>
+  <p>You have got two jugs. The first one has got a capacity of 5L and the
+    second one has got a capacity of 7L.</p>
+  <p>You also have some water, and you want to mesure exactly 3L. How can
+  you do that? What other amounts can you measure?</p>
+  <a onclick="$(event.target).hide();$('#waterjugshunt').fadeIn()">(hint)</a>
+  <p class="hint" id="waterjugshunt" style="display: none;">if the two jugs are co-prime
+    you can measure all the numbers from 1 to sum of both numbers</p>
+</section>
+
+<section>
+  <h3>Weighing scale</h3>
+  <p>A merchant has a balance scale and a 40kg stone. He trades his stone
+    against four smaller ones, which all sum up to 40kg. Using only these
+    four smaller stones, he is now able to weigh any item from 1kg to 40kg.
+  </p>
+  <p>What are the weights of these four stones?</p>
+</section>
+
+<section>
+  <h3>The lift</h3>
+  <p>A 30 year old man lives on the 25th floor of a building. Every morning
+    he uses the lift to get to the ground floor and goes to work. When he
+    gets back, he takes the lift up to the 24th floor and then walks his
+    way up the last floor. He has this strange habit of walking the last
+    floor every day, except when it has been a rainy day, in which case he
+    takes the lift straight up to the last floor.
+  </p>
+  <p>Can you explain this man's strange behavior?</p>
+  <a onclick="$(event.target).hide();$('#liftsolution').fadeIn()">(solution)</a>
+  <p class="hint" id="liftsolution" style="display: none;">The man is too short to push
+    the 25th floor button. On rainy days, he is able to use his umbrella.</p>
+</section>
+
+<!--
+<section>
+  <h3>UTF-8</h3>
+  <p>The following is a puzzle which landed me my job at Facebook. It didn't
+    come with a lot of context. The solution is a 7 letter english word.</p>
+  <pre>
+  </pre>
+</section>
+-->
+
+<section>
+  <h3>Prisoners and a light bulb</h3>
+  <p>There are 100 prisoners in solitary cells. In the court yard, there is
+    a light bulb. No prisoner can see the light bulb from his or her own
+    cell.</p>
+  <p>Everyday, the warden picks a random prisoner and that prisoner is
+    allowed to toggle the bulb.</p>
+  <p>The prisoners can assert that all 100 prisoners have
+    been in the court yard. If that is true, they will all be set free.
+    If that isn't true, all the prisoners are executed.
+  </p>
+  <p>On the first night, the prisoners are allowed to get together and
+    come up with a strategy. How can they free themselves?</p>
+</section>
+
+<section>
+  <h3>Mr. P and Mr. S</h3>
+  <p>There are two numbers between 1 and 100. Mr. P knows their product,
+    and Mr. S their sum. They have the following conversation:</p>
+  <p>Mr P: "I don't know the numbers."</p>
+  <p>Mr S: "I knew you didn't. Neither do I."</p>
+  <p>Mr P: "Now I do."</p>
+  <p>Mr S: "Now I do, too."</p>
+  <p>What are the numbers?</p>
+</section>
+
