@@ -4,10 +4,6 @@
       date: Oct 11, 2015
       url: html_white_listed_sanitizer/
 
-    - title: 'Some math puzzles'
-      date: Sep 18, 2015
-      url: some_math_puzzles/
-
     - title: 'Reporting "authenticity_token is not random across page loads" to a bunch of companies'
       date: Aug 13, 2015
       url: https://www.facebook.com/alok/posts/10153879581346840" class="external
@@ -58,18 +54,6 @@
 
 - year: '2014'
   posts:
-    - title: 'A less error prone HMAC-based hash construction'
-      date: Sep 25, 2014
-      url: salted_hmac/
-
-    - title: 'Forth Haiku: mixing math, art and Forth'
-      date: Sep 14, 2014
-      url: forth_haiku/
-
-    - title: 'Working at Square'
-      date: Aug 10, 2014
-      url: 'https://www.facebook.com/notes/alok-menghrajani/working-at-square/10152284423283947'
-
     - title: 'Ajsone: Abusing JSON Esolang'
       date: Jul 21, 2014
       url: ajsone/

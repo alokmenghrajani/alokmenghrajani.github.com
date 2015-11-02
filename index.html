@@ -23,7 +23,7 @@ layout: quaxio
         {% if currentYear == year.year %}
           <div class="index-post">
             <h3 class="index-post-title">
-              <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+              <a href="{{ post.permalink }}">{{ post.title }}</a>
             </h3>
             <div class="index-post-date">
               <time>{{ post.date | date: '%b %d, %Y' }}</time>
