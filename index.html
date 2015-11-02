@@ -19,7 +19,8 @@ layout: quaxio
     {% for year in site.data.old_posts %}
       <h2 class="index-year">{{ year.year }}</h2>
       {% for post in site.posts %}
-        {{% if post.date.year == year.year %}}
+        {% assign currentYear = post.date | date: "%Y" %}
+        {% if currentYear == year.year %}
           <div class="index-post">
             <h3 class="index-post-title">
               <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
@@ -31,7 +32,7 @@ layout: quaxio
               <div class="index-post-tags">{{ post.tags | join: ' | '}}</div>
             {% endif %}
           </div>
-        {{ %endif }}
+        {% endif %}
       {% endfor %}
       {% for post in year.posts %}
         <div class="index-post">

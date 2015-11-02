@@ -1,4 +1,4 @@
-- year: 2015
+- year: '2015'
   posts:
     - title: 'A simple yet robust approach to sanitizing user supplied HTML and CSS'
       date: Oct 11, 2015
@@ -56,7 +56,7 @@
       date: Jan 6, 2015
       url: http://jsfiddle.net/w49x9f1a/
 
-- year: 2014
+- year: '2014'
   posts:
     - title: 'A less error prone HMAC-based hash construction'
       date: Sep 25, 2014
@@ -94,7 +94,7 @@
       date: Jan 20, 2014
       url: invert_three_signals/
 
-- year: 2013
+- year: '2013'
   posts:
     - title: 'CSRF &amp; state mutation on read requests'
       date: Dec 9, 2013
@@ -196,7 +196,7 @@
       date: Feb 7, 2013
       url: wtf/flash.html
 
-- year: 2012 and older
+- year: '2012 and older'
   posts:
     - title: 'fun with HP-15C'
       date: Jun 7, 2012
