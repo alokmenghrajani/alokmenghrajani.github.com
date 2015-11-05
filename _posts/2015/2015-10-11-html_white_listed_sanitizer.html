@@ -1,0 +1,273 @@
+---
+layout: post
+title:  'A simple yet robust approach to sanitizing user supplied HTML and CSS'
+permalink: '/html_white_listed_sanitizer/'
+tags: ['html', 'css', 'parser', 'xss']
+prettyPrint: true
+---
+<div class="lead">
+  <p>
+    Web applications sometimes need to render a piece of HTML
+    that has been supplied by the users. This happens for example when
+    dealing with content ediable/rich text editors or 3rd party
+    integration (ads, games, etc.).
+  </p>
+  <p>
+    The web security risk with having user supplied HTML in a page is obvious:
+    if the page fails to properly strip all scripts, a malicious user will be
+    able to run arbitrary javascript and hijack the user experience (i.e. the
+    page will be vulnerable to XSS).
+  </p>
+  <p>
+    This page presents a a robust way to sanitize user supplied HTML and
+    CSS in ~100 lines of JavaScript.
+  </p>
+</div>
+
+<section>
+  <h3>Traditional approaches</h3>
+  <p>
+    A perfectly safe way to isolate user supplied HTML is to enable a strict
+    CSP ruleset, render the content in an iframe or host the entire page
+    on a sandbox subdomain.
+  </p>
+  <p>
+    In some cases, these isolation methods aren't flexible enough and web
+    developers need a way to sanitize the user supplied HTML. Writing a
+    parser works but can be tricky: you need to handle the complexity of
+    the HTML specification yet only allow a whitelist of tags.
+  </p>
+</section>
+
+<section>
+  <h3>Leveraging the browser</h3>
+  <p>
+    We can however let the browser parse the user supplied string (something
+    browsers are really good at doing) and then recursively sanitize the DOM
+    tree before attaching the content to the page.
+  </p>
+  <p>
+    I believe this approach is very robust for two reasons: we are
+    manipulating DOM nodes instead of strings and there is no risk of
+    "time of check time to use" bugs because the same browser is used
+    to parse the HTML and to render the sanitized string.
+  </p>
+  <p>
+    Given that strings like <code>&lt;sc%00ript&gt;</code> can end up trigger a XSS
+    on a subset of browsers, any method which involves parsing user
+    supplied strings into a tree and then returning a serialized version
+    of a subset of the tree is going to be more bullet-proof than code
+    trying to directly sanitize a string. Failing to write a proper parser
+    is one of the reasons FBML was riddled with security bugs.
+  </p>
+  <p>
+    Finally I like the approach of walking the DOM tree because it's
+    simple and can be implemented in a small amount of JavaScript.
+  </p>
+</section>
+
+<section>
+  <h3>Demo</h3>
+  <p>
+    Below is a demonstration of this method. The input field lets you enter
+    arbitrary HTML but only keeps <code>&lt;a&gt;</code>,
+    <code>&lt;img&gt;</code> <code>&lt;p&gt;</code>,
+    <code>&lt;div&gt;</code>, <code>&lt;span&gt;</code>,
+    <code>&lt;br&gt;</code>, <code>&lt;b&gt;</code>,
+    <code>&lt;i&gt;</code> and <code>&lt;u&gt;</code> tags. In addition, the
+    sanitizer allows setting <code>border</code>, <code>margin</code> and
+    <code>padding</code> CSS properties.
+  </p>
+  <p>
+    Can you get the page to run <code>alert(1)</code>?
+  </p>
+  <div>
+    <textarea id="input" style="width: 800px; height: 100px; border: 1px solid black"><div>
+  <b>Lorem</b> <i>Ipsum</i>
+  <div style="border: 1px solid green; padding: 5px">
+    <a href="http://quaxio.com/html_white_listed_sanitizer/">a link</a> and an image:
+    <p><img src="http://quaxio.com/files/2015/html_white_listed_sanitizer/success.jpeg"></p>
+  </div>
+  <!-- self-closing tags work --> <br/>
+  <div style="border: 1px solid red; padding: 5px">
+    <a href="javascript:alert(1)">this won't run</a>
+    and neither will this: <script>alert(1);</script>
+  </div>
+</div></textarea>
+  </div>
+  <button onclick="runSanitizer()">sanitize!</button>
+  <div><br/></div>
+  <p>Output as string:</p>
+  <pre id="output_as_string"></pre>
+
+  <p>Output as html:</p>
+  <div id="output_as_node" style="border: 1px solid black; padding: 10px"></div>
+</section>
+
+<section>
+  <h3>Code</h3>
+  <pre id="source_code" class="prettyprint linenums lang-js"></pre>
+<script id="html_whitelisted_sanitizer">/**
+ * Sanitizer which filters a set of whitelisted tags, attributes and css.
+ * For now, the whitelist is small but can be easily extended.
+ *
+ * @param bool whether to escape or strip undesirable content.
+ * @param map of allowed tag-attribute-attribute-parsers.
+ * @param array of allowed css elements.
+ * @param array of allowed url scheme
+ */
+function HtmlWhitelistedSanitizer(escape, tags, css, urls) {
+  this.escape = escape;
+  this.allowedTags = tags;
+  this.allowedCss = css;
+
+  if (urls == null) {
+    urls = ['http://', 'https://'];
+  }
+
+  if (this.allowedTags == null) {
+    // Configure small set of default tags
+    var unconstrainted = function(x) { return x; };
+    var globalAttributes = {
+      'dir': unconstrainted,
+      'lang': unconstrainted,
+      'title': unconstrainted
+    };
+    var url_sanitizer = HtmlWhitelistedSanitizer.makeUrlSanitizer(urls);
+    this.allowedTags = {
+      'a': HtmlWhitelistedSanitizer.mergeMap(globalAttributes, {
+          'download': unconstrainted,
+          'href': url_sanitizer,
+          'hreflang': unconstrainted,
+          'ping': url_sanitizer,
+          'rel': unconstrainted,
+          'target': unconstrainted,
+          'type': unconstrainted
+        }),
+      'img': HtmlWhitelistedSanitizer.mergeMap(globalAttributes, {
+          'alt': unconstrainted,
+          'height': unconstrainted,
+          'src': url_sanitizer,
+          'width': unconstrainted
+        }),
+      'p': globalAttributes,
+      'div': globalAttributes,
+      'span': globalAttributes,
+      'br': globalAttributes,
+      'b': globalAttributes,
+      'i': globalAttributes,
+      'u': globalAttributes
+    };
+  }
+  if (this.allowedCss == null) {
+    // Small set of default css properties
+    this.allowedCss = ['border', 'margin', 'padding'];
+  }
+}
+
+HtmlWhitelistedSanitizer.makeUrlSanitizer = function(allowed_urls) {
+  return function(str) {
+    if (!str) { return ''; }
+    for (var i in allowed_urls) {
+      console.log(allowed_urls[i]);
+      if (str.startsWith(allowed_urls[i])) {
+        return str;
+      }
+    }
+    return '';
+  };
+}
+
+HtmlWhitelistedSanitizer.mergeMap = function(/*...*/) {
+  var r = {};
+  for (var arg in arguments) {
+    for (var i in arguments[arg]) {
+      r[i] = arguments[arg][i];
+    }
+  }
+  return r;
+}
+
+HtmlWhitelistedSanitizer.prototype.sanitizeString = function(input) {
+  // Use the browser to parse the input. This won't evaluate any potentially
+  // dangerous scripts since the element isn't attached to the window's document.
+  // To be extra cautious, we could dynamically create an iframe, pass the
+  // input to the iframe and get back the sanitized string.
+  var doc = document.implementation.createHTMLDocument();
+  var div = doc.createElement('div');
+  div.innerHTML = input;
+
+  // Return the sanitized version of the node.
+  return this.sanitizeNode(div).innerHTML;
+}
+
+HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
+  // Note: <form> can have it's nodeName overriden by a child node. It's
+  // not a big deal here, so we can punt on this.
+  var node_name = node.nodeName.toLowerCase();
+  if (node_name == '#text') {
+    // text nodes are always safe
+    return node;
+  }
+  if (node_name == '#comment') {
+    // always strip comments
+    return document.createTextNode('');
+  }
+  if (!this.allowedTags.hasOwnProperty(node_name)) {
+    // this node isn't allowed
+    console.log("forbidden node: " + node_name);
+    if (this.escape) {
+      return document.createTextNode(node.outerHTML);
+    }
+    return document.createTextNode('');
+  }
+
+  // create a new node
+  var copy = document.createElement(node_name);
+
+  // copy the whitelist of attributes using the per-attribute sanitizer
+  for (var n_attr=0; n_attr < node.attributes.length; n_attr++) {
+    var attr = node.attributes.item(n_attr).name;
+    if (this.allowedTags[node_name].hasOwnProperty(attr)) {
+      var sanitizer = this.allowedTags[node_name][attr];
+      copy.setAttribute(attr, sanitizer(node.getAttribute(attr)));
+    }
+  }
+  // copy the whitelist of css properties
+  for (var css in this.allowedCss) {
+    copy.style[this.allowedCss[css]] = node.style[this.allowedCss[css]];
+  }
+
+  // recursively sanitize child nodes
+  while (node.childNodes.length > 0) {
+    var child = node.removeChild(node.childNodes[0]);
+    copy.appendChild(this.sanitizeNode(child));
+  }
+  return copy;
+}
+
+function runSanitizer() {
+  var parser = new HtmlWhitelistedSanitizer(true);
+  var sanitizedHtml = parser.sanitizeString(input.value);
+  output_as_string.textContent = sanitizedHtml;
+  output_as_node.innerHTML = sanitizedHtml;
+}
+source_code.innerText = html_whitelisted_sanitizer.innerText
+</script>
+</section>
+
+<section>
+  <h3>Next steps and links</h3>
+  <p>If people find this sanitizer useful I'm going to turn it in
+    "production" code by adding some tests, getting it peer reviewed and
+    packaging it into a NPM.</p>
+  <p>Credits to Erling for pointing out the need for <code>document.implementation.createHTMLDocument()</code>!</p>
+  <ul>
+    <li><a href="http://theory.stanford.edu/~jcm/papers/esorics09-camera-ready.pdf" class="external">Isolating JavaScript with Filters, Rewriting, and
+Wrappers</a></li>
+    <li><a href="https://github.com/google/caja" class="external">Google Caja</a></li>
+    <li><a href="https://code.google.com/p/es-lab/wiki/SecureEcmaScript" class="external">SES</a></li>
+    <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#attr-sandbox" class="external">Sandboxed iframe</a></li>
+    <li><a href="https://github.com/cure53/DOMPurify" class="external">DOMPurify</a></li>
+  </ul>
+</section>

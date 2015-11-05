@@ -246,6 +246,25 @@ footer a {
   }
 }
 
+.prettyprint {
+  pre {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    font-size: 50%;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-all;
+    // word-wrap: break-word;
+    background-color: #f9f9f9;
+    font-family: Menlo, Monaco, "Courier New", monospace;  
+  }
+  ol {
+    padding-left: -1em;
+  }
+}
+
 .nav-previous {
   border: 1px solid $grey-color;
   padding: 15px 25px;
@@ -279,7 +298,6 @@ footer a {
   }    
 }
 
-
 /**
  * Other stuff (TODO: cleanup)
  */
@@ -287,7 +305,6 @@ footer a {
 section {
   margin-top: 2em;
 }
-
 
 p {
   margin: 0 0 1rem;
@@ -402,13 +419,13 @@ pre {
   margin-top: 0;
   margin-bottom: 1rem;
   padding: 1rem;
-  font-size: .8rem;
+  font-size: 50%;
   line-height: 1.4;
-  white-space: pre;
   white-space: pre-wrap;
   word-break: break-all;
   // word-wrap: break-word;
   background-color: #f9f9f9;
+  font-family: Menlo, Monaco, "Courier New", monospace;  
 }
 
 pre code {

@@ -1,0 +1,380 @@
+---
+layout: post
+title:  'Dodecahedron Folding'
+permalink: '/dodecahedron/'
+tags: ['math', 'computer graphics', 'webgl']
+---
+<!--
+  Thank you for taking the time to look at my code. The code should be pretty well commented.
+
+  One of my goals was to keep the math to a minimum. Instead of computing angles or distances using
+  sin/cos functions, I used a combination of rotations & translations.
+
+  The only time I "cheat" is when converting the slider value into an angle. We need the
+  angle to be between PI and Math.acos(-1/Math.sqrt(5)).
+
+  The math is explained here:
+  http://quaxio.com/files/2014/dodecahedron/old/
+-->
+
+<link rel="stylesheet" href="/jquery-ui-1.7.1.css">
+<script src="/jquery-1.7.1.min.js"></script>
+<script src="/jquery-ui-1.7.1.min.js"></script>
+<script type="text/javascript" src="/glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="/webgl-utils.js"></script>
+<script type="text/javascript" src="/files/2014/dodecahedron/polyfold.js"></script>
+<script id="shader-fs" type="x-shader/x-fragment">
+  // This is boilder plate webgl code.
+  precision mediump float;
+  varying vec4 vColor;
+  void main(void) {
+    gl_FragColor = vColor;
+  }
+</script>
+<script id="shader-vs" type="x-shader/x-vertex">
+  // Again, boiler plate webgl code.
+  attribute vec3 aVertexPosition;
+  attribute vec4 aVertexColor;
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  varying vec4 vColor;
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    vColor = aVertexColor;
+  }
+</script>
+
+<script type="text/javascript">
+  // Create slider using jquery.
+  $(function() {
+    $("#slider").slider({value: 50});
+  });
+
+  // Lots more webgl boiler plate.
+  var gl;
+  function initGL(canvas) {
+    try {
+      gl = canvas.getContext("experimental-webgl");
+      gl.viewportWidth = canvas.width;
+      gl.viewportHeight = canvas.height;
+    } catch (e) {
+    }
+    if (!gl) {
+      alert("Could not initialise WebGL, sorry :-(");
+    }
+  }
+
+  function getShader(gl, id) {
+    var shaderScript = document.getElementById(id);
+    if (!shaderScript) {
+      return null;
+    }
+
+    var str = "";
+    var k = shaderScript.firstChild;
+    while (k) {
+      if (k.nodeType == 3) {
+        str += k.textContent;
+      }
+      k = k.nextSibling;
+    }
+
+    var shader;
+    if (shaderScript.type == "x-shader/x-fragment") {
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (shaderScript.type == "x-shader/x-vertex") {
+      shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+      return null;
+    }
+
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      alert(gl.getShaderInfoLog(shader));
+      return null;
+    }
+
+    return shader;
+  }
+
+  var shaderProgram;
+
+  function initShaders() {
+    var fragmentShader = getShader(gl, "shader-fs");
+    var vertexShader = getShader(gl, "shader-vs");
+
+    shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      alert("Could not initialise shaders");
+    }
+
+    gl.useProgram(shaderProgram);
+
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+    shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+
+    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+  }
+
+  var mvMatrix = mat4.create();
+  var pMatrix = mat4.create();
+
+  function setMatrixUniforms() {
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+  }
+
+  // The interesting code starts here!
+
+  // A pentagon has 5 edges, so we are going to often need to refer to 1/5 of 2*PI
+  // Note: all angles are in radians. If you want to convert radians to degrees:
+  // deg = rad * 180 / PI.
+  var fifthOfCircle = 2.0 * Math.PI / 5.0;
+
+  // Keeps track of the mouse related angle
+  var pos = mat4.create();
+  mat4.identity(this.pos);
+
+  // Keeps track of the fold percentage
+  var foldAngle;
+
+  // Returns the 2D positions of a pentagon.
+  function getPentagon() {
+    var vertices = [];
+
+    var rot = mat4.create();
+    mat4.identity(rot);
+
+    for (var i=0; i<5; i++) {
+      // There is a little bit of magic going on here. Can you explain why the rotation matrix contains the
+      // position of the points we are looking for at offset 0 and 1?
+      vertices.push(rot[0], rot[1]);
+      mat4.rotate(rot, fifthOfCircle, [0, 0, 1]);
+    }
+    return vertices;
+  }
+
+  function buildScene() {
+    var pentagon_2d = getPentagon();
+    // first layer, 1 pentagon
+    var pentagon1 = new Polyfold(pentagon_2d, [0x04/0xff, 0x2a/0xff, 0x2d/0xff, 1.0]);
+    pentagon1.preRender = function() {
+      mat4.translate(mvMatrix, [0, 0.0, -(Math.sqrt(5)-1)]);
+    }
+
+    // second layer, 5 pentagons
+    var pentagons_layer2 = [];
+    for (var i=0; i<5; i++) {
+      var c1 = 0x35 + (i * (0x7f-0x35) / 5);
+      var c2 = 0x8d + (i * (0xff - 0x8d) / 5);
+      var p = new Polyfold(pentagon_2d, [c1 / 0xff, c2 / 0xff, 0xa5 / 0xff, 1.0]);
+      p.addTo(pentagon1);
+      p.preRender = function(i) {
+        mat4.rotate(mvMatrix, fifthOfCircle*i, [0, 0, 1]);
+
+        mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+        mat4.rotate(mvMatrix, -fifthOfCircle, [0, 0, 1]);
+        mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+        mat4.rotate(mvMatrix, fifthOfCircle/2.0, [0, 0, 1]);
+
+        mat4.rotate(mvMatrix, foldAngle, [0, 1, 0]);
+
+        mat4.rotate(mvMatrix, -fifthOfCircle / 2.0, [0, 0, 1]);
+        mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+        mat4.rotate(mvMatrix, fifthOfCircle, [0, 0, 1]);
+        mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+      }.bind(this, i);
+      pentagons_layer2.push(p);
+    }
+
+    // one connecting pentagon
+    var pentagon7 = new Polyfold(pentagon_2d, [0x8e/0xff, 0xfb/0xff, 0xd1/0xff, 1.0]);
+    pentagon7.addTo(pentagons_layer2[0]);
+    pentagon7.preRender = function() {
+      mat4.rotate(mvMatrix, 2*fifthOfCircle, [0, 0, 1]);
+
+      mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+      mat4.rotate(mvMatrix, -fifthOfCircle, [0, 0, 1]);
+      mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+      mat4.rotate(mvMatrix, fifthOfCircle/2.0, [0, 0, 1]);
+
+      mat4.rotate(mvMatrix, -foldAngle, [0, 1, 0]);
+
+      mat4.rotate(mvMatrix, -fifthOfCircle / 2.0, [0, 0, 1]);
+      mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+      mat4.rotate(mvMatrix, fifthOfCircle, [0, 0, 1]);
+      mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+    }
+
+    // top pentagon
+    var pentagon12 = new Polyfold(pentagon_2d, [0xd9/0xff, 0xff/0xff, 0xf2/0xff, 1.0]);
+    pentagon12.addTo(pentagon7);
+    pentagon12.preRender = function() {
+      mat4.rotate(mvMatrix, 2*fifthOfCircle, [0, 0, 1]);
+
+      mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+      mat4.rotate(mvMatrix, -fifthOfCircle, [0, 0, 1]);
+      mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+      mat4.rotate(mvMatrix, fifthOfCircle/2.0, [0, 0, 1]);
+
+      mat4.rotate(mvMatrix, foldAngle, [0, 1, 0]);
+
+      mat4.rotate(mvMatrix, -fifthOfCircle / 2.0, [0, 0, 1]);
+      mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+      mat4.rotate(mvMatrix, fifthOfCircle, [0, 0, 1]);
+      mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+    }
+
+    // third layer, 4 pentagons
+    var pentagons_layer3 = [];
+    for (var i=1; i<5; i++) {
+      var c1 = 0x8e + (i * (0xff-0x8e) / 5);
+      var c2 = 0xfb + (i * (0xff - 0xfb) / 5);
+      var p = new Polyfold(pentagon_2d, [c1 / 0xff, c2 / 0xff, 0xd1 / 0xff, 1.0]);
+      p.addTo(pentagon12);
+      p.preRender = function(i) {
+        mat4.rotate(mvMatrix, fifthOfCircle*i, [0, 0, 1]);
+
+        mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+        mat4.rotate(mvMatrix, -fifthOfCircle, [0, 0, 1]);
+        mat4.translate(mvMatrix, [.5, 0.0, 0.0]);
+        mat4.rotate(mvMatrix, fifthOfCircle/2.0, [0, 0, 1]);
+
+        mat4.rotate(mvMatrix, -foldAngle, [0, 1, 0]);
+
+        mat4.rotate(mvMatrix, -fifthOfCircle / 2.0, [0, 0, 1]);
+        mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+        mat4.rotate(mvMatrix, fifthOfCircle, [0, 0, 1]);
+        mat4.translate(mvMatrix, [-.5, 0.0, 0.0]);
+      }.bind(this, i);
+      pentagons_layer3.push(p);
+    }        
+  }
+
+  function drawScene() {
+    // The slider value is between 0 <-> 100. We need to convert it to PI <-> Math.acos(-1/Math.sqrt(5)).
+    foldAngle = Math.PI - (Math.PI - Math.acos(-1/Math.sqrt(5))) * $("#slider").slider("value") / 100;
+
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+    mat4.identity(mvMatrix);
+
+    // Setup camera
+    mat4.translate(mvMatrix, [0, 0.0, -15.0]);
+    mat4.rotate(mvMatrix, -1.13, [1, 0, 0]);
+
+    // Mouse induced rotation
+    var newRotationMatrix = mat4.create();
+    mat4.identity(newRotationMatrix);
+    mat4.rotate(newRotationMatrix, lastMouseDX * 0.002, [0, 0, 1]);
+    mat4.rotate(newRotationMatrix, lastMouseDY * 0.002, [1, 0, 0]);
+    mat4.multiply(newRotationMatrix, pos, pos);
+    mat4.multiply(mvMatrix, pos);
+
+    Polyfold.render(mvMatrix);
+  }
+
+  function tick() {
+    // make sure we come back here for the next frame
+    requestAnimFrame(tick);
+
+    // draw everything
+    drawScene();
+  }
+
+  var mouseDown = false;
+  var lastMouseX = null;
+  var lastMouseY = null;
+  var lastMouseDX = 10;
+  var lastMouseDY = 0;
+  var lastMouseDownX = null;
+  var lastMouseDownY = null;
+
+  function handleMouseDown(event) {
+    mouseDown = true;
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+    lastMouseDownX = event.clientX;
+    lastMouseDownY = event.clientY;
+  }
+
+  function handleMouseUp(event) {
+    mouseDown = false;
+    var newX = event.clientX;
+    var newY = event.clientY;
+
+    if (((newX - lastMouseDownX)*(newX - lastMouseDownX)
+         + (newY - lastMouseDownY)*(newY - lastMouseDownY)) < 10) {
+      // the mouse was released close to where it went down, so we'll
+      // stop rotating things
+      lastMouseDX = 0;
+      lastMouseDY = 0;
+    }
+  }
+
+  function handleMouseMove(event) {
+    if (!mouseDown) {
+      return;
+    }
+    var newX = event.clientX;
+    var newY = event.clientY;
+
+    lastMouseDX = newX - lastMouseX;
+    lastMouseDY = newY - lastMouseY;
+    lastMouseX = newX;
+    lastMouseY = newY;
+  }
+
+  function webGLStart() {
+    var canvas = document.getElementById("canvas");
+    initGL(canvas);
+    initShaders();
+
+    // Handle mouse movements
+    canvas.onmousedown = handleMouseDown;
+    document.onmouseup = handleMouseUp;
+    document.onmousemove = handleMouseMove;
+
+    gl.clearColor(1, 1, 1, 1);
+    gl.enable(gl.DEPTH_TEST);
+
+    buildScene();
+
+    tick();
+  }
+</script>
+Slider: <div id="slider" style="width: 100px"></div>
+<canvas id="canvas" width="500" height="500"></canvas>
+<section>
+  <div>
+      <p>A dodecahedron is a solid made from 12 pentagons. It is one of only five Platonic solids.</p>
+      <p>
+        My interest in dodecahedron started in 2000, when playing around with Pov-Ray. I still have
+        my <a href="/files/2014/dodecahedron/old/">original code</a>!
+      </p>
+      <p>
+        This version is more fun, because it's interactive. Use the slider to fold or unfold the solid,
+        use the mouse to change the rotation.
+      </p>
+      <h3>Links</h3>
+      <ul>
+        <li><a href="http://en.wikipedia.org/wiki/Dodecahedron" class="external">Dodecahedron Wikipedia</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Platonic_solid" class="external">Platonic Solid Wikipedia</a></li>
+        <li><a href="http://www.povray.org/" class="external">Pov-ray</a></li>
+        <li><a href="../fbcube.html">Some old Webgl project of mine...</a></li>
+      </ul>
+  </div>
+</section>
+<script>webGLStart();</script>
+

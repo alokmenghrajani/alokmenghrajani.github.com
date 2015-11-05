@@ -1,0 +1,35 @@
+---
+layout: post
+title:  'Open sourcing Keywhiz: Protecting infrastructure secrets'
+permalink: '/keywhiz/'
+tags: ['keywhiz', 'open source']
+---
+<div class="lead">
+  <p>
+    We recently open sourced Keywhiz, a piece of infrastructure to manage
+    and distribute secrets across services.
+  </p>
+  <p>
+    A really neat thing about Keywhiz is that the client API uses FUSE.
+    FUSE makes it easy to manage files which contain secrets (think
+    database, web server configs or API keys) without having to actually
+    persist the data on disks.
+  </p>
+  <p>
+    In addition, the code has been battle tested for over 3+ years of use at
+    scale.
+  </p>
+  <p>
+    The server is written in Java and the client filesystem is written
+    in Go.
+  </p>
+</div>
+
+<section>
+  <h3>Links</h3>
+  <ul>
+    <li>The official <a href="https://corner.squareup.com/2015/04/keywhiz.html">Blog post</a></li>
+    <li><a href="https://square.github.io/keywhiz/">Docs</a></li>
+    <li><a href="https://github.com/square/keywhiz">Source code</a></li>
+  </ul>
+</section>

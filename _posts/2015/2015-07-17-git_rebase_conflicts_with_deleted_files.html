@@ -1,0 +1,127 @@
+---
+layout: post
+title:  'git rebase + conflicts with deleted files'
+permalink: '/git_rebase_conflicts_with_deleted_files/'
+tags: ['git']
+---
+<div class="lead">
+  <p>
+    I was migrating a large set of configuration files from one format
+    to another and I discovered that git's <code>ORIG_HEAD</code> is a
+    useful variable when dealing with merge conflicts, specifically
+    if the merge conflict involves deleted files.
+  </p>
+  <p>
+    The migration was partially manual. The process took a few days and
+    fellow engineers were editing the same files, hence the conflicts
+    when rebasing / merging.
+  </p>
+  <p>
+    Here is a recreation of the conflicts I encountered and how I
+    solved them.
+  </p>
+</div>
+
+<section>
+  <h3>Create an empty git repo:</h3>
+</section>
+<pre class="code">
+$ mkdir my_repo; cd my_repo
+$ git init
+$ echo 'hello' > a.txt
+$ echo 'world' >> a.txt
+$ git add a.txt
+$ git commit -m 'first commit'
+</pre>
+
+<section>
+  <h3>Migrate a.txt to b.txt in a branch:</h3>
+</section>
+<pre class="code">
+$ git co -b my_branch
+$ tr '[:lower:]' '[:upper:]' &lt; a.txt &gt; b.txt
+$ git rm a.txt
+$ git add b.txt
+$ git commit -m 'work in progress'
+</pre>
+
+<section>
+  <h3>Simulate changes by other engineers:</h3>
+</section>
+<pre class="code">
+$ git co master
+$ echo 'mountain' >> a.txt
+$ sort -o a.txt a.txt
+$ git add a.txt
+$ git commit -m 'second commit'
+
+$ echo "yolo" >> a.txt
+$ git add a.txt
+$ git commit -m 'third commit'
+</pre>
+
+<section>
+  <h3>Rebase and solve conflict:</h3>
+</section>
+<pre class="code">
+$ git co my_branch
+$ git rebase master
+First, rewinding head to replay your work on top of it...
+Applying: work in progress
+Using index info to reconstruct a base tree...
+M a.txt
+Falling back to patching base and 3-way merge...
+CONFLICT (modify/delete): a.txt deleted in work in progress and modified in HEAD. Version HEAD of a.txt left in tree.
+Failed to merge in the changes.
+Patch failed at 0001 work in progress
+The copy of the patch that failed is found in:
+   .../my_repo/.git/rebase-apply/patch
+
+When you have resolved this problem, run "git rebase --continue".
+If you prefer to skip this patch, run "git rebase --skip" instead.
+To check out the original branch and stop rebasing, run "git rebase --abort".
+
+$ cat a.txt (shows the whole file)
+hello
+world
+mountain
+yolo
+
+$ cat .../my_repo/.git/rebase-apply/patch (shows the changes I made)
+c699b5960ea45b6a712a495fa15ac6bde1f00abf
+diff --git a/a.txt b/a.txt
+deleted file mode 100644
+index 94954abda49de8615a048f8d2e64b5de848e27a1..0000000000000000000000000000000000000000
+--- a/a.txt
++++ /dev/null
+@@ -1,2 +0,0 @@
+-hello
+-world
+diff --git a/b.txt b/b.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..d10a988a38fa4a3ab59866f5105d3264e4649c79
+--- /dev/null
++++ b/b.txt
+@@ -0,0 +1,2 @@
++HELLO
++WORLD
+
+$ git diff ORIG_HEAD^..HEAD (shows what actually changed)
+diff --git a/a.txt b/a.txt
+index 94954ab..d48f0a4 100644
+--- a/a.txt
++++ b/a.txt
+@@ -1,2 +1,4 @@
+ hello
+ world
++mountain
++yolo
+</pre>
+
+<p>We can now resolve the conflict without having to process the entire file again,
+  which saves time if the migration involves a manual process.</p>
+<pre class="code">
+$ echo 'mountain' | tr '[:lower:]' '[:upper:]' >> b.txt
+$ echo 'yolo' | tr '[:lower:]' '[:upper:]' >> b.txt
+$ git rm a.txt; git add b.txt; git rebase --continue
+</pre>

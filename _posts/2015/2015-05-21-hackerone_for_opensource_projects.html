@@ -1,0 +1,78 @@
+---
+layout: post
+title:  'Hackerone for open source projects'
+permalink: '/hackerone_for_opensource_projects/'
+tags: ['hackerone', 'bug bounty', 'open source']
+---
+<div class="lead">
+  <p>
+    It is common for companies to have a bug bounty program which rewards
+    researchers who find and disclose security issues. One popular
+    platform for hosting bug bounty programs is
+    <a href="http://hackerone.com/">hackerone.com</a>.
+  </p>
+  <p>
+    Companies are however reluctant to include their open source code
+    in these programs. At Square, we came up with a solution.
+  </p>
+</div>
+
+<section>
+  <h3>Why care about open source projects?</h3>
+  <p>There are a few reasons why I wanted us to include our open source
+    projects in our bounty program. Some of this code is used in our
+    core infrastructure, we are therefore interested to know about any
+    security issue which might affect our customers' security.</p>
+  <p>I also feel that most current bug bounty programs target web
+    security researchers and exclude people who have other skills
+    (such as backend or static analysis skills). Our open source
+    projects provide a way for security engineers with strong
+    abilities in C, Java, Go, etc. to make meaningful contributions.</p>
+</section>
+
+<section>
+  <h3>Some concerns companies have with bounty programs.</h3>
+  <p>It seems companies are concerned that being able to report bugs in
+    publicly accessible source code will make them waste time and money.
+    They are concerned that they will have to deal with reports
+    about theoritical flaws which cannot be exploited in practice.
+  </p>
+  <p>Being able to see the source code implies being able to see some
+    of the design decisions the authors made. Design improvements
+    are sometimes deemed not worth fixing if it implies a breaking
+    API change.
+  </p>
+  <p>To summarize, being able to see the source code can lead researchers
+    to miss the overall picture, which is taken into account when a decision
+    is made to fix or not to fix a given bug.
+  </p>
+</section>
+
+<section>
+  <h3>Square's bug bounty program.</h3>
+  <p>
+    At Square, we decided to launch a bug bounty program which covers
+    some of the code published at
+    <a href="https://github.com/square/">github.com/square</a>.
+    The open source bug bounty program is separate from the <a href="https://hackerone.com/square">existing bounty</a>.
+  </p>
+  <p>
+    The rules for the two bounty programs are quite different. For example,
+    our open source bounty requires people to submit a proof-of-concept or
+    demonstrate a clear path to exploitation.
+  </p>
+  <p>
+    You can read more about this effort in our
+    <a href="https://corner.squareup.com/2015/05/open-source-bug-bounty.html">blog post</a>.
+  </p>
+  <p>Go hack!</p>
+</section>
+
+<section>
+  <h3>Links</h3>
+  <ul>
+    <li>The launch <a href="https://corner.squareup.com/2015/05/open-source-bug-bounty.html">blog post</a></li>
+    <li><a href="https://hackerone.com/square-open-source">hackerone.com/square-open-source</a>: open source bug bounty program</li>
+    <li><a href="https://hackerone.com/square">hackerone.com/square</a>: bug bounty program which covers our infrastructure</li>
+  </ul>
+</section>

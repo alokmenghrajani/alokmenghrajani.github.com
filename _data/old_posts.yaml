@@ -1,66 +1,15 @@
 - year: '2015'
   posts:
-    - title: 'A simple yet robust approach to sanitizing user supplied HTML and CSS'
-      date: Oct 11, 2015
-      url: html_white_listed_sanitizer/
-
-    - title: 'Reporting "authenticity_token is not random across page loads" to a bunch of companies'
-      date: Aug 13, 2015
-      url: https://www.facebook.com/alok/posts/10153879581346840" class="external
-
-    - title: 'A chess engine to improve my Golang-fu'
-      date: Aug 2, 2015
-      url: go-chess/
-
-    - title: 'My experience serving in the Swiss army'
-      date: Jul 20, 2015
-      url: savatan/
-
-    - title: 'git rebase + conflicts with deleted files'
-      date: Jul 17, 2015
-      url: git_rebase_conflicts_with_deleted_files/
-
-    - title: 'Bootloader + retro game in a tweet'
-      date: Jul 1, 2015
-      url: bootloader_retro_game_tweet/
-
-    - title: 'A simple auditable and anonymous voting scheme'
-      date: Jun 1, 2015
-      url: simple_auditable_anonymous_voting_scheme/
-
-    - title: 'Hackerone for opensource projects'
-      date: May 21, 2015
-      url: hackerone_for_opensource_projects/
-
-    - title: 'Open sourcing Keywhiz: Protecting infrastructure secrets'
-      date: Apr 20, 2015
-      url: keywhiz/
-
-    - title: "I made a PGP quine: a key with the user == the key's fingerprint"
-      date: Jan 19, 2015
-      url: 'http://pgp.mit.edu/pks/lookup?search=B9E39278&op=index" class="external'
-
-    - title: 'WebRTC leaks internal IP addresses'
-      date: Jan 8, 2015
-      url: 'http://jsfiddle.net/alokmenghrajani/0qo4kq7x/'
-
     - title: 'Message Board over PGP Key Servers'
       date: Jan 6, 2015
       url: message_board_over_pgp_key_servers.html
 
-    - title: 'Detecting incognito mode in Chrome'
-      date: Jan 6, 2015
-      url: http://jsfiddle.net/w49x9f1a/
 
 - year: '2014'
   posts:
     - title: 'Ajsone: Abusing JSON Esolang'
       date: Jul 21, 2014
       url: ajsone/
-
-    - title: 'Dodecahedron Folding'
-      date: Jul 11, 2014
-      url: dodecahedron/
 
     - title: 'Rough thoughts on Login Systems'
       date: Jul 5, 2014

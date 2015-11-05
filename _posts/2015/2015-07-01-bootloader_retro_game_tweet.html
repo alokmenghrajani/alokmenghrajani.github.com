@@ -1,0 +1,163 @@
+---
+layout: post
+title:  'Bootloader + retro game in a tweet'
+permalink: '/bootloader_retro_game_tweet/'
+tags: ['bootloader', 'operating systems', 'nibbles', 'code golf']
+---
+  <div class="lead">
+    <p>
+      In 1998, people were competing to write the smallest possible DOS
+      games, a type of progamming competition later coined as
+      "code golfing".
+    </p>
+    <p>
+      I decided to revisit one such piece of code (nibbles.asm) but turn
+      it into a bootable image which can fit in a tweet (140 characters):
+    </p>
+    <pre style="code">perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hISH
+IFLAJrwLCJwgHWtQa0C80Q4vwmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img</pre>
+  </div>
+  <p>
+    * Technically, my code isn't a bootloader. A real bootloader does things
+    like setup the x86 machine in protected mode, load more data from the
+    disk (the BIOS only loads the 512 bytes), etc. I skip all of that
+    and instead setup some registers and jump straight into the game.
+  </p>
+</div>
+
+<section>
+  <h3>hugi.de</h3>
+  <p>
+    A popular website which hosted such competitions was Hugi and one of my
+    favorite entries was "Nibbles by Altair/ODDS entertainment",
+    an implementation of nibbles (also known as Tron or Snakes) in only
+    48 bytes.
+  </p>
+  <p>
+    Unfortunately, running the original code today isn't very easy: you need
+    DOS and if you are running in an emulator, the assumptions the original
+    programmers made about their hardware (and often the speed of their
+    hardware) needs to hold up.
+  </p>
+  <p>
+    I therefore decided to take Altair's code and turn it into a bootable
+    floppy disk. I also made a few tweaks to make the game more playable.
+  </p>
+</section>
+
+<section>
+  <h3>floppy.asm</h3>
+  <p>Here is my code with some of the original comments as well as some
+    of my own.</p>
+<pre style="code">
+; floppy.asm: a bootloader(*) + retro game which fits in a tweet:
+;
+; perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hISH
+; IFLAJrwLCJwgHWtQa0C80Q4vwmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img
+;
+; to compile and run:
+; nasm floppy.asm -o floppy.img
+; qemu-system-i386 -fda floppy.img
+          [bits 16]                    ; This pragma tells the assembler that we
+                                       ; are in 16 bit mode (which is the state
+                                       ; of x86 when it boots from a floppy).
+          [org 0x7C00]                 ; Program to tell the assembler where the
+                                       ; code will be loaded.
+
+          mov dl, 1                    ; Starting direction for the worm.
+          push 0xa000                  ; Load address of VRAM into es.
+          pop es
+
+restart_game:
+          mov       si, 320*100+160    ; worm's starting position, center of
+                                       ; screen
+
+          ; Set video mode. Mode 13h is VGA (1 byte per pixel with the actual
+          ; color stored in a palette), 320x200 total size.
+          mov       ax, 0x0013
+          int       0x10
+
+          ; Draw borders. We assume the default palette will work for us.
+          ; We also assume that starting at the bottom and drawing 2176 pixels
+          ; wraps around and ends up drawing the top + bottom borders.
+          mov       di, 320*199
+          mov       cx, 2176
+          rep
+draw_loop:
+          stosb                        ; draw right border
+          stosb                        ; draw left border
+          add       di, 318
+          jnc       draw_loop          ; notice the jump in the middle of the
+                                       ; rep stosb instruction.
+
+game_loop:
+          ; We read the keyboard input from port 60h. This also reads bytes from
+          ; the mouse, so we need to only handle [up (0x48), left (0x4b),
+          ; right (0x4d), down (0x50)]
+          in        al, 0x60
+          cmp       al, 0x48
+          jb        kb_handle_end
+          cmp       al, 0x50
+          ja        kb_handle_end
+
+          ; At the end AX contains offset displacement (+1, -1, +320, -320)
+          ; based on pressed/released keypad key. I bet there are a few bytes
+          ; to shave around here given the bounds check above.
+          aaa
+          cbw
+          dec       ax
+          dec       ax
+          jc        kb_handle
+          sub       al, 2
+          imul      ax, ax, byte -0x50
+kb_handle:
+          mov       dx, ax
+
+kb_handle_end:
+          add       si, dx
+
+          ; The original code used set pallete command (10h/0bh) to wait for
+          ; the vertical retrace. Today's computers are however too fast, so
+          ; we wrap things in a loop ~1500 times.
+          mov       ch, 0x6
+          mov       ah, 0x0b
+wait_loop:
+          int 10h
+          loop wait_loop
+
+          ; Draw worm and check for collision with parity
+          ; (even parity=collision).
+          xor [es:si], ah
+
+          ; Go back to the main game loop.
+          jpo       game_loop
+
+          ; We hit a wall or the worm. Restart the game.
+          jmp       restart_game
+
+TIMES 510 - ($ - $$) db 0              ; Fill the rest of sector with 0
+dw 0xaa55                              ; Boot signature at the end of bootloader
+</pre>
+</section>
+
+<section>
+  <h3>Screenshot</h3>
+  <img src="/files/2015/bootloader_retro_game_tweet/screenshot.png">
+  <div style="width: 75%; margin: auto">
+    <small>
+    The code in the tweet creates a bootable file <code>boot.img</code>. You
+    can boot the code in qemu, virtual box or your favorite virtualization
+    software and play the game with the arrow keys.
+    </small>
+  </div>
+</section>
+
+<section>
+  <h3>Links</h3>
+  <ul>
+    <li><a href="http://www.hugi.scene.org/compo/compoold.htm">Hugi assembly size optimization competition</a></li>
+    <li><a href="/files/2015/bootloader_retro_game_tweet/NIBBLES.ASM">Altair's original source code</a></li>
+    <li><a href="http://viralpatel.net/taj/tutorial/hello_world_bootloader.php">Hello world bootloader</a></li>
+    <li><a href="http://wiki.osdev.org/OSKit">OSKit wiki</a></li>
+  </ul>
+</section>
