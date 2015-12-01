@@ -45,7 +45,7 @@ body {
   padding: 2rem 1.5rem;
   margin-left:  auto;
   margin-right: auto;
-  
+
   @media (min-width: 38rem){
     padding: 5rem 1rem;
   }
@@ -59,7 +59,7 @@ body {
 a {
   color: $link-color;
   text-decoration: none;
-  
+
   &:hover, &:focus {
     color: $link-color;
     text-decoration: none;
@@ -86,13 +86,19 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 250%;
+  font-size: 150%;
   font-weight: 300;
+  @media (min-width: 38rem){
+    font-size: 250%;
+  }
 }
 
 h2 {
-  font-size: 175%;
+  font-size: 150%;
   font-weight: 400;
+  @media (min-width: 38rem){
+    font-size: 175%;
+  }
 }
 
 h3 {
@@ -109,7 +115,7 @@ header {
   h1 {
     font-weight: 300;
     a {
-      color: $text-color;    
+      color: $text-color;
     }
   }
   a {
@@ -124,8 +130,8 @@ header {
   span {
     margin-bottom: .75rem;
     font-size: 75%;
-    font-weight: 300; 
-  }  
+    font-weight: 300;
+  }
 }
 
 footer {
@@ -145,14 +151,14 @@ footer a {
       svg { fill: $link-color; }
     }
     span {
-      width: 70px;
+      width: 60px;
       overflow: visible;
       color: #fff;
       display: block;
     }
     svg {
-      width: 35px;
-      margin: 0 20px;
+      width: 30px;
+      margin: 0 10px;
       fill: $grey-color;
     }
 }
@@ -163,12 +169,13 @@ footer a {
 
 .index {
   header {
-    img {
+    .first {
       float: left;
-      margin-right: 50px;
+      margin-right: 10px;
+      max-width: 20%;
     }
     div {
-      padding-left: 200px;
+      display: table-cell;
     }
   }
   &-year {
@@ -176,28 +183,28 @@ footer a {
     margin-top: 4rem;
   }
   &-post {
-    margin-bottom: 2rem;  
+    margin-bottom: 2rem;
     &-title {
       margin-bottom: .25rem;
       font-weight: 300;
       a {
         color: $text-color;
-        
+
         &:hover,
         &:focus {
           color: $link-color;
           text-decoration: none;
           border-bottom: 1px solid $link-color;
         }
-      }    
-    }  
+      }
+    }
     &-date {
       font-size: .75rem;
       color: $grey-color;
     }
     &-tags {
       font-size: .75rem;
-      color: $grey-color;    
+      color: $grey-color;
     }
   }
 }
@@ -236,7 +243,7 @@ footer a {
       color: $grey-color;
     }
     &-tags {
-      font-size: .75rem;      
+      font-size: .75rem;
       color: $grey-color;
     }
   }
@@ -258,7 +265,7 @@ footer a {
     word-break: break-all;
     // word-wrap: break-word;
     background-color: #f9f9f9;
-    font-family: Menlo, Monaco, "Courier New", monospace;  
+    font-family: Menlo, Monaco, "Courier New", monospace;
   }
   ol {
     padding-left: -1em;
@@ -279,7 +286,7 @@ footer a {
     background-color: $link-color;
     color: #fff;
     text-decoration: none;
-  }  
+  }
 }
 
 .nav-next {
@@ -295,7 +302,7 @@ footer a {
     background-color: $link-color;
     color: #fff;
     text-decoration: none;
-  }    
+  }
 }
 
 /**
@@ -326,11 +333,11 @@ dd {
 ul {
   list-style: bullet;
   padding-left: 1em;
-  
+
   li {
     margin-bottom: .25rem;
   }
-  
+
   ul,
   ol {
     list-style: circle;
@@ -342,11 +349,11 @@ ul {
 ol {
   list-style: inside decimal;
   padding-left: 0;
-  
+
   li {
     margin-bottom: .25rem;
   }
-  
+
   ul,
   ol {
     margin-top: .25rem;
@@ -395,7 +402,7 @@ blockquote {
   margin: 0 2rem 1rem 0;
   color: #999;
   border-left: .5rem solid #e5e5e5;
-  
+
   p:last-child {
     margin-bottom: 0;
   }
@@ -425,7 +432,7 @@ pre {
   word-break: break-all;
   // word-wrap: break-word;
   background-color: #f9f9f9;
-  font-family: Menlo, Monaco, "Courier New", monospace;  
+  font-family: Menlo, Monaco, "Courier New", monospace;
 }
 
 pre code {
