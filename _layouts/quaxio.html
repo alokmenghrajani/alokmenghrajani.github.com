@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+  <head>  
     <meta charset="utf-8"/>
+    <title>{% if page.title %}{{ page.title }}{% else %}Alok Menghrajani's Blog{% endif %}</title>    
     <meta name="author" content="Alok Menghrajani"/>
     <meta name="description" content="Security engineer at Square. Previously co-author of Hacklang and pushed for adoption of 100% https at Facebook."/>
     <meta property="fb:admins" content="536181839"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}Alok Menghrajani's Blog{% endif %}"/>
     <meta name="p:domain_verify" content="c8d7b1dec1e48b1046efe5f183a5cc4a"/>
     <link rel="shortcut icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% if page.title %}{{ page.title }}{% else %}{{ site.name }}{% endif %}</title>
     <link rel="stylesheet" href="{{ site.baseurl }}/quaxio.css"/>
   </head>
   <body>
