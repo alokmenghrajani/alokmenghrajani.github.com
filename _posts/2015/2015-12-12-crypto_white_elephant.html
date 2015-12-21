@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Crypto white elephant puzzle'
+title:  'Crypto white elephant gift exchange puzzle'
 permalink: '/crypto_white_elephant/index.html'
----                 
+---
 <div class="lead">
   <p>Seven cryptographers would like to exchange presents with each other. They
   are geographically located in different places, so they can't use a
@@ -38,3 +38,56 @@ permalink: '/crypto_white_elephant/index.html'
              /___|  /___|        /___|  /__|
              '"""   '"""         '"""  '"""</pre>
 <p>Happy holidays! I will post a solution here in a few weeks...</p>
+
+<p><a href="" onclick="solution.style.display=''; return false">reveal a solution</a></p>
+<pre id="solution" style="display: none">
+Every cryptographer starts with:
+- priv_key (their private key)
+- pub_key (their prublic key)
+- pub_keys (the set of all the 7 cryptographer's keys)
+
+And follows the following 5 steps:
+
+1. Takes the set of public keys (including their own) and generate a token1:
+   token1 = sort(pub_keys).join('-');
+
+2. Joins an irc channel named #token1, using tor to hide their identity.
+
+3. Creates a temporary private/public key pair (temp_priv_key, temp_pub_key) and
+   publishes the public part:
+   - 1st message:
+     send(temp_pub_key)
+
+   The crytographers then wait for everyone else to publish their temporary
+   public key and stores the set (including their own) in temp_pub_keys.
+
+4. Computes sorted_temp_pub_keys = sort(temp_pub_keys) and
+   token2 = sorted_temo_pub_keys.join('-'). Signs and sends token2 with their
+   public key. (It's a way of saying "I have participated in round 3" without
+   revealing their identity):
+   - 2nd message:
+     send(sign(msg=token2, key=priv_key))
+
+   The cryptographers then wait for everyone else to publish their second
+   message and validates that everyone has signed the same token2.
+
+5. Reveals their identify to the person whose temporary public key comes right
+   after theirs in token2.
+
+   To do this, they publish their identify and a proof that they own the
+   temporary private key:
+     m = [sign(msg=token1, key=priv_key), sign(msg=token1, key=temp_priv_key)]
+     next_key = (sorted_temp_pub_keys.indexOf(temp_pub_key) + 1) % 7;
+     send(encrypt(msg=m, key=sorted_temp_pub_keys[next_key]))
+
+   The cryptographers will be able to decrypt one message each. They must
+   validate that the two signatures are correct and match the expected
+   temporary key.
+
+   Only the identity of the person they need to send a gift to is revealed.
+
+Note:
+Some interesting attacks to think of include: what happens if an evil
+participant submits multiple temporary keys at step 3? What happens if a
+participant is able to split the network in two halves?
+</pre>
