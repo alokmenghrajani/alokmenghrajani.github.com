@@ -106,11 +106,11 @@
     var publicKey = readArmored(publicKeyData);
     var publicKeyFingerprint = getFingerprint(publicKey);
 
+    // Finding keyservers over 443 which are trusted by browsers is hard...
+    // Too bad browsers don't let you control tls settings on cross origin
+    // requests.
     var servers = [
-      'keys-01.licoho.de',
-      'keys.andreas-puls.de',
-      'pks.ms.mff.cuni.cz',
-      'sks.static.lu'
+      'pgp.mit.edu'
     ];
     var server = servers[Math.random()*servers.length|0];
     var fetched = {};
@@ -142,7 +142,7 @@
         }
       };
       xhr.onerror = loadFail;
-      xhr.open("GET", "http://" + server + ":11371/pks/lookup?op=get&options=mr&search=0x"+publicKeyFingerprint);
+      xhr.open("GET", "https://" + server + "/pks/lookup?op=get&options=mr&search=0x"+publicKeyFingerprint);
       xhr.send();
     }
 
@@ -179,7 +179,7 @@
         load__(err.message, keyId, sortKey);
         load_(packets, offset-1, onFailure);
       }
-      xhr.open("GET", "http://" + server + "/pks/lookup?op=get&options=mr&search=0x"+keyId);
+      xhr.open("GET", "https://" + server + "/pks/lookup?op=get&options=mr&search=0x"+keyId);
       xhr.send();
     }
 
@@ -260,7 +260,7 @@
       data = data.replace(/\r/g, "%0D");
       data = data.replace(/\+/g, "%2B");
       data = data.replace(/ /g, "+");
-      xhr.open("POST", "http://" + server + ":11371/pks/add");
+      xhr.open("POST", "https://" + server + "/pks/add");
       xhr.onreadystatechange = function(e) {
         if (e.currentTarget.readyState == 4) {
           onSuccess(e);
