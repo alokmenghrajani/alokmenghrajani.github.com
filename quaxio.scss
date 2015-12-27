@@ -197,6 +197,11 @@ footer a {
           border-bottom: 1px solid $link-color;
         }
       }
+      &-subtitle {
+        font-size: 75%;
+        letter-spacing: 0.1em;
+        font-weight: 150;
+      }
     }
     &-date {
       font-size: .75rem;

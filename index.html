@@ -24,6 +24,8 @@ layout: quaxio
           <div class="index-post">
             <h3 class="index-post-title">
               <a href="{{ post.permalink }}">{{ post.title }}</a>
+              {% if post.subtitle %}<div class="index-post-title-subtitle">{{ post.subtitle}}</div>
+              {% endif %}
             </h3>
             <div class="index-post-date">
               <time>{{ post.date | date: '%b %d, %Y' }}</time>

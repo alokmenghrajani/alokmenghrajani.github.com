@@ -4,13 +4,8 @@
       date: Jan 6, 2015
       url: message_board_over_pgp_key_servers.html
 
-
 - year: '2014'
   posts:
-    - title: 'Ajsone: Abusing JSON Esolang'
-      date: Jul 21, 2014
-      url: ajsone/
-
     - title: 'Rough thoughts on Login Systems'
       date: Jul 5, 2014
       url: login_systems/
