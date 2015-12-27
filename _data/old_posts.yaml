@@ -6,10 +6,6 @@
 
 - year: '2014'
   posts:
-    - title: 'Rough thoughts on Login Systems'
-      date: Jul 5, 2014
-      url: login_systems/
-
     - title: '(minor) WTF Openssl'
       date: Mar 28, 2014
       url: wtf/openssl_wtf.html
