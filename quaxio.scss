@@ -135,9 +135,14 @@ header {
 }
 
 footer {
-  text-align: center
+  text-align: center;
+  color: $grey-color;
+  .send-pr {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
 }
-footer a {
+footer .icons a {
     vertical-align: top;
     display: inline-block;
     text-align: center;

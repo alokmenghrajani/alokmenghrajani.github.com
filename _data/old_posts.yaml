@@ -10,10 +10,6 @@
       date: Mar 18, 2014
       url: 2048/
 
-    - title: 'Prolog program to solve "inverting three signals" puzzle'
-      date: Jan 20, 2014
-      url: invert_three_signals/
-
 - year: '2013'
   posts:
     - title: 'CSRF &amp; state mutation on read requests'
