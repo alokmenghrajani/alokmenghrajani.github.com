@@ -68,10 +68,6 @@
       date: Jun 19, 2013
       url: gif_encoder_from_scratch/
 
-    - title: 'GPS on Arduino'
-      date: Jun 16, 2013
-      url: arduino_gps/
-
     - title: 'Sum of first n natural numbers'
       date: Jun 4, 2013
       url: sum_of_first_n/

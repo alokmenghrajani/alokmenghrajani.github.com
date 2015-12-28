@@ -1,199 +1,160 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Alok Menghrajani's stuff | GPS on Arduino</title>
-  <meta property="fb:admins" content="536181839"/>
-  <meta name="author" content="Alok Menghrajani"/>
-  <link href="../bootstrap-2.3.1.min.css" rel="stylesheet"/>
-  <script type="text/javascript" src="../jquery-1.7.1.min.js"></script>
-  <link href="../prettify/prettify.css" type="text/css" rel="stylesheet"/>
-  <script type="text/javascript" src="../prettify/prettify.js"></script>
-<style>
-.menu {
-  top: 40px;
-  position: fixed;
-}
-.profile {
-  position: relative;
-  left: -170px;
-  overflow: visible;
-}
-.container-narrow {
-  margin: 0 auto;
-  width: 700px;
-}
-.jumbotron h1 {
-  font-size: 32px;
-}
-section {
-  padding-top: 20px;
-}
-body { margin-top: 40px; }
-section { padding-top: 20px; }
-footer { padding-top: 40px; }
-</style>
-</head>
-<body onload="prettyPrint()">
-<div class="container-narrow">
-  <div class="menu">
-    <div class="profile">
-      <p class="pull-right"><a href="../">&larr; Back to home</a></p>
-    </div>
-  </div>
-  <div class="jumbotron">
-    <h1>GPS on Arduino</h1>
-    <div class="lead">
-      <p>
-        Everybody knows that Arduinos are a great way to play around with microcontrollers.
-        In this article, I'm going to show how easy it was to interface a GPS receiver with
-        a LCD display.
-      </p>
-    </div>
-    <a href="overview.jpg"><img src="overview.jpg"/></a>
-  </div>
+---
+layout: post
+title:  'GPS on Arduino'
+permalink: '/arduino_gps/'
+tags: ['arduino', 'gps']
+---
+<div class="lead">
+  <p>
+    Arduinos are a great way to play around with microcontrollers.
+    In this post, I'm going to show how easy it is to interface a GPS receiver
+    with a LCD display.
+  </p>
+</div>
+<a href="/files/2013/arduino_gps/overview.jpg"><img src="/files/2013/arduino_gps/overview.jpg"/></a>
 
-  <section>
-    <div class="page-header"><h3>the hardware</h3></div>
-    <p>
-      I purchased an Ultimate Arduino Microcontroller Pack
-      (you can order the pack online at
-      <a href="http://blog.makezine.com/shed/ultimate-microcontroller-pack/">Makershed</a> or buy it
-      at your local <a href="http://www.radioshack.com/product/index.jsp?productId=12353398">RadioShack</a>).
-      The pack comes with an Arduino UNO and ton of components. It would probably be cheaper to
-      buy components as I need them for my projects, but I like the convenience
-      of a starter kit.
-    </p>
-    <p>
-      I also purchased a
-      <a href="http://www.digikey.com/product-search/en?WT.z_header=search_go&lang=en&site=us&keywords=28501PAR-ND&x=-1373&y=-51">GPS module</a>
-      from Digikey.com and a USB cable (it's too bad that
-      the pack does not include the USB cable). The GPS receiver has a built-in
-      antenna, but getting one with an external antenna would probably work best.
-    </p>
-    <p>
-      From the pack, I ended using the Arduino UNO, the mini breadboard, a few stackable
-      headers, jumper wires and the LCD screen.
-    </p>
-    <p>
-      The total hardware cost is around $175 (if you skip the pack and purchase the individual components,
-      you can probably get everything for ~$100):
-      <ul>
-        <li>Ultimate Arduino Microcontroller Pack ($130)</li>
-        <li>A USB cable (5$)</li>
-        <li>GPS receiver ($40)</li>
-      </ul>
-    </p>
-  </section>
+<section>
+  <div class="page-header"><h3>the hardware</h3></div>
+  <p>
+    I purchased an Ultimate Arduino Microcontroller Pack
+    (you can order the pack online at
+    <a href="http://blog.makezine.com/shed/ultimate-microcontroller-pack/">Makershed</a> or buy it
+    at your local <a href="http://www.radioshack.com/product/index.jsp?productId=12353398">RadioShack</a>).
+    The pack comes with an Arduino UNO and ton of components. It would probably be cheaper to
+    buy components as I need them for my projects, but I like the convenience
+    of a starter kit.
+  </p>
+  <p>
+    I also purchased a
+    <a href="http://www.digikey.com/product-search/en?WT.z_header=search_go&lang=en&site=us&keywords=28501PAR-ND&x=-1373&y=-51">GPS module</a>
+    from Digikey.com and a USB cable (it's too bad that
+    the pack does not include the USB cable). The GPS receiver has a built-in
+    antenna, but getting one with an external antenna would probably work best.
+  </p>
+  <p>
+    From the pack, I ended using the Arduino UNO, the mini breadboard, a few stackable
+    headers, jumper wires and the LCD screen.
+  </p>
+  <p>
+    The total hardware cost is around $175 (if you skip the pack and purchase the individual components,
+    you can probably get everything for ~$100):
+    <ul>
+      <li>Ultimate Arduino Microcontroller Pack ($130)</li>
+      <li>A USB cable (5$)</li>
+      <li>GPS receiver ($40)</li>
+    </ul>
+  </p>
+</section>
 
-  <section>
-    <div class="page-header"><h3>making sure the Arduino works</h3></div>
-    <p>
-      The first step is to make sure the Arduino works. The exact
-      installation process is beyond the scope of this article. I connected the Arduino to
-      my laptop, installed the software and selected one of the samples (<a href="http://arduino.cc/en/Tutorial/blink">Blink</a>).
-      After uploading the code to the Arduino, I had a led that was blinking every second:
-    </p>
-    <a href="arduino_only.jpg"><img src="arduino_only.jpg"/></a>
-  </section>
+<section>
+  <div class="page-header"><h3>making sure the Arduino works</h3></div>
+  <p>
+    The first step is to make sure the Arduino works. The exact
+    installation process is beyond the scope of this article. I connected the Arduino to
+    my laptop, installed the software and selected one of the samples (<a href="http://arduino.cc/en/Tutorial/blink">Blink</a>).
+    After uploading the code to the Arduino, I had a led that was blinking every second:
+  </p>
+  <a href="/files/2013/arduino_gps/arduino_only.jpg"><img src="/files/2013/arduino_gps/arduino_only.jpg"/></a>
+</section>
 
-  <section>
-    <div class="page-header"><h3>connecting the LCD</h3></div>
-    <p>
-      The LCD screen is a Topway (P050001501) LMB162ABC. It can display 16 characters on two rows (16x2)
-      and is compatible with the Hitachi HD44780, so I simply connected the display as
-      explained on the <a href="http://arduino.cc/en/Tutorial/LiquidCrystal">Liquid Crystal tutorial</a>.
-      I did not want to add a potentiometer to control the contrast, so I grounded Vo.
-    </p>
-    <p>I uploaded the sample code to the Arduino and made sure the LCD worked and displayed "hello, world!".</p>
-    <a href="arduino_lcd.jpg"><img src="arduino_lcd.jpg"/></a>
-  </section>
+<section>
+  <div class="page-header"><h3>connecting the LCD</h3></div>
+  <p>
+    The LCD screen is a Topway (P050001501) LMB162ABC. It can display 16 characters on two rows (16x2)
+    and is compatible with the Hitachi HD44780, so I simply connected the display as
+    explained on the <a href="http://arduino.cc/en/Tutorial/LiquidCrystal">Liquid Crystal tutorial</a>.
+    I did not want to add a potentiometer to control the contrast, so I grounded Vo.
+  </p>
+  <p>I uploaded the sample code to the Arduino and made sure the LCD worked and displayed "hello, world!".</p>
+  <a href="/files/2013/arduino_gps/arduino_lcd.jpg"><img src="/files/2013/arduino_gps/arduino_lcd.jpg"/></a>
+</section>
 
-  <section>
-    <div class="page-header"><h3>connecting the GPS</h3></div>
-    <p>
-      The GPS receiver is a Parallax PMB-688. I got a little confused, because the specification
-      and the PCB disagree on the pin labeling. By looking at the cable colors, and a little bit
-      of trial and error, I was able to figure out that the spec is right (the PCB was misprinted?).
-    </p>
-    <p>
-      The GPS module transmits the information in serial TTL format. This makes it trivial to
-      interface with the Arduino: all we need to do is connect the GPS's TTL TX to the Arduino's
-      pin 0 (RX) and we are done. We don't need to write any code or built a circuit with resistors
-      and capacitors.
-    </p>
-    <p>
-      It's important to note that the Arduino's pins 0 and 1 (RX and TX) are also used to connect
-      to your computer with USB. This means you need to disconnect the GPS when uploading code
-      to the Arduino. It's pretty annoying. You can get around this by using an Arduino which has
-      more serial ports (e.g. <a href="http://arduino.cc/en/Main/ArduinoBoardMega2560">Arduino Mega</a>
-      or <a href="http://arduino.cc/en/Main/ArduinoBoardDue">Arduino Due</a>).
-    </p>
-    <p>
-      The GPS receiver contains a built-in battery. This means when we power it up, we'll sometimes
-      get the time right away, other times we'll have to wait for a few seconds, until the receiver
-      locates a satellite and computes the time/position information. The location position always
-      takes a few seconds to appea. I wasn't able to get any information
-      about the type of built-in, if it's capacitor based it can last for a few hours or days. If it's
-      a rechargeable battery, it can keep the time for a few years.
-    </p>
-    <p>
-      The GPS receiver has an onboard LED. When the LED is on, it indicates a valid signal. If it's flashing,
-      it indicates the device is powered on but hasn't yet acquired a signal.
-    </p>
-    <p>
-      If you are using a GPS with a built-in antenna, you should make
-      sure to be in a place where you can see plenty of sky (e.g. the
-      middle of a field works great).
-    </p>
-  </section>
+<section>
+  <div class="page-header"><h3>connecting the GPS</h3></div>
+  <p>
+    The GPS receiver is a Parallax PMB-688. I got a little confused, because the specification
+    and the PCB disagree on the pin labeling. By looking at the cable colors, and a little bit
+    of trial and error, I was able to figure out that the spec is right (the PCB was misprinted?).
+  </p>
+  <p>
+    The GPS module transmits the information in serial TTL format. This makes it trivial to
+    interface with the Arduino: all we need to do is connect the GPS's TTL TX to the Arduino's
+    pin 0 (RX) and we are done. We don't need to write any code or built a circuit with resistors
+    and capacitors.
+  </p>
+  <p>
+    It's important to note that the Arduino's pins 0 and 1 (RX and TX) are also used to connect
+    to your computer with USB. This means you need to disconnect the GPS when uploading code
+    to the Arduino. It's pretty annoying. You can get around this by using an Arduino which has
+    more serial ports (e.g. <a href="http://arduino.cc/en/Main/ArduinoBoardMega2560">Arduino Mega</a>
+    or <a href="http://arduino.cc/en/Main/ArduinoBoardDue">Arduino Due</a>).
+  </p>
+  <p>
+    The GPS receiver contains a built-in battery. This means when we power it up, we'll sometimes
+    get the time right away, other times we'll have to wait for a few seconds, until the receiver
+    locates a satellite and computes the time/position information. The location position always
+    takes a few seconds to appea. I wasn't able to get any information
+    about the type of built-in, if it's capacitor based it can last for a few hours or days. If it's
+    a rechargeable battery, it can keep the time for a few years.
+  </p>
+  <p>
+    The GPS receiver has an onboard LED. When the LED is on, it indicates a valid signal. If it's flashing,
+    it indicates the device is powered on but hasn't yet acquired a signal.
+  </p>
+  <p>
+    If you are using a GPS with a built-in antenna, you should make
+    sure to be in a place where you can see plenty of sky (e.g. the
+    middle of a field works great).
+  </p>
+</section>
 
-  <section>
-    <div class="page-header"><h3>generating a Google maps url</h3></div>
-    <p>
-      The GPS data is in hours/minutes/seconds format. The Google maps for a given position can be
-      render by going to <code>https://maps.google.com/?ll=&lt;LAT&gt;,&ltLONG&gt;</code>, where the latitude and
-      longitude are in decimal format. The output from the GPS can be converted to decimal format by taking the
-      last 6 digits and dividing by 60. South and West coordinates need to be multiplied by -1.
-    </p>
-    <p>
-      For e.g. "3746.2779,N,12223.3198,W" becomes 37+(46.2779/60),-1*(122+(23.3198/60))=37.7713,-122.3887:
-    </p>
-    <img src="http://maps.googleapis.com/maps/api/staticmap?center=37.7713,-122.3887&zoom=12&format=png&sensor=false&size=700x200&maptype=satellite"/>
-  </section>
+<section>
+  <div class="page-header"><h3>generating a Google maps url</h3></div>
+  <p>
+    The GPS data is in hours/minutes/seconds format. The Google maps for a given position can be
+    render by going to <code>https://maps.google.com/?ll=&lt;LAT&gt;,&ltLONG&gt;</code>, where the latitude and
+    longitude are in decimal format. The output from the GPS can be converted to decimal format by taking the
+    last 6 digits and dividing by 60. South and West coordinates need to be multiplied by -1.
+  </p>
+  <p>
+    For e.g. "3746.2779,N,12223.3198,W" becomes 37+(46.2779/60),-1*(122+(23.3198/60))=37.7713,-122.3887:
+  </p>
+  <img src="http://maps.googleapis.com/maps/api/staticmap?center=37.7713,-122.3887&zoom=12&format=png&sensor=false&size=700x200&maptype=satellite"/>
+</section>
 
-  <section>
-    <div class="page-header"><h3><b>update:</b> logic analyzer</h3></div>
-    <p>
-      Matt and I connected the GPS module to a <a href="http://www.saleae.com/logic">Salae Logic</a> analyzer. The device rendered a nice
-      output of the GPS signal and also automatically decoded the TTL protocol.
-      The device is pretty cheap ($149) and can save lots of time when debugging hardware projects.
-    </p>
-    <a href="saleae_logic_analyzer.png"><img src="saleae_logic_analyzer.png"/></a>
-  </section>
+<section>
+  <div class="page-header"><h3><b>update:</b> logic analyzer</h3></div>
+  <p>
+    Matt and I connected the GPS module to a <a href="http://www.saleae.com/logic">Salae Logic</a> analyzer. The device rendered a nice
+    output of the GPS signal and also automatically decoded the TTL protocol.
+    The device is pretty cheap ($149) and can save lots of time when debugging hardware projects.
+  </p>
+  <a href="/files/2013/arduino_gps/saleae_logic_analyzer.png"><img src="/files/2013/arduino_gps/saleae_logic_analyzer.png"/></a>
+</section>
 
-  <section>
-    <div class="page-header"><h3>schema</h3></div>
-    <p>
-      In case you are confused, the full schema:
-      <img src="schema.png"/>
-    </p>
-  </section>
+<section>
+  <div class="page-header"><h3>schema</h3></div>
+  <p>
+    In case you are confused, the full schema:
+    <img src="/files/2013/arduino_gps/schema.png"/>
+  </p>
+</section>
 
-  <section>
-    <div class="page-header"><h3>the code</h3></div>
-    <p>
-      The GPS transmits information in a format called NMEA. We are interested in strings which begin with "$GPRMC".
-    </p>
-    <p>
-      The <a href="http://playground.arduino.cc/Tutorials/GPS">GPS tutorial</a> was also useful. I however rewrote the
-      code, because <code>linea[conta]</code> can potentially overflow,
-      as well as <code>indices[cont]</code>. The author also did not explain the origin of <code>int i=1</code>
-      in <code>for (int i=1;i<7;i++){</code> (it turns out, the 1 is due to the code detecting <code>byteGPS==13</code>
-      as the transmission ending condition, instead of <code>byteGPS==10</code>).
-    </p>
-    <p>
-      Here is a sample output from the receiver:
-<pre style="height: 100px; overflow: auto;">
+<section>
+  <div class="page-header"><h3>the code</h3></div>
+  <p>
+    The GPS transmits information in a format called NMEA. We are interested in strings which begin with "$GPRMC".
+  </p>
+  <p>
+    The <a href="http://playground.arduino.cc/Tutorials/GPS">GPS tutorial</a> was also useful. I however rewrote the
+    code, because <code>linea[conta]</code> can potentially overflow,
+    as well as <code>indices[cont]</code>. The author also did not explain the origin of <code>int i=1</code>
+    in <code>for (int i=1;i<7;i++){</code> (it turns out, the 1 is due to the code detecting <code>byteGPS==13</code>
+    as the transmission ending condition, instead of <code>byteGPS==10</code>).
+  </p>
+  <p>
+    Here is a sample output from the receiver:
+    <pre style="height: 100px; overflow: auto;">
 $PSRFTXT,Version:  GSW3.5.0_3.5.00.00-SDK-3EP2.01 *46
 $PSRFTXT,PL-090709-NMEA4800_S_DM1_G1_CM205_KLP-LX*66
 $PSRFTXT,TOW:  88867*2C
@@ -583,11 +544,11 @@ $GPGGA,004237.776,3746.2779,N,12223.3198,W,1,07,1.2,50.6,M,-25.3,M,,0000*5A
 $GPGSA,A,3,02,04,24,28,09,17,15,,,,,,2.0,1.2,1.6*35
 $GPRMC,004237.776,A,3746.2779,N,12223.3198,W,0.16,173.46,170613,,,A*74
 </pre>
-    </p>
-    <p>
-      And here is the full Arduino code:
-    </p>
-<pre class="prettyprint linenums">
+  </p>
+  <p>
+    And here is the full Arduino code:
+  </p>
+  <pre class="prettyprint linenums">
 /**
  * Code to display the time & date from a GPS receiver on a LCD.
  *
@@ -720,36 +681,18 @@ void loop() {
   }
 }
 </pre>
-  </section>
+</section>
 
-  <section>
-    <div class="page-header"><h3>links</h3></div>
-    <ul>
-      <li><a href="http://www.makershed.com/Ultimate_Arduino_Microcontroller_Pack_p/msump1.htm">Ultimate Arduino Microcontroller Pack</a></li>
-      <li><a href="http://www.amazon.com/gp/product/B001MXLD4G/">USB cable</a></li>
-      <li><a href="http://www.digikey.com/product-search/en?WT.z_header=search_go&lang=en&site=us&keywords=28501PAR-ND&x=-1373&y=-51">PMB-688 SIRF Parallax GPS receiver</a></li>
-      <li><a href="http://www.saleae.com/logic">Salae Logic</a>
-      <li><a href="http://www.topwaydisplay.com/Pub/Manual/LMB162ABC-Manual-Rev0.2.pdf">LCD (LMB162ABC) specification</a></li>
-      <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PMB-688_Specification_V0.1.pdf">GPS (PMB-688) specification</a></li>
-      <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PULSTAR_NMEA_commands.pdf">NMEA specification</a></li>
-      <li><a href="http://makezine.com/images/store/V2_Datasheet.pdf">Ultimate Arduino Microcontroller Pack datasheet</a></li>
-    </ul>
-  </section>
-
-  <footer class="footer">
-    <p class="pull-right"><a href="#">Back to top &uarr;</a></p>
-  </footer>
-</div>
-
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-2373559-12', 'quaxio.com');
-  ga('send', 'pageview');
-</script>
-
-</body>
-</html>
+<section>
+  <div class="page-header"><h3>links</h3></div>
+  <ul>
+    <li><a href="http://www.makershed.com/Ultimate_Arduino_Microcontroller_Pack_p/msump1.htm">Ultimate Arduino Microcontroller Pack</a></li>
+    <li><a href="http://www.amazon.com/gp/product/B001MXLD4G/">USB cable</a></li>
+    <li><a href="http://www.digikey.com/product-search/en?WT.z_header=search_go&lang=en&site=us&keywords=28501PAR-ND&x=-1373&y=-51">PMB-688 SIRF Parallax GPS receiver</a></li>
+    <li><a href="http://www.saleae.com/logic">Salae Logic</a>
+    <li><a href="http://www.topwaydisplay.com/Pub/Manual/LMB162ABC-Manual-Rev0.2.pdf">LCD (LMB162ABC) specification</a></li>
+    <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PMB-688_Specification_V0.1.pdf">GPS (PMB-688) specification</a></li>
+    <li><a href="http://www.parallax.com/Portals/0/Downloads/docs/prod/sens/PULSTAR_NMEA_commands.pdf">NMEA specification</a></li>
+    <li><a href="http://makezine.com/images/store/V2_Datasheet.pdf">Ultimate Arduino Microcontroller Pack datasheet</a></li>
+  </ul>
+</section>
