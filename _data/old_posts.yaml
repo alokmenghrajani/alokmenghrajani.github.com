@@ -6,10 +6,6 @@
 
 - year: '2014'
   posts:
-    - title: '(minor) WTF Openssl'
-      date: Mar 28, 2014
-      url: wtf/openssl_wtf.html
-
     - title: '2048-undo: a modification to 2048 which lets you undo as many moves as you wish'
       date: Mar 18, 2014
       url: 2048/
