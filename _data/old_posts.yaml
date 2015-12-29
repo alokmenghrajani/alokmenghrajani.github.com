@@ -12,10 +12,6 @@
 
 - year: '2013'
   posts:
-    - title: 'CSRF &amp; state mutation on read requests'
-      date: Dec 9, 2013
-      url: csrf_state_mutation_on_read_requests/
-
     - title: 'Universal logic gates'
       date: Nov 20, 2013
       url: universal_logic_gates/
