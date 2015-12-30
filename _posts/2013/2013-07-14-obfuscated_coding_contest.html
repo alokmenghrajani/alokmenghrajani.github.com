@@ -1,0 +1,85 @@
+---
+layout: post
+title:  'Obfuscated coding contest'
+permalink: '/obfuscated_coding_contest/'
+tags: ['C', 'coding', 'contest']
+---
+<div class="lead">
+  <p>
+    For the last few years, <a href="http://www.ioccc.org/">ioccc</a> has been organizing
+    obfuscated coding contests.
+  </p>
+  <p>
+    The goal is to write short programs in C, in a way that is essentially impossible
+    to read.
+  </p>
+</div>
+
+<section>
+  <div class="page-header"><h3>Brian Westley's entries</h3></div>
+  <p>
+    One of my all time favorite contributor is Brian Westley, who has written amazing
+    pieces of obfuscated code (and who has won the contest multiple
+    times). One of his entries computes pi.
+    The code is laid out in the shape of a circle and the program works by dividing the
+    area of the code by the "radius" squared.
+  </p>
+  <pre>#define _ F-->00 || F-OO--;
+long F=00,OO=00;
+main(){F_OO();printf("%1.3f\n", 4.*-F/OO/OO);}F_OO()
+{
+            _-_-_-_
+       _-_-_-_-_-_-_-_-_
+    _-_-_-_-_-_-_-_-_-_-_-_
+  _-_-_-_-_-_-_-_-_-_-_-_-_-_
+ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+ _-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+  _-_-_-_-_-_-_-_-_-_-_-_-_-_
+    _-_-_-_-_-_-_-_-_-_-_-_
+       _-_-_-_-_-_-_-_-_
+            _-_-_-_
+}</pre>
+  <p>Note: as you increase the circular pattern, you'll get a better approximation for the value of pi.</p>
+</section>
+
+<section>
+  <div class="page-header"><h3>javascript version</h3></div>
+  <p>
+    I don't think obfuscated code in JavaScript makes much sense,
+    because it's trivial to encode a program as a string and just
+    eval it.
+  </p>
+  <p>
+    I did like the idea of laying code in a circular pattern, so
+    I wrote the following piece of JavaScript, which also computes
+    pi:
+  </p>
+<pre>
+       &lt;html&gt;&lt;body
+    id="out"&gt;&lt;script&gt;
+  setTimeout(function()
+ {d = out.parentElement.
+outerHTML.replace(/ /g,''
+); area=d.length*2;radius
+=d.split(/\n/).length;pi=
+area / (radius * radius);
+pi=(pi * 100 | 0 ) / 100;
+ out.innerHTML="pi="+pi
+  },1)&lt;/script&gt;&lt;/body&gt;
+     h4ck  by   Alok
+         &lt;/html&gt;</pre>
+  </section>
+
+<section>
+  <h3>links</h3>
+  <ul>
+    <li><a class="external" href="http://www.ioccc.org/">ioccc</a></li>
+    <li><a class="external" href="http://en.wikipedia.org/wiki/International_Obfuscated_C_Code_Contest">International Obfuscated C Code Contest (wikipedia article)</a></li>
+  </ul>
+</section>
