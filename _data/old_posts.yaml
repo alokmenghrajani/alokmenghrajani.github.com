@@ -12,10 +12,6 @@
 
 - year: '2013'
   posts:
-    - title: 'qrquine: a QR code based quine'
-      date: Sep 27, 2013
-      url: qrquine/
-
     - title: 'Combining React and Firebase: sample TicTacToe game &amp; chat widget'
       date: Sep 13, 2013
       url: react_tictactoe/
