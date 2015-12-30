@@ -1,0 +1,15 @@
+---
+layout: post
+title:  'WTF Python'
+permalink: '/wtf/python.html'
+tags: ['python', 'wtf']
+---
+<p>Python's default parameters don't get deep copied at call time:</p>
+<pre>
+def myfun(data=[]):
+  data.append(1)
+  return data
+
+print myfun(), myfun(), myfun([]), myfun([])
+</pre>
+<p>Results in <code>[1] [1, 1] [1] [1]</code></p>
