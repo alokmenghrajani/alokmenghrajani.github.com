@@ -40,7 +40,7 @@ tags: ['crypto', 'algorithm']
              '"""   '"""         '"""  '"""</pre>
 <p>Happy holidays! I will post a solution here in a few weeks...</p>
 
-<p><a href="" onclick="solution.style.display=''; return false">reveal a solution</a></p>
+<p><a href="" onclick="solution.style.display=''; return false">First solution</a></p>
 <pre id="solution" style="display: none">
 Every cryptographer starts with:
 - priv_key (their private key)
@@ -92,3 +92,33 @@ Some interesting attacks to think of include: what happens if an evil
 participant submits multiple temporary keys at step 3? What happens if a
 participant is able to split the network in two halves?
 </pre>
+
+<p><a href="" onclick="solution2.style.display=''; return false">Another solution</a></p>
+<div id="solution2" style="display: none">
+  <p><a href="https://www.facebook.com/roman">Roman</a> was kind enough to share his solution. His initial approach was somewhat different,
+    with a restart process. However, what happens if an evil participant doesn't send
+    the restart signal?</p>
+  <pre>
+distRandom() {
+  x = random();
+  sendToAll(md5(x));
+  // send to friends x, later on if they want to verify that you did not cheat.
+  return sum(getRandomsFromOther())+x;
+}
+iter = 0;
+x=distrRandom()%7;
+sendToPerson(x, "iter => +1 present for you");
+if (receiveMoreThenOne()) {
+  sendToAll("restart iter+1");
+}
+if (noRestart()) {
+  givePresent(x);
+}
+</pre>
+<p>His initial approach left out how to map 'x' to an address, he followed up with:</p>
+<pre>
+SendToAll(random(), secretPublicKey())
+SortListByRandom()
+SendToNextAfterMe(nextSecretKey, "I am x, send me gift")
+</pre>
+</div>
