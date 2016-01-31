@@ -29,7 +29,7 @@ layout: quaxio
               {% endif %}
             </h3>
             <div class="index-post-date">
-              <time>{{ post.date | date: '%b %d, %Y' }}</time>
+              <time>{{ post.date | date: '%b %-d, %Y' }}</time>
             </div>
             {% if post.tags.size > 0 %}
               <div class="index-post-tags">{{ post.tags | join: ' | '}}</div>
