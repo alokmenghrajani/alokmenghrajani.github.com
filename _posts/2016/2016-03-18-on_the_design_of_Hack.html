@@ -1,0 +1,154 @@
+---
+layout: post
+title:  'On the design of Hack'
+permalink: '/on_the_design_of_hack'
+tags: ['Hack', 'PHP', 'Facebook']
+---
+<img src="/files/2016/on_the_design_of_hack/logo.png">
+
+<p style="font-style: italic;">
+  I recently stumbled upon <a href="https://chadaustin.me/2015/11/designing-a-delightful-functional-programming-language/">Designing
+  a Delightful Functional Programming Language</a> and it reminded me I should write about the story behind Hack, a
+  programming language I co-designed when working at Facebook.
+</p>
+
+<p>
+  Facebook was originally built on a LAMP stack: Linux servers, Apache web servers, Mysql databases and PHP as the programming
+  language (a standard technology decision in 2004). Around 2010, driven by performance needs, the company developed a compiler
+  (hphpc, later evolved to hhvm) which compiled PHP and also served as a web server.
+</p>
+
+<p>
+  Over time, engineers added various features to PHP such as xhp (a templating engine better suited for building web
+  applications), traits, generators, etc. We had clearly forked away from Zend and were not afraid to experiment with
+  ideas / language extensions.
+</p>
+
+<p>
+  I some point, I was working on some security sensitive code (a crypto library) and I wanted a validation tool.
+  I talked to Yoann, who implemented a linter dubbed strictmode. The linter analyzed the body of functions and enforced the use of
+  specific PHP coding patterns and could catch things like unused variables (it turned out that some of our runtime type
+  coercions saved us by making some bugs unexploitable in practice).
+</p>
+
+<p>
+  Over time, other engineers wanted to use strictmode and requested more features (types being one of them). We felt that type
+  annotations (and a type checker) would catch at development time bugs which would otherwise trigger at deploy time or
+  randomly in the middle of the night.
+</p>
+
+<p>
+  A simple linter was however not going to scale, we needed to rethink our approach and thus Hack, a gradual type system for PHP
+  was born. The language added parameter and return type annotations to PHP. It also supported generics, provided a safer way
+  to work with arrays (which can be arrays or maps) and null values.
+</p>
+
+<img src="/files/2016/on_the_design_of_hack/meme.jpg">
+
+<p>
+  Julien and I worked on Hack full time; it was a great partnership: he was an OCaml coder with deep language design knowledge
+  and I was a security engineer with my fair share of experience dealing with PHP’s pitfalls and shortcomings.
+</p>
+
+<p>
+  Initially, our peers were skeptical that we needed a type checker. They associated type checking with productivity pain
+  <a href="https://xkcd.com/303/">(https://xkcd.com/303/)</a>. We were however able to convince them to give us a chance by
+  having a reversible experiment (we wouldn’t change the runtime very much and if things didn’t work out, we could remove our
+  type annotations and revert to vanilla PHP). We also told people that we would leverage type annotations to deliver an
+  improved developer experience (better IDE/refactoring tools). Finally, there was the potential performance gains sometime
+  down the road.
+</p>
+
+<p>
+  Given these concerns, we built Hack as tool which lived outside the runtime (outside HHVM) similar to a linter in form
+  but somewhat different in essence.
+</p>
+
+<p>
+  The first step was to modify our various tooling to recognize the type annotations but ignore them (Java does something
+  similar for generics, a process called type erasure). It's not the ideal way to handle types, but it's an easy starting point.
+  We modified a whole bunch of parsers (hhvm, code coloring tools, code review tools, pfff's, etc).
+</p>
+
+<p>
+  We decided to build a tool which would type check arguments and return types but perform type inference on local variables.
+  We didn’t want to perform global type inference because type annotations serve a useful documentation purpose; engineers were
+  describing  ypes in comments anyways, might as well keep them in a structured form.
+</p>
+
+<p>
+  Not having some form of type inference was also out of the question, as it would involve more significant changes to our
+  parsers and would potentially hurt productivity. We wanted to reduce the amount of code and comments engineers were writing, not increase it (not having a syntax for declaring the type of local variables did cause some other challenges).
+</p>
+
+<p>
+  Our type checker ended up being a service which observed the filesystem and any time a file changed, we incrementally type
+  checked the file, as well as the transitive closure of dependencies (the tool keeps a dependency graph for the entire codebase,
+  the graph itself is modifying incrementally). The type checker itself simply asks the service what is the current state of the codebase. The result was a pair of tools which could handle a giant codebase and answer most queries in under a second!
+</p>
+
+<p>
+  For the type inference part, we spent a lot of time providing detailed error messages. The type checker builds a
+  "proof" for each inferred type which it later reveals when a type error is found. <!-- TODO: example -->
+</p>
+
+<div style="padding-left: 2em; padding-right: 2em"><i>Ocaml:</i><pre>
+1 let f1 (): int =
+2   42
+3
+4 let f2 (s: string): unit =
+5  Printf.printf "%s" s
+6
+7 let () =
+8  let x = f1() in
+9  f2(x)
+
+line 8, characters 4-7:
+Error: This expression has type int but an expression was expected of type string
+</pre>
+</div></div>
+
+<div style="padding-left: 2em; padding-right: 2em"><i>Hack:</i><pre>
+ 1 &lt?hh
+ 2 function f1(): int {
+ 3   return 42;
+ 4 }
+ 5 function f2(string $s): void {
+ 6   echo $s;
+ 7 }
+ 8 
+ 9 $x=f1();
+10 f2($x);
+
+line 10, characters 4-5:
+Invalid argument
+line 5, characters 13-18:
+This is a string
+line 2, characters 16-18:
+It is incompatible with an int</pre></div>
+
+<p>
+  Over time, we got a lot of feedback from engineers using Hack. We tried to recognize and give
+  special treatment to common coding patterns and idioms. The Hack team grew and merged with the HHVM team,
+  allowing us to make more interesting runtime changes. We hired a technical writer who did an amazing job documenting
+  our work.
+</p>
+
+<div>
+  <img src="/files/2016/on_the_design_of_hack/launch.jpg">
+  <p style="font-style: italic; margin-bottom: 1.5rem;">March 2014, we open sourced Hack</p>
+</div>
+
+<p>
+  When I left Facebook in 2014, Hack had gained massive adoption within Facebook, without impacting engineer’s productivity. Other “PHP shops” started considering adopting it. The same technology was used to build Flow, a gradual type system for JavaScript.
+</p>
+
+<h3>Some links</h3>
+<ul>
+  <li><a href="https://github.com/strangeloop/StrangeLoop2013/blob/master/slides/sessions/Adams-TakingPHPSeriously.pdf?raw=true">Taking PHP Seriously</a>, Strange Loop talk by Keith Adams</li>
+  <li><a href="http://cufp.org/2013/slides/verlaguet.pdf">CUFP 2013</a>, talk by Julien</li>
+  <li><a href="https://code.facebook.com/posts/264544830379293/hack-a-new-programming-language-for-hhvm/">Hack: a new programming language for HHVM</a></li>
+  <li><a href="https://www.reddit.com/r/programming/comments/20wuuo/facebook_introduces_hack_a_new_programming/">Facebook introduces Hack: a new programming language for HHVM</a>, reddit discussion</li>
+</ul>
+
+
