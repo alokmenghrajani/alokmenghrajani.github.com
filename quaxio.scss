@@ -186,6 +186,8 @@ footer .icons a {
   &-year {
     font-weight: 100;
     margin-top: 4rem;
+    border-bottom: 1px solid $grey-color-light;
+    color: $grey-color;
   }
   &-post {
     margin-bottom: 2rem;
