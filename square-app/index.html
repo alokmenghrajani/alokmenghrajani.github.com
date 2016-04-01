@@ -1,0 +1,73 @@
+<html>
+<body>
+<h1>A very simple Square OAuth demo app</h1>
+
+<div>
+  <button onclick="auth('code')">Authenticate with Square (response_type=code)</button>
+  <button onclick="auth('token')">Authenticate with Square (response_type=token)</button>
+</div>
+
+<p id="csrfCheck"></p>
+<p id="curl" style="border: 1px solid black; padding: 10px"></p>
+
+<script src="../jquery-1.7.1.min.js"></script>
+<script>
+// set the state cookie if it's not set.
+var data = {};
+try {
+	data = JSON.parse(document.cookie);
+} catch (e) {
+	console.error(e);
+}
+if (typeof(data.state) == "undefined") {
+	data.state = Math.random();
+	document.cookie = JSON.stringify(data);
+}
+
+// Find the csrf and code/token
+csrfCheck.textContent = '';
+curl.textContent = '';
+
+var p = window.location.search.substr(1);
+p = p.split('&');
+for (var i=0; i<p.length; i++) {
+	var kv = p[i].split('=')
+	if (kv[0] == 'state') {
+		if (data.state == kv[1]) {
+			csrfCheck.textContent = "CSRF PASS";
+		} else {
+			csrfCheck.textContent = "CSRF FAIL";
+		}
+	}
+	if (kv[0] == 'code') {
+		curl.textContent = "curl -v -X POST -d '{\"client_id\":\"sq0idp-jZolRwKWO7w5LpBO9Z8RCw\",\"client_secret\":\"...\",\"code\":\"" + kv[1] + "\",\"redirect_uri\":\"https://quaxio.com/\"}' -H 'Content-type: application/json' -H 'Accept: application/json' https://connect.squareup.com/oauth2/token"
+	}
+}
+p = window.location.hash.substr(1);
+p = p.split('&');
+for (var i=0; i<p.length; i++) {
+	var kv = p[i].split('=')
+	if (kv[0] == 'state') {
+		if (data.state == kv[1]) {
+			csrfCheck.textContent = "CSRF PASS";
+		} else {
+			csrfCheck.textContent = "CSRF FAIL";
+		}
+	}
+	if (kv[0] == 'access_token') {
+		curl.textContent = "curl -v -X POST -d '{\"client_id\":\"sq0idp-jZolRwKWO7w5LpBO9Z8RCw\",\"client_secret\":\"...\",\"code\":\"" + kv[1] + "\",\"redirect_uri\":\"https://quaxio.com/\"}' -H 'Content-type: application/json' -H 'Accept: application/json' https://connect.squareup.com/oauth2/token"
+		curl.textContent = "curl -v -X GET -H 'Authorization: Bearer " + kv[1] + "' -H 'Accept: application/json' https://connect.squareup.com/v2/customers";
+	}		
+}
+
+function auth(response_type) {
+  var url = encodeURIComponent('https://quaxio.com/square-app/');
+  window.location = 'https://squareup.com/oauth2/authorize?redirect_uri=' + url +
+    '&state=' + data.state +
+    '&response_type=' + response_type +
+    '&client_id=sq0idp-jZolRwKWO7w5LpBO9Z8RCw';
+}
+
+</script>
+</body>
+</html>
