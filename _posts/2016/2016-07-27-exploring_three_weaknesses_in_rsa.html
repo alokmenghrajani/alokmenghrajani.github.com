@@ -1,0 +1,301 @@
+---
+layout: post
+title:  'Exploring 3 weaknesses in RSA'
+permalink: '/exploring_three_weaknesses_in_rsa/'
+tags: ['crypto', 'rsa', 'chinese remainder theorem']
+---
+<div class="lead">
+  <p>
+    When using RSA you must ensure that you are using large enough keys, proper
+    data padding schemes, constant time operations, etc.
+  </p>
+  <p>
+    Let's explore what happens when you don’t get some of this right
+    in three different ways <small>(these various weaknesses have been known for
+    a long time, but I figured it might be interesting to re-explore them</small>).
+  </p>
+</div>
+
+<section>
+  <h3>2 minute refresher on RSA</h3>
+  <p>RSA is a public key cryptosystem developed by Rivest, Shamir and Adleman in
+  1977. It is still the main primitive used by TLS (https), GPG, ssh, etc.</p>
+  <p>Public key crypto involves two keys: a public key and a private key. A user (Bob) publishes their public key and keeps the private key secure. Anyone can securely send messages to Bob by encrypting the contents using the public key. Only Bob who knows the private key can decrypt the messages.</p>
+  <p>RSA is based on the fact that it's easy to create and multiply two large prime numbers but it's hard to factorize the product. RSA also relies on modular exponentiation (<code>a^e mod n</code>) being a one-way function (given <code>c &#x2261; a^e mod n</code>, computing <code>c</code> is easy but finding <code>e</code> given <code>c</code>, <code>a</code> and <code>n</code> is hard).</p>
+  <p>The key generation algorithm boils down to:
+  <ol>
+    <li>choose two distinct prime numbers <code>p</code> and <code>q</code>. (Look up how this is
+    actually done, it's interesting and has been the source of flaws in the past).</li>
+    <li>compute <code>n = p*q</code>. The length of <code>n</code> (in bits) is going to be the key length.</li>
+    <li>compute <code>&#x03c6; = (p − 1)*(q − 1)</code>.</li>
+    <li>choose <code>e</code>, typically 3 or 65537.</li>
+    <li>compute <code>d &#x2261; e^-1 mod &#x03c6;</code> (also look up how this is done).</li>
+  </ol>
+  <ul>
+    <li>public key is the pair <code>(n, e)</code></li>
+    <li>private key is the pair <code>(n, d)</code></li>
+  </ul>
+  </p>
+
+  <p>Encryption is then performed using modular exponentiation:
+  <ul>
+  <li>convert the message into a big integer.</li>
+  <li>compute <code>c &#x2261; m^e mod n</code></li>
+  </ul>
+  </p>
+  
+  <p>And decryption ends up being the same operation with a different exponent:
+  <ul>
+  <li><code>c^d &#x2261; (m^e)^d &#x2261; m (mod n)</code></li>
+  </ul>
+  </p>
+
+  <p>See <a href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)">Wikipedia's page on RSA</a> for more info.</p>
+</section>
+
+<section>
+  <h3>Cracking a weak RSA key</h3>
+  <p>Let’s create a weak key and crack it. We’ll use openssl to create the key and encrypt a message. We’ll then use Ruby to factorize the public key and re-create the private key. Ruby makes handling bignums implicit (which is nice), but keep in mind that its handling of bignum is very slow (100 times slower than javascript and at least 3 orders of magnitude slower than native code).
+  </p>
+  <h4>Key generation</h4>
+  <p>The first step is to create a weak key. We decided to go with a 64 bit RSA key because 64 bits ends up taking me a few minutes to break on my laptop. Feel free to try breaking larger keys, such as 128, 256 or 512 bit keys.</p>
+  <p>Notice how openssl doesn’t throw any warnings!</p>
+  <pre>$ openssl genrsa 64 | tee small.pem
+Generating RSA private key, 64 bit long modulus
+....+++++++++++++++++++++++++++
+...+++++++++++++++++++++++++++
+e is 65537 (0x10001)
+-----BEGIN RSA PRIVATE KEY-----
+MD8CAQACCQDCX12/CM4MOQIDAQABAgh0j4YCTp0HdQIFAOq31rsCBQDT/wubAgUA
+6YaGyQIEYIMgOQIFAM2FQT4=
+-----END RSA PRIVATE KEY-----
+
+To see what’s in the key, use openssl rsa -text:
+$ openssl rsa -text -in small.pem 
+Private-Key: (64 bit)
+modulus: 14006016441213389881 (0xc25f5dbf08ce0c39)
+publicExponent: 65537 (0x10001)
+privateExponent: 8399079174536234869 (0x748f86024e9d0775)
+prime1: 3937916603 (0xeab7d6bb)
+prime2: 3556707227 (0xd3ff0b9b)
+exponent1: 3917907657 (0xe98686c9)
+exponent2: 1619206201 (0x60832039)
+coefficient: 3448062270 (0xcd85413e)
+writing RSA key
+-----BEGIN RSA PRIVATE KEY-----
+MD8CAQACCQDCX12/CM4MOQIDAQABAgh0j4YCTp0HdQIFAOq31rsCBQDT/wubAgUA
+6YaGyQIEYIMgOQIFAM2FQT4=
+-----END RSA PRIVATE KEY-----</pre>
+
+<p>The key follows the following format:</p>
+<pre>    RSAPrivateKey ::= SEQUENCE {
+        version           Version,
+        modulus           INTEGER,  -- n
+        publicExponent    INTEGER,  -- e
+        privateExponent   INTEGER,  -- d
+        prime1            INTEGER,  -- p
+        prime2            INTEGER,  -- q
+        exponent1         INTEGER,  -- d mod (p-1)
+        exponent2         INTEGER,  -- d mod (q-1)
+        coefficient       INTEGER,  -- (inverse of q) mod p
+        otherPrimeInfos   OtherPrimeInfos OPTIONAL
+    }</pre>
+
+<p><code>exponent1</code>, <code>exponent2</code> and <code>coefficient</code> are
+stored in the private key for optimizing purpose.</p>
+
+<p>We want to throw away the private part of the key, so we extract the public key with <code>-pubout</code>:</p>
+<pre>$ openssl rsa -pubout -in small.pem | tee small_pub.pem; mv small_pub.pem small.pem
+writing RSA key
+-----BEGIN PUBLIC KEY-----
+MCQwDQYJKoZIhvcNAQEBBQADEwAwEAIJAMJfXb8Izgw5AgMBAAE=
+-----END PUBLIC KEY-----</pre>
+
+<p>Finally, let’s encrypt a message using the public key. In general, RSA is used to encrypt session keys (e.g. AES keys). Using a string here is non-standard. </p>
+
+<pre>$ echo -n "new york" | openssl rsautl -encrypt -inkey small.pem -pubin -raw | base64 | tee cipher.txt
+TKna/HwfcOI=</pre>
+
+<h4>Factorization</h4>
+<p>To factorize small.pem, we simply iterate through all the numbers from 2 to the square root of <code>n</code> (we can stop at the square root r of n because if a number n is divisible by m with m&gt;r, then n is also divisible by n/m and n/m&lt;r).</p>
+<p>As a micro optimization (makes the code run ~4x faster), we start by checking if <code>n</code> is divisible by 2, 3, 5 and we then go in chunks of 30 (30 comes from 2*3*5).</p>
+
+<pre>$ irb
+&gt; def factorize(n)
+  if n%2==0 then return 2 end
+  if n%3==0 then return 3 end
+  if n%5==0 then return 5 end
+  m = Math.sqrt(n)
+  i=7
+  while i&lt;=m do
+    if (n%i==0)      then return i end
+    if (n%(i+4)==0)  then return i+4 end
+    if (n%(i+6)==0)  then return i+6 end
+    if (n%(i+10)==0) then return i+10 end
+    if (n%(i+12)==0) then return i+12 end
+    if (n%(i+16)==0) then return i+16 end
+    if (n%(i+22)==0) then return i+22 end
+    if (n%(i+24)==0) then return i+24 end
+    i+=30
+  end
+end
+&gt; factorize(14006016441213389881)
+&gt; 3556707227</pre>
+
+<h4>Re-creating the private key</h4>
+<p>Once we have factorized <code>n</code>, we can recreate the private key which allows us to decrypt cipher.txt.</p>
+
+<pre>&gt; require 'openssl'
+&gt; require 'base64'
+&gt; a = OpenSSL::PKey::RSA::new
+&gt; a.e = 65537
+&gt; a.n = 14006016441213389881
+&gt; a.p = 3556707227
+&gt; a.q = a.n.to_i / a.p.to_i
+&gt; a.d = a.e.mod_inverse((a.p-1) * (a.q-1))
+&gt; a.dmp1 = a.d % (a.p-1)
+&gt; a.dmq1 = a.d % (a.q-1)
+&gt; a.iqmp = a.q.mod_inverse(a.p)
+&gt; File.write('small.pem', a)
+
+$ cat cipher.txt| base64 -D | openssl rsautl -decrypt -inkey small.pem -raw
+new york</pre>
+
+<p>Thankfully this attack isn’t easy in practice because we always use keys of length 2048 or greater.</p>
+</section>
+
+<section>
+<h3>Cracking a weak RSA message</h3>
+<p>Encrypting a message involves computing <code>m^e mod n</code>. If <code>e</code> is a small value (e.g. 3) and <code>m^e</code> is less than <code>n</code>, the modulo does not do anything.</p>
+<p>The original message is revealed by computing the <code>e</code>th root.</p>
+
+<h4>Message generation</h4>
+<pre>$ openssl genrsa -3 128 | tee private.pem
+Generating RSA private key, 128 bit long modulus
+...+++++++++++++++++++++++++++
+....+++++++++++++++++++++++++++
+e is 3 (0x3)
+-----BEGIN RSA PRIVATE KEY-----
+MGECAQACEQCy/aCKGshlpPi2TFvQHvQDAgEDAhB3U8BcEdrubN1k06S5LCdLAgkA
+4Kz0hhYYddkCCQDL8hpepERDOwIJAJXIowQOuvk7AgkAh/a8PxgtgicCCGHoV8yc
+zeW8
+-----END RSA PRIVATE KEY-----
+$ echo -en "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00hello" | openssl rsautl -encrypt -inkey private.pem -raw  | base64
+ABFcaHeP6CvK2nvQ2hKiTw==</pre>
+
+<h4>Computing the nth root</h4>
+<p>We compute the nth root using Newton’s method. The code was easily found by Googling around.</p>
+
+<pre>$ irb
+&gt; require 'base64'
+&gt; def nthroot(n, a, precision = 1e-1024)
+  x = a
+  begin
+    prev = x
+    x = ((n - 1) * prev + a / (prev ** (n - 1))) / n
+  end while (prev - x).abs > precision
+ x
+end
+&gt; a = Base64.decode64("ABFcaHeP6CvK2nvQ2hKiTw==")
+&gt; a = a.unpack('H*')[0].to_i(16)
+&gt; r = nthroot(3, a)
+&gt; puts [r.to_s(16)].pack('H*')
+&gt; hello</pre>
+
+<p>Notice how openssl doesn’t print any warnings.</p>
+<p>In the case where we don't know the exponent's value, we can try a few different options.</p>
+
+<h3>Same RSA message encrypted multiple times</h3>
+<p>If a message is encrypted <code>e</code> times, we can use the Chinese Remainder Theorem (<a href="https://rdist.root.org/2009/10/06/why-rsa-encryption-padding-is-critical/">see this post</a>) to decrypt the ciphertext.</p>
+
+<p>The theorem says that given:
+<ul>
+<li><code>m^e mod A</code></li>
+<li><code>m^e mod B</code></li>
+<li><code>m^e mod C</code></li>
+<li>...</li>
+</ul></p>
+<p>It is possible to compute <code>m^e (mod A*B*C*...)</code>.</p>
+
+<p>This means we can convert three identical messages encrypted to three recipients into the weak message case above. This is possible because the message is going to be smaller than the product A*B*C.</p>
+
+<pre>$ openssl genrsa -3 128 | tee key1.pem 
+Generating RSA private key, 128 bit long modulus
+..+++++++++++++++++++++++++++
+.+++++++++++++++++++++++++++
+e is 3 (0x3)
+-----BEGIN RSA PRIVATE KEY-----
+MGICAQACEQDSqVXh6LYTArm4OiIDupGVAgEDAhEAjHDj6/B5YgCbaxSUePbjKwIJ
+AO33P5tsUQuxAgkA4qBbp+H3MSUCCQCepNUSSDYHywIJAJcVkm/r+iDDAggJ6hBR
+5pRslA==
+-----END RSA PRIVATE KEY-----
+$ openssl genrsa -3 128 | tee key2.pem 
+Generating RSA private key, 128 bit long modulus
+...+++++++++++++++++++++++++++
+....+++++++++++++++++++++++++++
+e is 3 (0x3)
+-----BEGIN RSA PRIVATE KEY-----
+MGICAQACEQDEtWSUEvnIiKUrAb9BqE7bAgEDAhEAgyOYYrdRMFnrimfrJUiquwIJ
+APwgNlor+6pVAgkAx7svhF2/pG8CCQCoFXmRcqfG4wIJAIUndQLpKm2fAghyf0MX
+IZWaZw==
+-----END RSA PRIVATE KEY-----
+$ openssl genrsa -3 128 | tee key3.pem 
+Generating RSA private key, 128 bit long modulus
+.+++++++++++++++++++++++++++
+.....+++++++++++++++++++++++++++
+e is 3 (0x3)
+-----BEGIN RSA PRIVATE KEY-----
+MGICAQACEQDQOJ3STkxOKGWNp/GTCwS/AgEDAhEAitBpNt7diW8Phgt4Dlvp+wIJ
+APICm09QDGXtAgkA3EH7bi10v9sCCQChVxI04AhD8wIJAJLWp57I+H/nAggXDoxS
+56i64g==
+-----END RSA PRIVATE KEY-----
+
+$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key1.pem -raw  | base64 
+pAvH0C8oeAF0PUX4ntQOJw==
+$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key2.pem -raw  | base64 
+p+XoMuN1JKzZI2L/EDF2xQ==
+$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key3.pem -raw  | base64 
+a+GgTrVXCGWWL9JO7CPhxA==
+
+$ irb
+&gt; require 'base64'
+&gt; def nthroot(n, a, precision = 1e-1024)
+  x = a
+  begin
+    prev = x
+    x = ((n - 1) * prev + a / (prev ** (n - 1))) / n
+  end while (prev - x).abs > precision
+ x
+end
+&gt; def extended_gcd(a, b)
+  last_remainder, remainder = a.abs, b.abs
+  x, last_x, y, last_y = 0, 1, 1, 0
+  while remainder != 0
+    last_remainder, (quotient, remainder) = remainder, last_remainder.divmod(remainder)
+    x, last_x = last_x - quotient*x, x
+    y, last_y = last_y - quotient*y, y
+  end
+  return last_remainder, last_x * (a &lt; 0 ? -1 : 1)
+end
+&gt; def invmod(e, et)
+  g, x = extended_gcd(e, et)
+  if g != 1
+    raise 'Multiplicative inverse modulo does not exist!'
+  end
+  x % et
+end
+&gt; def chinese_remainder(mods, remainders)
+  max = mods.inject( :* )  # product of all moduli
+  series = remainders.zip(mods).map{ |r,m| (r * max * invmod(max/m, m) / m) }
+  series.inject( :+ ) % max
+end
+&gt; n1 = '00d2a955e1e8b61302b9b83a2203ba9195'.to_i(16)
+&gt; c1 = Base64.decode64('pAvH0C8oeAF0PUX4ntQOJw==').unpack('H*')[0].to_i(16)
+&gt; n2 = '00c4b5649412f9c888a52b01bf41a84edb'.to_i(16)
+&gt; c2 = Base64.decode64('p+XoMuN1JKzZI2L/EDF2xQ==').unpack('H*')[0].to_i(16)
+&gt; n3 = '00d0389dd24e4c4e28658da7f1930b04bf'.to_i(16)
+&gt; c3 = Base64.decode64('a+GgTrVXCGWWL9JO7CPhxA==').unpack('H*')[0].to_i(16)
+&gt; crt = chinese_remainder([n1, n2, n3], [c1, c2, c3])
+&gt; r = nthroot(3, crt)
+&gt; puts [r.to_s(16)].pack('H*')
+hello world !!!!</pre>
