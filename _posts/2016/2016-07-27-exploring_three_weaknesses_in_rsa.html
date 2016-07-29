@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Exploring 3 weaknesses in RSA'
+title:  'Exploring 3 insecure usage of RSA'
 permalink: '/exploring_three_weaknesses_in_rsa/'
 tags: ['crypto', 'rsa', 'chinese remainder theorem']
 ---
@@ -11,8 +11,8 @@ tags: ['crypto', 'rsa', 'chinese remainder theorem']
   </p>
   <p>
     Let's explore what happens when you don’t get some of this right
-    in three different ways <small>(these various weaknesses have been known for
-    a long time, but I figured it might be interesting to re-explore them</small>).
+    in three different ways <small>(these various issues have been known for
+    a long time, however I figured it would be interesting to re-visit them</small>).
   </p>
 </div>
 
@@ -25,7 +25,7 @@ tags: ['crypto', 'rsa', 'chinese remainder theorem']
   <p>The key generation algorithm boils down to:
   <ol>
     <li>choose two distinct prime numbers <code>p</code> and <code>q</code>. (Look up how this is
-    actually done, it's interesting and has been the source of flaws in the past).</li>
+    actually done, it's interesting and has caused security flaws in the past).</li>
     <li>compute <code>n = p*q</code>. The length of <code>n</code> (in bits) is going to be the key length.</li>
     <li>compute <code>&#x03c6; = (p − 1)*(q − 1)</code>.</li>
     <li>choose <code>e</code>, typically 3 or 65537.</li>
@@ -37,7 +37,11 @@ tags: ['crypto', 'rsa', 'chinese remainder theorem']
   </ul>
   </p>
 
-  <p>Encryption is then performed using modular exponentiation:
+  <p>Encryption is then performed using modular exponentiation. In this post,
+  we ignore the fact that RSA encryption should always be combined with a secure
+  encryption scheme (e.g. OAEP). Normally, you don't process plaintext with RSA but instead
+  generate a fixed size random session key.</p>
+  <p>The RSA part of the encryption process boils down to:
   <ul>
   <li>convert the message into a big integer.</li>
   <li>compute <code>c &#x2261; m^e mod n</code></li>
@@ -111,7 +115,7 @@ writing RSA key
 MCQwDQYJKoZIhvcNAQEBBQADEwAwEAIJAMJfXb8Izgw5AgMBAAE=
 -----END PUBLIC KEY-----</pre>
 
-<p>Finally, let’s encrypt a message using the public key. In general, RSA is used to encrypt session keys (e.g. AES keys). Using a string here is non-standard. </p>
+<p>Finally, let’s encrypt a message using the public key.</p>
 
 <pre>$ echo -n "new york" | openssl rsautl -encrypt -inkey small.pem -pubin -raw | base64 | tee cipher.txt
 TKna/HwfcOI=</pre>
@@ -161,7 +165,7 @@ end
 $ cat cipher.txt| base64 -D | openssl rsautl -decrypt -inkey small.pem -raw
 new york</pre>
 
-<p>Thankfully this attack isn’t easy in practice because we always use keys of length 2048 or greater.</p>
+<p><em>Thankfully, keys are typically 2048 bits or longer, making this attack infeasible.</em></p>
 </section>
 
 <section>
@@ -205,6 +209,10 @@ end
 <p>Notice how openssl doesn’t print any warnings.</p>
 <p>In the case where we don't know the exponent's value, we can try a few different options.</p>
 
+<p><em>When using RSA with random session keys, this case is unlikely to occur.</em></p>
+</section>
+
+<section>
 <h3>Same RSA message encrypted multiple times</h3>
 <p>If a message is encrypted <code>e</code> times, we can use the Chinese Remainder Theorem (<a href="https://rdist.root.org/2009/10/06/why-rsa-encryption-padding-is-critical/">see this post</a>) to decrypt the ciphertext.</p>
 
@@ -299,3 +307,5 @@ end
 &gt; r = nthroot(3, crt)
 &gt; puts [r.to_s(16)].pack('H*')
 hello world !!!!</pre>
+<p><em>This is why RSA needs a randomized padding scheme.</em></p>
+</section>
