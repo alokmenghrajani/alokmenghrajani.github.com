@@ -25,10 +25,6 @@
       date: Jul 5, 2013
       url: https://docs.google.com/presentation/d/1h49gY3TSiayLMXYmRMaAEMl05FaJ-Z6jDOWOz3EsqqQ/preview#slide=id.p
 
-    - title: 'Know your bits: bit manipulation puzzle'
-      date: Jul 1, 2013
-      url: know_your_bits/
-
     - title: 'GIF encoder from scratch'
       date: Jun 19, 2013
       url: gif_encoder_from_scratch/
