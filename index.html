@@ -24,7 +24,7 @@ layout: quaxio
         {% if currentYear == year.year %}
           <div class="index-post">
             <h3 class="index-post-title">
-              <a href="{{ post.permalink }}">{{ post.title }}</a>
+              <a href="{{ post.permalink }}{{ post.external }}">{{ post.title }}</a>
               {% if post.subtitle %}<div class="index-post-title-subtitle">{{ post.subtitle}}</div>
               {% endif %}
             </h3>
