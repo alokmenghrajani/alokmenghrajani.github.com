@@ -1,0 +1,391 @@
+---
+layout: post
+title:  'Building multi-master distributed systems using feeds'
+permalink: '/building_distributed_systems_using_feeds/'
+tags: ['distributed systems', 'data replication', 'multi-master', 'tla+']
+---
+<div class="lead">
+  <p>
+    At Square, backend engineers have a large set of tools that help build
+    application at a datacenter level: app containers to handle application
+    life cycle and monitoring, MySQL databases, zookeeper, logging, rpc, etc.
+    When it comes to replicating data across our datacenters, we have to
+    understand various tradeoffs and build the replication layer ourselves.
+  </p>
+  <p>
+    The advantage of having each team tackle data storage is that applications
+    and algorithms can be tailored to specific use-cases. For example, we have
+    an application which creates crypto keys and replicates them pre-emptively
+    while preventing the same key from being concurrently assigned to two clients.
+    It might have been harder to build such a feature with a generic distributed
+    key-value store.
+  </p>
+  <p>
+    The disadvantage of having to care about data replication is that we end up
+    building less reusable abstractions. Our lack of distributed systems skills
+    also leads us to repeatedly make some mistakes.
+  </p>
+  <p>
+    In 2012, Bob Lee gave a talk:
+    <a href="http://www.infoq.com/presentations/Square">Engineering Elegance: The Secrets of Square's Stack</a>
+    , where he described our use of feeds. In this post, I will explain some
+    of the issues our team has had to deal with over the last few years.
+  </p>
+</div>
+
+<section>
+  <h3>Feeds overview</h3>
+  <p>
+    The feed abstraction allows remote clusters to sync data from a given
+    cluster. The model is poll based and the contract is roughly:
+    <ul>
+      <li>the master cluster keeps track of changes. It exposes an endpoint
+        which takes a cursor. The response contains up to 10 data entries and
+        an updated cursor. If there is no change to return, the same cursor
+        is returned.</li>
+      <li>the other clusters keep track of their cursor and continuously
+        hit the master datacenter's endpoint, updating their local state as
+        they go along.</li>
+    </ul>
+  </p>
+  <p>
+    When building a multi-master application, we end up with N^2 feeds (where
+    N is the number of datacenters or clusters).
+  </p>
+  <p>
+    The feed contract boils down to:
+    "Two different feed consumers polling the same feed with the same cursor get
+    back the exact same entries in the exact same order. (The number of necessary
+    poll requests can vary between the consumers, for example if entries
+    are added to the feed between the two poll requests.)"
+  </p>
+  <p>
+    At Square, the number of items we return is configurable. We also have a
+    concept of shard. I'll ignore those details in this post.
+  </p>
+</section>
+
+<section>
+  <h3>Ordering issue</h3>
+  <p>
+    The first issue with using feeds to replicate data is that the application
+    needs to handle ordering issues. Let's look at the following toy application:
+    Two or more servers which are updating some internal value V at random
+    intervals. We want the state to replicate and we want data to be eventually consistent.
+  </p>
+  <p>
+    The pseudo-code for this example might look like:
+<pre>function init() {
+  value = 0;
+  current_version = 0;
+  cursors = [0];
+  schedule(job)
+}
+
+function job() {
+  lock();
+  value = rand();
+  current_version++;
+  release();
+}
+
+function feed_provider(cursor, num_results) {
+  lock();
+  if (cursor &lt; current_version) {
+    t = (current_version, [value]);
+  } else if (cursor == current_version) {
+    t = (current_version, []);
+  } else {
+    // scream...
+  }
+}
+
+function feed_listener() {
+  t = request(peer, cursors[0], 1)
+  if (t.entries == []) { return; }
+  lock();
+  value = t.entries[0];
+  cursors[0] = t.cursor;
+  unlock();
+}
+</pre>
+</p>
+  <p>
+    The code will work fine when deployed to two servers. The values
+    might look something like:
+    <br/><br/>
+
+    <svg class='diagram' xmlns='http://www.w3.org/2000/svg' version='1.1' height='137' width='312'>
+    <g transform='translate(8,16)'>
+    <path d='M 104,0 L 112,0' style='fill:none;stroke:#000;'></path>
+    <path d='M 200,0 L 208,0' style='fill:none;stroke:#000;'></path>
+    <path d='M 144,80 L 152,80' style='fill:none;stroke:#000;'></path>
+    <path d='M 224,80 L 232,80' style='fill:none;stroke:#000;'></path>
+    <path d='M 72,112 L 256,112' style='fill:none;stroke:#000;'></path>
+    <path d='M 112,0 L 112,48' style='fill:none;stroke:#000;'></path>
+    <path d='M 152,16 L 152,80' style='fill:none;stroke:#000;'></path>
+    <path d='M 208,0 L 208,48' style='fill:none;stroke:#000;'></path>
+    <path d='M 232,16 L 232,80' style='fill:none;stroke:#000;'></path>
+    <polygon points='120.000000,48.000000 108.000000,42.400002 108.000000,53.599998' style='fill:#000' transform='rotate(90.000000, 112.000000, 48.000000)'></polygon>
+    <polygon points='160.000000,16.000000 148.000000,10.400000 148.000000,21.600000' style='fill:#000' transform='rotate(270.000000, 152.000000, 16.000000)'></polygon>
+    <polygon points='216.000000,48.000000 204.000000,42.400002 204.000000,53.599998' style='fill:#000' transform='rotate(90.000000, 208.000000, 48.000000)'></polygon>
+    <polygon points='240.000000,16.000000 228.000000,10.400000 228.000000,21.600000' style='fill:#000' transform='rotate(270.000000, 232.000000, 16.000000)'></polygon>
+    <polygon points='264.000000,112.000000 252.000000,106.400002 252.000000,117.599998' style='fill:#000' transform='rotate(0.000000, 256.000000, 112.000000)'></polygon>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='24' y='4' style='fill:#000;font-size:1em'>v</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='232' y='4' style='fill:#000;font-size:1em'>7</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='0' y='84' style='fill:#000;font-size:1em'>s</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='112' y='84' style='fill:#000;font-size:1em'>4</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='176' y='84' style='fill:#000;font-size:1em'>1</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='208' y='84' style='fill:#000;font-size:1em'>7</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='296' y='116' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='0' y='4' style='fill:#000;font-size:1em'>s</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='8' y='4' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='32' y='4' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='40' y='84' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='288' y='116' style='fill:#000;font-size:1em'>m</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='16' y='4' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='48' y='4' style='fill:#000;font-size:1em'>1</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='96' y='4' style='fill:#000;font-size:1em'>4</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='152' y='4' style='fill:#000;font-size:1em'>6</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='32' y='84' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='48' y='84' style='fill:#000;font-size:1em'>2</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='84' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='40' y='4' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='8' y='84' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='272' y='116' style='fill:#000;font-size:1em'>t</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='192' y='4' style='fill:#000;font-size:1em'>7</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='16' y='84' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='136' y='84' style='fill:#000;font-size:1em'>6</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='4' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='24' y='84' style='fill:#000;font-size:1em'>v</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='280' y='116' style='fill:#000;font-size:1em'>i</text>
+    </g>
+    </svg>
+  </p>
+  <p>
+    At any point in time, either the data is consistent or the feed is slightly
+    behind and the data will become consistent. Things fall apart when the code
+    is deployed to three servers. The values can end up looking something like:
+    <br/><br/>
+    <svg class='diagram' xmlns='http://www.w3.org/2000/svg' version='1.1' height='185' width='328'>
+    <g transform='translate(8,16)'>
+    <path d='M 104,0 L 112,0' style='fill:none;stroke:#000;'></path>
+    <path d='M 112,0 L 128,0' style='fill:none;stroke:#000;'></path>
+    <path d='M 152,64 L 160,64' style='fill:none;stroke:#000;'></path>
+    <path d='M 208,64 L 216,64' style='fill:none;stroke:#000;'></path>
+    <path d='M 184,128 L 192,128' style='fill:none;stroke:#000;'></path>
+    <path d='M 232,128 L 240,128' style='fill:none;stroke:#000;'></path>
+    <path d='M 72,160 L 272,160' style='fill:none;stroke:#000;'></path>
+    <path d='M 112,0 L 112,32' style='fill:none;stroke:#000;'></path>
+    <path d='M 128,0 L 128,96' style='fill:none;stroke:#000;'></path>
+    <path d='M 160,16 L 160,64' style='fill:none;stroke:#000;'></path>
+    <path d='M 192,16 L 192,128' style='fill:none;stroke:#000;'></path>
+    <path d='M 216,64 L 216,96' style='fill:none;stroke:#000;'></path>
+    <path d='M 240,80 L 240,128' style='fill:none;stroke:#000;'></path>
+    <polygon points='120.000000,32.000000 108.000000,26.400000 108.000000,37.599998' style='fill:#000' transform='rotate(90.000000, 112.000000, 32.000000)'></polygon>
+    <polygon points='136.000000,96.000000 124.000000,90.400002 124.000000,101.599998' style='fill:#000' transform='rotate(90.000000, 128.000000, 96.000000)'></polygon>
+    <polygon points='168.000000,16.000000 156.000000,10.400000 156.000000,21.600000' style='fill:#000' transform='rotate(270.000000, 160.000000, 16.000000)'></polygon>
+    <polygon points='200.000000,16.000000 188.000000,10.400000 188.000000,21.600000' style='fill:#000' transform='rotate(270.000000, 192.000000, 16.000000)'></polygon>
+    <polygon points='224.000000,96.000000 212.000000,90.400002 212.000000,101.599998' style='fill:#000' transform='rotate(90.000000, 216.000000, 96.000000)'></polygon>
+    <polygon points='248.000000,80.000000 236.000000,74.400002 236.000000,85.599998' style='fill:#000' transform='rotate(270.000000, 240.000000, 80.000000)'></polygon>
+    <polygon points='280.000000,160.000000 268.000000,154.399994 268.000000,165.600006' style='fill:#000' transform='rotate(0.000000, 272.000000, 160.000000)'></polygon>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='68' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='240' y='68' style='fill:#000;font-size:1em'>6</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='296' y='164' style='fill:#000;font-size:1em'>i</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='32' y='4' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='96' y='4' style='fill:#000;font-size:1em'>4</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='32' y='68' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='144' y='68' style='fill:#000;font-size:1em'>6</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='16' y='132' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='0' y='4' style='fill:#000;font-size:1em'>s</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='16' y='4' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='40' y='132' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='176' y='132' style='fill:#000;font-size:1em'>9</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='40' y='4' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='112' y='68' style='fill:#000;font-size:1em'>4</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='32' y='132' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='132' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='128' y='132' style='fill:#000;font-size:1em'>4</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='216' y='132' style='fill:#000;font-size:1em'>6</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='288' y='164' style='fill:#000;font-size:1em'>t</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='8' y='68' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='24' y='132' style='fill:#000;font-size:1em'>v</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='0' y='68' style='fill:#000;font-size:1em'>s</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='48' y='68' style='fill:#000;font-size:1em'>2</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='8' y='4' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='48' y='4' style='fill:#000;font-size:1em'>1</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='160' y='4' style='fill:#000;font-size:1em'>6</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='24' y='68' style='fill:#000;font-size:1em'>v</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='0' y='132' style='fill:#000;font-size:1em'>s</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='48' y='132' style='fill:#000;font-size:1em'>3</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='24' y='4' style='fill:#000;font-size:1em'>v</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='4' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='40' y='68' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='8' y='132' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='304' y='164' style='fill:#000;font-size:1em'>m</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='312' y='164' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='192' y='4' style='fill:#000;font-size:1em'>9</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='16' y='68' style='fill:#000;font-size:1em'>r</text>
+    </g>
+    </svg>
+  </p>
+  <p>
+    Server 2 and 3 generate a value at roughly the same time, the two servers
+    end up with the same value (thanks to the use of locks), but server 1
+    doesn’t see any of this and ends up with a different view of the world.
+  </p>
+  <p>
+    For fun, I modeled these two cases in TLA+. The model checks with two servers
+    and fails with more servers.
+  </p>
+</section>
+
+<section>
+  <h3>Using timestamps for feeds</h3>
+  <p>
+    In order to track and return change sets, applications usually store
+    changes in a dedicated table. An alternative is to have an updatedAt column
+    and use map the cursor to the clock.
+  </p>
+  <p>
+    This approach however breaks the feed contract: polling the same feed
+    with the same cursor will no longer return the same data.
+  </p>
+  <p>
+    Using timestamps also comes with a few implementation risks: you must
+    ensure you have the right indexes (to make the feed query fast), you must
+    take into account that server clocks can be slightly off, be careful
+    about rounding (*), think about query ordering (**), etc.
+  </p>
+  <p>
+    * older versions of MySQL round timestamps at a seconds granularity. This
+    can lead a failure to propagate data if you have more than 10 writes per
+    second.
+  </p>
+  <p>
+    ** query completion ordering can result in an updated value which is
+    slightly in the past.
+  </p>
+</section>
+
+<section>
+  <h3>Auto-increment looks non-monotonic</h3>
+  <p>
+    When storing log entries in a MySQL table with an auto-increment id, we
+    use the row id as the feed cursor. There is however a case where the
+    feed will skip one or more rows.
+  </p>
+  <p>
+    Let's say a query is adding a row. MySQL will reserve a row id, say 100.
+    If another query is adding a row, MySQL will give an increasing number,
+    say 102. There is however no guarantee that the first query will finish
+    first and it's possible for the database to contain only row 102 for a few
+    seconds.
+  </p>
+  <p>
+    From the feeds point of view, the rows are being added in a non-monotonic
+    fashion and row 100 can get skipped if the feed fetches 102:
+    <br/><br/>
+
+    <svg class='diagram' xmlns='http://www.w3.org/2000/svg' version='1.1' height='185' width='320'>
+    <g transform='translate(8,16)'>
+    <path d='M 0,16 L 216,16' style='fill:none;stroke:#000;'></path>
+    <path d='M 24,48 L 184,48' style='fill:none;stroke:#000;'></path>
+    <path d='M 0,96 L 264,96' style='fill:none;stroke:#000;'></path>
+    <path d='M 192,144 L 200,144' style='fill:none;stroke:#000;'></path>
+    <path d='M 0,16 L 0,80' style='fill:none;stroke:#000;'></path>
+    <path d='M 24,48 L 24,80' style='fill:none;stroke:#000;'></path>
+    <path d='M 184,48 L 184,80' style='fill:none;stroke:#000;'></path>
+    <path d='M 200,112 L 200,144' style='fill:none;stroke:#000;'></path>
+    <path d='M 216,16 L 216,80' style='fill:none;stroke:#000;'></path>
+    <path d='M 0,80 L 0,88' style='fill:none;stroke:#000;'></path>
+    <polygon points='16.000000,80.000000 4.000000,74.400002 4.000000,85.599998' style='fill:#000' transform='rotate(90.000000, 0.000000, 80.000000)'></polygon>
+    <path d='M 24,80 L 24,88' style='fill:none;stroke:#000;'></path>
+    <polygon points='40.000000,80.000000 28.000000,74.400002 28.000000,85.599998' style='fill:#000' transform='rotate(90.000000, 24.000000, 80.000000)'></polygon>
+    <path d='M 184,80 L 184,88' style='fill:none;stroke:#000;'></path>
+    <polygon points='200.000000,80.000000 188.000000,74.400002 188.000000,85.599998' style='fill:#000' transform='rotate(90.000000, 184.000000, 80.000000)'></polygon>
+    <path d='M 200,104 L 200,112' style='fill:none;stroke:#000;'></path>
+    <polygon points='216.000000,112.000000 204.000000,106.400002 204.000000,117.599998' style='fill:#000' transform='rotate(270.000000, 200.000000, 112.000000)'></polygon>
+    <path d='M 216,80 L 216,88' style='fill:none;stroke:#000;'></path>
+    <polygon points='232.000000,80.000000 220.000000,74.400002 220.000000,85.599998' style='fill:#000' transform='rotate(90.000000, 216.000000, 80.000000)'></polygon>
+    <polygon points='272.000000,96.000000 260.000000,90.400002 260.000000,101.599998' style='fill:#000' transform='rotate(0.000000, 264.000000, 96.000000)'></polygon>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='112' y='4' style='fill:#000;font-size:1em'>d</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='152' y='4' style='fill:#000;font-size:1em'>)</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='40' y='36' style='fill:#000;font-size:1em'>2</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='164' style='fill:#000;font-size:1em'>s</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='80' y='4' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='104' y='4' style='fill:#000;font-size:1em'>i</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='64' y='4' style='fill:#000;font-size:1em'>i</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='304' y='100' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='168' y='36' style='fill:#000;font-size:1em'>2</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='120' y='36' style='fill:#000;font-size:1em'>(</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='288' y='100' style='fill:#000;font-size:1em'>i</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='96' y='148' style='fill:#000;font-size:1em'>d</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='48' y='36' style='fill:#000;font-size:1em'>n</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='296' y='100' style='fill:#000;font-size:1em'>m</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='136' y='4' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='96' y='36' style='fill:#000;font-size:1em'>t</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='128' y='36' style='fill:#000;font-size:1em'>i</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='88' y='36' style='fill:#000;font-size:1em'>i</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='88' y='164' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='144' y='36' style='fill:#000;font-size:1em'>=</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='80' y='148' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='152' y='148' style='fill:#000;font-size:1em'>o</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='16' y='4' style='fill:#000;font-size:1em'>1</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='36' style='fill:#000;font-size:1em'>w</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='112' y='148' style='fill:#000;font-size:1em'>w</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='168' y='148' style='fill:#000;font-size:1em'>l</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='112' y='164' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='120' y='148' style='fill:#000;font-size:1em'>i</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='104' y='164' style='fill:#000;font-size:1em'>1</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='120' y='164' style='fill:#000;font-size:1em'>2</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='120' y='4' style='fill:#000;font-size:1em'>=</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='104' y='36' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='148' style='fill:#000;font-size:1em'>f</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='88' y='148' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='32' y='4' style='fill:#000;font-size:1em'>t</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='176' y='36' style='fill:#000;font-size:1em'>)</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='96' y='4' style='fill:#000;font-size:1em'>(</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='160' y='36' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='24' y='4' style='fill:#000;font-size:1em'>s</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='48' y='4' style='fill:#000;font-size:1em'>w</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='80' y='164' style='fill:#000;font-size:1em'>e</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='144' y='4' style='fill:#000;font-size:1em'>0</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='136' y='36' style='fill:#000;font-size:1em'>d</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='280' y='100' style='fill:#000;font-size:1em'>t</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='136' y='148' style='fill:#000;font-size:1em'>l</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='176' y='148' style='fill:#000;font-size:1em'>y</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='72' y='4' style='fill:#000;font-size:1em'>t</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='152' y='36' style='fill:#000;font-size:1em'>1</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='128' y='148' style='fill:#000;font-size:1em'>l</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='160' y='148' style='fill:#000;font-size:1em'>n</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='56' y='36' style='fill:#000;font-size:1em'>d</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='80' y='36' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='56' y='4' style='fill:#000;font-size:1em'>r</text>
+    <text text-anchor='middle' font-family='Menlo,Lucida Console,monospace' x='128' y='4' style='fill:#000;font-size:1em'>1</text>
+    </g>
+    </svg>
+  </p>
+</section>
+
+<section>
+  <h3>Summary</h3>
+  <p>
+    To summarize, replicating data with feeds requires taking data ordering into
+    account. Application developers need to decide if they can handle inconsistent
+    views on their data or if they need to apply some kind of re-ordering logic.
+  </p>
+  <p>
+    In practice, it is easier to handle data which has an inherent order (e.g.
+    counters or timestamps) or store unordered sets.
+  </p>
+  <p>
+    Ensuring the correctness of the code is hard. You can end up with code which
+    fails to sync a few rows when some rare conditions are met.
+  </p>
+  <p>
+    Given these findings, we tend to write our applications with a fallback to
+    query all the remote datacenters if a piece of information is missing. This
+    feature has saved us multiple times!
+  </p>
+</section>
