@@ -269,18 +269,18 @@ function feed_listener() {
 </section>
 
 <section>
-  <h3>Auto-increment looks non-monotonic</h3>
+  <h3>Auto-increment appears non-monotonic</h3>
   <p>
     When storing log entries in a MySQL table with an auto-increment id, we
     use the row id as the feed cursor. There is however a case where the
-    feed will skip one or more rows.
+    feed can skip one or more rows.
   </p>
   <p>
-    Let's say a query is adding a row. MySQL will reserve a row id, say 100.
-    If another query is adding a row, MySQL will give an increasing number,
-    say 102. There is however no guarantee that the first query will finish
-    first and it's possible for the database to contain only row 102 for a few
-    seconds.
+    Let's say a query is adding a row. MySQL will reserve a row id (e.g. 100).
+    If another query is adding a row, MySQL will increases the row id (e.g. 102).
+    There is however no guarantee that the first query will finish
+    first and it's possible for the database to contain only row 102 for a
+    brief period of time.
   </p>
   <p>
     From the feeds point of view, the rows are being added in a non-monotonic
