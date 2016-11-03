@@ -25,14 +25,14 @@ tags: ['Hack', 'PHP', 'Facebook']
 </p>
 
 <p>
-  I some point, I was working on some security sensitive code (a crypto library) and I wanted a validation tool.
+  At some point, I was working on some security sensitive code (a crypto library) and I wanted a validation tool.
   I talked to Yoann, who implemented a linter dubbed strictmode. The linter analyzed the body of functions and enforced the use of
   specific PHP coding patterns and could catch things like unused variables (it turned out that some of our runtime type
   coercions saved us by making some bugs unexploitable in practice).
 </p>
 
 <p>
-  Over time, other engineers wanted to use strictmode and requested more features (types being one of them). We felt that type
+  Other engineers wanted to use strictmode and requested more features (types being one of them). We felt that type
   annotations (and a type checker) would catch at development time bugs which would otherwise trigger at deploy time or
   randomly in the middle of the night.
 </p>
@@ -116,7 +116,7 @@ Error: This expression has type int but an expression was expected of type strin
  5 function f2(string $s): void {
  6   echo $s;
  7 }
- 8 
+ 8
  9 $x=f1();
 10 f2($x);
 
@@ -128,7 +128,7 @@ line 2, characters 16-18:
 It is incompatible with an int</pre></div>
 
 <p>
-  Over time, we got a lot of feedback from engineers using Hack. We tried to recognize and give
+  As we got feedback from engineers using Hack, we tried to recognize and give
   special treatment to common coding patterns and idioms. The Hack team grew and merged with the HHVM team,
   allowing us to make more interesting runtime changes. We hired a technical writer who did an amazing job documenting
   our work.
@@ -150,5 +150,3 @@ It is incompatible with an int</pre></div>
   <li><a href="https://code.facebook.com/posts/264544830379293/hack-a-new-programming-language-for-hhvm/">Hack: a new programming language for HHVM</a></li>
   <li><a href="https://www.reddit.com/r/programming/comments/20wuuo/facebook_introduces_hack_a_new_programming/">Facebook introduces Hack: a new programming language for HHVM</a>, reddit discussion</li>
 </ul>
-
-
