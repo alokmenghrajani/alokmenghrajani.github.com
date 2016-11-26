@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="_internal_/dynamic_resource/lib/stdlib/themes/bootstrap/bs-resources/2.2.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="riskybird.css"/>
+<title>RegexpLint</title><script type="text/javascript">var page_server = 2887585888206848; var page_lang = "en";</script></head><body id="Body">
+<div id="main" class="container">
+<section id="info">
+<p class="lead">
+RegexpLint helps you understand and analyze regular expressions.<br/>
+We graphically render regular expressions and point out common pitfalls.
+</p>
+<p>
+Enter a regular expression or try <a href="javascript:void(0)" onclick='_U(0)(_F(event))'>example 1</a> ·
+<a href="javascript:void(0)" onclick='_T(0)(_F(event))'>example 2</a> ·
+<a href="javascript:void(0)" onclick='_L(0)(_F(event))'>example 3</a>
+</p>
+</section>
+<section id="go">
+<div id="row1" class="row">
+<div class="span12">
+<div class="input">
+<input type="text" id="regexp" placeholder="Enter a regular expression" value="" class="xxlarge"/>
+<input type="submit" value="render &#38; lint" onclick='_R(0)(_F(event))' id="EL" class="btn"/>
+</div>
+<br/>
+</div>
+</div>
+<div id="row2" class="row hidden">
+<div class="span12">
+<div class="input">
+<span id="string_output" onclick='_S(0)(_F(event))' class="uneditable-input xxlarge"></span>
+</div>
+<div id="parser_output"></div>
+<div id="debug_output"></div>
+</div>
+</div>
+<div id="row3" class="row hidden">
+<div id="lint_output" class="span4"></div>
+<div class="span8"> </div>
+</div>
+</section>
+<section id="cheatsheet">
+<p class="lead">
+Use the table below as a cheat sheet:
+</p>
+<table>
+<tr>
+<td><code>[abc]</code></td>
+<td>a, b or c</td>
+<td><code>.</code></td>
+<td>any single character</td>
+<td><code>a?</code></td>
+<td>zero or one of a</td>
+</tr>
+<tr>
+<td><code>[^abc]</code></td>
+<td>any character except a, b, or c</td>
+<td><code>\s</code></td>
+<td>whitespace</td>
+<td><code>a*</code></td>
+<td>zero or more of a</td>
+</tr>
+<tr>
+<td><code>[a-z]</code></td>
+<td>range a-z</td>
+<td><code>\S</code></td>
+<td>non-whitespace</td>
+<td><code>a+</code></td>
+<td>one or more of a</td>
+</tr>
+<tr>
+<td><code>[a-zA-Z]</code></td>
+<td>a-z or A-Z</td>
+<td><code>\d</code></td>
+<td>any digit</td>
+<td><code>a{n}</code></td>
+<td>exactly n of a</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>anchor at start of line</td>
+<td><code>\D</code></td>
+<td>any non-digit</td>
+<td><code>a{n,}</code></td>
+<td>n or more of a</td>
+</tr>
+<tr>
+<td><code>$</code></td>
+<td>anchor at end of line</td>
+<td><code>\w</code></td>
+<td>any word character (letter, number, underscore)</td>
+<td><code>a{n,m}</code></td>
+<td>between n and m of a</td>
+</tr>
+<tr>
+<td><code>(...)</code></td>
+<td>capture everything enclosed</td>
+<td><code>\W</code></td>
+<td>any non-word character</td>
+<td><code>a*?</code></td>
+<td>zero or more of a (non greedy)</td>
+</tr>
+<tr>
+<td><code>(a|b)</code></td>
+<td>a or b</td>
+<td><code>\b</code></td>
+<td>any word boundary</td>
+<td><code>(a)...\1</code></td>
+<td>back reference</td>
+</tr>
+<tr>
+<td><code>(?=a)</code></td>
+<td>look ahead (positive)</td>
+<td><code>(?!a)</code></td>
+<td>look ahead (negative)</td>
+<td><code>\B</code></td>
+<td>any non-word boundary</td>
+</tr>
+</table>
+</section>
+</div>
+<div class="push"></div>
+</div>
+<footer class="footer">
+<p>
+<a href="about.html">About</a> ·
+<a href="http://github.com/alokmenghrajani/riskybird/">Fork on github.com</a> 
+</p>
+</footer>
+<script type="text/javascript">
+</script>
+<script src="_internal_/dd9c6f7b043cd04a7f467301754abde2/code/all.js" type="text/javascript"></script>
+<script type="text/javascript">//<![CDATA[
+
+$('#regexp')
+.bind('keydown.newline',(function(event){_P(0)(_F(event))}))
+
+$('#EL')
+.css({  'margin-bottom': '9px'})
+
+$('#debug_output')
+.css({  'display': 'none'})
+
+$('#row3')
+.css({  'margin-top': '12px'})
+
+$('#EM')
+.css({  'border': 'none  ', 'overflow': 'hidden', 'width': '75px', 'height': '21px'})
+
+$('#EN')
+.css({  'padding-left': '20px'})
+
+//]]>
+</script>
+</body></html>

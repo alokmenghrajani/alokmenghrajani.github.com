@@ -1,0 +1,75 @@
+* {
+  margin:0;
+}
+
+html, body {
+  height: 100%;
+}
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -71px;
+}
+
+#main {
+  overflow: visible;
+  padding-bottom: 70px;
+  padding-top: 80px;
+}
+
+table {
+  border: 1px solid black;
+}
+
+table td .code {
+  white-space: nowrap;
+}
+
+.push {
+  height: 71px;
+}
+
+.footer {
+  border-top: 1px solid #DDDDDD;
+  height: 70px;
+  color: #777777;
+  text-align: center;
+  margin: 0 auto;
+  clear:both;
+  width: 940px;
+}
+
+.footer a {
+  margin: 0 10px 0 10px;
+}
+
+.highlight {
+  background-color: #D9EDF7;
+}
+
+.hidden {
+  display: none;
+}
+
+iframe {
+  border: 0px;
+}
+
+.xxlarge {
+  width: 80%;
+}
+
+.alert {
+  border: 1px solid #DBCEA5;
+}
+
+/*Opera Fix*/
+//body:before {/* thanks to Maleika (Kohoutec)*/
+//  content:"";
+//  height:100%;
+//  float:left;
+//  width:0;
+//  margin-top:-32767px;/* thank you Erik J - negate effect of float*/
+//}
