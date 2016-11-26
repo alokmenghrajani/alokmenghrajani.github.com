@@ -37,9 +37,9 @@
       date: May 7, 2013
       url: perpetual_calendar/
 
-    - title: 'regexp.quaxio.com: a linter and visualizer for regular expressions'
+    - title: 'a linter and visualizer for regular expressions'
       date: Apr 29, 2013
-      url: http://regexp.quaxio.com/
+      url: https://www.quaxio.com/regexp_lint/
 
     - title: 'Mapping an IP address to an ASN'
       date: Apr 18, 2013
