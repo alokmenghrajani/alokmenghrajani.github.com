@@ -83,6 +83,10 @@
       date: Mar 20, 2012
       url: tron/
 
+    - title: 'Facebook Rubik Cube in javascript'
+      date: Oct 15, 2011
+      url: fbcube.html
+
     - title: 'Taint support for PHP'
       date: Aug 25, 2011
       url: taint_support_for_php/
