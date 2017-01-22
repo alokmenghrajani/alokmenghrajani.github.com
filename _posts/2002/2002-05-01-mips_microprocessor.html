@@ -1,0 +1,38 @@
+---
+layout: post
+title:  'Mips microprocessor'
+permalink: '/mips_microprocessor/'
+tags: ['mips', 'cpu architecture', 'cpu design']
+---
+<p>Alexandre Lopes and I designed a MIPS processor. We implemented the
+  processor in VHDL and tested it on a reprogrammable (FPGA) chip.</p>
+<p>We worked with Mentor Graphics' development suit (ModelSim, Leonardo and
+HDL Designer). These tools were used to simulate our processor on a desktop
+computer.</p>
+<p>We also used a MIPS emulator to help debug things.</p>
+<p>In order to manipulate data, two components are required: an algorithm
+(that will instruct how to manipulate the data) and hardware resources
+(that will do the actual manipulation).</p>
+<p>A processor is a system that some has hardware resources, access to the data
+(in our case via the RAM) and a way to understand and execute instructions
+(in our case the instructions are in the ROM). The main parts of a processor
+are:
+<ul>
+<li><p>ALU (arithmetic logic unit)</p>
+<p>This part is responsible for performing basic operations such as addition, substraction, AND, OR, etc...</p></li>
+
+<li><p>Register File</p>
+<p>The register file is a special memory (known as registers) that is accessible very quickly (because it is inside the processor). These registers are used to store the intermediate results of calculations (because it is easier and more efficient to design the instructions to use these registers rather than the RAM). We had 32 registers.</p></li>
+
+<li><p>3 data buses and 2 address buses</p>
+<p>The buses allow data to be exchanged between the registers and the RAM and ROM.</p></li>
+
+<li><p>PC (program counter)</p>
+<p>The PC is a special register, used to keep track of what is the next instruction to be executed.</p></li>
+
+<li><p>Control Unit</p>
+<p>The control unit is used to manage the above resources. It is implemented as a state machine.
+We implemented all these parts and inter-connected them to form the datapath. Our processor is very simple and understands 8 instructions (addition, substraction, logic AND, logic OR, immediate add, conditional branch, loading and storing data in RAM). The reason our processor is simple is because it does not have a pipeline or virtual memory support.</p></li>
+</ul></p>
+<p>This pdf contains <a href="/files/2002/mips_microprocessor/mips.pdf">source code (vhdl) and some docs (french)</a>.</p>
+<p><a href="/files/2002/mips_microprocessor/mips_prime.asm">prime.asm</a> is a test application we wrote in assembly. We compute a list of prime numbers. We were proud to be able to do this, considering we didn't have multiplication or division instructions.</p>

@@ -21,6 +21,11 @@ layout: quaxio
       <h2 class="index-year">{{ year.year }}</h2>
       {% for post in site.posts %}
         {% assign currentYear = post.date | date: "%Y" %}
+        {% assign currentYearN = currentYear | plus: 0  %}
+        {% if currentYearN < 2012 %}
+        {% assign currentYear = "2012 and older" %}
+        {% endif %}
+
         {% if currentYear == year.year %}
           <div class="index-post">
             <h3 class="index-post-title">
