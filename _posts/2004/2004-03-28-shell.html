@@ -1,0 +1,15 @@
+---
+layout: post
+title:  'Writing Your Own Unix Shell'
+permalink: '/writing_your_own_unix_shell/'
+tags: ['malloc', 'memory allocator']
+---
+<p>Writing a unix shell is a great way to familiarize with the concepts of
+process control and signaling.</p>
+<p>As part of 15213 (introduction to computer systems), I implemented a shell
+with the following features:
+<ul>
+<li>quit, fg, bg and jobs built-in commands.</li>
+<li>use of &amp; (foreground / background jobs).</li>
+<li>catch SIGCHILD, SIGINT and SIGSTOP signals.</li>
+<p><a href="/files/2004/writing_your_own_unix_shell/shell.tar.gz">source code + readme + shlab.pdf</a></p>
