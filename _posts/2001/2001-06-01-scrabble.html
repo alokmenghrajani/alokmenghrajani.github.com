@@ -1,0 +1,26 @@
+---
+layout: post
+title:  'Scrabble'
+permalink: '/scrabble/'
+tags: ['ada', 'scrabble', 'coding competition']
+---
+<pre>
+   ______   ______   ______   ______   ______   ______   ______   ______
+  |  __  | |  __  | |  _   | |      | |  _   | |  _   | |      | |  __  |
+  | (_   | | /    | | |_)  | |  /\  | | |_)  | | |_)  | | |    | | |__  |
+  | __) 1| | \__ 3| | | \ 1| | /--\1| | |_) 3| | |_) 3| | |__ 1| | |__ 1|
+  |______| |______| |______| |______| |______| |______| |______| |______|
+       ______   ______   ______   ______   ______   ______   ______
+      |  _   | |  _   | |  _   | |   _  | |  __  | |  __  | | ___  |
+      | |_)  | | |_)  | | / \  | |   |  | | |__  | | /    | |  |   |
+      | |   3| | | \ 1| | \_/ 1| |  _| 8| | |__ 1| | \__ 3| |  |  1|
+      |______| |______| |______| |______| |______| |______| |______|</pre>
+
+<p>This group project (team of 4 students) was organized as a competition among
+1st year students taking an introductory course to programming (Ada language).</p>
+<p>We were given a dictionnary (a modified webster) and an input. We had to find the longest match and maximum weight given the standard rules of the scrabble game (we must find words that can be formed by combinations of the input).</p>
+<p>We had a set of files that would test our code. Our code had to comply to a given specification.</p>
+<p>Our team was composed of Nicolas Baly, Mark Kornfilt, Francois Bonzon and me. Our strategy was to use binary operations (which are fast), so we encoded each word on 115 bits. Each bit represent the occurance of a letter. Since a word can have the same letter multiple times (eg: 'hello' has two l's), the second occurance of l will have it's own bit. By analysing the dictionnary, we found out we needed 115 bits. We can then tell if a given word can be made up given the input, by simply performing a binary OR operation. (see the source code for more detailed information).</p>
+<p>We also presorted the dictionnary by length and weight.</p>
+<p><a href="/files/2001/scrabble/scrabble.tar.gz">Source code</a></p>
+
