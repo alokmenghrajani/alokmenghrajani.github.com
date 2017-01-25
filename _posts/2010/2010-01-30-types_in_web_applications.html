@@ -1,0 +1,26 @@
+---
+layout: post
+title:  "Types in web applications"
+permalink: '/types_web_applications/'
+tags: ['type system', 'web application security', 'random thoughts']
+---
+<p>I poked at a web application looking for SQL injection and
+cross site scripting bugs. This was part of a white box security testing of
+a pretty large codebase.</p>
+<p>At one point, I found a common coding pattern which I knew would result in
+a security hole. For a second, I thought that I had stumbled upon dozens of
+SQL injections!</p>
+
+<p>It turned out that while I had theoretically found a whole bunch of flaws,
+none of them were exploitable in practice. The reason is because the first thing
+that the web application did with these user inputs was to cast them to an
+integer. Unfortunately (or fortunately depending on your point of view), you
+can't do much damage using only numbers.</p>
+
+<p>While the casting to an integer had been put in place for documentation and
+ease of development purpose, it turned out to also provide a layer of
+security. I think types in general provide goodness at various layers and this
+is only one such example.</p>
+
+<p>A few months later, the code was re-written to use a better library to
+manipulate SQL, which removed the risk of SQL injections.</p>
