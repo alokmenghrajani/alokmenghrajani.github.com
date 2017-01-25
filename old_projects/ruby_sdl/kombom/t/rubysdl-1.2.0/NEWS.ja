@@ -1,0 +1,138 @@
+version 1.2.0
+日本語のリファレンスのMPEGの項目を加筆
+以下のメソッドを追加
+  SDL::MPEG#render_final
+  SDL::Surface.load_bmp_from_io
+  SDL::Surface.load_from_io
+  SDL::Mixer::Wave.load_from_io
+  SDL::Mixer::Music.load_from_string
+SMPEG有、SDL_mixer無の場合にコンパイルできないバグを修正
+
+version 1.1.0
+日本語のリファレンスを全面改訂
+以下のメソッドを追加
+  SDL::CD.framesToMSF
+  SDL::CD.MSFToFrames
+  SDL::CD#in_drive?
+  SDL::Mixer.playChannelTimed
+  SDL::Mixer.fadeInChannel
+  SDL::Mixer.fadeInChannelTimed
+  SDL::Mixer.expire
+  SDL::Mixer.fading
+  SDL::Mixer.fadeOut
+  SDL::Mixer.fadingMusic
+  SDL::Mouse.show?
+  SDL::CollisionMap#w
+  SDL::CollisionMap#h
+  SDL::BMFont#textSize
+  SDL::TTF#init?
+以下のクラスを追加
+  SDL::Event2::VideoExpose
+以下のメソッドのバグを修正
+  SDL::Key.press?
+  SDL::TTF#familyName
+  SDL::TTF#styleName
+以下のクラスの終了時バグを修正
+  SDL::BMFont
+キーリピート関連の定数を追加
+
+version 1.0.0
+以下のメソッドを追加
+  SDL::Surface#drawBezier
+  SDL::Surface#drawAABezier
+  SDL::Surface#drawBezierAlpha
+  SDL::Surface#drawAABezierAlpha
+以下のメソッドのバグを修正
+  SDL::MPEG#setDisplay
+
+version 0.9.5
+以下のメソッドのバグを修正
+  SDL::Surface#getPalette
+  SDL::Surface#copyRect
+以下のメソッドを追加
+  SDL::WM.grubInput
+  SDL.quit
+  SDL.putenv
+  SDL.getenv
+ささいなtypoを修正
+ドキュメントを一部修正(SDL::TTF#textSize)
+
+version 0.9.4
+SDL::Surface#pixels, SDL::Surface#[RGBA]mask, SDL::Surface.new_fromを追加
+SDL::Surface.newを拡張
+OpenGL関連のドキュメントを最低限の分追加
+
+version 0.9.3
+sgeのbitmap font描画機能を追加
+SDL_kanjiによるbdf font描画機能を追加
+SDL::TTF#height, #ascent, #descent, #lineSkipを追加
+SDL::Surface#copyRectを追加
+warningがでる点を修正
+SDLSKKインターフェースの致命的なバグを修正
+OpenGLをデフォルトで有効にした
+
+version 0.9.2
+sgeのアルファ付き図形描画、アンチエイリアズ付き図形描画をサポート
+SDL.transformBlitをsetAlphaでのalphaの設定を有効にする
+
+version 0.9.1
+
+SDL::EventとSDL::Event2の致命的なバグを修正
+
+version 0.9
+
+SDLSKK 0.4をサポート、0.3のサポートを停止
+衝突判定機能を追加 ( thanks to Wayne Conrad )
+MPEG再生機能を強化。複数のMPEGファイルを読みこめるようにする、SDL_Mixerによる
+音声再生機能との共存を可能にするなどの変更をした。
+サンプルを追加。( thanks to Simon Strandgaard )
+
+version 0.8.3
+
+以下のメソッドを追加(typoのため) ( thanks to Wayne Conrad )
+  SDL::Surface#drawEllipse
+  SDL::Surface#drawFilledEllipse
+以下のメソッドを修正( thanks to moumar )
+  SDL.videoInfo
+
+version 0.8.2
+
+SDLSKK 0.3をサポート、0.2以前はサポートしないことにした
+Joystick機能のバグを修正
+以下のメソッドを追加
+  SDL::Screen#toggleFullScreen
+  SDL::Key.getKeyName
+ドキュメントにaliasを記述
+
+version 0.8.1
+
+バグ修正
+
+version 0.8
+
+SDLSKKのサポートを加える。
+終了処理の変更(たむらさんのパッチなどによる)
+アンダーバー区切りのメソッド名を利用できるようにした( blit_surface など )
+メソッド名を変更
+  SDL::CD.name -> SDL::CD.indexName
+  SDL::Joystick.name -> SDL::Joystick.indexName
+以下のメソッドの追加
+  SDL::Mixer.allocateChannels
+  SDL::TTF#renderSolidUTF8
+  SDL::TTF#renderBlendedUTF8
+  SDL::TTF#renderShadedUTF8
+  SDL::TTF#faces
+  SDL::TTF#fixedWidth?
+  SDL::TTF#familyName
+  SDL::TTF#styleName
+  SDL.videoDriverName
+  SDL.getGammaRamp
+  SDL.setGammaRamp
+  SDL::Surface#saveBMP
+  SDL::Surface#displayFormatAlpha
+  SDL::Surface#getClipRect
+  SDL.autoLock?
+  SDL.autoLockON
+  SDL.autoLockOFF
+以下のメソッドを拡張
+  SDL.blitSurface2

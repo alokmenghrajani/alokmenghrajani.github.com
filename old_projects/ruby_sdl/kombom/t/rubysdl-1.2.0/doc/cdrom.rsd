@@ -1,0 +1,431 @@
+= CD-ROM
+* ((<CD-ROM機能概説>))
+* ((<SDL::CD>))
+* ((<CD-ROM関連メソッド>))
+TOC
+
+== CD-ROM機能概説
+SDL は一度に 32 までのローカル CD-ROM ドライブの
+オーディオ制御をサポートします。
+
+トラック一覧の取得・再生・停止そして CD-ROM の取り出しを含む、
+CD プレーヤの全ての基本的な機能を実行するためにこの API を使います。
+(現在はマルチチェンジャーの CD ドライブはサポートしていません)
+
+Ruby/SDL のどの CD-ROM 関連メソッドを呼ぶ前に、
+まず @[init](SDL::INIT_CDROM) を呼ばなければいけません。
+これは CD-ROM ドライブを探してシステムをスキャンし、
+プログラムがオーディオ制御できるようセットアップします。
+
+ライブラリを初期化した後は、
+@[CD.num_drives] を使って
+利用可能なドライブがいくつあるかを知ることができます。
+リストの最初のドライブはデフォルト CD-ROM ドライブです。
+ドライブを選択し、@[CD.open] でオープンした後は、
+ステータスをチェックし CD がドライブにあるなら再生を開始することができます。
+
+CD-ROM は 1 つまたはそれ以上のトラックで構成され、
+個々のトラックはある数の「フレーム」で構成されています。
+フレームは CD の基礎データの単位で、
+それぞれのフレームはサイズにして 2K であり、
+CD は通常の再生スピードにおいて 1 秒間に 75(= SDL::CD::FPS)
+フレーム再生されます。
+SDL は CD 上のフレーム数を使って動作しますが、
+@[CD.frames_to_msf] を使うことで、
+より見慣れた分/秒のフォーマットに簡単に変換することができます。
+またこの変換の逆は @[CD.msf_to_frames] でできます。
+
+== SDL::CD
+@[CD.open] によってオープンされた CDROM デバイスを表し、
+ディスクにおけるトラックのレイアウトの情報を格納します。
+
+== CD-ROM関連メソッド
+%%%
+NAME num_drives
+MOD CD
+TYPE .
+PURPOSE システム上の CD-ROM の数を返します。
+RVAL Integer
+
+PROTO
+num_drives
+numDrives
+
+DESC
+システム上の CD-ROM の数を返します。
+
+SEEALSO
+CD.open
+
+%%
+NAME index_name
+MOD CD
+TYPE .
+PURPOSE CD-ROM について、人間に読めるシステム非依存の ID を返します。
+RVAL String
+
+PROTO
+index_name(drive)
+indexName(drive)
+
+DESC
+CD-ROM について、人間に読めるシステム非依存の ID を文字列で返します。
+$[drive] はドライブのインデックス番号です。
+インデックス番号は 0 で始まり、@[CD.num_drives]-1 で
+終わります。
+
+返り値は例えば以下のような文字列です。
+* "/dev/cdrom"
+* "E:"
+* "/dev/disk/ide/1/master"
+
+SEEALSO
+CD.num_drives
+
+%%
+NAME open
+MOD CD
+TYPE .
+PURPOSE CD-ROM ドライブにアクセスするためにオープンします。
+RVAL SDL::CD
+
+PROTO
+open(drive)
+
+DESC
+CD-ROM ドライブにアクセスするためにオープンします。
+成功した場合は @[CD] のインスタンスを返します。
+
+EXCEPTION
+ドライブが正しくないか、ビジー状態のときは例外 @[Error] を発生させます。
+
+EXAMPLE
+SDL.init SDL::INIT_CDROM
+
+# CD ドライブをチェック 
+if SDL::CD.num_drives == 0
+  # 見つからなかった 
+  STDERR.print "利用可能な CDROM デバイスがありません\n"
+  exit 255
+end
+
+begin
+  # デフォルトドライブをオープン
+  cdrom = SDL::CD.open(0)
+rescue SDL::Error
+  # オープンできなかった
+  STDERR.puts "ドライブがオープンできませんでした"
+  exit 255
+end
+
+# ボリュームの情報を表示 
+printf "名前: %s\n", SDL::CD.index_name(0)
+printf "トラック数: %d\n", cdrom.num_tracks
+num_tracks.times do |cur_track|
+  min, sec, frame = SDL::CD.frames_to_msf(cdrom.track_length(cur_track))
+  printf "\tトラック %d: 長さ %d:%d\n", cur_track, min, sec
+end
+
+%%
+NAME status
+MOD CD
+TYPE #
+PURPOSE 指定されたドライブの現在の状態を返します。
+RVAL UINT
+
+PROTO
+status
+
+DESC
+この関数は指定されたドライブの現在の状態を返します。
+状態は次のいずれかです。
+* SDL::CD::TRAYEMPTY
+* SDL::CD::STOPPED
+* SDL::CD::PLAYING
+* SDL::CD::PAUSED
+* SDL::CD::ERROR
+
+ドライブに CD が入っていると、
+@[current_track], @[current_frame], @[num_tracks], @[track_type],
+@[track_lenght]の情報が更新されます。
+
+EXAMPLE
+def play_track(track)
+  raise "not cd in drive" unless $cdrom.in_drive?
+
+  # 実際の CD のトラック数で切り捨て
+  track = $cdrom.num_tracks-1 if track >= $cdrom.num_tracks
+  $cdrom.play_tracks(track, 0, 1, 0)
+end
+
+%%
+NAME play
+MOD CD
+TYPE #
+PURPOSE CD を再生します。
+
+PROTO
+play(start, length)
+
+DESC
+$[self] で示されるCDを
+フレーム $[start]から
+$[length] フレームだけ
+再生します。
+
+EXCEPTION *
+
+SEEALSO
+CD#play_tracks
+
+%%
+NAME play_tracks
+MOD CD
+TYPE #
+PURPOSE 指定された CD トラックを再生します。
+
+PROTO
+play_tracks(start_track, start_frame, ntracks, nframes)
+
+DESC
+$[start_track] 番目のトラックから
+$[ntracks] トラック分、
+指定された CD を再生します。
+
+$[start_frame] は
+再生を始める $[start_track] の先頭から数えた
+フレームのオフセット値です。
+$[nframes] は
+再生を終了する最後のトラック
+($[start_track]+$[ntracks]) の
+先頭から数えたフレームのオフセット値です。
+
+このメソッドは、@[CD#status]を
+呼んで CD のトラック情報を取得した後にのみ、呼ぶべきです。
+
+NOTES
+データトラックは無視されます。
+
+EXCEPTION *
+
+EXAMPLE
+# 前もって cdrom がオープンされたデバイスだと仮定 
+# CD 全体を再生 
+if cdrom.in_drive?
+  cdrom.play_tracks 0, 0, 0, 0
+
+# 最初のトラックを再生 
+if cdrom.in_drive?
+  cdrom.play_tracks 0, 0, 1, 0
+
+# 2 番目のトラックの最初から 15 秒を再生 
+if cdrom.in_drive?
+  cdrom.play_tracks 1, 0, 0, SDL::CD::FPS*15
+
+SEEALSO
+CD#play
+CD#status
+
+%%
+NAME pause
+MOD CD
+TYPE #
+PURPOSE CD-ROM の再生を一時停止します。
+
+PROTO
+pause
+
+DESC
+指定された CD-ROM の再生を一時停止します。
+
+EXCEPTION *
+
+SEEALSO
+CD#play
+CD#resume
+
+%%
+NAME resume
+MOD CD
+TYPE #
+PURPOSE CD-ROM の再生を再開します。
+
+PROTO
+resume
+
+DESC
+指定した CD-ROM の再生を再開します。
+
+EXCEPTION *
+
+SEEALSO
+CD#play
+CD#pause
+
+%%
+NAME stop
+MOD CD
+TYPE #
+PURPOSE CD-ROM の再生を停止します。
+
+PROTO
+stop
+
+DESC
+指定された CD-ROM の再生を停止します。
+
+EXCEPTION *
+
+SEEALSO
+CD#play
+
+%%
+NAME eject
+MOD CD
+TYPE #
+PURPOSE CD-ROM を取り出します。
+
+PROTO
+eject
+
+DESC
+指定された CD-ROM を取り出します。
+
+EXCEPTION *
+
+%%
+NAME num_tracks
+MOD CD
+TYPE #
+PURPOSE CD のトラック数を返します。
+RVAL Integer
+
+PROTO
+num_tracks
+numTracks
+
+DESC
+指定された CD-ROM のトラック数を返します。
+@[CD#status]で内容が更新されます。
+
+SEEALSO
+CD#status
+
+%%
+NAME current_track
+MOD CD
+TYPE #
+PURPOSE 現在のトラックを返します。
+RVAL Integer
+
+PROTO
+current_track
+currentTrack
+
+DESC
+指定された CD-ROM の現在のトラックを返します。
+@[CD#status]で内容が更新されます。
+
+SEEALSO
+CD#status
+
+%%
+NAME current_frame
+MOD CD
+TYPE #
+PURPOSE トラック内の現在のフレームオフセット値を返します。
+RVAL Integer
+
+PROTO
+current_frame
+currentFrame
+
+DESC
+指定された CD-ROM のトラック内の現在演奏しているフレームオフセット値を返します。
+@[CD#status]で内容が更新されます。
+
+SEEALSO
+CD#status
+
+%%
+NAME track_type
+MOD CD
+TYPE #
+PURPOSE トラックの種類を返します。
+RVAL UINT
+
+PROTO
+track_type(track)
+trackType(track)
+
+DESC
+$[track] で指定したトラックの種類を返します。
+SDL::CD::AUDIO_TRACK か SDL::CD::DATA_TRACK のいずれかを返します。
+
+%%
+NAME track_length
+MOD CD
+TYPE #
+PURPOSE トラックの長さを返します。
+RVAL Integer
+
+PROTO
+track_length(track)
+trackLength(track)
+
+DESC
+$[track] で指定したトラックの長さをフレーム単位で返します。
+
+%%
+NAME in_drive?
+MOD CD
+TYPE #
+PURPOSE ドライブにディスクがあるかどうかを調べます。
+RVAL true/false
+
+PROTO
+in_drive?
+
+DESC
+ドライブにディスクがあるなら true を返します。
+
+SEEALSO
+CD#status
+
+%%
+NAME frames_to_msf
+MOD CD
+TYPE .
+PURPOSE フレーム数を分/秒/フレームに分解します。
+RVAL [Integer, Integer, Integer]
+
+PROTO
+frames_to_msf(frames)
+framesToMSF(frames)
+
+DESC
+フレーム数を分/秒/フレームに変換し、[分, 秒, フレーム] という整数3個の
+配列にして返します。
+
+SEEALSO
+CD.msf_to_frames
+
+%%
+NAME msf_to_frames
+MOD CD
+TYPE .
+PURPOSE 分/秒/フレームという値をフレーム数に変換します。
+RVAL Integer
+
+PROTO
+msf_to_frames(min, sec, frames)
+MSFToFrames(min, sec, frames)
+
+DESC
+分/秒/フレームという値をフレーム数に変換します。
+
+SEEALSO
+CD.frames_to_msf
+
+
+

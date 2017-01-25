@@ -1,0 +1,8 @@
+GH
+
+This is sample of Ruby/SDL.
+Please use freely this sample, but see ttf_readme to use font.ttf .
+
+Author:Ohbayashi Ippei
+Please send comments to the author.
+Author's mail address: ohai@kmc.kyoto-u.ac.jp

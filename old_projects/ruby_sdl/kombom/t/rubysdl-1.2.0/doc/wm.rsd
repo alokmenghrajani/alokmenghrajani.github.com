@@ -1,0 +1,113 @@
+= Window Management
+* ((<Window Management概要>))
+* ((<Window Management関連メソッド>))
+TOC
+
+== Window Management概要
+SDL はウィンドウ管理の機能の一部を提供しており、
+アプリケーションが自身のタイトルを変更したり、
+フルスクリーンモードがサポートされていれば
+ウィンドウモードとフルスクリーンモードとを切り換える
+ことができます。
+
+== Window Management関連メソッド
+%%%
+NAME caption
+MOD WM
+TYPE .
+PURPOSE ウィンドウのタイトルとアイコン名を取得します。
+RVAL [String, String]
+
+PROTO
+caption
+
+DESC
+ウィンドウのタイトルとアイコン名を文字列2個の配列で返します。
+
+SEEALSO
+WM.set_caption
+
+%%
+NAME set_caption
+MOD WM
+TYPE .
+PURPOSE ウィンドウのタイトルとアイコン名をセットします。
+
+PROTO
+set_caption(title, icon)
+setCaption(title, icon)
+
+DESC
+表示ウィンドウのタイトルバーとアイコン名をセットします。
+
+SEEALSO
+WM.caption
+WM.icon=
+
+%%
+NAME icon=
+MOD WM
+TYPE .
+PURPOSE 表示ウィンドウにアイコンをセットします。
+
+PROTO
+icon=(icon_image)
+
+DESC
+表示ウィンドウにアイコンをセットします。
+Win32 のアイコンは 32×32 でなければいけません。
+
+このモジュール関数は、@[set_video_mode] を
+初めて呼ぶ前に呼ばれなければいけません。
+$[icon]としては @[Surface] のインスタンスを与えます。
+
+EXAMPLE
+SDL::WM.icon = SDL::Surface.load_bmp("icon.bmp")
+
+SEEALSO
+set_video_mode
+WM.caption
+
+%%
+NAME iconify
+MOD WM
+TYPE .
+PURPOSE ウィンドウをアイコン化/最小化します。
+
+PROTO
+iconify
+
+DESC
+ウィンドウを管理する環境でアプリケーションが実行されている場合、
+SDL はアプリケーションをアイコン化/最小化することを試みます。
+もし成功すれば、アプリケーションは @[Event2::APPACTIVE] を失なった
+イベントを受け取るでしょう。
+
+EXCEPTION *
+
+%%
+NAME grab_input
+MOD WM
+TYPE .
+PURPOSE マウスとキーボード入力をつかんで離さないようにします。
+RVAL Integer
+
+PROTO
+grab_input(mode)
+grabInput(mode)
+
+DESC
+つかむ(Grabbing)とは、マウスがアプリケーションウィンドウに閉じ込められ、
+ほぼ全てのキーボード入力が直接アプリケーションに転送され、
+ウィンドウマネージャにも解釈されないことを表します。
+
+$[mode] として以下の定数を与えることができます。
+* SDL::WM::GRAB_QUERY
+* SDL::WM::GRAB_OFF
+* SDL::WM::GRAB_ON
+
+$[mode] が SDL::WM::GRAB_QUERY のときは、
+grab モードは変更されないで現在の grab モードが返されます。
+
+RET
+現在の、あるいは新しいモードを返します。

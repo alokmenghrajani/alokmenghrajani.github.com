@@ -1,0 +1,2445 @@
+= Video
+* ((<Video Subsystem 概説>))
+* ((<SDL::Screen>))
+* ((<SDL::Surface>))
+* ((<SDL::VideoInfo>))
+* ((<色、ピクセルフォーマット、ピクセル値について>))
+
+* Video関連メソッド
+TOC
+
+== Video Subsystem 概要
+SDL は表示フレームバッファに対するとてもシンプルなインターフェースを
+提供します。
+フレームバッファはあなたが直接書くことができる
+オフスクリーンサーフェスとして表現されます。
+スクリーンに書いたものを画面に表示させるには、
+画面の必要な部分が更新されることを保証する
+@[更新|Screen#update_rect]関数を呼んで下さい。
+
+Ruby/SDL のいかなるビデオ関連メソッドを呼ぶ前に、
+最初に @[init](SDL::INIT_VIDEO)を呼ばなければいけません。
+これは SDL 内のビデオとイベントを初期化します。
+
+アプリケーションでサウンドとビデオを共に使うときは、
+サウンドデバイスをオープンする前に
+@[init](SDL::INIT_AUDIO|SDL::INIT_VIDEO)
+を呼ぶ必要があります。
+そうしないと、Win32 の DirectX において
+フルスクリーン表示モードにセットすることができないでしょう。
+
+ライブラリを初期化した後は、ビデオ表示を順番にスタートさせることができます。
+最も簡単な方法は、共通のスクリーン解像度とピクセル深度を選び、
+エラーをチェックしつつビデオを初期化することです。
+おそらくあなたが望んだものが得られるでしょうが、
+SDL はあなたが求めたモードをエミュレートし、
+更新の際に変換しているかもしれません。
+最もよい方法は、
+望まれるものに最も近いビデオモードを
+@[問い合わせ|video_info]、
+そのピクセルフォーマットに合わせて画像を
+@[変換|Surface#display_format]することです。
+
+SDL は現在 1 ピクセル 8 bit 以上のいかなるピクセル深度もサポートしています。
+8 bpp のフォーマットは 8 bit のパレットモードとしてみなされ、
+12, 15, 16, 24, そして 32 bpp は
+「パックドピクセル」モードとしてみなされます。
+これは、個々のピクセルが RGB 各チャンネルの輝度を
+ピクセルのビットの中にパッキングして持っているということです。
+
+ビデオモードを初期化した後は、
+返値として得られたサーフェスに対し、他のフレームバッファのように書き込み、
+いつものように更新処理を呼ぶことができます。
+
+== SDL::Surface
+絵のサーフェスを表わすクラスです。
+
+このクラスは描画される「絵」のメモリを表現しています。
+
+メソッドおよびクラスメソッドのリスト
+METHODS(Surface)
+
+== SDL::Screen
+画面に対応するサーフェスを表わすクラスです。
+
+このクラスは @[Surface] のサブクラスであり、実際に画面に表示される
+サーフェスを表わします。
+
+ビデオフレームバッファは @[set_video_mode] と @[get_video_surface]
+から得られます。
+
+メソッドおよびクラスメソッドのリスト
+METHODS(Screen)
+
+== SDL::VideoInfo
+ビデオターゲットの情報を表わすクラスです。
+このクラスのインスタンスは @[video_info] から返り値として得られます。
+これは以下のメソッドを持ちます。
+
+--- SDL::VideoInfo#hw_available
+
+    ハードウェアサーフェスを作ることは可能かどうか
+
+--- SDL::VideoInfo#wm_available
+
+    ウィンドウマネージャが利用できるかどうか
+
+--- SDL::VideoInfo#blit_hw
+
+    ハードウェア間の blit はアクセラレーションが有効かどうか
+
+--- SDL::VideoInfo#blit_hw_CC
+
+    ハードウェア間のカラーキー blit はアクセラレーションが有効かどうか
+
+--- SDL::VideoInfo#blit_hw_A
+
+    ハードウェア間のα blit はアクセラレーションが有効かどうか
+
+--- SDL::VideoInfo#blit_sw
+
+    ソフトウェアからハードウェアへの blit はアクセラレーションが有効かどうか
+
+--- SDL::VideoInfo#blit_sw_CC
+
+    ソフトウェアからハードウェアへのカラーキー blit はアクセラレーション
+    が有効かどうか
+
+--- SDL::VideoInfo#blit_sw_A
+
+    ソフトウェアからハードウェアへのα blit はアクセラレーションが有効かどうか
+
+--- SDL::VideoInfo#blit_fill
+
+    色の塗潰しはアクセラレーションが有効かどうか
+
+--- SDL::VideoInfo#video_mem
+
+    ビデオメモリの総容量(Kbyte)
+
+--- SDL::VideoInfo#bpp
+
+    一ピクセルあたりのバイト数
+
+
+== 色、ピクセルフォーマット、ピクセル値について
+まずは Ruby/SDL において重要なことを先に書きます。
+Ruby/SDLにおいて色はRGBAそれぞれ0から255までの値を取ります。
+性能のため SDL 内部ではRGBA値を32ビット符号無し整数でパッキングします。
+このRGBA値と符号無し32ビット整数との変換規則をピクセルフォーマットと
+呼び、変換後の値をピクセル値と呼びます。
+ピクセルフォーマットはサーフェスごとに決まっていて、
+変換は@[Surface#map_rgb]、@[Surface#map_rgba]、
+@[Surface#get_rgb]、@[Surface#get_rgba]というメソッドでします。
+メソッドの引数などで色を指定する場合、[231, 251, 100] というような
+要素が3個の配列(RGB,A=255)、
+[231, 251, 100, 128]という要素が4個の配列(RGBA)、もしくはピクセル値の
+いずれでも使えます。またメソッドの返り値として色情報が得られる場合は
+通常ピクセル値が得られます。
+
+以下はより基本的でより詳しい内容です。
+
+Ruby/SDLにおける絵は、ピクセルの集合として表されます。
+ピクセルと呼ばれる小さな正方形を縦横に並べ、そのそれぞれに
+色をわりあてることで画像を表現します。
+例えば 640x480 の絵は 307200個 = 640×480 のピクセルで表わされます。
+
+そして、その色は光の3原色である赤(Red)、緑(Green)、青(Blue)それぞれの値
+を0から255までで指定することで決めます。例えば [R,G,B] = [0,0,0] ならば黒、
+[255, 255, 0]ならば黄色、[160, 32, 240]で紫、などです。
+
+そしてこの情報をバイト列に変換して保存します。一つのピクセルに対し
+8ビット、16ビット、24ビット、もしくは32ビットのメモリを割当て、
+R,G,Bの 255*255*255の情報を適当にそのメモリに収まるように変換します。
+このビット数をbpp(Bits Per Pixel)と呼びます。
+そしてこの色の情報 -> バイト列の変換規則をピクセルフォーマットと呼びます。
+また、ピクセル1個分の色データをピクセルフォーマットで変換したものを
+ピクセル値と呼びます。性能のため SDL 内部ではこのピクセル値を
+よく利用します。
+それぞれのサーフェスは、このピクセルフォーマットと「絵を表わすバイト列」
+の組であると解釈できます。
+
+この色データとピクセル値の相互変換は
+@[Surface#map_rgb]、@[Surface#get_rgb]というメソッドでします。
+
+また、各メソッドの引数で色を指定する場合は、[r, g, b]という要素が整数3個の
+配列、もしくはそのサーフェスのピクセルフォーマットで変換したピクセル値の
+どちらでも使える場合がほとんどです。
+
+最後にα値について解説します。この値はある画像と別の画像を重ね合わせる
+時に意味のある値です。@[blit_surface]などで2つの画像が重ね合わされる場合、
+通常下の画像は上の画像で完全に隠されてしまいます。しかし上の画像に
+α値を指定しておくと、上の画像の色と下の画像の色が混ぜ合されます。
+この混ぜ合せの割合をα値と呼びます。SDLではα値は0から255までの値をとりえます。
+0が完全な透明で、255が完全な不透明です。
+この値はbppが32の場合には、各ピクセルごとに指定することができます。
+つまりピクセル値には R,G,B のほかアルファ(Alpha)値を含めることができると
+いうことです。このα値を含めた変換には
+@[Surface#map_rgba]、[Surface#get_rgba]を使います。
+また各メソッドの引数でアルファ付きの色を指定する場合は、[r,g,b,a]という
+要素が整数4個の配列を使うことが可能です。
+
+== Methods 
+%%%
+NAME get_video_surface
+TYPE .
+PURPOSE 現在の表示サーフェスを返します。
+RVAL Screen
+
+PROTO
+get_video_surface
+getVideoSurface
+
+DESC
+このメソッドは現在の表示サーフェスを返します。
+SDL が表示サーフェス上でフォーマット変換を行っている場合は、
+この関数は実際のビデオサーフェスではなく、(SDL を使う側に
+見せている) 変換前のサーフェスを返します。
+
+RET
+@[Screen]のインスタンスを返します。
+
+EXCEPTION *
+
+%%
+NAME video_info
+TYPE .
+PURPOSE ビデオハードウェアについての情報を返します。
+RVAL VideoInfo
+
+PROTO
+video_info
+videoInfo
+
+DESC
+この関数はビデオハードウェアに関する@[情報|VideoInfo]を返します。
+
+@[set_video_mode]の前にこれが呼ばれると、
+返されたオブジェクトのbppアトリビュートには
+「最も適した」ビデオモードのピクセルフォーマットが入ります。
+
+RET
+情報を@[VideoInfo]のインスタンスで返します。
+
+EXCEPTION *
+
+SEEALSO
+set_video_mode
+VideoInfo
+
+%%
+NAME video_driver_name
+TYPE .
+PURPOSE ビデオドライバの名前を取得します。
+RVAL String
+
+PROTO
+video_driver_name
+videoDriverName
+
+DESC
+ドライバ名は "x11" や "windib" のように単なる 1 語の識別子です。
+
+RET
+ドライバ名を文字列で返します。
+
+EXCEPTION
+ビデオがまだ@[init]で初期化されていないなら例外@[Error]を発生させます。
+
+SEEALSO
+init
+
+%%
+NAME list_modes
+TYPE .
+PURPOSE 与えられたフォーマットとビデオのフラグに対し、利用可能な画面モードの配列を返します。
+RVAL nil/true/Array of [UINT, UINT]
+
+PROTO
+list_modes(flags)
+listModes(flags)
+
+DESC
+与えられたビデオのフラグに対し、
+利用可能な画面モードの配列を返します。
+
+フラグは@[set_video_mode]
+で使われるものと同じであり、モードが有効かどうかを決定する際に
+強い役割を果たします。
+SDL::HWSURFACEをフラグとして渡すと、
+ハードウェアのビデオサーフェスがサポートするモードだけが返されます。
+
+RET
+大きい方から小さい方にソートされています。
+ある特定のフォーマットに対し利用可能なモードがない場合は
+nil を返し、
+与えられたフォーマットに対しどのモードでも OK の場合は
+true を返します。
+利用可能なモードが有限個しか存在しない場合は、
+[縦方向の解像度, 横方向の解像度]という配列の配列を返します。
+
+EXAMPLE
+# 利用可能なフルスクリーンハードウェアモードを取得する
+modes = SDL.list_modes(SDL::FULLSCREEN|SDL::HWSURFACE)
+
+# 利用可能なモードがあるかどうかチェック
+if modes == nil
+  puts "利用可能なモードがありません!"
+  exit 1
+end
+
+# 解像度が制限されているかどうかチェック
+if modes == true
+  puts "全解像度が利用可能です。"
+else
+  # 有効なモードを表示
+  puts "利用可能なモード"
+  modes.each{|w, h| puts "  #{w} x #{h}"}
+end
+
+SEEALSO
+set_video_mode
+video_info
+
+%%
+NAME check_video_mode
+TYPE .
+PURPOSE ある特定のビデオモードがサポートされているかチェックします。
+RVAL Integer
+
+PROTO
+check_video_mode(w,h,bpp,flags)
+checkVideoMode(w,h,bpp,flags)
+
+DESC
+要求されたモードがどのピクセル深度においてもサポートされていない場合は
+0を返し、
+あるいは与えられた横幅・高さと
+要求された@[サーフェス|Surface] フラグ(@[set_video_mode]を見て下さい)
+において利用可能な最も近いピクセル深度を返します。
+
+ピクセル深度の値は推奨されるモードに過ぎません。
+ビデオモードの@[設定|set_video_mode]時に
+普通にあなたの望むピクセル深度を要求することができ、
+SDL はシャドウビデオサーフェスを使ってそのピクセル深度を
+エミュレートするでしょう。
+
+EXAMPLE
+puts "640x480@16bpp のモードをチェックしています。"
+bpp = SDL.check_video_mode(640, 480, 16, SDL::HWSURFACE)
+if bpp == 0
+  puts "利用可能なモードではありません。"
+  exit 1
+end
+
+puts "SDL は 640x480@#{bpp}bpp を推奨します。"
+screen = SDL.set_video_mode(640, 480, bpp, SDL_HWSURFACE)
+
+SEEALSO
+set_video_mode
+video_info
+
+%%
+NAME set_video_mode
+TYPE .
+PURPOSE 指定された横幅・高さ・ピクセル深度を用いてビデオモードを設定します。
+RVAL Screen
+
+PROTO
+setVideoMode(w,h,bpp,flags)
+set_video_mode(w,h,bpp,flags)
+
+DESC
+指定された幅・高さ・ピクセル深度(1ピクセルのビット数)を用いて
+ビデオモードを設定します。
+$[bpp] が 0 ならば、現在表示されているピクセル深度として扱われます。
+
+$[flags] パラメータは@[Surface#flags]と同じです。
+以下の値の OR による組み合わせが有効です。
+
+:SDL::SWSURFACE
+  システムメモリからビデオサーフェスを作成します。
+:SDL::HWSURFACE
+  ビデオメモリからビデオサーフェスを作成します。
+:SDL::ASYNCBLIT
+  表示サーフェスの非同期更新の使用を有効にします。
+  これは通常、単一 CPU における blit 転送は遅くなりますが、
+  SMP システムにおいてスピードの向上をもたらすかも知れません。
+:SDL::ANYFORMAT
+  普通は、もし要求されたピクセル深度のビデオサーフェス
+  ($[bpp]) が使えない場合は、
+  SDL はシャドウサーフェスでこれをエミュレートします。
+  SDL::ANYFORMATはこれを禁止し、
+  SDL はピクセル深度とは無関係にビデオサーフェスを使うことになります。
+:SDL::HWPALETTE
+  SDL がパレットに対する排他的なアクセスをできるようにします。
+  このフラグがないと、
+  @[Surface#set_colors]や@[Surface#set_palette]を用いて要求した色が、
+  常に取得できるとは限りません。
+:SDL::DOUBLEBUF
+  ハードウェアによるダブルバッファを有効にします。
+  (SDL::HWSURFACE と一緒の時のみ)
+  @[Screen#flip] の呼び出し
+  によってバッファを切り替え、画面を更新します。
+  全ての描画は、その瞬間に表示されていない方のサーフェスに行われます。
+  ダブルバッファを有効にできなかった場合は、
+  @[Screen#flip] は画面全体に対し単に@[Screen#update_rect]を行います。
+:SDL::FULLSCREEN
+  SDL はフルスクリーンモードの使用を試みます。
+  どういう理由であれ、ハードウェアによる解像度変更ができない場合は
+  一段階解像度の高いモードが使われ、黒い背景の中央に表示ウインドウが置かれます。
+:SDL::OPENGL
+  OpenGL の描画コンテキストを作成します。
+  前もって@[set_GL_attr]によって OpenGL のビデオ属性を
+  設定しておく必要があります。
+:SDL::OPENGLBLIT
+  上と同様に OpenGL の描画コンテキストを作成しますが、
+  通常の blit 転送を可能にします。
+  画面(2D)のサーフェスはαチャンネルを持つことが可能で、
+  画面のサーフェスへの変更を更新するために、
+  @[Screen#update_rect]を使わなければいけません。
+  注意: このオプションは互換性のためにのみ
+  残されており、新しいコードでこの機能を使うことは
+  ((*推奨されていません*))。
+:SDL::RESIZABLE
+  リサイズ可能なウィンドウを作成します。
+  ユーザーの手でウィンドウがリサイズされた場合は、
+  @[Event2::VideoResize]イベントが発生し、
+  新しいサイズで @[set_video_mode]が再度呼ばれることがあります。
+:SDL::NOFRAME
+  もし可能であれば、
+  SDL がタイトルバーなし、あるいはフレームによる装飾なしの
+  ウィンドウが生成することになります。
+  フルスクリーンモードの場合自動的にこのフラグを設定します。
+
+NOTES
+SDL.set_video_modeがどの$[flags]をを満たすことができたかは、
+返り値のサーフェスの@[Surface#flags]にセットされています。
+
+$[bpp] パラメータはピクセルごとのビット数です。
+そのため、$[bpp] が 24 の場合は 3 バイト/ピクセルの
+パッキングされた表現方法が使われます。
+より一般的な 4 バイト/ピクセルのモードについては、
+$[bpp] が 32 の場合に使われます。
+幾分奇妙ですが、15 と 16 の場合はいずれも 2 バイト/ピクセルのモードを
+要求しますが、異なるピクセルフォーマットです。
+
+RET
+フレームバッファのサーフェスを@[Screen]のインスタンスで返します。
+
+EXCEPTION *
+SEEALSO
+Surface#lock
+Surface#set_colors
+Screen#flip
+Screen
+
+%%
+NAME update_rect
+MOD Screen
+TYPE #
+PURPOSE 与えられた領域の画面を更新します。
+
+PROTO
+updateRect(x,y,w,h)
+update_rect(x,y,w,h)
+
+DESC
+与えられた領域の画面を更新します。
+矩形は画面の境界内の収まっていなければなりません。
+(つまりクリッピングはされません)
+
+$[x]、$[y]、$[w]、$[h]がすべて 0 ならば、画面全体を更新します。
+
+この関数は$[self]が@[ロック|Surface#lock]されている間は呼んでは
+いけません。
+
+SEEALSO
+Surface#lock
+
+%%
+NAME flip
+MOD Screen
+TYPE #
+PURPOSE スクリーンバッファを交換します。
+
+PROTO
+flip
+
+DESC
+ダブルバッファをサポートするハードウェアにおいて、
+この関数は切替を設定して帰ってします。
+ハードウェアは垂直帰線区間を待ち、
+次のビデオサーフェスの blit 転送やロックが戻る前に
+ビデオバッファを交換します。
+ダブルバッファをサポートしないハードウェアにおいては、
+$[self].update_rect(0, 0, 0, 0) を呼ぶのと同等です。
+
+EXCEPTION *
+
+SEEALSO
+set_video_mode
+Screen#update_rect
+
+%%
+NAME set_colors
+MOD Surface
+TYPE #
+PURPOSE 与えられた 8 bit サーフェスのカラーマップの一部をセットします。
+RVAL true/false
+
+PROTO
+set_colors(colors,firstcolor)
+setColors(colors,firstcolor)
+
+DESC
+$[self] が現在の表示と関連付けられたサーフェスの場合は、
+表示カラーマップは要求された色で更新されます。@[set_video_mode] フラグに
+SDL::HWPALETTE がセットされていた場合は、
+SDL::Surface#set_colors は常にtrueを返し、
+ウィンドウのカラーマップが歪められていたり、
+エミュレーションの下で動いている場合でも、
+パレットはあなたが望んだ通りにセットされることが保証されています。
+
+$[colors]として色情報の配列を与える必要があります。色情報とは
+R、G、Bそれぞれ0から255までの値を持つ要素が3個の配列です。
+
+SDL::HWPALETTE がセットされた、パレット化された(8 bit)
+画面サーフェスには 2 種類のパレット、すなわち
+サーフェスに対する(あるいはサーフェスからの)マッピング blit に
+使われる論理パレットと、
+ハードウェアが色を画面にどうマッピングするかを決定する物理パレット
+とがあります。
+SDL::Surface#SDL_set_colors は(存在するなら)双方のパレットを変更します。
+これは (SDL::LOGPAL | SDL::PHYSPAL) を
+$[flags] にセットして @[Surface#set_palette] を呼ぶのと同等です。
+
+RET
+$[self] がパレット化されたサーフェスではない場合は、
+この関数は何もせず、false を返します。
+全ての色がこのメソッドに
+渡した通りにセットされた場合は、true を返します。
+必ずしも全ての色エントリが与えられた通りにセットされた訳ではない場合は、
+false を返すので、
+実際の色パレットを決めるサーフェスパレットを見る必要があります。
+
+EXAMPLE
+# グレースケールのパレットでサーフェスを作成
+
+# 色情報で埋める
+colors = Array.new(256){|i| [i, i, i]}
+# 表示サーフェスを作成
+screen = SDL.set_video_mode(640, 480, 8, SDL::HWPALETTE)
+
+# パレットのセット
+screen.set_colors(colors, 0)
+
+SEEALSO
+Surface#set_palette
+set_video_mode
+
+%%
+NAME set_palette
+MOD Surface
+TYPE #
+PURPOSE 8 ビットサーフェスのパレットに色をセットします。
+RVAL true/false
+
+PROTO
+set_palette(flags,colors,firstcolor)
+setPalette(flags,colors,firstcolor)
+
+DESC
+与えられた 8 ビットサーフェスに対し、パレットの一部をセットします。
+
+SDL::HWPALETTE フラグがセットされている
+パレット(8ビット) の画面サーフェスには
+2種類のパレットがあります。
+すなわち、サーフェスからの(あるいはサーフェスに対する) blit 転送を
+マッピングする論理パレットと、
+ハードウェアが色を画面にマッピングする方法を決定する
+物理パレットです。
+@[blit_surface] は
+サーフェスのピクセルフォーマット間で変換が必要な場合、
+サーフェスを blit 転送する際に常に論理パレットを使います。
+このため、さまざまな特殊色効果
+(画面のフェード・カラーフラッシュ・画面の霞み)を得るために
+パレットを片方だけ変更することはしばしば有用です。
+
+この関数は
+SDL::LOGPAL か SDL::PHYSPAL を
+$[flags] に指定することで、
+論理または物理パレットのいずれかを変更することができます。
+$[self]が現在の表示と
+関連付けられているサーフェスのときは、
+表示のカラーマップは要求された色で更新されます。
+@[set_video_mode] に
+SDL::HWPALETTE がセットされていた場合は、
+このメソッドは常に true を返し、
+ウィンドウのカラーマップが歪められなければならない場合や、
+エミュレーション下で動いている場合であっても、
+パレットにはあなたが望んだ方法でセットされることが保証されます。
+
+$[colors]として色情報の配列を与えます。色情報とは
+R、G、Bそれぞれ0から255までの値を持つ要素が3個の配列です。
+256**3 = 16777216色が使えます。
+
+RET
+$[self]がパレット化されたサーフェスでない場合は、
+この関数は false を返して何もしません。
+全ての色がこのメソッドに渡された通りにセットされると、
+true を返します。
+必ずしも全ての色エントリが与えられた通りにセットされた訳ではない場合は、
+false を返すので、
+実際の色パレットを決定するサーフェスパレットを見る必要があります。
+
+EXAMPLE
+# グレースケールのパレットでサーフェスを作成
+
+# 色情報で埋める
+colors = Array.new(256){|i| [i, i, i]}
+# 表示サーフェスを作成
+screen = SDL.set_video_mode(640, 480, 8, SDL::HWPALETTE)
+
+# パレットのセット
+screen.set_palette(SDL::LOGPAL|SDL::PHYSPAL, colors, 0)
+
+SEEALSO
+Surface#set_colors
+set_video_mode
+
+%%
+NAME set_gamma
+TYPE .
+PURPOSE 表示用のカラーガンマ関数をセットします。
+
+PROTO
+set_gamma(redgamma,greengamma,bluegamma)
+setGamma(redgamma,greengamma,bluegamma)
+
+DESC
+各カラーチャンネルについて、表示用の「ガンマ関数」をセットします。
+ガンマは画面に表示される色の明るさ・コントラストを制御します。
+ガンマ値 1.0 は単位元です。
+(つまり、何の調整も行われません)
+
+この関数は「ガンマ関数」のパラメータに基いてガンマを調整します。
+@[set_gamma_ramp] を使うと、
+ガンマ調整の参照テーブルを直接指定することができます。
+
+EXCEPTION *
+NOTES
+全ての表示ハードウェアがガンマを変更することができるわけではありません。
+
+SEEALSO
+get_gamma_ramp
+set_gamma_ramp
+
+%%
+NAME get_gamma_ramp
+TYPE .
+PURPOSE 表示のためのカラーガンマ値の変換テーブルを取得します。
+RVAL Array of UINT
+
+PROTO
+get_gamma_ramp
+getGammaRamp
+
+DESC
+現在表示に使われているガンマ値の変換テーブルを取得します。
+それぞれのテーブル(R, G, B)は 256 個の16bit符号なし整数値の配列です。
+
+RET
+3個の「256個の16bit符号なし整数値の配列」の配列を返します。
+
+NOTES
+全ての表示ハードウェアがガンマを変換できるわけではありません。
+
+EXCEPTION *
+
+SEEALSO
+set_gamma
+set_gamma_ramp
+
+%%
+NAME set_gamma_ramp
+TYPE .
+PURPOSE 表示用にカラーガンマの参照テーブルをセットします。
+
+PROTO
+set_gamma_ramp(table)
+setGammaRamp(table)
+
+DESC
+各色チャンネルについて、表示用のガンマ参照テーブルをセットします。
+引数 $[tables] は @[get_gamma_ramp] と同じフォーマットで、
+対応するチャンネルの入力と出力間の写像を表現します。
+入力は配列に対するインデックスであり、出力はそのインデックスにおける
+16 ビットのガンマ値で、出力の色精度に合わせてスケーリングされます。
+
+この関数は参照テーブルに基いてガンマを調整しますが、
+@[set_gamma] を用いて
+「ガンマ関数」パラメータに基いて計算されたガンマも持つことができます。
+
+EXCEPTION *
+
+SEEALSO
+set_gamma
+get_gamma_ramp
+
+%%
+NAME map_rgb
+MOD Surface
+TYPE #
+PURPOSE RGB カラー値をピクセルフォーマットに写像します。
+RVAL UINT
+
+PROTO
+map_rgb(r,g,b)
+mapRGB(r,g,b)
+
+DESC
+RGB カラーの値を$[self]のピクセルフォーマットに写像し、
+ピクセル値を 32bit 符号無し整数 として返します。
+$[r]、$[g]、$[b] は0から255までの値をとれます。
+
+フォーマットがパレット (8ビット) を持つ場合は、
+パレット内において最も近い色のインデックスが返されます。
+
+指定されたピクセルフォーマットがαチャンネルを持つ場合は、
+全て 1 のビット(完全に不透明)として返されます。
+
+RET
+与えられたピクセルフォーマット上において、
+与えられた RGB カラー値を最も良く近似するピクセル値です。
+ピクセルフォーマットのピクセル深度が 32bpp より小さい場合は、
+返値の使用されていない上位ビットは安全に無視することができます。
+(例えば、16bpp のフォーマットでは返値は 2**16 より小さく、
+8bpp では 2**8 より小さい)
+
+SEEALSO
+Surface#get_rgb
+Surface#get_rgba
+Surface#map_rgba
+((<色、ピクセルフォーマット、ピクセル値について>))
+
+%%
+NAME map_rgba
+MOD Surface
+TYPE #
+PURPOSE RGBA カラー値をピクセルフォーマットに写像します。
+RVAL UINT
+
+PROTO
+map_rgba(r,g,b,a)
+mapRGBA(r,g,b,a)
+
+DESC
+RGBA カラーの値を$[self]のピクセルフォーマットに写像し、
+ピクセル値を 32bit 符号無し整数 として返します。
+$[r]、$[g]、$[b]、$[a] は0から255までの値をとれます。
+
+フォーマットがパレット (8ビット) を持つ場合は、
+パレット内において最も近い色のインデックスが返されます。
+
+指定されたピクセルフォーマットがαチャンネルを持たない場合は、
+(パレットを持つフォーマットの中でそうであるように)
+α値は無視されます。
+
+RET
+与えられたピクセルフォーマット上において、
+与えられた RGBA カラー値を最も良く近似するピクセル値です。
+ピクセルフォーマットのピクセル深度が 32bpp より小さい場合は、
+返値の使用されていない上位ビットは安全に無視することができます。
+(例えば、16bpp のフォーマットでは返値は 2**16 より小さく、
+8bpp では 2**8 より小さい)
+
+SEEALSO
+Surface#get_rgb
+Surface#get_rgba
+Surface#map_rgb
+((<色、ピクセルフォーマット、ピクセル値について>))
+
+%%
+NAME get_rgb
+MOD Surface
+TYPE #
+PURPOSE 指定されたピクセルフォーマット内のピクセルから RGB 値を取得します。
+RVAL [UINT, UINT, UINT]
+PROTO
+get_rgb(pixel)
+getRGB(pixel)
+
+DESC
+$[self]のピクセルフォーマットによるピクセル値から
+RGB 各チャンネルの値を要素数3の配列で取得します。
+
+このメソッドは
+RGB 各チャンネルが 8 ビット未満のピクセルフォーマットから
+色チャンネルを変換する際にも 8 ビット全体 [0〜255] の範囲を使います。
+(例えば、16 ビット RGB565 フォーマットにおける完全な白色は
+[0xf8, 0xfc, 0xf8] ではなく [0xff, 0xff, 0xff] を返します)
+
+SEEALSO
+Surface#get_rgba
+Surface#map_rgb
+Surface#map_rgba
+((<色、ピクセルフォーマット、ピクセル値について>))
+
+%%
+NAME get_rgba
+MOD Surface
+TYPE #
+PURPOSE 指定されたピクセルフォーマット内のピクセルから RGBA 値を取得します。
+RVAL [UINT, UINT, UINT, UINT]
+
+PROTO
+get_rgba(pixel)
+getRGBA(pixel)
+
+DESC
+指定されたピクセルフォーマットに格納されたピクセルから
+RGBA 各チャンネルの値を要素数4の配列で取得します。
+
+RGB 各チャンネルが 8 ビット未満のピクセルフォーマットから
+色チャンネルを変換する際にも 8 ビット全体 [0〜255] の範囲を使います。
+(例えば、16 ビット RGB565 フォーマットにおける完全な白色は
+[0xf8, 0xfc, 0xf8] ではなく [0xff, 0xff, 0xff] を返します)
+
+サーフェスにαチャンネルがない場合は、αには 0xff (100% 不透明) が返されます。
+
+SEEALSO
+Surface#get_rgba
+Surface#map_rgb
+Surface#map_rgba
+((<色、ピクセルフォーマット、ピクセル値について>))
+
+%%
+NAME new
+MOD Surface
+TYPE .
+PURPOSE 空の @[Surface] のインスタンスを生成します。
+RVAL Surface
+
+PROTO
+new(flags,w,h,depth,Rmask,Gmask,Bmask,Amask)
+
+DESC
+大きさが $[w] x $[h] の空のサーフェスを確保します。
+(@[set_video_mode]の後で呼ばれなければいけません)
+
+$[depth] が 8 ビットの場合は、
+サーフェスに空のパレットが確保されます。
+そうでない場合は、
+与えられた$[Rmask]、$[Gmask]、$[Bmask]、$[Amask] を使って
+「パッキングされたピクセル」が作られます。
+$[flags] は作られるサーフェスのタイプを指定し、
+以下の取りうる値の OR による組み合わせとなります。
+
+:SDL::SWSURFACE
+  SDL はシステムメモリからサーフェスを作ります。
+  ピクセルレベルのアクセスのパフォーマンスを向上されますが、
+  いくつかのハードウェアによる blit 転送の
+  利点を得ることができなくなるかも知れません。
+:SDL::HWSURFACE
+  SDL はビデオメモリからサーフェスを作ろうとします。
+  これにより SDL はビデオメモリ同士の bilt 転送
+  (しばしばアクセラレーションが利きます) の利点を得ることができます。
+:SDL::SRCCOLORKEY
+  このフラグはサーフェスを blit する際にカラーキーを有効にします。
+  SDL::HWSURFACE も指定されており、
+  カラーキー付きの blit 転送もハードウェアによるアクセラレーションが利く場合は、
+  SDL はサーフェスをビデオメモリに作ろうとします。
+  サーフェスを作った後にこのフラグをセット・リセットしたい場合は
+  @[Surface#set_color_key] を使って下さい。
+:SDL::SRCALPHA
+  このフラグはサーフェスからの blit 転送におけるαブレンディングを有効にします。
+  SDL::HWSURFACE も指定され、
+  αブレンディング blit 転送がハードウェアによるアクセラレーションが利く場合は
+  サーフェスはなるだけビデオメモリに置かれます。
+  サーフェスを作った後にこのフラグをセット・リセットしたい場合は
+  @[Surface#set_alpha]を使って下さい。
+RET
+@[Surface]のインスタンスを返します。
+
+EXCEPTION *
+
+NOTES
+αチャンネルが指定されている
+(つまり $[Amask] が 0 でない) 場合は、
+SDL::SRCALPHA フラグは自動的にセットされます。
+サーフェスを作った後は、@[Surface#set_alpha]を
+呼ぶことでこのフラグを取り除くことができます。
+
+EXAMPLE
+# テクスチャ用として OpenGL に要求される、
+# 個々々のピクセルのバイトが RGBA の順番で並んだ
+# 32 ビットのサーフェスを生成
+
+big_endian = ([1].pack("N") == [1].pack("L"))
+
+if big_endian
+  rmask = 0xff000000
+  gmask = 0x00ff0000
+  bmask = 0x0000ff00
+  amask = 0x000000ff
+else
+  rmask = 0x000000ff
+  gmask = 0x0000ff00
+  bmask = 0x00ff0000
+  amask = 0xff000000
+end
+
+surface = SDL::Surface.new(SDL::SWSURFACE, width, height, 32,
+                           rmask, gmask, bmask, amask);
+
+SEEALSO
+Surface.new_from
+set_video_mode
+Surface#lock
+Surface#set_alpha
+Surface#set_color_key
+
+%%
+NAME new_from
+MOD Surface
+TYPE .
+PURPOSE ピクセルデータから @[Surface] のインスタンスを生成します。
+RVAL Surface
+
+PROTO
+new_from(pixels,w,h,depth,pitch,Rmask,Gmask,Bmask,Amask)
+
+DESC
+与えられたピクセルデータ($[pixels]、 Stringのインスタンス)から
+@[Surface] のインスタンスを生成します。
+$[pixels] に格納されたデータは $[depth] のものであるとみなされます。
+$[pitch] は各スキャンラインの長さ(バイト数)です。
+
+他のパラメータについての詳しい記述については、@[Surface.new]を見てください。
+
+RET
+生成されたサーフェスを返します。
+
+EXCEPTION *
+
+SEEALSO
+Surface.new
+
+%%
+NAME lock
+MOD Surface
+TYPE #
+PURPOSE 直接アクセスのためにサーフェスをロックします。
+
+PROTO
+lock
+
+DESC
+ピクセルに直接アクセスするためにサーフェスをロックします。
+@[Surface#lock] と @[Surface#unlock] の呼びだしの間、
+サーフェスへ直接読み書きができます。
+ひとたびサーフェスへのアクセスが終了したら、
+@[Surface#unlock] を使って解放する必要があります。
+
+サーフェスへ直接読み書きをする、ロックが必要なメソッドは
+以下の通りです。
+
+* @[Surface#pixels]
+LOCKLIST
+
+また@[auto_lock?]が真である場合には、ロックが必要なメソッドが呼ばれた
+場合自動的にロックの設定と解放をするため、このメソッドを呼ぶ必要
+はありません。
+
+すべてのサーフェスがロックを必要とする訳ではありません。
+@[Surface#must_lock?]が偽ならば
+いつでも読み書きすることができ、サーフェスのピクセルフォーマット
+は変更されません。
+
+この時間の間にクリティカルなシステムロックが行われることがあるため、
+ロック/アンロック間では、いかなる OS システムコールやライブラリコールも
+呼ばれるべきではありません。
+
+明記しておくべきことに、
+SDL 1.1.8 以降ではサーフェスのロックは再帰的である、という点があります。
+これは複数のサーフェスロックをかけることができるということですが、
+個々のロックには対応するアンロックがなければいけません。
+  surface.lock
+  # サーフェスはロックされている 
+  # ここでサーフェス上の直接ピクセルアクセス
+  surface.lock
+  # さらにサーフェス上の直接ピクセルアクセス
+  surface.unlock
+  # サーフェスはまだロックされている
+  # 注記: バージョンが 1.1.8 以下の場合は、
+  # この段階でサーフェスはもうロックされていない
+  surface.unlock
+  # サーフェスは今アンロックされている
+EXCEPTION
+サーフェスのロックができなかった場合は例外@[Error]を返します。
+
+SEEALSO
+Surface#unlock
+Surface#must_lock?
+auto_lock?
+auto_lock_on
+auto_lock_off
+auto_lock=
+
+%%
+NAME unlock
+MOD Surface
+TYPE #
+PURPOSE 以前にロックされたサーフェスのロックを解除します。
+
+PROTO
+unlock
+
+DESC
+@[Surface#lock]を使ってロックされたサーフェスは
+このメソッドでロックを解除しなければいけません。
+サーフェスのロックはできるだけ早く解除されるべきです。
+
+1.1.8 以降、サーフェスのロックは再帰的であることに注意すべきです。
+
+SEEALSO
+Surface#lock
+
+%%
+NAME must_lock?
+MOD Surface
+TYPE #
+PURPOSE ロックが必要かどうかを返します。
+RVAL true/false
+
+PROTO
+must_lock?
+mustLock?
+
+DESC
+サーフェスのピクセルに直接アクセスするときに @[Surface#lock] による
+ロックが必要かどうかを true/false で返します。
+
+SEEALSO
+Surface#lock
+
+%%
+NAME load_bmp
+MOD Surface
+TYPE .
+PURPOSE Windows の BMP ファイルをサーフェスにロードします。
+RVAL Surface
+
+PROTO
+load_bmp(filename)
+loadBMP(filename)
+
+DESC
+Windows の BMP ファイルからサーフェスをロードします。
+
+RET
+@[Surface]のインスタンスを返します。
+
+EXCEPTION *
+
+SEEALSO
+Surface#save_bmp
+Surface.load
+
+%%
+NAME load_bmp_from_io
+MOD Surface
+TYPE .
+PURPOSE RubyのIOオブジェクトから BMP ファイルをサーフェスにロードします。
+RVAL Surface
+
+PROTO
+load_bmp_from_io(io)
+loadBMPFromIO(io)
+
+DESC
+RubyのIOオブジェクトから BMP ファイルをサーフェスにロードします。
+
+RET
+@[Surface]のインスタンスを返します。
+
+EXCEPTION *
+
+SEEALSO
+Surface.load_bmp
+Surface.load_from_io
+
+NOTES
+RubyのIOオブジェクトとは、read、rewind、tell という3つのメソッドを
+持つオブジェクトです。IO、StringIO、Zlib::GzipReaderなどが
+利用できます。
+
+%%
+NAME save_bmp
+MOD Surface
+TYPE #
+PURPOSE サーフェスを Windows の BMP ファイルとしてセーブします。
+
+PROTO
+save_bmp(filename)
+saveBMP(filename)
+
+DESC
+$[self]の内容をWindows の BMP ファイル $[filename] にセーブします。
+
+EXCEPTION *
+SEEALSO
+Surface.load_bmp
+
+%%
+NAME set_color_key
+MOD Surface
+TYPE #
+PURPOSE blit 転送可能なサーフェスのカラーキー(透明ピクセル)と、RLE アクセラレーションをセットします。
+
+PROTO
+set_color_key(flag,key)
+setColorKey(flag,key)
+
+DESC
+blit 転送可能なサーフェスのカラーキー(透明ピクセル)をセットし、
+RLE アクセラレーションを有効または無効にします。
+$[key]はピクセル値もしくは色を表す配列で指定できます。
+
+RLE (Run-length encoding) アクセラレーションは、
+透明ピクセル(つまり$[key]と同じ値のピクセル)が
+水平方向に長く続いている場合に、
+画像の blit 転送を実質スピードアップさせることができます。
+$[key]としてピクセル値を使う場合、$[self]と
+同じピクセルフォーマットのものでなければいけません。
+
+$[flag] が SDL::SRCCOLORKEY ならば、$[key] は転送元の画像の透明色です。
+
+$[flag] に SDL::RLEACCEL が
+セットされている場合は、
+@[blit_surface] で描かれる時に、
+サーフェスは RLE アクセラレーションを使って描きます。
+最初にサーフェスに対して
+@[blit_surface] か @[Surface#display_format] が
+呼ばれた時に、実際に RLE アクセラレーションのためエンコードされます。
+
+flag が 0 ならば、この関数は現在のカラーキーをクリアします。
+
+EXCEPTION *
+SEEALSO
+blit_surface
+Surface#display_format
+Surface#map_rgb
+Surface#set_alpha
+Surface#colorkey
+
+%%
+NAME set_alpha
+MOD Surface
+TYPE #
+PURPOSE サーフェスのアルファ値を調整します。
+
+PROTO
+set_alpha(flags,alpha)
+setAlpha(flags,alpha)
+
+DESC
+このメソッドはサーフェス単位のα値をセットしたり、
+αブレンディングを有効に、また無効にするために使われます。
+
+$[flags] は、αブレンディングが使われるべきかどうか
+SDL::SRCALPHA、
+また blit の際に RLE アクセラレーションを使うべきかどうか
+SDL::RLEACCELを指定するのに使われます。
+$[flags] はこれらの 2 つのオプションの OR による
+組み合わせか、どちらか 1 つか、または 0 になり得るでしょう。
+SDL::SRCALPHA がフラグとして渡されないと、
+サーフェスを blit するときに全てのα情報は無視されます。
+$[alpha] パラメータはサーフェス単位のα値です。
+つまり、サーフェス単位のαを使うには、サーフェスのαチャンネルは不要であり、
+blit は未だ SDL::RLEACCEL によってアクセラレートされる
+ことが可能です。
+
+αは以下の方法でサーフェスの blit に影響を及ぼします。
+
+:RGBA->RGB SDL::SRCALPHA あり
+  転送元のピクセルはαチャンネルを使って転送先のピクセルとαブレンドされます。
+:RGBA->RGB SDL::SRCALPHA なし
+  転送元ピクセルから RGB データがコピーされます。
+  転送元のαチャンネルとサーフェス単位のα値は無視されます。
+
+:RGB->RGBA SDL::SRCALPHA あり
+  転送元ピクセルはサーフェス単位のα値を使って転送先ピクセルとαブレンドされます。
+  SDL::SRCCOLORKEY がセットされている場合は、
+  カラーキーの値と一致しないピクセルだけがコピーされます。
+  コピーされるピクセルのαチャンネルは不透明にセットされます。
+
+:RGB->RGBA SDL::SRCALPHA なし
+  RGB データは転送元のピクセルからコピーされ、コピーされたピクセルのα値は不透明にセットされます。
+  SDL::SRCCOLORKEY がセットされている場合は、
+  カラーキーの値に一致しないピクセルだけがコピーされます。
+
+:RGBA->RGBA SDL::SRCALPHA あり
+  転送元のピクセルはαチャンネルを使って転送先のピクセルとαブレンドされます。
+  転送先のピクセルのαチャンネルは変更されません。
+  SDL::SRCCOLORKEY は無視されます。
+
+:RGBA->RGBA SDL::SRCALPHA なし
+  RGBA データが転送先サーフェスにコピーされます。
+  SDL::SRCCOLORKEY がセットされている場合は、
+  カラーキーの値と一致しないピクセルだけがコピーされます。
+
+:RGB->RGB SDL::SRCALPHA あり
+  転送元ピクセルはサーフェス単位のα値を使って転送先ピクセルとαブレンドされます。
+  SDL::SRCCOLORKEY がセットされている場合は、
+  カラーキーの値と一致しないピクセルだけがコピーされます。
+
+:RGB->RGB SDL::SRCALPHA なし
+  転送元ピクセルから RGB データがコピーされます。
+  SDL::SRCCOLORKEY がセットされている場合は、
+  カラーキーの値と一致しないピクセルだけがコピーされます。
+
+
+NOTES
+この関数と SDL のαブレンディングの意味合いがバージョン 1.1.4 から変わりました。
+バージョン 1.1.5 までは、α値 0 は不透明で、255 は透明とみなされていました。
+これは今では反転されました。
+つまり、0 (SDL::ALPHA_TRANSPARENT) は透明であり、
+255 (SDL::ALPHA_OPAQUE) は不透明とみなされています。
+
+サーフェス単位のα値 128 は特殊な場合とみなされて最適化されるため、
+他の値よりもはるかに高速です。
+
+SDL::SRCALPHA がセットされた状態での RGBA->RGBA の blit は
+転送先サーフェスのαをそのまま維持することに注意して下さい。
+これは、2 つの任意の RGBA サーフェスを合成して
+それらの「重ね合わせ」が期待されるような結果を得ることはできないということです。
+転送先のαはマスクとして働きます。
+
+また、ピクセル単位のαとサーフェス単位のαは合成できないことにも注意して下さい。
+ピクセル単位のαが有効な時は必ずそちらが使われます。
+
+EXCEPTION *
+SEEALSO
+Surface#map_rgba
+Surface#get_rgba
+Surface#display_format
+blit_surface
+Surface#alpha
+
+%%
+NAME set_clip_rect
+MOD Surface
+TYPE #
+PURPOSE サーフェスのクリッピング矩形をセットします。
+
+PROTO
+set_clip_rect(x,y,w,h)
+setClipRect(x,y,w,h)
+
+DESC
+サーフェスのクリッピング矩形をセットします。
+このサーフェスが blit 転送の転送先である場合は、
+クリッピング矩形の内部の領域だけが描画されます。
+
+引数によって指定された矩形はサーフェスの端でクリッピングされ、
+サーフェスに対するクリッピング矩形がサーフェスの端に出ないようにします。
+
+SEEALSO
+Surface#get_clip_rect
+blit_surface
+
+%%
+NAME get_clip_rect
+MOD Surface
+TYPE #
+PURPOSE サーフェスのクリッピング矩形を取得します。
+RVAL [Integer, Integer, UINT, UINT]
+
+PROTO
+get_clip_rect
+getClipRect
+
+DESC
+サーフェスのクリッピング矩形を取得します。
+このサーフェスが blit の転送の場合は、
+クリッピング矩形の内部の領域のみが描画されます。
+
+RET
+[x, y, w, h]という整数4個の配列を返します。
+
+SEEALSO
+Surface#set_clip_rect
+blit_surface
+
+%%
+NAME blit_surface
+TYPE .
+PURPOSE 転送元サーフェスから転送先サーフェスへ高速 blit 転送を行います。
+RVAL 0/-2
+
+PROTO
+blit_surface(src,srcX,srcY,srcW,srcH,dst,dstX,dstY)
+blitSurface(src,srcX,srcY,srcW,srcH,dst,dstX,dstY)
+
+DESC
+転送元サーフェスから転送先サーフェスへ高速 blit 転送を行います
+$[src]が転送元、$[dst]が転送先のサーフィスとなります。
+$[srcX]、$[srcY]、$[srcW]、$[srcH]がすべて0の場合は$[src]
+全体がコピーされます。
+
+blit 関数はロックされたサーフェス上で呼ばれるべきではありません。
+
+blit 操作の結果は
+SDL::SRCAPLHA がセットされているか否かによって
+大きく変化します。
+これがどのように結果に影響するかについては、
+Surface#set_alpha を見て下さい。
+以下の擬似コードのようにカラーキーとα属性もサーフェスの blit に作用します。
+
+  if 転送元サーフェスに SDL::SRCALPHA がセットされている
+    if 転送元サーフェスにαチャンネルがある (つまり Amask != 0)
+      ピクセル単位のα値を使い、カラーキーを無視して blit
+    elsif 転送元サーフェスに SDL::SRCCOLORKEY がセットされている
+      カラーキーとサーフェス単位のα値を使って blit
+    else
+      サーフェス単位のα値を使って blit
+    end
+  elsif 転送元サーフェスに SDL::SRCCOLORKEY がセットされている
+    カラーキーを使って blit
+  else
+    普通の矩形 blit
+  end
+
+RET
+成功時には0を返します。
+どちらかのサーフェスがビデオメモリにあり、このメソッドが
+-2 を返す場合は、ビデオメモリが失われたため、
+画像込みでもう一度ロードして blit する必要があります。
+
+これは DirextX5.0 の下で、
+システムがあなたのフルスクリーンアプリケーションを切り換える時に発生します。
+あなたがビデオメモリに再度アクセスするまでは
+サーフェスのロックも失敗するでしょう。
+
+%%
+NAME fill_rect
+MOD Surface
+TYPE #
+PURPOSE 与えられた矩形領域と色で高速な塗り潰しを行います。
+
+PROTO
+fill_rect(x,y,w,h,color)
+fillRect(x,y,w,h,color)
+
+DESC
+与えられた矩形領域と $[color] で
+高速な塗り潰しを行います。
+$[color]は((<色、ピクセルフォーマット、ピクセル値について>))に書かれて
+いる方法で指定できます。
+
+色の値がα値を含んでいる場合は、塗り潰し先は単にそのα情報で「塗り潰され」、
+ブレンディングは起こりません。
+塗り潰し先にクリッピング矩形がある場合(@[Surface#set_clip_rect]に
+よってセットされます)は、この関数はクリッピング矩形と 指定した矩形が
+重なった領域でクリッピングされます。
+
+EXCEPTION *
+SEEALSO
+Surface#map_rgb
+Surface#map_rgba
+blit_surface
+
+%%
+NAME display_format
+MOD Surface
+TYPE #
+PURPOSE サーフェスを表示フォーマットに変換します。
+RVAL Surface
+
+PROTO
+display_format
+displayFormat
+
+DESC
+このメソッドは$[self]を表示サーフェス上への高速 blit に適するように、
+ビデオフレームバッファのピクセルフォーマットとパレットの
+新しいサーフェスを作ります。
+
+ハードウェアによるカラーキーやαの blit 転送のアクセラレーション
+の利点を得たい場合は、
+このメソッドを呼ぶ前にカラーキーとα値をセットしておくべきです。
+
+RET
+変換後のサーフェスを返します。
+
+EXCEPTION
+変換に失敗するか、メモリを使い切った時は例外@[Error]を返します。
+
+SEEALSO
+Surface#display_format_alpha
+Surface#set_alpha
+Surface#set_color_key
+
+%%
+NAME display_format_alpha
+MOD Surface
+TYPE #
+PURPOSE サーフェスを表示フォーマットに変換します。
+RVAL Surface
+
+PROTO
+display_format_alpha
+displaFormatAlpha
+
+DESC
+このメソッドは$[self]を表示サーフェス上への高速 blit に適するように、
+ビデオフレームバッファのピクセルフォーマット・色にαチャンネルを加えた
+新しいサーフェスにコピーします。
+
+ハードウェアによるカラーキーやαの blit 転送のアクセラレーション
+の利点を得たい場合は、
+このメソッドを呼ぶ前にカラーキーとα値をセットしておくべきです。
+
+$[self]に SDL::SRCCOLORKEY フラグがセットされている
+場合は、この関数はカラーキーをαチャンネルに変換することに使うことが
+できます。
+そうして生成されたサーフェスは、
+カラーキーに一致するピクセルでは透明(α=0)に、
+他の場所では不透明(α=255)になります。
+
+RET
+変換後のサーフェスを返します。
+
+EXCEPTION
+変換に失敗するか、メモリを使い切った時は例外@[Error]を返します。
+
+SEEALSO
+Surface#display_format
+Surface#set_alpha
+Surface#set_color_key
+
+%%
+NAME flags
+MOD Surface
+TYPE #
+PURPOSE サーフェスのフラグ
+RVAL UINT
+
+PROTO
+flags
+
+DESC
+サーフェスにセットされているフラグを返します。以下のフラグが
+サポートされています。
+
+:SDL::SWSURFACE
+  サーフェスがシステムメモリに格納されます。
+:SDL::HWSURFACE
+  サーフェスがビデオメモリに格納されます。
+:SDL::ASYNCBLIT
+  可能であればサーフェスは非同期 blit 転送を使用します。
+:SDL::ANYFORMAT
+  任意のピクセルフォーマットを許可します。(表示サーフェス)
+:SDL::HWPALETTE
+  サーフェスには排他的なパレットがあります。
+:SDL::DOUBLEBUF
+  サーフェスはダブルバッファです。(表示サーフェス)
+:SDL::FULLSCREEN
+  サーフェスはフルスクリーンです。(表示サーフェス)
+:SDL::OPENGL
+  サーフェスには OpenGL コンテキストがあります。(表示サーフェス)
+:SDL::OPENGLBLIT
+  サーフェスは OpenGL への blit 転送をサポートします。(表示サーフェス)
+:SDL::RESIZABLE
+  サーフェスはサイズ変更が可能です。(表示サーフェス)
+:SDL::HWACCEL
+  サーフェスの blit 転送にはハードウェアアクセラレーションを使います。
+:SDL::SRCCOLORKEY
+  サーフェスはカラーキー付き blit 転送を使います。
+:SDL::RLEACCEL
+  カラーキー付き blit 転送は RLE (ランレングス圧縮)による
+  アクセラレーションが利きます。
+:SDL::SRCALPHA
+  サーフェスの blit 転送はαブレンディングを使います。
+
+RET
+以上のフラグの OR を取ったものが返されます。
+
+SEEALSO
+Surface
+Screen
+
+%%
+NAME w
+MOD Surface
+TYPE #
+PURPOSE サーフェスの幅
+RVAL UINT
+
+PROTO
+w
+
+DESC
+サーフェスの幅のピクセル数を整数で返します。
+
+SEEALSO
+Surface#h
+
+%%
+NAME h
+MOD Surface
+TYPE #
+PURPOSE サーフェスの高さ
+RVAL UINT
+
+PROTO
+h
+
+DESC
+サーフェスの高さのピクセル数を整数で返します。
+
+SEEALSO
+Surface#w
+
+%%
+NAME pixels
+MOD Surface
+TYPE #
+PURPOSE 実際のピクセルデータを返します
+RVAL String
+
+PROTO
+pixels
+
+DESC
+実際のピクセルデータをStringのインスタンスで返します。
+ピクセルデータの形式は@[Surface#flags]、SDL::Surface#[RGBA]mask、
+@[Surface#bpp]によります。
+
+NOTES
+これにアクセスするには@[ロック|Surface#lock]が必要です。
+
+SEEALSO
+Surface#flags
+Surface#Rmask
+Surface#Gmask
+Surface#Bmask
+Surface#Amask
+Surface#bpp
+
+%%
+NAME Rmask
+MOD Surface
+TYPE #
+PURPOSE 赤チャンネルの値を取得するのに使われるビットマスク
+RVAL UINT
+
+PROTO
+Rmask
+
+DESC
+赤チャンネルの値を取得するのに使われるビットマスクを整数で返します。
+
+%%
+NAME Gmask
+MOD Surface
+TYPE #
+PURPOSE 緑チャンネルの値を取得するのに使われるビットマスク
+RVAL UINT
+
+PROTO
+Gmask
+
+DESC
+緑チャンネルの値を取得するのに使われるビットマスクを整数で返します。
+
+%%
+NAME Bmask
+MOD Surface
+TYPE #
+PURPOSE 青チャンネルの値を取得するのに使われるビットマスク
+RVAL UINT
+
+PROTO
+Bmask
+
+DESC
+青チャンネルの値を取得するのに使われるビットマスクを整数で返します。
+
+%%
+NAME Amask
+MOD Surface
+TYPE #
+PURPOSE αチャンネルの値を取得するのに使われるビットマスク
+RVAL UINT
+
+PROTO
+Amask
+
+DESC
+αチャンネルの値を取得するのに使われるビットマスクを整数で返します。
+
+%%
+NAME colorkey
+MOD Surface
+TYPE #
+PURPOSE 透明ピクセルのピクセル値
+RVAL UINT
+
+PROTO
+colorkey
+
+DESC
+透明ピクセルのピクセル値を正の整数で返します。
+
+SEEALSO
+Surface
+Surface#set_color_key
+((<色、ピクセルフォーマット、ピクセル値について>))
+
+%%
+NAME alpha
+MOD Surface
+TYPE #
+PURPOSE サーフェス全体のα値
+RVAL UINT
+
+PROTO
+alpha
+
+DESC
+サーフェス全体のα値を0から255までの整数で返します。
+0が透明で、255が不透明です。
+
+SEEALSO
+Surface#set_alpha
+
+%%
+NAME bpp
+MOD Surface
+TYPE #
+PURPOSE サーフェスの各ピクセルを表わすのに使われるビット数
+RVAL UINT
+
+PROTO
+bpp
+
+DESC
+サーフェスの各ピクセルを表わすのに使われるビット数を返します。
+通常8、16、24、32のいずれかです。
+
+%%
+NAME load
+MOD Surface
+TYPE .
+DEP SDL_image
+PURPOSE 画像をサーフェスにロードします。
+RVAL Surface
+
+PROTO
+load(filename)
+
+DESC
+画像のファイルをサーフェスにロードします。
+もし画像の形式が透明ピクセルをサポートしているならば、サーフェスに
+カラーキーがセットされます。
+
+対応しているフォーマットはBMP, PNM (PPM/PGM/PBM), XPM,
+XCF, PCX, GIF, JPEG, TIFF, TGA, PNG, LBMです。
+
+NOTES
+SDL_image のコンパイル時に使えるように指定しなかったフォーマット
+のファイルはこのメソッドではロードできません。
+
+EXCEPTION *
+
+%%
+NAME load_from_io
+MOD Surface
+TYPE .
+PURPOSE RubyのIOオブジェクトから画像をサーフェスにロードします。
+RVAL Surface
+
+PROTO
+load_from_io(io)
+loadFromIO(io)
+
+DESC
+RubyのIOオブジェクトから画像データをサーフェスにロードします。
+もし画像の形式が透明ピクセルをサポートしているならば、サーフェスに
+カラーキーがセットされます。
+
+対応しているフォーマットはBMP, PNM (PPM/PGM/PBM), XPM,
+XCF, PCX, GIF, JPEG, TIFF, TGA, PNG, LBMです。
+
+EXCEPTION *
+
+NOTES
+RubyのIOオブジェクトとは、read、rewind、tell という3つのメソッドを
+持つオブジェクトです。IO、StringIO、Zlib::GzipReaderなどが
+利用できます。
+
+SEEALSO
+Surface.load
+Surface.load_bmp_from_io
+
+%%
+NAME put_pixel
+MOD Surface
+TYPE #
+LOCK
+PURPOSE 指定した位置に点を書きます。
+
+PROTO
+put_pixel(x, y, color)
+putPixel(x, y, color)
+[]=(x, y, color)
+
+DESC
+サーフェスの($[x], $[y])で指定した位置に$[color]のピクセルを描画します。
+$[color]としてピクセル値もしくは色を表わす配列が利用できます。
+
+SEEALSO
+Surface#get_pixel
+
+%%
+NAME get_pixel
+MOD Surface
+TYPE #
+LOCK
+PURPOSE 指定した位置のピクセル値を得ます。
+RVAL UINT
+
+PROTO
+get_pixel(x, y)
+getPixel(x, y)
+[](x, y)
+
+DESC
+サーフェスの($[x], $[y])で指定した位置のピクセル値を得ます。
+
+SEEALSO
+Surface#put_pixel
+
+%%
+NAME put
+MOD Surface
+TYPE #
+PURPOSE 指定したサーフェス全体を指定した位置に高速 blit 転送します。
+
+PROTO
+put(src, x, y)
+
+DESC
+$[self]の($[x], $[y])で指定した位置にサーフェス $[src] を高速 blit 転送
+します。
+
+これは、
+  SDL.blit_surface(src, 0, 0, src.w, src.h, self, x, y)
+と同じです。
+
+SEEALSO
+blit_surface
+
+%%
+NAME copy_rect
+MOD Surface
+TYPE #
+PURPOSE サーフェスの一部を切り出した新しいサーフェスを返します。
+
+PROTO
+copy_rect(x,y,w,h)
+copyRect(x,y,w,h)
+
+DESC
+サーフェス $[self] の ($[x], $[y], $[w], $[h]) で指定される矩形を
+コピーした新しいサーフェスを作り、返します。
+
+NOTES
+このメソッドは内部で @[blit_surface] を呼ぶため、ロックされたサーフェス上で
+呼ばれるべきではありません。
+
+EXCEPTION *
+
+%%
+NAME auto_lock?
+TYPE .
+DEP SGE
+PURPOSE サーフェスを自動でロックするかどうかを返す。
+RVAL true/false
+
+PROTO
+auto_lock?
+autoLock?
+auto_lock
+autoLock
+
+DESC
+サーフェスに対する@[ロック|Surface#lock]が必要な操作をするとき、
+Ruby/SDLが自動的にロック/アンロックするか
+どうかを true/false で返します。デフォルトでは true です。
+
+SEEALSO
+Surface#lock
+Surface#unlock
+auto_lock_on
+auto_lock_off
+
+%%
+NAME auto_lock_on
+TYPE .
+DEP SGE
+PURPOSE 自動ロックを利用するようにします。
+
+PROTO
+auto_lock_on
+autoLockON
+
+DESC
+自動ロックを利用するようにします。これを呼ぶと@[auto_lock?]が真に
+なります。
+
+SEEALSO
+Surface#lock
+auto_lock?
+auto_lock_off
+
+%%
+NAME auto_lock_off
+TYPE .
+DEP SGE
+PURPOSE 自動ロックを利用しないようにします。
+
+PROTO
+auto_lock_off
+autoLockOFF
+
+DESC
+自動ロックを利用しないようにします。これを呼ぶと@[auto_lock?]が偽に
+なります。
+
+SEEALSO
+Surface#lock
+auto_lock?
+auto_lock_on
+
+%%
+NAME auto_lock=
+TYPE .
+DEP SGE
+PURPOSE 自動ロックを使うかどうかを設定します。
+
+PROTO
+auto_lock=(locking)
+autoLock=(locking)
+
+DESC
+自動ロックを使うかどうかを設定します。 SDL.auto_lock = true は
+SDL.auto_lock_on と同じで、 SDL.auto_lock = false は SDL.auto_lock_off と
+同じです。
+
+SEEALSO
+Surface#lock
+auto_lock?
+auto_lock_on
+auto_lock_off
+
+%%
+NAME transform
+TYPE .
+DEP SGE
+PURPOSE 回転縮小拡大描画をします。
+
+PROTO
+transform(src,dst,angle,xscale,yscale,px,py,qx,qy,flags)
+
+DESC
+$[src]を回転縮小拡大したものを$[dst]に描画します。
+$[angle]は回転角度(単位はラジアンではなく度)、$[xscale]、$[yscale]は
+それぞれX方向とY方向の倍率、($[px], $[py]) は $[src]における回転の
+中心で、その点が$[dst]の($[qx], $[qy])にくるように描画されます。
+また、$[flags]としては以下の値のORを取ったものを与えます。
+
+:0
+  普通
+:SDL::TRANSFORM_SAFE
+  $[src] と $[dst] のピクセルフォーマットが異なっていても正しく描画します。
+  $[src].bpp と $[dst].bpp が異なる場合は自動的に有効になります。
+  ただしれを有効にすると遅くなります。
+:SDL::TRANSFORM_AA
+  補完描画をします。遅いがみためが良くなります。
+:SDL::TRANSFORM_TMAP
+  テクスチャマッピングを使います。すこし速くなるが見た目は悪くなります。
+  このフラグを有効にした場合 $[px] 、$[py] や上で挙げたフラグを無視します。
+
+NOTES
+最適なパフォーマンスを得るために、$[src] と $[dst] は同じピクセル
+フォーマットを使い、また24bpp以外のフォーマットを使ってください。
+
+@[Surface#set_clip_rect] で設定したクリッピング矩形は $[src]
+および $[dst] で有効です。
+
+SDL::TRANSFORM_AA を使う場合は、高さ方向および幅方向にそれぞれ
+1ピクセルづつ間引かれます(パフォーマンスを良くするためです)。
+
+$[src]が32bpp RGBA フォーマットの場合には、SDL::TRANSFORM_SAFEを使うべきです。
+
+このメソッドはアルファブレンディングは一切しませんが、アルファチャンネルの
+値は保ちます。もし、アルファブレンディング、カラーキーの効果のある
+回転縮小拡大描画をしたい場合は@[transform_blit]をかわりに利用してください。
+
+SEEALSO
+transform_blit
+Surface#transform_surface
+Surface.new
+
+%%
+NAME transform_blit
+TYPE .
+DEP SGE
+PURPOSE カラーキーおよびアルファブレンドが有効な回転縮小拡大描画をします。
+
+PROTO
+transform_blit(src,dst,angle,xscale,yscale,px,py,qx,qy,flags)
+transformBlit(src,dst,angle,xscale,yscale,px,py,qx,qy,flags)
+
+DESC
+回転縮小拡大描画をします。引数の意味などは @[transform] と同様です。
+@[transform] との違いは $[src] に設定されたカラーキー(抜き色)
+およびアルファブレンディングが有効になることです。
+
+SEEALSO
+transform
+Surface#transform_surface
+Surface#set_color_key
+Surface#set_alpha
+
+%%
+NAME draw_line
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 直線を描画します。
+
+PROTO
+draw_line(x1,x2,y1,y2,color)
+drawLine(x1,x2,y1,y2,color)
+
+DESC
+($[x1], $[y1])から($[x2], $[y2])までの直線を $[color] で指定した色で
+描画します。
+
+SEEALSO
+Surface#draw_aa_line
+Surface#draw_line_alpha
+Surface#draw_rect
+
+%%
+NAME draw_aa_line
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE アンチエイリアシングされた直線を描画します。
+
+PROTO
+draw_aa_line(x1,x2,y1,y2,color)
+drawAALine(x1,x2,y1,y2,color)
+
+DESC
+($[x1], $[y1])から($[x2], $[y2])までの直線を $[color] で指定した色で
+アンチエイリアスして描画します。
+
+SEEALSO
+Surface#draw_line
+
+%%
+NAME draw_line_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE アルファブレンディングした直線を描画します。
+
+PROTO
+draw_line_alpha(x1,x2,y1,y2,color,alpha)
+drawLineAlpha(x1,x2,y1,y2,color,alpha)
+
+DESC
+($[x1], $[y1])から($[x2], $[y2])までの直線を $[color] で指定した色、
+$[alpha]で指定したα値で描画します。
+
+SEEALSO
+Surface#draw_line
+
+%%
+NAME draw_aa_line_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE アルファブレンディングした直線を描画します。
+
+PROTO
+draw_aa_line_alpha(x1,x2,y1,y2,color,alpha)
+drawAALineAlpha(x1,x2,y1,y2,color,alpha)
+
+DESC
+($[x1], $[y1])から($[x2], $[y2])までの直線を $[color] で指定した色、
+$[alpha]で指定したα値でアンチエイリアスをかけて描画します。
+
+SEEALSO
+Surface#draw_line
+
+%%
+NAME draw_rect
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 長方形を描画します。
+
+PROTO
+draw_rect(x,y,w,h,color)
+drawRect(x,y,w,h,color)
+
+DESC
+($[x], $[y])が左上の点で$[w]が幅、$[h]が高さの長方形を $[color] で
+指定した色で描画します。中を塗り潰しません。
+
+SEEALSO
+Surface#fill_rect
+
+%%
+NAME draw_rect_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 長方形をアルファブレンディング描画します。
+
+PROTO
+draw_rect_alpha(x,y,w,h,color,alpha)
+drawRectAlpha(x,y,w,h,color,alpha)
+
+DESC
+($[x], $[y])が左上の点で$[w]が幅、$[h]が高さの長方形を $[color] で
+指定した色、$[alpha] で指定したα値で描画します。中を塗り潰しません。
+
+SEEALSO
+Surface#fill_rect
+Surface#draw_rect
+
+%%
+NAME draw_filled_rect_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 塗り潰した長方形をアルファブレンディング描画します。
+
+PROTO
+draw_filled_rect_alpha(x,y,w,h,color,alpha)
+drawFilledRectAlpha(x,y,w,h,color,alpha)
+
+DESC
+($[x], $[y])が左上の点で$[w]が幅、$[h]が高さの中を塗り潰した
+長方形を $[color] で指定した色、$[alpha] で指定したα値で描画します。
+
+SEEALSO
+Surface#fill_rect
+Surface#draw_rect
+
+%%
+NAME draw_circle
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 円を描画します。
+
+PROTO
+draw_circle(x,y,r,color)
+drawCircle(x,y,r,color)
+
+DESC
+中心 ($[x],$[y])、半径 $[r]の円を $[color] で指定した色で描画します。
+
+SEEALSO
+Surface#draw_ellipse
+Surface#draw_filled_circle
+Surface#draw_aa_circle
+Surface#draw_aa_filled_circle
+Surface#draw_circle_alpha
+Surface#draw_filled_circle_alpha
+Surface#draw_aa_circle_alpha
+
+%%
+NAME draw_filled_circle
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 塗り潰した円を描画します。
+
+PROTO
+draw_filled_circle(x,y,r,color)
+drawFilledCircle(x,y,r,color)
+
+DESC
+中心 ($[x],$[y])、半径 $[r]の円を $[color] で指定した色で中を
+塗り潰して描画します。
+
+SEEALSO
+Surface#draw_circle
+
+%%
+NAME draw_aa_circle
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE アンチエイリアスをかけた円を描画します。
+
+PROTO
+draw_aa_circle(x,y,r,color)
+drawAACircle(x,y,r,color)
+
+DESC
+中心 ($[x],$[y])、半径 $[r]の円を $[color] で指定した色で
+アンチエイリアスをかけて描画します。
+
+SEEALSO
+Surface#draw_circle
+
+%%
+NAME draw_aa_filled_circle
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 塗り潰した円をアンチエイリアスをかけて描画します。
+
+PROTO
+draw_aa_filled_circle(x,y,r,color)
+drawAAFilledCircle(x,y,r,color)
+
+DESC
+中心 ($[x],$[y])、半径 $[r]の円を $[color] で指定した色で
+中を塗り潰しアンチエイリアスをかけて描画します。
+
+SEEALSO
+Surface#draw_circle
+
+%%
+NAME draw_circle_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 円をアルファブレンディング描画します。
+
+PROTO
+draw_circle_alpha(x,y,r,color,alpha)
+drawCircleAlpha(x,y,r,color,alpha)
+
+DESC
+中心 ($[x],$[y])、半径 $[r]の円を $[color] で指定した色、
+$[alpha]で指定したアルファ値で描画します。
+
+SEEALSO
+Surface#draw_circle
+
+%%
+NAME draw_filled_circle_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 塗り潰した円をアルファブレンディング描画します。
+
+PROTO
+draw_filled_circle_alpha(x,y,r,color,alpha)
+drawFilledCircleAlpha(x,y,r,color,alpha)
+
+DESC
+中心 ($[x],$[y])、半径 $[r]の中を塗り潰した円を $[color] で指定した色、
+$[alpha]で指定したアルファ値で描画します。
+
+SEEALSO
+Surface#draw_circle
+
+%%
+NAME draw_aa_circle_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 円をアルファブレンディング、アンチエイリアス描画します。
+
+PROTO
+draw_aa_circle_alpha(x,y,r,color,alpha)
+drawAACircleAlpha(x,y,r,color,alpha)
+
+DESC
+中心 ($[x],$[y])、半径 $[r]の円を $[color] で指定した色、
+$[alpha]で指定したアルファ値でアンチエイリアスで描画します。
+
+SEEALSO
+Surface#draw_circle
+
+%%
+NAME draw_ellipse
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 楕円を描画します。
+
+PROTO
+draw_ellipse(x,y,rx,ry,color)
+drawEllipse(x,y,rx,ry,color)
+
+DESC
+中心 ($[x],$[y])、X方向の半径 $[xr]、Y方向の半径 $[ry] の楕円を $[color] で指定した色で描画します。
+
+SEEALSO
+Surface#draw_circle
+Surface#draw_filled_ellipse
+Surface#draw_aa_ellipse
+Surface#draw_aa_filled_ellipse
+Surface#draw_ellipse_alpha
+Surface#draw_filled_ellipse_alpha
+Surface#draw_aa_ellipse_alpha
+
+%%
+NAME draw_filled_ellipse
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 塗り潰した楕円を描画します。
+
+PROTO
+draw_filled_ellipse(x,y,rx,ry,color)
+drawFilledEllipse(x,y,rx,ry,color)
+
+DESC
+中心 ($[x],$[y])、X方向の半径 $[xr]、Y方向の半径 $[ry] の楕円を $[color] で指定した色で中を
+塗り潰して描画します。
+
+SEEALSO
+Surface#draw_ellipse
+
+%%
+NAME draw_aa_ellipse
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE アンチエイリアスをかけた楕円を描画します。
+
+PROTO
+draw_aa_ellipse(x,y,rx,ry,color)
+drawAAEllipse(x,y,rx,ry,color)
+
+DESC
+中心 ($[x],$[y])、X方向の半径 $[xr]、Y方向の半径 $[ry] の楕円を $[color] で指定した色で
+アンチエイリアスをかけて描画します。
+
+SEEALSO
+Surface#draw_ellipse
+
+%%
+NAME draw_aa_filled_ellipse
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 塗り潰した楕円をアンチエイリアスをかけて描画します。
+
+PROTO
+draw_aa_filled_ellipse(x,y,rx,ry,color)
+drawAAFilledEllipse(x,y,rx,ry,color)
+
+DESC
+中心 ($[x],$[y])、X方向の半径 $[xr]、Y方向の半径 $[ry] の楕円を $[color] で指定した色で
+中を塗り潰しアンチエイリアスをかけて描画します。
+
+SEEALSO
+Surface#draw_ellipse
+
+%%
+NAME draw_ellipse_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 楕円をアルファブレンディング描画します。
+
+PROTO
+draw_ellipse_alpha(x,y,rx,ry,color,alpha)
+drawEllipseAlpha(x,y,rx,ry,color,alpha)
+
+DESC
+中心 ($[x],$[y])、X方向の半径 $[xr]、Y方向の半径 $[ry] の楕円を $[color] で指定した色、
+$[alpha]で指定したアルファ値で描画します。
+
+SEEALSO
+Surface#draw_ellipse
+
+%%
+NAME draw_filled_ellipse_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 塗り潰した楕円をアルファブレンディング描画します。
+
+PROTO
+draw_filled_ellipse_alpha(x,y,rx,ry,color,alpha)
+drawFilledEllipseAlpha(x,y,rx,ry,color,alpha)
+
+DESC
+中心 ($[x],$[y])、X方向の半径 $[xr]、Y方向の半径 $[ry] の中を塗り潰した楕円を $[color] で指定した色、
+$[alpha]で指定したアルファ値で描画します。
+
+SEEALSO
+Surface#draw_ellipse
+
+%%
+NAME draw_aa_ellipse_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 楕円をアルファブレンディング、アンチエイリアス描画します。
+
+PROTO
+draw_aa_ellipse_alpha(x,y,rx,ry,color,alpha)
+drawAAEllipseAlpha(x,y,rx,ry,color,alpha)
+
+DESC
+中心 ($[x],$[y])、X方向の半径 $[xr]、Y方向の半径 $[ry] の楕円を $[color] で指定した色、
+$[alpha]で指定したアルファ値でアンチエイリアスで描画します。
+
+SEEALSO
+Surface#draw_ellipse
+
+%%
+NAME draw_bezier
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE ベジエ曲線を描く
+
+PROTO
+draw_bezier(x1,y1,x2,y2,x3,y3,x4,y4,level,color)
+drawBezier(x1,y1,x2,y2,x3,y3,x4,y4,level,color)
+
+DESC
+($[x1], $[y1]) から ($[x4], $[y4])までのベジエ曲線を
+($[x2], $[y2]) と ($[x3], $[y3]) をコントロールポイントとして
+$[color]で指定した色で
+描画する。$[leve] は曲線の近似度で、4から7を使うと良い。
+
+SEEALSO
+Surface#draw_aa_bezier
+Surface#draw_bezier_alpha
+Surface#draw_aa_bezier_alpha
+
+%%
+NAME draw_aa_bezier
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE アンチエイリアスをかけたベジエ曲線を描く
+
+PROTO
+draw_aa_bezier(x1,y1,x2,y2,x3,y3,x4,y4,level,color)
+drawAABezier(x1,y1,x2,y2,x3,y3,x4,y4,level,color)
+
+DESC
+($[x1], $[y1]) から ($[x4], $[y4])までのベジエ曲線を
+($[x2], $[y2]) と ($[x3], $[y3]) をコントロールポイントとして
+$[color]で指定した色でアンチエイリアスして
+描画する。$[leve] は曲線の近似度で、4から7を使うと良い。
+
+SEEALSO
+Surface#draw_bezier
+
+%%
+NAME draw_bezier_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE ベジエ曲線をアルファブレンディングして描く
+
+PROTO
+draw_bezier_alpha(x1,y1,x2,y2,x3,y3,x4,y4,level,color,alpha)
+drawBezierAlpha(x1,y1,x2,y2,x3,y3,x4,y4,level,color,alpha)
+
+DESC
+($[x1], $[y1]) から ($[x4], $[y4])までのベジエ曲線を
+($[x2], $[y2]) と ($[x3], $[y3]) をコントロールポイントとして
+$[color]で指定した色、$[alpha]で指定したα値で
+描画する。$[leve] は曲線の近似度で、4から7を使うと良い。
+
+SEEALSO
+Surface#draw_bezier
+
+%%
+NAME draw_aa_bezier_alpha
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE アンチエイリアスしたベジエ曲線をアルファブレンディングして描く
+
+PROTO
+draw_aa_bezier_alpha(x1,y1,x2,y2,x3,y3,x4,y4,level,color,alpha)
+drawAABezierAlpha(x1,y1,x2,y2,x3,y3,x4,y4,level,color,alpha)
+
+DESC
+($[x1], $[y1]) から ($[x4], $[y4])までのベジエ曲線を
+($[x2], $[y2]) と ($[x3], $[y3]) をコントロールポイントとして
+$[color]で指定した色、$[alpha]で指定したα値でアンチエイリアス
+描画する。$[leve] は曲線の近似度で、4から7を使うと良い。
+
+SEEALSO
+Surface#draw_bezier
+
+%%
+NAME transform_surface
+MOD Surface
+TYPE #
+DEP SGE
+LOCK
+PURPOSE 拡大縮小変形した新しいサーフェスを生成する
+RVAL Surface
+
+PROTO
+transform_surface(bgcolor,angle,xscale,yscale,flags)
+transformSurface(bgcolor,angle,xscale,yscale,flags)
+
+DESC
+$[self] を拡大縮小変形したサーフェスを生成し返す。
+回転によって生じた隙間は $[bgcolor] で指定した色で埋められる。
+引数 $[angle]、$[xscale]、$[yscale]、$[flags] は @[transform]
+と同じ意味である。
+
+新しいサーフェスは $[self] と同じ bpp およびピクセルフォーマットを
+持つ。
+
+EXCEPTION *
+
+SEEALSO
+transform
+transform_blit
+

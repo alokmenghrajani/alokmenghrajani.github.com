@@ -1,0 +1,132 @@
+version 1.2.0
+Add Japanese reference
+Add following methods
+  SDL::MPEG#render_final
+  SDL::Surface.load_bmp_from_io
+  SDL::Surface.load_from_io
+  SDL::Mixer::Wave.load_from_io
+  SDL::Mixer::Music.load_from_string
+Fix the bug that we cannot compile when SMEPG is installed but SDL_mixer is not installed.
+
+version 1.1.0
+Change Japanese reference
+Add following methods
+  SDL::CD.framesToMSF
+  SDL::CD.MSFToFrames
+  SDL::CD#in_drive?
+  SDL::Mixer.playChannelTimed
+  SDL::Mixer.fadeInChannel
+  SDL::Mixer.fadeInChannelTimed
+  SDL::Mixer.expire
+  SDL::Mixer.fading
+  SDL::Mixer.fadeOut
+  SDL::Mixer.fadingMusic
+  SDL::Mouse.show?
+  SDL::CollisionMap#w
+  SDL::CollisionMap#h
+  SDL::BMFont#textSize
+  SDL::TTF#init?
+Add following class
+  SDL::Event2::VideoExpose
+Fix bugs in
+  SDL::Key.press?
+  SDL::TTF#familyName
+  SDL::TTF#styleName
+  SDL::BMFont
+Add some constants about key repeat
+
+version 1.0.0
+Add following methods
+  SDL::Surface#drawBezier
+  SDL::Surface#drawAABezier
+  SDL::Surface#drawBezierAlpha
+  SDL::Surface#drawAABezierAlpha
+Fix bugs in SDL::MPEG#setDisplay
+
+version 0.9.5
+Fix bugs in SDL::Surface#getPalette and SDL::Surface#copyRect
+Add SDL::WM.grubInput, SDL.quit, SDL.putenv and SDL.getenv
+Fix trivial typo
+Fix documentation of SDL::TTF#textSize
+
+version 0.9.4
+Add SDL::Surface#pixels, SDL::Surface#[RGBA]mask and SDL::Surface.new_from
+Modyfy SDL::Surface.new
+Add a little OpenGL document
+
+version 0.9.3
+Support bitmap font drawing with sge
+Support bdf font drawing with SDL_kanji
+Add following methods
+  SDL::TTF#height
+  SDL::TTF#ascent
+  SDL::TTF#descent
+  SDL::TTF#lineSkip
+  SDL::Surface#copyRect
+Fix some warnings
+Fix a critical bug in SDLSKK module
+Setup OpenGL by default
+
+version 0.9.2
+Primitive draw with anti-alias and alpha blending is now available.
+Modify SDL.transformBlit for alpha blending.
+
+version 0.9.1
+Fix two critical bugs in event module.
+
+version 0.9
+
+Support SDLSKK 0.4, and stop supporting 0.3.
+Add collision detection function. ( thanks to Wayne Conrad )
+Improve MPEG playback function. Enable to load multiple mpeg files.
+Add sample. ( thanks to Simon Strandgaard )
+
+version 0.8.3
+
+Add following methods because of typo. ( thanks to Wayne Conrad )
+  SDL::Surface#drawEllipse
+  SDL::Surface#drawFilledEllipse
+Fix following method. ( thanks to moumar )
+  SDL.videoInfo
+
+version 0.8.2
+
+Support SDLSKK 0.3, and stop supporting 0.2.
+Bug fix about Joystick subsystem.
+Add following methods.
+  SDL::Screen#toggleFullScreen
+  SDL::Key.getKeyName
+Add aliases into documents.
+
+version 0.8.1
+
+bug fix
+
+version 0.8
+
+Support SDLSKK.
+Change SDL's finalizer (Thanks to Tamura).
+Change some methods' name.
+  SDL::CD.name -> SDL::CD.indexName
+  SDL::Joystick.name -> SDL::Joystick.indexName
+Add Ruby like ( uncapitalized and separated by underbars ) aliases.
+Add following methods.
+  SDL::Mixer.allocateChannels
+  SDL::TTF#renderSolidUTF8
+  SDL::TTF#renderBlendedUTF8
+  SDL::TTF#renderShadedUTF8
+  SDL::TTF#faces
+  SDL::TTF#fixedWidth?
+  SDL::TTF#familyName
+  SDL::TTF#styleName
+  SDL.videoDriverName
+  SDL.getGammaRamp
+  SDL.setGammaRamp
+  SDL::Surface#saveBMP
+  SDL::Surface#displayFormatAlpha
+  SDL::Surface#getClipRect
+  SDL.autoLock?
+  SDL.autoLockON
+  SDL.autoLockOFF
+Extend following method.
+  SDL.blitSurace2

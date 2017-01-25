@@ -1,0 +1,387 @@
+= Joystick
+* ((<Joystick機能概説>))
+* ((<SDL::Joystick>))
+* ジョイスティック関連メソッド
+TOC
+
+== Joystick機能概説
+ジョイスティック、またそれに近い他のデバイスは、
+ゲームプレイにおける非常に強い役割を持っており、
+SDL はそれらを広範囲にサポートしています。
+軸、ボタン、POV ハットスイッチ、そしてトラックボールは
+全てサポートされてます。
+
+ジョイスティックのサポートは
+@[init] に SDL::INIT_JOYSTICK フラグを渡すことで初期化されます。
+いったん初期化されたジョイスティックは
+@[Joystick.open] で
+オープンされなければいけません。
+
+ここに書かれているメソッドを使う時、
+ジョイスティックにこちらからアクセスして読み込むのが
+最良の方法のように思えますが、たいていの場合そうではありません。
+理想的には、ジョイスティックは@[イベント|Event]
+システムを使って読み込むべきです。
+これを可能にするために、@[Joystick.poll=]
+を使ってジョイスティックのイベント処理状態を設定しなければなりません。
+もちろん、ジョイスティックを使う前に@[オープン|Joystick.open]
+しなければなりません。
+
+* NOTES
+
+  イベントキューを通してジョイスティックを扱っているので
+  ((*なければ*))、 @[Joystick.update_all]
+  を呼んでジョイスティックの更新を明示的に要求する必要があります。
+
+  フォースフィードバックはまだサポートされていません。
+
+== SDL::Joystick
+個々のジョイステックから入力情報を得るためのクラスです。
+
+METHODS(Joystick)
+
+== Methods
+%%%
+NAME num
+MOD Joystick
+TYPE .
+PURPOSE 利用可能なジョイスティックの数を数えます。
+RVAL Integer
+
+PROTO
+num
+
+DESC
+システムに接続されたジョイスティックの数を数えます。
+
+SEEALSO
+Joystick.index_name
+Joystick.open
+
+%%
+NAME index_name
+MOD Joystick
+TYPE .
+PURPOSE ジョイスティック名を取得します。
+RVAL String
+
+PROTO
+index_name(index)
+indexName(index)
+
+DESC
+実装に依存するジョイスティック名を文字列で取得します。
+$[index] パラメータはシステム上のジョイスティック番号を指します。
+
+EXAMPLE
+# 接続された全てのジョイスティックの名前を表示
+num_joy = SDL::Joystick.num
+printf("%d 本のジョイスティックが見つかりました\n", num_joy)
+num_joy.times do |i|
+  puts SDL::Joystick.index_name(i)
+end
+
+SEEALSO
+Joystick.open
+
+%%
+NAME open
+MOD Joystick
+TYPE .
+PURPOSE ジョイスティックを使うためオープンします。
+RVAL SDL::Joystick
+
+PROTO
+open(index)
+
+DESC
+SDL 内でジョイスティックを使うためオープンします。
+$[index] はシステムにおけるジョイスティックの番号を指します。
+ジョイスティックはゲームで使用する前にオープンされる必要があります。
+
+ジョイスティック番号は 0 から SDL::Joystick.num - 1 までが有効です。
+
+RET
+@[Joystick]のインスタンスを返します。
+
+EXCEPTION *
+
+EXAMPLE
+# ジョイスティックがあるかチェック
+if SDL::Joystick.num > 0
+  # ジョイスティックをオープンする
+  joy = SDL::Joystick.open(0)
+
+  printf("0番のジョイスティックを開きました\n");
+  printf("名前: %s\n", SDL::Joystick.name(0))
+  printf("軸の数: %d\n", joy.num_axes)
+  printf("ボタンの数: %d\n", joy.num_buttons)
+  printf("ボールの数: %d\n", joy.num_balls)
+end  
+
+%%
+NAME open?
+MOD Joystick
+TYPE .
+PURPOSE ジョイスティックがオープンされているかどうかを調べます。
+RVAL true/false
+
+PROTO
+open?(index)
+
+DESC
+アプリケーションの中でジョイスティックがオープンされているかどうかを調べます。
+$[index] はシステムにおけるジョイスティックの番号を指します。
+
+RET
+ジョイスティックが既にオープンされている場合は true を、
+そうでない場合は false を返します。
+
+SEEALSO
+Joystick.open
+
+%%
+NAME index
+MOD Joystick
+TYPE #
+PURPOSE ジョイスティックのインデックス番号を返します。
+RVAL Integer
+
+PROTO
+index
+
+DESC
+$[self] のインデックス番号を返します。
+
+%%
+NAME num_axes
+MOD Joystick
+TYPE #
+PURPOSE ジョイスティックの軸の数を取得します。
+RVAL Integer
+
+PROTO
+num_axes
+numAxes
+
+DESC
+利用可能な軸の数を返します。
+
+NOTES
+縦軸と横軸を持つような入力装置(いわゆるアナログスティック)は軸が
+2つと数えられます。
+
+SEEALSO
+Joystick#axis
+
+%%
+NAME num_balls
+MOD Joystick
+TYPE #
+PURPOSE ジョイスティックのトラックボールの数を取得します。
+RVAL Integer
+
+PROTO
+num_balls
+numBalls
+
+DESC
+利用可能なトラックボールの数を返します。
+
+SEEALSO
+Joystick#ball
+
+%%
+NAME num_hats
+MOD Joystick
+TYPE #
+PURPOSE ジョイスティックのハットスイッチの数を取得します。
+RVAL Integer
+
+PROTO
+num_hats
+numHats
+
+DESC
+利用可能なハットスイッチの数を返します。
+
+SEEALSO
+Joystick#hat
+
+%%
+NAME num_buttons
+MOD Joystick
+TYPE #
+PURPOSE ジョイスティックのボタンの数を取得します。
+RVAL Integer
+
+PROTO
+num_buttons
+numButtons
+
+DESC
+利用可能なボタンの数を返します。
+
+SEEALSO
+Joystick#button
+
+%%
+NAME poll=
+MOD Joystick
+TYPE .
+PURPOSE ジョイスティックイベントのポーリングを有効/無効にします。
+
+PROTO
+poll=(enable)
+
+DESC
+ジョイスティックイベントの処理を有効または無効にするために使われます。
+ジョイスティックイベントの処理が無効の状態では、@[Joystick.update_all]
+を使ってジョイスティックの状態を更新し、
+手動でジョイスティックの情報を読み込む必要があります。
+
+デフォルトでは有効になっています。
+
+SEEALSO
+Joystick.update_all
+Joystick.poll
+Event2::JoyAxis
+Event2::JoyBall
+Event2::JoyButtonDown
+Event2::JoyButtonUp
+Event2::JoyHat
+
+%%
+NAME poll
+MOD Joystick
+TYPE .
+PURPOSE ジョイスティックイベントのポーリングが有効かどうかを調べます。
+RVAL true/false
+
+PROTO
+poll
+
+DESC
+ジョイスティックイベントの処理が有効ならば true を、無効なら false を返し
+ます。詳しくは @[Joystick.poll=] を見てください。
+
+%%
+NAME update_all
+MOD Joystick
+TYPE .
+PURPOSE すべてのジョイスティックの状態を更新します。
+
+PROTO
+update_all
+updateAll
+
+DESC
+オープンされたすべてのジョイスティックの状態(位置・ボタンなど)を更新します。
+@[Joystick.poll=]
+によってジョイスティックイベントが有効になっている場合は、
+イベントループの中で自動的に呼ばれます。
+
+%%
+NAME axis
+MOD Joystick
+TYPE #
+PURPOSE 軸の現在の状態を取得します。
+RVAL Integer
+
+PROTO
+axis(axis_index)
+
+DESC
+$[self] の$[axis_index] で指定した軸の現在の状態を返します。
+
+最近のほとんどのジョイスティックでは、
+X 軸は通常 axis 0、
+Y 軸は axis 1 で表現されています。
+このメソッドによって返される値は、軸の現在の位置を表わす
+符号付き整数 (-32768 から 32768 まで) であり、
+ぶれを考慮するためこれらの値に適当な閾値を設定しておく必要があるでしょう。
+
+EXAMPLE
+joy = SDL::Joystick.open(0)
+  .
+  .
+x_move = joy.axis(0)
+y_move = joy.axis(1)
+
+SEEALSO
+Joystick#num_axes
+
+%%
+NAME hat
+MOD Joystick
+TYPE #
+PURPOSE ジョイスティックのハットスイッチの現在の状態を取得します。
+RVAL UINT
+
+PROTO
+hat(hat_index)
+
+DESC
+$[hat_index] で指定したハットスイッチの現在の状態を取得します。
+
+RET
+現在の状態は、
+以下に挙げる値の 1 つまたは複数の OR による組み合わせとして
+定義される符号無し整数の値として返されます。
+
+* SDL::Joystick::HAT_CENTERED
+* SDL::Joystick::HAT_UP
+* SDL::Joystick::HAT_RIGHT
+* SDL::Joystick::HAT_DOWN
+* SDL::Joystick::HAT_LEFT
+* SDL::Joystick::HAT_RIGHTUP
+* SDL::Joystick::HAT_RIGHTDOWN
+* SDL::Joystick::HAT_LEFTUP
+* SDL::Joystick::HAT_LEFTDOWN
+
+SEEALSO
+Joystick#num_hats
+
+%%
+NAME button
+MOD Joystick
+TYPE #
+PURPOSE 指定されたボタンの現在の情報を返します。
+RVAL true/false
+
+PROTO
+button(button_index)
+
+DESC
+$[button_index] で指定されたボタンの現在の情報を返します。
+ボタンが押下状態にある場合は true を、離されている場合は false を
+返します。
+
+SEEALSO
+Joystick#num_buttons
+
+%%
+NAME ball
+MOD Joystick
+TYPE #
+PURPOSE トラックボールの相対的な動きを取得します。
+RVAL [Integer, Integer]
+
+PROTO
+ball(ball_index)
+
+DESC
+$[ball_index] で指定したボールの相対的な変化を取得します。
+
+トラックボールは
+前回のこのメソッドの呼び出しからの
+相対的な動きだけを返すことができ、これらの動きの変化は
+[dx, dy] という形の整数2個の配列で得られます。
+
+EXCEPTION *
+
+EXAMPLE
+delta_x, delta_y = joy.ball(0)
+printf("トラックボールの相対移動値- X:%d, Y:%d\n", delta_x, delta_y)
+
+

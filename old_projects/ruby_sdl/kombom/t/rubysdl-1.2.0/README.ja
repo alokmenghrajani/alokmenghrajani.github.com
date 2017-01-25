@@ -1,0 +1,165 @@
+
+Ruby/SDL 1.2.0
+大林一平
+
+1 概要
+
+これは、RubyからSDLの機能を使うための拡張ライブラリです。
+SDLとは、Win32,Linux,BeOS,MacOS,FreeBSD,Solaris等で動く、クロスプラットフォームなゲーム開発用ライブラリです。
+
+2 動作環境
+LinuxのX上、Win32
+また、FreeBSDで動作が確認され、Portsが作られたそうです。
+BeOS上でも動くそうです。
+MacOSXでも動いたそうです。ただしRubyに手を入れる必要があるようです。
+それ以外では確認していません。 
+
+3 必要なライブラリ
+
+このライブラリは、rubyの処理系の他、以下のライブラリを必要とします。
+SDL_mixer,SDL_ttf,SDL_image,SGE,smpeg,SDLSKKはなくてもかまいません。
+
+SDL(必須) http://www.libsdl.org/
+
+
+SDL_mixer(オプション) http://www.libsdl.org/projects/SDL_mixer/index.html
+SDL_ttf(オプション) http://www.libsdl.org/projects/SDL_ttf/index.html
+SDL_image(オプション) http://www.libsdl.org/projects/SDL_image/index.html
+SGE(オプション) http://www.etek.chalmers.se/~e8cal1/sge/
+SMPEG(オプション) http://www.icculus.org/smpeg/
+SDLSKK(オプション) http://www.kmc.gr.jp/~ohai/sdlskk.html
+
+また、SDL_kanjiを利用していますが、これはアーカイブに含めているので
+別に用意する必要はありません。
+
+4 インストール
+Linux上でのインストールを説明します。Unix系のOSならどれでも同じよう
+にできると思います。
+Debian、Vine、その他様々なディストリビューションにはRuby/SDLのパッケージ
+があるのでそれを利用してもよいでしょう。
+Windows上では別に用意しているバイナリを使用したほうが楽でしょう。
+FreeBSDにはPortがあるのでそれを利用してください。
+作者のWindowsの環境では、extconf.rbを使用せずMakefileを手で書いて
+コンパイルしていたりします。
+
+(1)rubyのインストール
+  rubyのドキュメント等に従ってインストールしてください。
+
+(2)SDLのインストール
+  ソースを展開してコンパイルする場合は、以下の通りにしてください。
+  ./configure --disable-pthreads
+  (ここで--disable-pthreadsオプションをつけないとうまく動きません)
+  (このオプションをつけても、SDLは全機能使えるようです)
+  (Linux以外では必要ありません)
+  (rubysdl_doc.rdの最後に--disable-pthreadsを付けなくとも良い方法も書いてあります)
+  make
+  make install
+
+(3)SGEのインストール
+  make; make installでインストールされます。
+
+(4)SDL_mixer,SDL_ttf,SDL_image,SMPEG,SDLSKKのインストール
+  附属のドキュメントに従ってインストールしてください。
+
+(5)この拡張ライブラリ(Ruby/SDL)のインストール
+  このライブラリのソースを展開したディレクトリ内で
+  ruby extconf.rb
+  make
+  make install
+  としてください。
+
+5 使い方
+  require 'sdl'で使えます。
+  詳しくは、以下のファイルやドキュメントを見てください。
+
+  sample/*.rb サンプル
+    以下のサンプルがあります。
+        testsprite.rb   画像表示のサンプル
+        playwave.rb     PCMファイル演奏のサンプル sample.wav が必要
+        movesp.rb       キー入力のサンプル
+        alpha.rb        アルファブレンディングのサンプル
+        sgetest.rb      sgeのプリミティブ描画のサンプル
+        font.rb         True Type Fontのサンプル sample.ttf というフォント
+                        ファイルが必要
+        playmod.rb      modファイル演奏のサンプル sample.it が必要
+        testgl.rb       OpenGLのサンプル
+        cursor.rb       マウスカーソルを変更するサンプル
+        transformblit.rb 回転縮小拡大のサンプル
+        joy2.rb         ジョイパッド入力のサンプル
+        plaympeg.rb     mpeg表示のサンプル sample.mpgが必要
+        sdlskk.rb       SDLSKKのサンプル。フォントや辞書等必要
+                        詳しくはサンプルのコメントを見てください
+        bfont.rb        ビットマップフォント表示のサンプル
+        kanji.rb        SDL_Kanji機能のサンプル。8x16.bdfとjiskan16.bdf
+                        という2つのbdfファイルが必要
+        collision.rb    衝突検出機能のサンプル
+        その他
+  rubysdl_ref.rd, rubysdl_ref.html リファレンス
+    Ruby/SDLのリファレンスマニュアルです。
+  rubysdl_doc_old.rd 古いリファレンス
+    古いリファレンスです。
+  SDLのドキュメント
+    SDLのインストールのときに展開したファイルの中にあるはずです。
+    また、 http://www.tacoworks.jp/software/SDLdoc-jp/index-j.html
+    から日本語のドキュメントも手に入ります。
+    リファレンスに書かれていないことはこれを見てください。
+  doc/
+    Makefile
+    rsd.rb
+    *.rsd
+      リファレンスマニュアルの元データです。
+
+6 OpenGLについて
+  このライフラリによってOpenGLへのアクセスが可能になります。
+
+  (1) SDLからOpenGLを使えるように設定する。
+  (2) http://raa.ruby-lang.org/project/opengl/ からRuby用の
+      OpenGL Interface を取ってきてインストールする。
+  (3) ruby extconf.rb をするときに、--enable-opengl を指定する。
+  (4) make ; make install する。
+  この場合はRubyのスクリプト内でrequire 'opengl'をする必要があります。
+
+  インターフェースは OpenGL Interface のものをそのまま使っています。
+  これの使いかたは、SDLのドキュメント、OpenGLのドキュメント、
+  および sample/testgl.rb を見て調べてください。
+
+  注意
+    OpenGLのインターフェースは実装によって少しずつ異なります。そのため
+    そのままだととコンパイルできない、うまく動かないなどの現象が起きる
+    ことがあります。その場合 OpenGL Interface のソースに手を入れる必要
+    があります。
+
+7 ライセンス
+  GNU LGPL(GNU Lesser General Public License) version 2.1 以降に従います。
+  詳しくはLICENSEを見てください。
+  ただし、sample/ 以下にあるサンプルプログラムはこれには従わず、
+  自由に利用してよいです。
+
+8 謝辞
+  以下の人達に感謝します。
+  * FreeBSDでの動作確認をし、Portsを作っていただいたAkinori MUSHAさん。
+  * さまざまな意見を送ってくださり、いくつものパッチを送ってくださったり
+    したたむらさん。
+  * そしてもうひとつのSDLのRuby拡張ライブラリ"RUDL"の作者である
+    Danny van Bruggen さん(いくつかのアイデアをこのライブラリから得ました)。
+  * rubysdl_ttf.cの機能拡張パッチやVine、Debianのパッケージ作成などを
+    していただいたやまだあきらさん。
+  * いくつかのパッチを下さった Wayne Conrad さん、Christian Neukirchenさん、
+    Keffin Barnabyさん。
+  * サンプルを提供してくださった Simon Strandgaard さん。
+  * 有用な情報、バグレポートをくださった Rorien Dunnさん、Dennis Rankeさん、
+    Keita Urashimaさん。
+  * SDLの存在を教えてくれ、Ruby/SDLを作るきっかけを与えてくれた田畑さん。
+  * SDLdoc 日本語翻訳プロジェクトにかかわったみなさま
+
+9 その他
+  まだテストされていない機能が多くあります(パレット関連
+  やMPEG関連のメソッドいくつかなど)。
+
+  要望、バグ報告、使用した感想等は、ohai@kmc.gr.jpにメールを出して
+  ください。今のところまるで反響がありませんので、簡単な感想でも送ってくれ
+  ると嬉しいです。
+  また、ruby-list、ruby-extを見ていますので、バグ等をそこに報告してくれても
+  良いです。
+
+以上

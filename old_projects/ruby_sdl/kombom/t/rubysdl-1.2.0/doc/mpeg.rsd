@@ -1,0 +1,595 @@
+= MPEG playback
+* ((<MPEG playback機能概説>))
+* ((<SDL::MPEG>))
+* ((<SDL::MPEG::Info>))
+* ((<MPEG関連メソッド>))
+TOC
+
+== MPEG playback機能概説
+Ruby/SDLはMPEGの映像および音声を
+((<SMPEG|URL:http://www.icculus.org/smpeg>))
+を利用して再生することができます。
+
+これを利用するためには、初期化時に @[init] の引数として
+SDL::INIT_AUDIO|SDL::INIT_VIDEO を与え、さらにその後
+@[Mixer.open] を呼ぶ必要があります。
+
+また、この機能は内部では OS ネイティブのスレッド機能を使い、
+別スレッドで再生ルーチンを呼ぶことで実現されています。
+そのため再生中は再生映像が描画されている @[サーフェス|Surface]
+にアクセスしてはなりません。
+もう一つ、 SDL_Mixer の音声再生機能をフックしているため
+音声を伴う再生、つまり @[MPEG#enable_audio] を真にして
+@[MPEG#play] を呼びだした場合にはその再生中には @[Mixer]
+での音声再生はできません。
+
+これらの制限に対しては、一切のチェックを Ruby/SDL では行って
+いません。よって MPEG 再生機能を使う場合には以上のことに
+注意してください。
+
+== SDL::MPEG
+MPEGストリームを表わすクラスです。再生状態もこのクラスが
+保持します。
+
+METHODS(MPEG)
+
+== SDL::MPEG::Info
+@[MPEG] の情報を表わすクラスです。@[MPEG#info] でインスタンスが
+得られます。
+
+METHODS(MPEG::Info)
+
+== MPEG関連メソッド
+%%%
+NAME new
+MOD MPEG
+TYPE .
+DEP SMPEG
+PURPOSE MPEGファイルを読み込みます。
+RVAL SDL::MPEG
+
+PROTO
+new(filename)
+load(filename)
+
+DESC
+$[filename] で指定したMPEGファイルを読み込み、
+@[MPEG] の新しいインスタンスを返します。
+
+EXCEPTION *
+
+SEEALSO
+MPEG#info
+MPEG#play
+
+%%
+NAME info
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE MPEGオブジェクトの状態を返します。
+RVAL SDL::MPEG::Info
+
+PROTO
+info
+
+DESC
+MPEGオブジェクトの現在の状態を @[MPEG::Info] のインスタンスで返します。
+
+SEEALSO
+MPEG::Info
+
+%%
+NAME enable_audio
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 音声再生する、しないを設定します。
+
+PROTO
+enable_audio(enable)
+enableAudio(enable)
+
+DESC
+$[self] を再生するときに音声を再生するかどうかを指定します。
+$[enable] に true を与えると再生し、false を与えると再生
+しないように設定します。これを使い映像のみを再生することができます。
+
+NOTES
+このメソッドは演奏中に呼びだしても効果を発揮しません。一度演奏を
+停止し、再び演奏を開始して始めてこの指定が有効になります。
+
+SEEALSO
+MPEG#enable_video
+MPEG#info
+
+%%
+NAME enable_video
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 映像再生する/しないを設定します。
+
+PROTO
+enable_video(enable)
+enableVideo(enable)
+
+DESC
+$[self] を再生するときに映像を再生するかどうかを指定します。
+$[enable] に true を与えると再生し、false を与えると再生
+しないように設定します。これを使い音声のみを再生することが
+できます。
+
+SEEALSO
+MPEG#enable_audio
+MPEG#info
+
+%%
+NAME status
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 現在の状態を返します。
+RVAL Integer
+
+PROTO
+status
+
+DESC
+$[self] の現在の状態を以下の3種類の値で返します。
+* SDL::MEPG::ERROR - エラーが生じている
+* SDL::MPEG::STOPPED - 演奏停止中
+* SDL::MPEG::PLAYING - 演奏中
+
+SEEALSO
+MPEG#info
+
+%%
+NAME set_volume
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE ボリュームを変更します。
+
+PROTO
+set_volume(volume)
+setVolume(volume)
+
+DESC
+MPEG音声のボリュームを0から100までの値で指定します。
+
+NOTES
+現在設定されているボリュームの大きさを得る方法はありません。
+
+SEEALSO
+MPEG#enable_audio
+
+%%
+NAME set_display
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 映像を描画するサーフェスを設定します。
+
+PROTO
+set_display(surface)
+setDisplay(surface)
+
+DESC
+再生された映像を描画する@[サーフェス|Surface]を設定します。これには通常
+@[set_video_mode] で得たサーフェスを与えます。
+
+NOTES
+これで指定したサーフェスは再生時に自動で @[Screen#update_rect] が
+呼ばれます。
+
+SEEALSO
+Surface
+MPEG#play
+
+%%
+NAME set_loop
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 再生をループするかどうかを指定します。
+
+PROTO
+set_loop(repeat)
+setLoop(repeat)
+
+DESC
+再生をループするかどうかを指定します。。
+$[repeat] に true/false を与えるとループする/しないとなります。
+
+SEEALSO
+MPEG#play
+
+%%
+NAME scale_xy
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 再生映像の大きさを指定します。
+
+PROTO
+scale_xy(width, height)
+scaleXY(width, height)
+
+DESC
+再生する映像の大きさを横 $[width] ピクセル、縦 $[height] ピクセルに指定します。
+
+SEEALSO
+MPEG#scale
+MPEG#set_display_region
+
+%%
+NAME scale
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 再生画像の大きさの倍率を指定します。
+
+PROTO
+scale(scale)
+
+DESC
+再生する画像の大きさを縦横 $[scale] 倍にします。
+
+SEEALSO
+MPEG#scale_xy
+
+%%
+NAME move
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 再生画像の描画位置を指定します。
+
+PROTO
+move(x, y)
+
+DESC
+再生画像の描画位置を @[MPEG#set_display] で指定した描画先サーフェスの
+($[x], $[y]) に指定します。
+
+SEEALSO
+MPEG#set_display
+MPEG#set_display_region
+
+%%
+NAME set_display_region
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 映像が描画される位置と大きさを決めます。
+
+PROTO
+set_display_region(x, y, w, h)
+
+DESC
+映像が描画される位置を($[x], $[y])、大きさを($[w], $[h])
+にします。
+
+COMMENT
+  mpeg.set_display_region(x, y, w, h)
+と
+  mpeg.move(x, y)
+  mpeg.scale_xy(w, h)
+は等しいと思う。
+
+SEEALSO
+MPEG#move
+MPEG#scale_xy
+
+%%
+NAME play
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE MPEGを再生します。
+
+PROTO
+play
+
+DESC
+MPEGを再生します。
+
+NOTES
+再生中は @[MPEG#set_display] で指定したサーフェスには
+触れないでください。
+
+SEEALSO
+MPEG#pause
+MPEG#stop
+MPEG#rewind
+MPEG#seek
+MPEG#skip
+MPEG#render_frame
+
+%%
+NAME stop
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE MPEGの再生を停止します。
+
+PROTO
+stop
+
+DESC
+MPEGの再生を停止します。
+
+SEEALSO
+MPEG#play
+
+%%
+NAME pause
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE MPEGの再生を一時停止/再開します。
+
+PROTO
+pause
+
+DESC
+MPEGの再生中にを一時停止/再開します。再生中なら一時停止、
+一時停止中なら再開します。
+
+%%
+NAME rewind
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE MPEGの再生位置を最初に移動します。
+
+PROTO
+rewind
+
+DESC
+MPEGの再生位置を最初に移動します。
+
+%%
+NAME seek
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE MPEGの再生位置を移動します。
+
+PROTO
+seek(bytes)
+
+DESC
+MPEGの再生位置を $[bytes] ((*バイト*)) シークします。
+
+SEEALSO
+MPEG#play
+MPEG#skip
+
+%%
+NAME skip
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE MPEGの再生位置を指定した秒だけ進めます。
+
+PROTO
+skip(seconds)
+
+DESC
+MPEGの再生位置を $[seconds] 秒進めます。 $[seconds] には Float
+が指定できます。
+
+SEEALSO
+MPEG#play
+MPEG#seek
+
+%%
+NAME render_frame
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 特定のフレームを描画します。
+
+PROTO
+render_frame(framenum)
+
+DESC
+MPEGの中の $[framenum] で指定したフレームを @[MPEG#set_display] で指定した
+サーフェスの @[MPEG#move] で指定した位置に描画します。
+
+SEEALSO
+MPEG#render_final
+MPEG#play
+
+%%
+NAME render_final
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 最後のフレームを描画します。
+
+PROTO
+render_final(dst, x, y)
+
+DESC
+MPEGの映像の最後のフレームを $[dst] で指定した@[サーフェス|Surface]の
+($[x], $[y])の位置に描画します。
+
+%%
+NAME set_filer
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE 映像にかけるフィルタを指定します。
+
+PROTO
+set_filer(filter)
+
+DESC
+映像にかけるフィルタを以下の中から指定します。
+* SDL::MPEG::NULL_FILTER フィルタなし
+* SDL::MPEG::BILIEAR_FILTER 双線型フィルタ
+* SDL::MPEG::DEBLOCKING_FILTER ブロックノイズ軽減フィルタ
+
+%%
+NAME has_audio
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE MPEGストリームが音声を持っているかを返します。
+RVAL true/false
+
+PROTO
+has_audio
+
+DESC
+MPEGストリームが音声を持っているかを true/false で返します。
+
+%%
+NAME has_video
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE MPEGストリームが映像を持っているかを返します。
+RVAL true/false
+
+PROTO
+has_video
+
+DESC
+MPEGストリームが映像を持っているかを true/false で返します。
+
+%%
+NAME width
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE 映像の幅を返します。
+
+PROTO
+width
+
+DESC
+映像の幅をピクセル数で返します。
+
+%%
+NAME height
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE 映像の高さを返します。
+
+PROTO
+height
+
+DESC
+映像の高さをピクセル数で返します。
+
+%%
+NAME current_frame
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+current_frame
+
+DESC
+not documented yet
+
+%%
+NAME current_fps
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+current_fps
+
+DESC
+not documented yet
+
+%%
+NAME audio_string
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+audio_string
+
+DESC
+not documented yet
+
+%%
+NAME audio_current_frame
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+audio_current_frame
+
+DESC
+not documented yet
+
+%%
+NAME current_offset
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+current_offset
+
+DESC
+not documented yet
+
+%%
+NAME total_size
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+total_size
+
+DESC
+not documented yet
+
+%%
+NAME current_time
+MOD MPEG::Info
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+current_time
+
+DESC
+not documented yet
+
+%%
+NAME total_time
+MOD MPEG
+TYPE #
+DEP SMPEG
+PURPOSE
+
+PROTO
+total_time
+
+DESC
+not documented yet
+
+
+

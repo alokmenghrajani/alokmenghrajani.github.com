@@ -1,0 +1,1482 @@
+= Event
+* ((<Event system概要>))
+* ((<SDL::Event2>))
+* ((<SDL::Event2::Active>))
+* ((<SDL::Event2::KeyDown>))
+* ((<SDL::Event2::KeyUp>))
+* ((<SDL::Event2::MouseMotion>))
+* ((<SDL::Event2::MouseButtonDown>))
+* ((<SDL::Event2::MouseButtonUp>))
+* ((<SDL::Event2::JoyAxis>))
+* ((<SDL::Event2::JoyBall>))
+* ((<SDL::Event2::JoyHat>))
+* ((<SDL::Event2::JoyButtonDown>))
+* ((<SDL::Event2::JoyButtonUp>))
+* ((<SDL::Event2::Quit>))
+* ((<SDL::Event2::SysWM>))
+* ((<SDL::Event2::VideoResize>))
+* ((<SDL::Event2::VideoExpose>))
+* ((<SDL::Key>))
+* ((<SDL::Mouse>))
+* Event関連メソッド
+TOC
+
+== Event system概要
+イベント処理によってあなたのアプリケーションはユーザーからの
+入力を受け取ることができます。
+イベント処理は次のメソッドを呼ぶことで、(ビデオと一緒に)初期化されます。
+  SDL.init(SDL::INIT_VIDEO)
+内部的には、SDL は処理されるまで待機している全てのイベントをイベントキューに
+格納します。
+
+@[Event2.poll] や @[Event2.wait] のようなメソッドを使うことで、
+待機している入力イベントを見たり、処理することができます。
+
+Ruby/SDLにおけるイベント処理の鍵は、@[Event2]のサブクラス群です。
+イベントキュー自身は@[Event2](のサブクラス)のインスタンスの列と
+みなすことができます。それらのオブジェクトは@[Event2.poll]を使って
+キューから読みだされ、
+そしてそこに格納された情報の処理をアプリケーションがします。
+
+@[Event2]のサブクラスは以下の通りです。
+* @[Event2::Active]
+* @[Event2::KeyDown]
+* @[Event2::KeyUp]
+* @[Event2::MouseMotion]
+* @[Event2::MouseButtonDown]
+* @[Event2::MouseButtonUp]
+* @[Event2::JoyAxis]
+* @[Event2::JoyBall]
+* @[Event2::JoyHat]
+* @[Event2::JoyButtonDown]
+* @[Event2::JoyButtonUp]
+* @[Event2::Quit]
+* @[Event2::SysWM]
+* @[Event2::VideoResize]
+* @[Event2::VideoExpose]
+
+イベントクラスには以下の二つの用途があります。
+* キューからイベントを読み出す
+* キューにイベントを登録する
+
+キューからイベントを読み出すには、 @[Event2.poll] を使います。
+ここでは、 @[Event2.poll] を使った例を示します。
+  while event = SDL::Event2.poll
+@[Event2.poll] はイベントキューから次のイベントを
+取り出して、キューから削除します。キューにイベントがないときは
+nil を返し、それ以外の場合は上に挙げたイベントクラスのインスタンス
+を返します。
+
+次に、イベントの種類を判別するために case〜when 文を使います。
+    case event
+次に、どの種類のイベントを知りたいのかということと、起こった
+イベントの種類を知らなければいけません。
+ここでは、アプリケーション内のマウスポインタの動きを知りたいとします。
+求めているイベントに対応するクラスは@[Event2::MouseMotion]
+であることがわかります。case〜when 文の when の所にクラスを書くと、
+そのクラスのインスタンスをcaseに与えたときに分岐することうぃ利用します
+  when SDL::Event2::MouseMotion
+ここでは event は @[Event2::MouseMotion] のインスタンスなので
+そのメソッドを使って情報を得ることができます。
+      puts "マウスカーソルが移動するイベントを受信しました。"
+      puts "カーソルの位置は(#{event.x}, #{event.y})です。"
+    else
+      puts "ハンドルしていないイベントです!"
+    end
+  end
+  puts "イベントキューは空です。"
+
+イベントキューにイベントを送ることもできますので、
+イベントキューを双方向通信に利用することもできます。
+@[Event2.push]でイベントキューにイベントを送ることができます。
+偽の入力イベントを作り出したりするために使うことができます。
+ユーザイベントは Ruby/SDL では利用できません。
+
+== SDL::Event2
+イベントを取り扱うためのクラスです。実際のクラスはこのクラスのサブクラス
+として表されます。
+
+Event2という名前は互換性のためのものです。これが気にいらない場合は、
+ライブラリ読み込みの直後に
+  module SDL
+    remove_const :Event2
+    Event = Event2
+  end
+と書いてください。これで SDL::Event という名前で SDL::Event2 に
+アクセスできます。
+
+== SDL::Event2::Active
+アプリケーションの可視性に関するイベントのクラスです。
+
+マウスカーソルのウインドウの出入り、
+キーボードフォーカスの得失、および
+最小化/アイコン化されたり元に戻ったときに発生します。
+
+上のいずれが生じたのかは @[Event2::Active#state] でわかります。
+
+* NOTES
+
+  このイベントは、最初にウィンドウが作成されたときには発生しません。
+
+METHODS(Event2::Active)
+
+== SDL::Event2::KeyDown
+キーボードを押したときに発生するイベントのクラスです。
+
+METHODS(Event2::KeyDown)
+
+== SDL::Event2::KeyUp
+キーボードを離したときに発生するイベントのクラスです。
+
+METHODS(Event2::KeyUp)
+
+== SDL::Event2::MouseMotion
+マウスを動かしたときに発生するイベントのクラスです。
+
+簡単に言うと、
+このイベントは
+アプリケーションウィンドウの中でユーザーがマウスを動かしたとき、
+または @[Mouse.warp] が呼ばれた時に発生します。
+現在のボタンの状態(@[Event2::MouseMotion#state])とともに、
+絶対座標(@[Event2::MouseMotion#x] と @[Event2::MouseMotion#y])
+と相対座標(@[Event2::MouseMotion#xrel] と @[Event2::MouseMotion#yrel])
+の両方が報告されます。
+
+METHODS(Event2::MouseMotion)
+
+== SDL::Event2::MouseButtonDown
+マウスボタンを押したときのイベントのクラスです。
+
+METHODS(Event2::MouseButtonDown)
+
+== SDL::Event2::MouseButtonUp
+マウスボタンを離したときのイベントのクラスです。
+
+METHODS(Event2::MouseButtonUp)
+
+== SDL::Event2::JoyAxis
+ジョイスティックの軸イベントのクラスです。
+
+ユーザがジョイスティックの軸を移動させるとこのイベントが発生します。
+
+METHODS(Event2::JoyAxis)
+
+* SEEALSO
+    @[Joystick#num_axes]、@[Joystick#axis]
+
+== SDL::Event2::JoyBall
+ジョイスティックのトラックボールの動きイベントのクラスです。
+
+METHODS(Event2::JoyBall)
+
+* SEEALSO
+
+  @[Joystick#num_balls]、@[Joystick#ball]
+
+== SDL::Event2::JoyHat
+ジョイスティックのハットスイッチの位置変化イベントのクラスです。
+
+METHODS(Event2::JoyHat)
+
+* SEEALSO
+  
+  @[Joystick#num_hats]、@[Joystick#hat]
+
+== SDL::Event2::JoyButtonDown
+ジョイスティックのボタンが押し下げられたときに発生するイベントのクラスです。
+
+METHODS(Event2::JoyButtonDown)
+
+* SEEALSO
+
+  @[Joystick#num_buttons]、@[Joystick#button]
+
+== SDL::Event2::JoyButtonUp
+ジョイスティックのボタンを離したときに発生するイベントのクラスです。
+
+METHODS(Event2::JoyButtonUp)
+
+* SEEALSO
+
+  @[Joystick#num_buttons]、@[Joystick#button]
+
+== SDL::Event2::Quit
+終了要請イベントのクラスです。
+
+終了イベントを無視すると、
+ユーザーはウィンドウを閉じることが不可能になります。
+一方で、終了イベントを受け入れるならば、
+アプリケーションウィンドウは閉じられて
+アプリケーションは見えなくなりますが、
+画面更新はそれでも成功イベントを報告します。
+
+== SDL::Event2::SysWM
+プラットフォーム依存のウィンドウマネージャイベントのクラスです。
+
+ウィンドウマネージャから処理できないイベントを受け取った時はいつでも
+生成されます。Ruby/SDL からはいかなるイベントであるのかを知ることは
+できません。ただ存在するだけで有用でないイベントです。
+Ruby からは無視する以外のことはできません。
+
+== SDL::Event2::VideoResize
+ウィンドウのリサイズイベントのクラスです。
+
+SDL::RESIZABLE が $[flag] として @[set_video_mode] に
+渡された時は、ユーザーはアプリケーションウィンドウをリサイズすることが
+許されます。
+ウィンドウがリサイズされた時は、このイベントが発生し、
+@[Event2::VideoResize#w] と @[Event2::VideoResize#h] から
+ウィンドウの新しい横幅と高さが得られます。
+
+このイベントを受け取ると、ウィンドウは
+@[set_video_mode]を使って新しい寸法にリサイズされるはずです。
+
+== SDL::Event2::VideoExpose
+再描画に関するイベントのクラスです
+
+このイベントは他のアプリケーション、通常はウインドウマネージャによってscreen
+が変更されたときに発生し、再描画の必要性を通知します。
+
+== SDL::Key
+キーボード入力関連を取り扱うモジュールです。
+
+キーボード関連の定数とモジュール関数が定義されています。
+
+METHODS(Key)
+
+=== キーシンボル
+@[Key] にはキーボードのそれぞれのキーに対応する以下の定数が定義されています。
+* SDL::Key::BACKSPACE  '\b'  backspace  
+* SDL::Key::TAB  '\t'  tab  
+* SDL::Key::CLEAR     clear クリア  
+* SDL::Key::RETURN  '\r'  return  
+* SDL::Key::PAUSE    pause  
+* SDL::Key::ESCAPE  '^['  escape  
+* SDL::Key::SPACE  ' '   space スペース  
+* SDL::Key::EXCLAIM  '!'   exclaim 感嘆符  
+* SDL::Key::QUOTEDBL  '"'   quotedbl 二重引用符   
+* SDL::Key::HASH  '#'   hash ハッシュ(シャープ)  
+* SDL::Key::DOLLAR  '$'   dollar ドル  
+* SDL::Key::AMPERSAND  '&'   ampersand アンパサンド  
+* SDL::Key::QUOTE  '''   quote 引用符  
+* SDL::Key::LEFTPAREN  '('   left parenthesis 左丸括弧  
+* SDL::Key::RIGHTPAREN  ')'   right parenthesis 右丸括弧  
+* SDL::Key::ASTERISK  '*'   asterisk アスタリスク  
+* SDL::Key::PLUS  '+'   plus sign プラス  
+* SDL::Key::COMMA  ','   comma カンマ  
+* SDL::Key::MINUS  '-'   minus sign マイナス  
+* SDL::Key::PERIOD  '.'   period ピリオド  
+* SDL::Key::SLASH  '/'   forward slash スラッシュ  
+* SDL::Key::K0  '0'  0  
+* SDL::Key::K1  '1'  1  
+* SDL::Key::K2  '2'  2  
+* SDL::Key::K3  '3'  3  
+* SDL::Key::K4  '4'  4  
+* SDL::Key::K5  '5'  5  
+* SDL::Key::K6  '6'  6  
+* SDL::Key::K7  '7'  7  
+* SDL::Key::K8  '8'  8  
+* SDL::Key::K9  '9'  9  
+* SDL::Key::COLON  ':'   colon コロン  
+* SDL::Key::SEMICOLON  ';'   semicolon セミコロン  
+* SDL::Key::LESS  '&lt;'   less-than sign 小なり  
+* SDL::Key::EQUALS  '='   equals sign イコール  
+* SDL::Key::GREATER  '&gt;'   greater-than sign 大なり  
+* SDL::Key::QUESTION  '?'   question mark 疑問符  
+* SDL::Key::AT  '@'   at アットマーク  
+* SDL::Key::LEFTBRACKET  '['   left bracket 左かぎ括弧  
+* SDL::Key::BACKSLASH  '\'   backslash バックスラッシュ  
+* SDL::Key::RIGHTBRACKET  ']'   right bracket 右かぎ括弧  
+* SDL::Key::CARET  '^'   caret キャレット  
+* SDL::Key::UNDERSCORE  '_'   underscore アンダースコア  
+* SDL::Key::BACKQUOTE  '`'   grave 逆引用符  
+* SDL::Key::A  'a'  a  
+* SDL::Key::B  'b'  b  
+* SDL::Key::C  'c'  c  
+* SDL::Key::D  'd'  d  
+* SDL::Key::E  'e'  e  
+* SDL::Key::F  'f'  f  
+* SDL::Key::G  'g'  g  
+* SDL::Key::H  'h'  h  
+* SDL::Key::I  'i'  i  
+* SDL::Key::J  'j'  j  
+* SDL::Key::K  'k'  k  
+* SDL::Key::L  'l'  l  
+* SDL::Key::M  'm'  m  
+* SDL::Key::N  'n'  n  
+* SDL::Key::O  'o'  o  
+* SDL::Key::P  'p'  p  
+* SDL::Key::Q  'q'  q  
+* SDL::Key::R  'r'  r  
+* SDL::Key::S  's'  s  
+* SDL::Key::T  't'  t  
+* SDL::Key::U  'u'  u  
+* SDL::Key::V  'v'  v  
+* SDL::Key::W  'w'  w  
+* SDL::Key::X  'x'  x  
+* SDL::Key::Y  'y'  y  
+* SDL::Key::Z  'z'  z  
+* SDL::Key::DELETE  '^?'  delete  
+* SDL::Key::KP0     keypad 0 キーバッド(テンキー)の0  
+* SDL::Key::KP1     keypad 1 キーバッドの1  
+* SDL::Key::KP2     keypad 2 キーバッドの2  
+* SDL::Key::KP3     keypad 3 キーバッドの3  
+* SDL::Key::KP4     keypad 4 キーバッドの4  
+* SDL::Key::KP5     keypad 5 キーバッドの5  
+* SDL::Key::KP6     keypad 6 キーバッドの6  
+* SDL::Key::KP7     keypad 7 キーバッドの7  
+* SDL::Key::KP8     keypad 8 キーバッドの8  
+* SDL::Key::KP9     keypad 9 キーバッドの9  
+* SDL::Key::KP_PERIOD  '.'   keypad period キーバッドのピリオド  
+* SDL::Key::KP_DIVIDE  '/'   keypad divide キーパッドの除算記号  
+* SDL::Key::KP_MULTIPLY  '*'   keypad multiply キーバッドの乗算記号  
+* SDL::Key::KP_MINUS  '-'   keypad minus キーバッドのマイナス  
+* SDL::Key::KP_PLUS  '+'   keypad plus キーバッドのプラス  
+* SDL::Key::KP_ENTER  '\r'   keypad enter キーパッドのenter  
+* SDL::Key::KP_EQUALS  '='   keypad equals キーパッドのイコール  
+* SDL::Key::UP     up arrow 上矢印  
+* SDL::Key::DOWN     down arrow 下矢印  
+* SDL::Key::RIGHT     right arrow 右矢印  
+* SDL::Key::LEFT     left arrow 左矢印  
+* SDL::Key::INSERT    insert  
+* SDL::Key::HOME    home  
+* SDL::Key::END    end  
+* SDL::Key::PAGEUP    page up  
+* SDL::Key::PAGEDOWN    page down  
+* SDL::Key::F1    F1  
+* SDL::Key::F2    F2  
+* SDL::Key::F3    F3  
+* SDL::Key::F4    F4  
+* SDL::Key::F5    F5  
+* SDL::Key::F6    F6  
+* SDL::Key::F7    F7  
+* SDL::Key::F8    F8  
+* SDL::Key::F9    F9  
+* SDL::Key::F10    F10  
+* SDL::Key::F11    F11  
+* SDL::Key::F12    F12  
+* SDL::Key::F13    F13  
+* SDL::Key::F14    F14  
+* SDL::Key::F15    F15  
+* SDL::Key::NUMLOCK    numlock  
+* SDL::Key::CAPSLOCK    capslock  
+* SDL::Key::SCROLLOCK    scrollock  
+* SDL::Key::RSHIFT     right shift 右shift  
+* SDL::Key::LSHIFT     left shift 左shift  
+* SDL::Key::RCTRL     right ctrl 右ctrl  
+* SDL::Key::LCTRL     left ctrl 左ctrl  
+* SDL::Key::RALT     right alt 右alt  
+* SDL::Key::LALT     left alt 左alt  
+* SDL::Key::RMETA     right meta 右meta  
+* SDL::Key::LMETA     left meta 左meta  
+* SDL::Key::LSUPER     left windows key 左windowsキー  
+* SDL::Key::RSUPER     right windows key 右windowsキー  
+* SDL::Key::MODE     mode shift モードシフト  
+* SDL::Key::HELP    help  
+* SDL::Key::PRINT    print-screen  
+* SDL::Key::SYSREQ    SysRq  
+* SDL::Key::BREAK    break  
+* SDL::Key::MENU    menu  
+* SDL::Key::POWER    power  
+* SDL::Key::EURO     euro ユーロ  
+
+== SDL::Mouse
+マウス入力関連を取り扱うモジュールです。
+
+マウス関連の定数とモジュール関数が定義されています。
+
+METHODS(Mouse)
+== Methods
+%%%
+NAME poll
+MOD Event2
+TYPE .
+PURPOSE 現在留まっているイベントを取り出します。
+RVAL Event2/nil
+
+PROTO
+poll
+
+DESC
+現在留まっているイベントを取り出し、イベントがあるときはそのイベントを、
+無いときは nil を返します。イベントが取り出されたときは
+キューからそのイベントを削除します。
+
+EXAMPLE
+while event = SDL::Event2.poll #キューに残っているイベントがなくなるまでループ
+  case event # 適切なイベントタイプを処理
+  when SDL::Event2::KeyDown # キー押下イベントを処理
+    puts "あ! キーを押しましたね"
+  when SDL::Event2::MouseMotion
+    .
+    .
+    .
+  else # 未処理のイベントを報告
+    puts 私にはよく分からないイベントです!"
+  end
+end
+
+SEEALSO
+Event2
+Event2.wait
+
+%%
+NAME wait
+MOD Event2
+TYPE .
+PURPOSE 次の利用可能なイベントが来るまで無限に待機します。
+RVAL Event2/nil
+
+PROTO
+wait
+
+DESC
+次の利用可能なイベントが来るまで無限に待機し、
+イベントが来たらそのイベントを返します。
+
+返したイベントはキューから削除されます。
+
+EXCEPTION
+イベントを待っている間にエラーがあった場合は例外 @[Error] を
+発生させます。
+
+SEEALSO
+Event2.poll
+
+%%
+NAME push
+MOD Event2
+TYPE .
+PURPOSE イベントをイベントキューにプッシュします。
+
+PROTO
+push(event)
+
+DESC
+$[event] で指定したイベントをイベントキューにプッシュします。
+
+NOTES
+デバイス入力イベントをキューにプッシュしても、
+SDL 内のデバイスの状態は変わりません。
+
+EXCEPTION *
+
+SEEALSO
+Event2.poll
+
+%%
+NAME app_state
+MOD Event2
+TYPE .
+PURPOSE アプリケーションの状態を得ます。
+RVAL UINT
+
+PROTO
+app_state
+appState
+
+DESC
+アプリケーションの現在の状態を返します。戻り値は以下のビット和です。
+:SDL::Event2::APPMOUSEFOCUS
+  マウスのフォーカスがあります。
+:SDL::Event2::APPINPUTFOCUS
+  キーボードのフォーカスがあります。
+:SDL::Event2::APPACTIVE
+  アプリケーションは可視状態です。
+
+SEEALSO
+Event2::Active
+
+%%
+NAME enable_unicode
+MOD Event2
+TYPE .
+PURPOSE UNICODE変換を有効にします。
+
+PROTO
+enable_unicode
+enableUNICODE
+
+DESC
+キーイベントに対応した文字コードを得るために、
+まずこの関数を呼び出してUnicode変換を有効にしなければいけません。
+変換を有効にすると、キーボードイベントのたびにちょっとした
+オーバーヘッドが発生するため、デフォルトでは変換は無効になっています。
+変換を有効にすると、以後のキーダウンイベントでは、
+@[Event2::KeyDown#unicode] から対応する文字コードが得られます。
+対応する文字コードが見つからないときは0が入ります。
+
+NOTES
+変換が有効なのはキーダウンイベントのみです。
+キーリリースイベントは変換されません。
+
+SEEALSO
+Event2.disable_unicode
+Event2.enable_unicode?
+
+%%
+NAME disable_unicode
+MOD Event2
+TYPE .
+PURPOSE UNICODE変換を無効にします。
+
+PROTO
+disable_unicode
+disableUNICODE
+
+DESC
+UNICODE変換を無効にします。詳しくは @[Event2.enable_unicode]
+を見てください。
+
+%%
+NAME enable_unicode?
+MOD Event2
+TYPE .
+PURPOSE UNICODE変換が有効かどうか調べます。
+RVAL true/false
+
+PROTO
+enable_unicode?
+enableUNICODE?
+
+DESC
+UNICODE変換が有効かどうか調べます。詳しくは @[Event2.enable_unicode]
+を見てください。
+
+%%
+NAME gain
+TYPE #
+MOD Event2::Active
+PURPOSE 可視性を得たなら true を、失ったなら false を返します。
+RVAL true/false
+
+PROTO
+gain
+
+DESC
+可視性を得たことに対応するイベントなら true を、
+失ったことに対応するイベントなら false を返します。
+
+SEEALSO
+Event2::Active
+Event2::Active#state
+
+%%
+NAME state
+MOD Event2::Active
+TYPE #
+PURPOSE どのような種類の可視性変更イベントが発生したのかを返します。
+RVAL SDL::Event2::APPMOUSEFOCUS/SDL::Event2::APPINPUTFOCUS/SDL::Event2::APPACTIVE
+
+PROTO
+state
+
+DESC
+マウスカーソルがウインドウの外に出たり(gain=false)、ウインドウ内に
+入ったり(gain=true)したときは、SDL::Event2::APPMOUSEFOCUS を返します。
+
+アプリケーションがキーボードフォーカスを得たり(gain=true)
+失ったり(gain=false)したときは、SDL::Event2::APPINPUTFOCUS を
+返します。これは通常他のアプリケーションがアクティブに
+なったときに発生します。
+
+アプリケーションが最小化/アイコン化されたり(gain=false)
+元に戻ったとき(gain=true)には SDL::Event2::APPACTIVE を返します。
+
+SEEALSO
+Event2::Active
+Event2::Active#gain
+
+%%
+NAME press
+MOD Event2::KeyDown
+TYPE #
+PURPOSE trueを返します。
+RVAL true
+
+PROTO
+press
+
+DESC
+常に true を返します。
+
+SEEALSO
+Event2::KeyUp#press
+
+%%
+NAME sym
+MOD Event2::KeyDown
+TYPE #
+PURPOSE 何のキーを押したかをキーシンボルで返します。
+RVAL Integer
+
+PROTO
+sym
+
+DESC
+何のキーを押したかを((<キーシンボル>))で返します。
+
+SEEALSO
+Event2::KeyDown#unicode
+
+%%
+NAME mod
+MOD Event2::KeyDown
+TYPE #
+PURPOSE キー押下時のキーモディファイアの状態を返します。
+RVAL UINT
+
+PROTO
+mod
+
+DESC
+キー押下時のキーモディファイアの状態を返します。
+返り値は @[Key.mod_state] で得られるものと同じです。
+
+SEEALSO
+Key.mod_state
+
+%%
+NAME unicode
+MOD Event2::KeyDown
+TYPE #
+PURPOSE 変換された文字を返します。
+RVAL UINT
+
+PROTO
+unicode
+
+DESC
+@[Event2.enable_unicode] によって UNICODE 変換が有効にされた時には、
+キーの押下に対応する UNICODE 文字を返します。
+文字の上位 9 ビットが 0 の場合は、 ASCII 文字に対応しています。
+
+変換が有効でない場合には0 を返します。
+
+%%
+NAME press
+MOD Event2::KeyUp
+TYPE #
+PURPOSE falseを返します。
+RVAL false
+
+PROTO
+press
+
+DESC
+常に false を返します。
+
+SEEALSO
+Event2::KeyDown#press
+
+%%
+NAME sym
+MOD Event2::KeyUp
+TYPE #
+PURPOSE 何のキーを離したかをキーシンボルで返します。
+RVAL Integer
+
+PROTO
+sym
+
+DESC
+何のキーを離したかを((<キーシンボル>))で返します。
+
+%%
+NAME mod
+MOD Event2::KeyUp
+TYPE #
+PURPOSE キーモディファイアの状態を返します。
+RVAL UINT
+
+PROTO
+mod
+
+DESC
+キーモディファイアの状態を返します。
+返り値は @[Key.mod_state] で得られるものと同じです。
+
+SEEALSO
+Key.mod_state
+
+%%
+NAME state
+MOD Event2::MouseMotion
+TYPE #
+PURPOSE 現在のボタンの状態を返します。
+RVAL UINT
+
+PROTO
+state
+
+DESC
+現在のボタンの状態を返します。
+以下の定数の論理和を取ったものを返します。
+
+:SDL::Mouse::BUTTON_LMASK
+  左ボタン
+:SDL::Mouse::BUTTON_MMASK
+  中央ボタン
+:SDL::Mouse::BUTTON_RMASK
+  右ボタン
+
+SEEALSO
+Mouse.state
+
+%%
+NAME x
+MOD Event2::MouseMotion
+TYPE #
+PURPOSE マウスの X 座標を返します。
+RVAL UINT
+
+PROTO
+x
+
+DESC
+マウスの X 座標を正の整数で返します。
+
+SEEALSO
+Mouse.state
+
+%%
+NAME y
+MOD Event2::MouseMotion
+TYPE #
+PURPOSE マウスの Y 座標を返します。
+RVAL UINT
+
+PROTO
+y
+
+DESC
+マウスの Y 座標を正の整数で返します。
+
+SEEALSO
+Mouse.state
+
+%%
+NAME xrel
+MOD Event2::MouseMotion
+TYPE #
+PURPOSE マウスの X 方向の相対的な動きを返します。
+RVAL Integer
+
+PROTO
+xrel
+
+DESC
+マウスの X 座標の相対的な動きを整数で返します。
+
+%%
+NAME yrel
+MOD Event2::MouseMotion
+TYPE #
+PURPOSE マウスの Y 方向の相対的な動きを返します。
+RVAL Integer
+
+PROTO
+yrel
+
+DESC
+マウスの Y 座標の相対的な動きを整数で返します。
+
+%%
+NAME button
+MOD Event2::MouseButtonDown
+TYPE #
+PURPOSE 押されたボタンの番号を返します。
+
+PROTO
+button
+
+DESC
+どのボタンが押されたのかを返します。左、中央、右のボタンに対応して
+* SDL::Mouse::BUTTON_LEFT
+* SDL::Mouse::BUTTON_MIDDLE
+* SDL::Mouse::BUTTON_RIGHT
+が得られます。
+
+%%
+NAME press
+MOD Event2::MouseButtonDown
+TYPE #
+PURPOSE ボタン押し下げイベントかどうかを返します。
+RVAL true
+
+PROTO
+press
+
+DESC
+ボタン押し下げイベントかどうかを返します。
+常に true を返します。
+
+SEEALSO
+Event2::MouseButtonUp#press
+
+%%
+NAME x
+MOD Event2::MouseButtonDown
+TYPE #
+PURPOSE マウスの X 座標を返します。
+RVAL UINT
+
+PROTO
+x
+
+DESC
+マウスの X 座標を正の整数で返します。
+
+SEEALSO
+Mouse.state
+
+%%
+NAME y
+MOD Event2::MouseButtonDown
+TYPE #
+PURPOSE マウスの Y 座標を返します。
+RVAL UINT
+
+PROTO
+y
+
+DESC
+マウスの Y 座標を正の整数で返します。
+
+SEEALSO
+Mouse.state
+
+%%
+NAME button
+MOD Event2::MouseButtonUp
+TYPE #
+PURPOSE 離されたボタンの番号を返します。
+
+PROTO
+button
+
+DESC
+どのボタンが離されたのかを返します。左、中央、右のボタンに対応して
+* SDL::Mouse::BUTTON_LEFT
+* SDL::Mouse::BUTTON_MIDDLE
+* SDL::Mouse::BUTTON_RIGHT
+が得られます。
+
+%%
+NAME press
+MOD Event2::MouseButtonUp
+TYPE #
+PURPOSE ボタン押し下げイベントかどうかを返します。
+RVAL false
+
+PROTO
+press
+
+DESC
+ボタン押し下げイベントかどうかを返します。
+常に false を返します。
+
+SEEALSO
+Event2::MouseButtonDown#press
+
+%%
+NAME x
+MOD Event2::MouseButtonUp
+TYPE #
+PURPOSE マウスの X 座標を返します。
+RVAL UINT
+
+PROTO
+x
+
+DESC
+マウスの X 座標を正の整数で返します。
+
+SEEALSO
+Mouse.state
+
+%%
+NAME y
+MOD Event2::MouseButtonUp
+TYPE #
+PURPOSE マウスの Y 座標を返します。
+RVAL UINT
+
+PROTO
+y
+
+DESC
+マウスの Y 座標を正の整数で返します。
+
+SEEALSO
+Mouse.state
+
+%%
+NAME which
+MOD Event2::JoyAxis
+TYPE #
+PURPOSE ジョイスティックデバイスの番号を返します。
+RVAL Integer
+
+PROTO
+which
+
+DESC
+イベントが発生したジョイスティックのインデックスを返します。
+
+SEEALSO
+Joystick
+Joystick#num_axes
+
+%%
+NAME axis
+MOD Event2::JoyAxis
+TYPE #
+PURPOSE ジョイスティックの軸の番号を返します。
+RVAL Integer
+
+PROTO
+axis
+
+DESC
+イベントが発生した軸のインデックスを返します。
+
+SEEALSO
+Joystick
+
+%%
+NAME value
+MOD Event2::JoyAxis
+TYPE #
+PURPOSE 軸の値を返します。
+RVAL -32767 - 32767
+
+PROTO
+value
+
+DESC
+軸の現在の位置を -32767 から 32767 までの整数で返します。
+
+SEEALSO
+Joystick
+Joystick#axis
+
+%%
+NAME which
+MOD Event2::JoyBall
+TYPE #
+PURPOSE ジョイスティックデバイスの番号を返します。
+RVAL Integer
+
+PROTO
+which
+
+DESC
+イベントが発生したジョイスティックのインデックスを返します。
+
+SEEALSO
+Joystick
+
+%%
+NAME ball
+MOD Event2::JoyBall
+TYPE #
+PURPOSE ジョイスティックのトラックボールの番号を返します。
+RVAL Integer
+
+PROTO
+ball
+
+DESC
+イベントが発生したジョイスティックのトラックボールの
+インデックスを返します。
+
+SEEALSO
+Joystick
+Joystick#num_balls
+
+%%
+NAME xrel
+MOD Event2::JoyBall
+TYPE #
+PURPOSE X方向の相対的な動きを返します。
+RVAL Integer
+
+PROTO
+xrel
+
+DESC
+X方向の相対的な動きを整数で返します。
+
+SEEALSO
+Joystick
+Joystick#ball
+
+%%
+NAME yrel
+MOD Event2::JoyBall
+TYPE #
+PURPOSE Y方向の相対的な動きを返します。
+RVAL Integer
+
+PROTO
+yrel
+
+DESC
+Y方向の相対的な動きを整数で返します。
+
+SEEALSO
+Joystick
+Joystick#ball
+
+%%
+NAME which
+MOD Event2::JoyHat
+TYPE #
+PURPOSE ジョイスティックデバイスの番号を返します。
+RVAL Integer
+
+PROTO
+which
+
+DESC
+イベントが発生したジョイスティックのインデックスを返します。
+
+SEEALSO
+Joystick
+
+%%
+NAME hat
+MOD Event2::JoyHat
+TYPE #
+PURPOSE ジョイスティックのハットスイッチの番号を返します。
+RVAL Integer
+
+PROTO
+hat
+
+DESC
+イベントが発生したジョイスティックのハットスイッチのインデックスを返します。
+
+SEEALSO
+Joystick
+Joystick#num_hats
+
+%%
+NAME value
+MOD Event2::JoyHat
+TYPE #
+PURPOSE ハットスイッチの位置を返します。
+RVAL UINT
+
+PROTO
+value
+
+DESC
+イベントが発生したハットスイッチの現在の位置を以下の値の論理和で
+返します。
+
+* SDL::Joystick::HAT_CENTERED
+* SDL::Joystick::HAT_UP
+* SDL::Joystick::HAT_RIGHT
+* SDL::Joystick::HAT_DOWN
+* SDL::Joystick::HAT_LEFT
+* SDL::Joystick::HAT_RIGHTUP
+* SDL::Joystick::HAT_RIGHTDOWN
+* SDL::Joystick::HAT_LEFTUP
+* SDL::Joystick::HAT_LEFTDOWN
+
+%%
+NAME which
+MOD Event2::JoyButtonDown
+TYPE #
+PURPOSE ジョイスティックデバイスの番号を返します。
+RVAL Integer
+
+PROTO
+which
+
+DESC
+イベントが発生したジョイスティックのインデックスを返します。
+
+SEEALSO
+Joystick
+
+%%
+NAME button
+MOD Event2::JoyButtonDown
+TYPE #
+PURPOSE ジョイスティックのボタンの番号を返します。
+RVAL Integer
+
+PROTO
+button
+
+DESC
+イベントが発生したジョイスティックのボタンのインデックスを返します。
+
+SEEALSO
+Joystick
+Joystick#num_buttons
+
+%%
+NAME press
+MOD Event2::JoyButtonDown
+TYPE #
+PURPOSE ボタン押し下げイベントかどうかを返します。
+RVAL true
+
+PROTO
+press
+
+DESC
+ボタン押し下げイベントかどうかを返します。
+常に true を返します。
+
+SEEALSO
+Event2::JoyButtonUp#press
+Joystick#button
+
+%%
+NAME which
+MOD Event2::JoyButtonUp
+TYPE 
+PURPOSE ジョイスティックデバイスの番号を返します。
+RVAL Integer
+
+PROTO
+which
+
+DESC
+イベントが発生したジョイスティックのインデックスを返します。
+
+SEEALSO
+Joystick
+
+%%
+NAME button
+MOD Event2::JoyButtonUp
+TYPE #
+PURPOSE ジョイスティックのボタンの番号を返します。
+RVAL Integer
+
+PROTO
+button
+
+DESC
+イベントが発生したジョイスティックのボタンのインデックスを返します。
+
+SEEALSO
+Joystick
+Joystick#num_buttons
+
+%%
+NAME press
+MOD Event2::JoyButtonUp
+TYPE #
+PURPOSE ボタン押し下げイベントかどうかを返します。
+RVAL false
+
+PROTO
+press
+
+DESC
+ボタン押し下げイベントかどうかを返します。
+常に false を返します。
+
+SEEALSO
+Event2::JoyButtonDown#press
+Joystick#button
+
+%%
+NAME w
+MOD Event2::VideoResize
+TYPE #
+PURPOSE ウィンドウの新しい幅を返します。
+RVAL Integer
+
+PROTO
+w
+
+DESC
+ウィンドウがリサイズされたときに、
+ウィンドウの新しい幅を整数で返します。
+
+%%
+NAME h
+MOD Event2::VideoResize
+TYPE #
+PURPOSE ウィンドウの新しい高さを返します。
+RVAL Integer
+
+PROTO
+h
+
+DESC
+ウィンドウがリサイズされたときに、
+ウィンドウの新しい高さを整数で返します。
+
+%%
+NAME scan
+MOD Key
+TYPE .
+PURPOSE キーボードの状態のスナップショットをとります。
+
+PROTO
+scan
+
+DESC
+キーボードの状態のスナップショットをとります。
+@[Key.press?]を使いこの関数で取った状態の情報を得ます。
+
+この状態は @[Event2.poll] や @[Event2.wait] を呼ばないと更新されません。
+
+SEEALSO
+Key.press?
+Event2::KeyDown
+Event2::KeyUp
+Event2.poll
+
+%%
+NAME press?
+MOD Key
+TYPE .
+PURPOSE キーボードを押しているかどうかを返します。
+RVAL true/false
+
+PROTO
+press?(key)
+
+DESC
+$[key]で指定したキーを押しているかどうかを返します。ここで返す値は
+最も最近に呼んだ @[Key.scan] の時点での状態に基きます。
+$[key] として((<キーシンボル>))を与えてください。
+
+SEEALSO
+Key.scan
+Event2::KeyDown
+Event2::KeyUp
+
+%%
+NAME mod_state
+MOD Key
+TYPE .
+PURPOSE モディファイアキーの状態を得ます。
+RVAL UINT
+
+PROTO
+mod_state
+modState
+
+DESC
+モディファイアキー(CTRL、ALTなど)の状態を返します。
+以下の値の論理和が帰ります。
+:SDL::Key::MOD_NONE
+  何も押していない
+:SDL::Key::MOD_LSHIFT
+  左シフト
+:SDL::Key::MOD_RSHIFT
+  右シフト
+:SDL::Key::MOD_LCTRL
+  左コントロール
+:SDL::Key::MOD_RCTRL
+  右コントロール
+:SDL::Key::MOD_LALT
+  左ALT
+:SDL::Key::MOD_RALT
+  右ALT
+:SDL::Key::MOD_LMETA
+  左メタキー
+:SDL::Key::MOD_RMETA
+  右メタキー
+:SDL::Key::MOD_NUM
+  NumLock
+:SDL::Key::MOD_CAPS
+  Caps
+:SDL::Key::MOD_MODE
+ 
+以下のような定数も定義されています。
+* SDL::Key::MOD_CTRL = SDL::Key::MOD_LCTRL|SDL::Key::MOD_RCTRL
+* SDL::Key::MOD_SHIFT = SDL::Key::MOD_LSHIFT|SDL::Key::MOD_RSHIFT
+* SDL::Key::MOD_ALT = SDL::Key::MOD_LALT|SDL::Key::MOD_RALT
+* SDL::Key::MOD_META = SDL::Key::MOD_LMETA|SDL::Key::MOD_RMETA
+
+SEEALSO
+Key.scan
+
+%%
+NAME get_key_name
+MOD Key
+TYPE .
+PURPOSE キーシンボルに対応する名前を得ます。
+RVAL String
+
+PROTO
+get_key_name(key)
+getKeyName(key)
+
+DESC
+$[key] で与えた((<キーシンボル>))に対応する文字列を返します。
+
+%%
+NAME enable_key_repeat
+MOD Key
+TYPE .
+PURPOSE キーリピートレートを設定します。
+
+PROTO
+enable_key_repeat(delay,interval)
+enableKeyRepeat(delay,interval)
+
+DESC
+キーリピートレートを有効にします。
+$[delay] は、リピートが開始されるまでの
+時間を指定します。
+その後に、$[interval]で指定された
+レートでリピートが始まります。
+$[delay] と $[interval] は
+どちらもミリセカンド単位で指定します。
+
+デフォルト値はそれぞれ SDL::Key::DEFAULT_REPEAT_DELAY と
+SDL::Key::DEFAULT_REPEAT_INTERVAL という定数で定義されています。
+
+EXCEPTION
+レートの変更に失敗すると例外 SDL::Error が発生します。
+
+SEEALSO
+Key.disable_key_repeat
+
+%%
+NAME disable_key_repeat
+MOD Key
+TYPE .
+PURPOSE キーリピートを無効にします。
+
+PROTO
+disable_key_repeat
+disableKeyRepeat
+
+DESC
+キーリピートを無効にします。
+
+EXCEPTION *
+
+SEEALSO
+Key.enable_key_repeat
+
+%%
+NAME state
+MOD Mouse
+TYPE .
+PURPOSE 現在のマウスの状態を得ます。
+RVAL [Integer, Integer, true/false, true/false, true/false]
+PROTO
+state
+
+DESC
+現在のマウスの状態を以下のような要素5個の配列で得ます。
+  [ マウスのX座標, マウスのY座標, 左ボタンが押されているか？, 中央ボタンが押されているか？, 右ボタンが押されているか？ ]
+
+EXAMPLE
+x, y, lbutton, * = SDL::Mouse.state
+if lbutton
+  print "マウス左ボタン が押されました。\n"
+end
+
+SEEALSO
+Event2::MouseMotion
+Event2::MouseButtonDown
+Event2::MouseButtonUp
+
+%%
+NAME warp
+MOD Mouse
+TYPE .
+PURPOSE マウスカーソルの位置をセットします。
+
+PROTO
+warp(x,y)
+
+DESC
+マウスカーソルの位置をセットします。(マウスモーションイベントを発生させます)
+
+SEEALSO
+Event2::MouseMotion
+
+%%
+NAME show
+MOD Mouse
+TYPE .
+PURPOSE カーソルが画面に表示されるようにします。
+
+PROTO
+show
+
+DESC
+カーソルを表示します。
+
+カーソルは最初は表示されていますが、非表示にすることもできます。
+
+SEEALSO
+Mouse.hide
+Mouse.show?
+
+%%
+NAME hide
+MOD Mouse
+TYPE .
+PURPOSE カーソルが画面に表示されないようにします。
+
+PROTO
+hide
+
+DESC
+カーソルを非表示にします。
+
+SEEALSO
+Mouse.show
+Mouse.show?
+
+%%
+NAME show?
+MOD Mouse
+TYPE .
+PURPOSE カーソルが画面に表示されているかどうかを返します。
+RVAL true/false
+
+PROTO
+show?
+
+DESC
+カーソルが画面に表示されているなら trueを、 いなければ false を返します。
+
+SEEALSO
+Mouse.show
+Mouse.hide
+
+%%
+NAME set_cursor
+MOD Mouse
+TYPE .
+PURPOSE 現在アクティブなマウスカーソルを設定します。
+
+PROTO
+set_cursor(bitmap,white,black,transparent,inverted,hot_x=0,hot_y=0)
+setCursor(bitmap,white,black,transparent,inverted,hot_x=0,hot_y=0)
+
+DESC
+現在アクティブなカーソルを指定されたものに設定します。
+カーソルが現在見える状態にあるときは、この変更はすぐに表示に反映されます。
+
+カーソルは $[bitmap] で @[Surface] のインスタンスを指定します。
+カーソルは白黒2色で作られます。$[white] が白に対応するピクセル値、
+$[black] が黒に対応するピクセル値、$[transparent]は透明に対応するピクセル値、
+$[inverted] は反転色(なければ黒)に対応するピクセル値です。
+またカーソルの横幅は 8 の倍数でなければいけません。
+
+$[hot_x]、$[hot_y] はビットマップのどの点をマウスカーソルの位置とするかを
+指定します。
+
+SEEALSO
+Surface
+

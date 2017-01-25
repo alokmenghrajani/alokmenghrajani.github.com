@@ -1,0 +1,18 @@
+rubysdl_event.o: rubysdl_event.c rubysdl.h
+rubysdl_event_key.o: rubysdl_event_key.c rubysdl.h
+rubysdl_main.o: rubysdl_main.c rubysdl.h
+rubysdl_video.o: rubysdl_video.c rubysdl.h
+rubysdl_mixer.o: rubysdl_mixer.c rubysdl.h
+rubysdl_time.o: rubysdl_time.c rubysdl.h
+rubysdl_wm.o: rubysdl_wm.c rubysdl.h
+rubysdl_mouse.o: rubysdl_mouse.c rubysdl.h
+rubysdl_sge_video.o: rubysdl_sge_video.c rubysdl.h
+rubysdl_image.o: rubysdl_image.c rubysdl.h
+rubysdl_ttf.o: rubysdl_ttf.c rubysdl.h
+rubysdl_joystick.o: rubysdl_joystick.c rubysdl.h
+rubysdl_cdrom.o: rubysdl_cdrom.c rubysdl.h
+rubysdl_pixel.o: rubysdl_pixel.c rubysdl.h
+rubysdl_smpeg.o: rubysdl_smpeg.c rubysdl.h
+rubysdl_sdlskk.o: rubysdl_sdlskk.c rubysdl.h
+rubysdl_kanji.o: rubysdl_kanji.c rubysdl.h SDL_kanji.h
+SDL_kanji.o: SDL_kanji.c SDL_kanji.h

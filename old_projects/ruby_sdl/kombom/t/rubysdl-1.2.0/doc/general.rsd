@@ -1,0 +1,49 @@
+= 目次
+* ((<"Ruby/SDLの概要">))
+* ((<初期化>))
+* ((<Video>))
+* ((<Window Management>))
+* ((<Event>))
+* ((<Joystick>))
+* ((<CD-ROM>))
+* ((<Audio>))
+* ((<Time>))
+* ((<Font>))
+* ((<衝突判定>))
+* ((<SDLSKK>))
+* ((<MPEG playback>))
+
+= Ruby/SDLの概要
+Ruby/SDL は ((<SDL|URL:http://www.libsdl.org/>)) を
+((<Ruby|URL:http://www.ruby-lang.org/>)) から利用するための
+拡張ライブラリです。
+Ruby でゲームなどを使うためなどに利用できます。
+
+Ruby/SDLは、以下の機能を持っています。
+* ((<2D高速描画|Video>))
+* ((<キーボードやマウス|Event>))、((<ジョイスティック|Joystick>))から
+  の入力の取り扱い
+* ((<SDL_mixer|URL:http://www.libsdl.org/projects/SDL_mixer/index.html>))
+  による((<音声再生|Audio>))
+* ((<CD-ROMの再生|CD-ROM>))
+* ((<SDL_ttf|URL:http://www.libsdl.org/projects/SDL_ttf/index.html>))、
+  ((<SDL_kanji|URL:http://shinh.skr.jp/sdlkanji/>))、
+  ((<SGE|URL:http://www.etek.chalmers.se/~e8cal1/sge/index.html>))
+  による((<文字列の描画|Font>))
+* ((<OpenGL Interface|URL:http://www2.giganet.net/~yoshi/>))による
+  3D描画
+* ((<時間の計測および一時停止|Time>))
+* ((<SDLSKK|URL:http://www.kmc.gr.jp/~ohai/sdlskk.html>))による、
+  ((<行単位の日本語入力|SDLSKK>))
+* ((<SMPGE|URL:http://www.icculus.org/smpeg/>))による
+  ((<mpegの再生|MPEG playback>))
+* その他にも、((<Windowの管理|Window Management>))や
+  ((<衝突判定>))など
+
+
+== SDL::Error
+SDL固有のエラーを表わす例外クラスです。StandardErrorを継承しています。
+
+== SDL::VERSION
+SDLのバージョンを表わす文字列です。"1.0.0"という形になっています。
+

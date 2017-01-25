@@ -1,0 +1,839 @@
+= Font
+* ((< Font描画機能概説>))
+* ((<SDL::TTF>))
+* ((<SDL::BMFont>))
+* ((<SDL::Kanji>))
+* フォント関連メソッド
+TOC
+
+== Font描画機能概説
+Ruby/SDL は3種類の異なるフォント描画システムを持っています。
+((<SDL_ttf|URL:http://www.libsdl.org/projects/SDL_ttf/index.html>))
+での True Type Font の描画、
+((<SGE|URL:http://www.etek.chalmers.se/~e8cal1/sge/index.html>))
+での独自形式/SFont形式でのビットマップフォントの描画、
+((<SDL_kanji|URL:http://shinh.skr.jp/sdlkanji/>)) での bdf フォントの描画
+です。
+このそれぞれに、@[TTF]、@[BMFont]、@[Kanji] というクラスが割当てられて
+いて、それぞれ異なるメソッド、機能を持ちます。
+
+これにはそれぞれ以下のような特徴があります。適切に使いわけてください。
+* SDL::TTF
+
+  フォントファイルの名前は *.ttf や *.ttc が一般的です。
+  フォントデータの情報がベクトルデータであるため、一つの
+  フォントデータがあれば任意の大きさの文字を描画できる利点があります。
+  フォントデータを準備するのが面倒という欠点です。とくに自作
+  するのは大変でしょう。
+
+* SDL::BMFont
+
+  フォントファイルはたんなるビットマップファイル(*.bmp) や PNG ファイル(*.png)
+  を使います。独自形式の場合、画像を等幅の文字データを横に256個並べたものと
+  みなし、そのそれぞれが ASCII コードと対応しているもとの解釈されます。
+  つまり 横幅 8 ピクセル、高さ 16ピクセルのデータならば
+  幅 8*256 = 2048、高さ 16ピクセルの画像となります。
+  フォントデータを自作するのが比較的容易なことが利点です。
+  平仮名、漢字等の描画ができないこと、拡大縮小した文字を
+  描画できないことが欠点です。
+
+  もう一つ、このクラスは ((<SFont|URL:http://www.linux-games.com/sfont/>))
+  形式も扱うことができます。これもビットマップフォントの一種ですが、
+  文字の幅が可変である点などが利点です。詳しくはリンク先を見てください。
+  
+* SDL::Kanji
+
+  フォントファイルの拡張子にはbdfが使われます。ビットマップフォントの
+  一種です。複数のフォントファイル(例えばアルファベットと日本語)
+  のデータを併せて使う機能を持っています。
+  平仮名、漢字等の描画が可能な点が利点です。
+  欠点は、bdf フォントはあまり一般的な形式ではないためフォントの用意が
+  面倒であることです。
+
+== SDL::TTF
+METHODS(TTF)
+
+TrueTypeFontを表わすクラスです。このクラスを使うためには、
+((<SDL_ttf|URL:http://www.libsdl.org/projects/SDL_ttf/index.html>))
+が必要です。バックエンドに((<Freetype|URL:http://www.freetype.org/>))
+を利用します。
+
+また、フォントのライセンスにも注意してください。例えば Windows 付属の
+フォントは再配布が認められていません。
+
+== SDL::BMFont
+METHODS(BMFont)
+
+ビットマップフォントを表わすクラスです。このクラスを使うためには
+((<SGE|URL:http://www.etek.chalmers.se/~e8cal1/sge/index.html>))
+が必要です。
+
+== SDL::Kanji
+METHODS(Kanji)
+
+bdfフォントを表わすクラスです。
+
+== フォント関連メソッド
+%%%
+NAME init
+MOD TTF
+TYPE .
+DEP SDL_ttf
+PURPOSE TTF描画機能を初期化します。
+
+PROTO
+init
+
+DESC
+TTF描画機能を初期化します。
+@[TTF] の他のメソッドを呼ぶ前にこれを呼んでください。
+@[init] を呼ぶ前に呼んでもかまいません。
+
+SEEALSO
+TTF.init?
+
+%%
+NAME init?
+MOD TTF
+TYPE .
+DEP SDL_ttf
+PURPOSE TTF描画機能が初期化されているかどうかを得ます。
+RVAL true/false
+
+PROTO
+init?
+
+DESC
+TTF描画機能が既に初期化されていればtrueを、いなければ
+falseを返します。
+
+SEEALSO
+TTF.init
+
+%%
+NAME open
+MOD TTF
+TYPE .
+DEP SDL_ttf
+PURPOSE ファイルからフォントを読みこみます。
+RVAL SDL::TTF
+
+PROTO
+open(filename, ptsize, index=nil)
+
+DESC
+$[filename] で指定したフォントファイルを $[ptsize] ポイント
+で読み込みます。$[index] で face index を指定できます。
+デフォルトでは 0 です。
+
+RET
+@[TTF] のインスタンスを返します。
+
+EXCEPTION *
+
+EXAMPLE
+SDL::TTF.init
+font = SDL::TTF.open("font.ttf", 32, 0)
+
+%%
+NAME style
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントの描画スタイルを返します。
+RVAL UINT
+
+PROTO
+style
+
+DESC
+フォント $[self] の描画スタイルを以下の値の論理和をとったもので返します。
+* SDL::TTF::STYLE_BOLD
+* SDL::TTF::STYLE_ITALIC
+* SDL::TTF::STYLE_UNDERLINE
+以上のどれも設定されていない場合は SDL::TTF::STYLE_NORMAL が返されます。
+
+EXAMPLE
+print "The font style is:"
+
+print " normal" if font.style == SDL::TTF::STYLE_NORMAL
+print " bold" if (font.style & SDL::TTF::STYLE_BOLD) != 0
+print " italic" if (font.style & SDL::TTF::STYLE_ITALIC) != 0
+print " italic" if (font.style & SDL::TTF::STYLE_UNDERLINE) != 0
+
+print "\n"
+
+SEEALSO
+TTF#style=
+
+%%
+NAME style=
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントの描画スタイルを設定します。
+
+PROTO
+style=(new_style)
+
+DESC
+フォント $[self] の描画スタイルを $[new_style] に設定します。
+$[new_style] は以下の定数の論理和を与えてください。
+* SDL::TTF::STYLE_BOLD
+* SDL::TTF::STYLE_ITALIC
+* SDL::TTF::STYLE_UNDERLINE
+
+NOTES
+このメソッドを呼ぶと内部のレンダリング済み文字のキャッシュが
+消されます。
+
+EXAMPLE
+# イタリック体かつボールド体に設定する
+font.style = SDL::TTF::STYLE_ITALIC | SDL::TTF::STYLE_BOLD
+
+# 描画する…
+
+# 通常に戻す
+font.style = SDL::TTF::STYLE_NORMAL
+
+SEEALSO
+TTF#style
+
+%%
+NAME height
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントの文字の高さを返します。
+RVAL Integer
+
+PROTO
+height
+
+DESC
+フォントの文字の中で一番縦の高さが高いものの高さをピクセル数で返します。
+この値を文字を縦にできるだけ近づけて描画するために使えます。その場合は
+この値に1を足せば文字同士が触れなくなります。
+Ruby/SDLは複数行描画を考慮していないため、行間をきちんと取るのは
+自分でしなければなりません。@[TTF#line_skip] も参考にしてください。
+
+%%
+NAME ascent
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントのascentを返します。
+RVAL Integer
+
+PROTO
+ascent
+
+DESC
+文字のascent(ベースラインからの上の部分の高さ)の最大値を返します。
+つまり文字の上端からベースラインまでの距離です。
+
+COMMENT
+It could be used when drawing an individual glyph relative to a top point, by combining
+it with the glyph's maxy metric to resolve the top of the rectangle used when blitting
+the glyph on the screen.
+
+SEEALSO
+TTF#height
+TTF#descent
+TTF#line_skip
+
+%%
+NAME descent
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントのdescentを返します。
+RVAL Integer
+
+PROTO
+descent
+
+DESC
+文字のdescent(ベースラインから下の部分の高さ)の最大値を返します。
+つまり文字の下端からベースラインまでの距離です。
+
+COMMENT
+It could be used when drawing an individual glyph relative to a bottom point, by
+combining it with the glyph's maxy metric to resolve the top of the rectangle used when
+blitting the glyph on the screen.
+
+SEEALSO
+TTF#height
+TTF#ascent
+TTF#line_skip
+
+%%
+NAME line_skip
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントの一行あたりの推奨高さを返す。
+RVAL Integer
+
+PROTO
+line_skip
+
+DESC
+そのフォントに一行あたり何ピクセルの高さを割当てるべきかを
+返します。複数行描画したい場合には @[TTF#height] の値より
+こちらの値を使ったほうが良いかもしれません。
+この値は通常 @[TTF#height] の値より大きいです。
+
+SEEALSO
+TTF#height
+TTF#ascent
+TTF#descent
+
+%%
+NAME faces
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フェイスの数を返します。
+RVAL Integer
+
+PROTO
+faces
+
+DESC
+フォントに含まれる利用可能なフェイス(「サブフォント」)の数を返します。
+通常この値は利用価値はないでしょう、というのはこの値は @[TTF] の他の
+メソッドになんら影響を与えないからです。
+
+%%
+NAME fixed_width?
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントフェイスが等幅かどうかを得ます。
+RVAL true/false
+
+PROTO
+fixed_width?
+
+DESC
+$[self] が等幅であれば true を、なければ false を返す。
+等幅フォントはすべての文字が同じであり、文字列をレンダリングした結果
+のサーフェスの幅は単に「文字の幅 * 文字列の長さ」になります。
+
+SEEALSO
+TTF#faces
+TTF#family_name
+
+%%
+NAME family_name
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントの現在のフェイスの名前を得ます。
+RVAL String/nil
+
+PROTO
+family_name
+familyName
+
+DESC
+$[self] の現在のフォントフェイスの名前を返します。
+名前情報が無い場合は nil を返します。
+
+SEEALSO
+TTF#faces
+TTF#fixed_width?
+TTF#style_name
+
+%%
+NAME style_name
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE フォントの現在のフェイスのスタイルの名前を得ます。
+RVAL String/nil
+
+PROTO
+style_name
+styleName
+
+DESC
+$[self] の現在のフォントフェイスのスタイルの名前を返します。
+名前情報が無い場合は nil を返します。
+
+SEEALSO
+TTF#faces
+TTF#fixed_width?
+TTF#family_name
+
+%%
+NAME size_text
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE 文字列のレンダリングに必要なサーフェスのサイズを得ます。
+RVAL [Integer, Integer]
+
+PROTO
+size_text(text)
+sizeText(text)
+
+DESC
+$[text] で与えられた文字列をレンダリングするのに必要な@[サーフェス|Surface]
+のサイズを計算し、その幅、高さを返します。$[text] のエンコーディングは
+UTF8でなければなりません。
+実際には一切レンダリングされませんが、カーニングの影響を考慮した幅が
+得られます。
+高さは @[TTF#height] と同じ値が得られます。
+
+EXCEPTION *
+
+EXAMPLE
+w, h = font.size_text("Hello World!")
+puts "width=#{w} height=#{h}"
+
+SEEALSO
+TTF#render_solid_utf8
+TTF#render_shaded_utf8
+TTF#render_blended_utf8
+TTF#draw_solid_utf8
+TTF#draw_shaded_utf8
+TTF#draw_blended_utf8
+
+%%
+NAME render_solid_utf8
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE 文字列をレンダリングしたサーフェスを返します。
+RVAL SDL::Surface/nil
+
+PROTO
+render_solid_utf8(text, r, g, b)
+renderSolidUTF8(text, r, g, b)
+
+DESC
+$[text] で指定した文字列(エンコーディングはUTF8)を
+$[r], [g], $[b] で指定した色でレンダリングし、結果を
+@[Surface] のインスタンスで返します。
+
+@[TTF#render_shaded_utf8] や @[TTF#render_blended_utf8]
+より高速ですが見た目はこれらより良くありません。
+
+生成されるサーフェスは8bppのサーフェスで、指定した色
+および透明色の2色のみ使われます。
+透明色として 0 のピクセル値が、 文字の部分に 1 のピクセル値が
+使われ、パレットの1に指定した色の値が置かれます。
+そのため再レンダリングすることなしに文字の色を変えることができます。
+0 はカラーキーで、透明ですから、
+パレット 0 の色は当然他のサーフェスに@[転送|blit_surface]しても
+描画されません。実はこの色は (255-$[r], 255-$[g], 255-$[b])
+です。
+これは @[TTF#render_shaded_utf8] や @[TTF#render_blended_utf8]
+に比べて高速なレンダリングができますが、
+アンチエイリアシング等はかかっていません。
+また、このメソッドで作ったサーフェスは、
+@[TTF#render_blended_utf8] で生成したサーフェスを @[転送|blit_surface]
+するより高速に転送できます。
+とにかく高速な動作が必要な場合に使うとよいでしょう。
+
+SEEALSO
+TTF#render_shaded_utf8
+TTF#render_blended_utf8
+TTF#draw_solid_utf8
+
+%%
+NAME render_shaded_utf8
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE 文字列をアンチエイリアシングしてレンダリングしたサーフェスを返します。
+RVAL SDL::Surface/nil
+
+PROTO
+render_shaded_utf8(text,fg_r,fg_g,fg_b,bg_r,bg_g,bg_b)
+renderShadedUTF8(text,fg_r,fg_g,fg_b,bg_r,bg_g,bg_b)
+
+DESC
+$[text] で指定した文字列(エンコーディングはUTF8)を
+$[fg_r], [fg_g], $[fg_b] で指定した色を文字の色、
+$[bg_r], [bg_g], $[bg_b] で指定した色を背景の色として
+レンダリングし、結果を
+@[Surface] のインスタンスで返します。
+
+@[TTF#render_solid_utf8]よりレンダリングは低速ですが、
+見た目は @[TTF#render_solid_utf8] より優れています。
+
+生成される@[サーフェス|Surface]は8bppで、ピクセル値 0 が背景で、
+その他のピクセル値は背景色と前景色との中間の色を表現するため
+に使われます。文字にはアンチエイリアスがされています。
+レンダリングの速度は @[TTF#render_solid_utf8] より低速で、
+@[TTF#render_blended_utf8] と同じくらいです。
+また、このメソッドで作ったサーフェスは、
+@[TTF#render_solid_utf8] で生成したサーフェスを@[転送|blit_surface]
+するのと同じくらいの速度で転送できます。
+カラーキーによる抜きやアルファブレンドなどは仕組み上使えないので、
+高品質なレンダリングが必要で、背景が一色で問題ない場合に使ってください。
+
+SEEALSO
+TTF#render_solid_utf8
+TTF#render_blended_utf8
+TTF#draw_shaded_utf8
+
+%%
+NAME render_blended_utf8
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE 文字列をアルファを使ってアンチエイリアスしたサーフェスを返します。
+RVAL SDL::Surface/nil
+
+PROTO
+render_blended_utf8(text, r, g, b)
+render_blended_utf8(text, r, g, b)
+
+DESC
+$[text] で指定した文字列(エンコーディングはUTF8)を
+$[r], [g], $[b] で指定した色でレンダリングし、結果を
+@[Surface] のインスタンスで返します。
+
+@[TTF#render_solid_utf8]よりレンダリングは低速ですが、
+見た目は優れています。
+
+生成されるサーフェスは32bppARGBのもので、アルファを使いディザリング
+をし高品質な文字描画をします。背景はアルファ値が完全に透明な値なので、
+@[TTF#render_shaded_utf8] のように文字のまわりに四角が描かれる
+ことはありません。文字にはアンチエイリアシングがされています。
+レンダリングに必要な時間は @[TTF#render_solid_utf8] より長く、
+@[TTF#render_shaded_utf8] と同じくらいです。
+また、生成したサーフェスを@[ blit 転送|blit_surface]するのには、
+@[TTF#render_solid_utf8] や @[TTF#render_shaded_utf8] で生成した
+サーフェスを転送するより時間がかかります。
+このメソッドは高品質なレンダリングが必要で、速度がそれほど必要と
+されない場合に利用してください。
+
+SEEALSO
+TTF#render_solid_utf8
+TTF#render_shaded_utf8
+TTF#draw_blended_utf8
+
+%%
+NAME draw_solid_utf8
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE 文字列を描画します。
+
+PROTO
+draw_solid_utf8(dest, text, x, y, r, g, b)
+drawSolidUTF8(dest, text, x, y, r, g, b)
+
+DESC
+$[text] で指定した文字列を $[dest] で指定した@[サーフェス|Surface]の
+($[x], $[y]) を左上とした場所に($[r], $[g], $[b])で指定した色で
+描画します。描画される文字の品質や速度などは @[TTF#render_solid_utf8]
+と同じ特性を持ちます。詳しくはそちらを見てください。
+
+SEEALSO
+TTF#draw_shaded_utf8
+TTF#draw_blended_utf8
+TTF#render_solid_utf8
+
+%%
+NAME draw_shaded_utf8
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE 文字列をアンチエイリアス描画します。
+
+PROTO
+draw_shaded_utf8(dest, text, x, y, fg_r, fg_g, fg_b, bg_r, bg_g, bg_b)
+drawShadedUTF8(dest, text, x, y, fg_r, fg_g, fg_b, bg_r, bg_g, bg_b)
+
+DESC
+$[text] で指定した文字列を $[dest] で指定した@[サーフェス|Surface]の
+($[x], $[y]) を左上とした場所に($[fg_r], $[fg_g], $[fg_b])で指定した
+色で文字を、($[bg_r], $[bg_g], $[bg_b])で指定した色を背景として
+描画します。描画される文字の品質や速度などは @[TTF#render_shaded_utf8]
+と同じ特性を持ちます。そのため($[x], $[y])を左上とし、
+@[TTF#size_text]($[text]) を幅、高さとする長方形が指定した背景色で
+塗りつぶされます。
+
+SEEALSO
+TTF#draw_solid_utf8
+TTF#draw_blended_utf8
+TTF#render_shaded_utf8
+
+%%
+NAME draw_blended_utf8
+MOD TTF
+TYPE #
+DEP SDL_ttf
+PURPOSE 文字列をアルファでアンチエイリアスして描画します。
+
+PROTO
+draw_blended_utf8(dest, text, x, y, r, g, b)
+drawBlendedUTF8(dest, text, x, y, r, g, b)
+
+DESC
+$[text] で指定した文字列を $[dest] で指定した@[サーフェス|Surface]の
+($[x], $[y]) を左上とした場所に($[r], $[g], $[b])で指定した色で
+描画します。描画される文字の品質や速度などは @[TTF#render_blended_utf8]
+と同じ特性を持ちます。詳しくはそちらを見てください。
+
+SEEALSO
+TTF#draw_solid_utf8
+TTF#draw_shaded_utf8
+TTF#render_blended_utf8
+
+%%
+NAME open
+MOD BMFont
+TYPE .
+DEP SGE
+PURPOSE フォントをロードします。
+RVAL SDL::BMFont
+
+PROTO
+open(filename, flags)
+
+DESC
+$[filename] で指定したフォントをロードし、そのフォントを表わす
+オブジェクトを @[BMFont] のインスタンスとして返します。
+
+$[flags] としては以下の値を与えることができます。
+:SDL::BMFont::TRANSPARENT
+  @[Surface#set_color_key] で適当な透過色を与える(常に使うべき)。
+:SDL::BMFont::NOCONVERT
+  読み込んだフォント画像に対し @[Surface#display_format] を呼ばない。
+:SDL::BMFont::SFONT
+  読み込んだフォント画像を SFont フォーマットと仮定する。
+  これを与えない場合は独自形式と仮定する。
+:SDL::BMFont::PALETTE
+  読みこんだサーフェスを 8bppパレット付きサーフェスに変換する。
+  これは SFont 形式のフォントに対しては使えません。
+  これをすると描画が少し遅くなりますが @[BMFont#set_color] は速くなります。
+
+%%
+NAME set_color
+MOD BMFont
+TYPE #
+DEP SGE
+PURPOSE フォントの色を変更します。
+
+PROTO
+set_color(r, g, b)
+setColor(r, g, b)
+
+DESC
+フォントの色を ($[r], $[g], $[b]) に変更します。多色フォントおよび
+SFontに対しては利用できません。このメソッドを何度も呼ぶのであれば
+@[BMFont.open] で ((<SDL::BMFont::PALETTE>)) を与えておくと良いでしょう。
+
+%%
+NAME height
+MOD BMFont
+TYPE #
+DEP SGE
+PURPOSE フォントの高さを得ます。
+RVAL Integer
+
+PROTO
+height
+
+DESC
+フォントの高さを返します。
+
+SEEALSO
+BMFont#width
+
+%%
+NAME width
+MOD BMFont
+TYPE #
+DEP SGE
+PURPOSE フォントの幅を得ます。
+RVAL Integer
+
+PROTO
+width
+
+DESC
+文字一つ分の幅を返します。SFont に対しては使えません。
+
+SEEALSO
+BMFont#height
+
+%%
+NAME text_size
+MOD BMFont
+TYPE #
+DEP SGE
+PURPOSE 文字列の描画に必要なサーフェスの大きさを得ます。
+RVAL [Integer, Integer]
+
+PROTO
+text_size(string)
+textSize(string)
+
+DESC
+$[self] で表わされるフォントで $[string] を描画するのに必要な
+サーフェスの大きさを [幅, 高さ] という配列で返します。
+長さの単位はピクセル数です。
+
+SEEALSO
+BMFont#textout
+
+%%
+NAME textout
+MOD BMFont
+TYPE #
+DEP SGE
+PURPOSE 文字列を描画します。
+
+PROTO
+textout(surface, string, x, y)
+
+DESC
+$[string] を $[surface] の ($[x], $[y]) に描画します。
+
+COMMENT
+lockする？
+
+SEEALSO
+BMFont#text_size
+
+%%
+NAME open
+MOD Kanji
+TYPE .
+PURPOSE bdfファイルを読み込む。
+RVAL SDL::Kanji
+
+PROTO
+open(filename, size)
+
+DESC
+$[filename] で指定した bdf ファイルを読みこみ、@[Kanji] のインスタンス
+を返します。$[size] で文字のサイズを指定します。この値は
+文字の高さに相当します。またいわゆる半角文字2文字分の幅にもなります。
+
+SEEALSO
+Kanji#add
+
+%%
+NAME add
+MOD Kanji
+TYPE #
+PURPOSE 既に読み込んでいるフォントに追加してフォントを読みこみます。
+
+PROTO
+add(filename)
+
+DESC
+$[filename] で指定した bdf ファイルを読みこみ、$[self] に無かった文字を
+新しいフォントで補完します。これを使って英語と日本語を別のフォント
+から読みこむ、といったことができます。
+
+SEEALSO
+Kanji#open
+
+%%
+NAME set_coding_system
+MOD Kanji
+TYPE #
+PURPOSE 文字コードを指定します。
+
+PROTO
+set_coding_system(sys)
+setCodingSystem(sys)
+
+DESC
+文字コードを指定します。 $[sys] として以下のいずれかを指定できます。
+* SDL::Kanji::SJIS
+* SDL::Kanji::EUC
+* SDL::Kanji::JIS
+デフォルトでは SDL::Kanji::JIS が指定されています。
+
+%%
+NAME height
+MOD Kanji
+TYPE #
+PURPOSE 文字の高さを得ます。
+RVAL Integer
+
+PROTO
+height
+
+DESC
+フォントの高さをピクセル数で返します。これはいわゆる全角文字の幅であり、
+いわゆる半角文字の幅の2倍の値です。
+
+%%
+NAME textwidth
+MOD Kanji
+TYPE #
+PURPOSE 文字列の幅を得ます。
+RVAL Integer
+
+PROTO
+textwidth(text)
+
+DESC
+$[text] で指定した文字列を描画するのに必要な幅をピクセル数で返します。
+
+SEEALSO
+Kanji#width
+
+%%
+NAME width
+MOD Kanji
+TYPE #
+PURPOSE 文字の幅を得ます。
+
+PROTO
+width
+
+DESC
+半角文字1文字の幅をピクセル数で得ます。
+
+SEEALSO
+textwidth
+
+%%
+NAME put
+MOD Kanji
+TYPE #
+PURPOSE 文字を描画します。
+
+PROTO
+put(surface, text, x, y, r, g, b)
+
+DESC
+$[text] で指定した文字列を $[surface] の ($[x], $[y]) に ($[r], $[g], $[b])
+で指定した色で描画します。
+
+SEEALSO
+Kanji#put_tate
+
+%%
+NAME put_tate
+MOD Kanji
+TYPE #
+PURPOSE 文字を縦書きで描画します。
+
+PROTO
+put_tate(surface, x, y, r, g, b)
+putTate(surface, x, y, r, g, b)
+
+DESC
+$[text] で指定した文字列を $[surface] の ($[x], $[y]) に ($[r], $[g], $[b])
+で指定した色で縦書きで描画します。
+
+ASCII文字は縦書きにできません。
+
+SEEALSO
+Kanji#put
+
+

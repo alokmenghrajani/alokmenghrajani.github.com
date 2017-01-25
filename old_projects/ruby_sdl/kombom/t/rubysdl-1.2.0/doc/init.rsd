@@ -1,0 +1,175 @@
+= 初期化
+TOC
+
+Ruby/SDLを使う前には必ず@[init]で初期化する必要があります。@[init]は、
+ユーザの指定したすべてのサブシステム(ビデオ、オーディオ、ジョイスティック、
+タイマー、CD-ROMのいずれかあるいは全部)を初期化することができます。
+
+== Methods
+%%%
+NAME init
+TYPE .
+PURPOSE SDLを初期化します。
+
+PROTO
+init(flags)
+
+DESC
+SDLを初期化します。
+すべてのRuby/SDLのメソッドを呼び出す前にこの関数が呼ばれなければいけません。
+$[flags]にはSDLのどの部分を初期化するかを指定します。
+:SDL::INIT_AUDIO
+  オーディオサブシステム(音声出力機能)を初期化
+:SDL::INIT_VIDEO
+   ビデオサブシステム(画像出力機能とキーボード、マウス入力機能)を初期化
+:SDL::INIT_CDROM
+  CDROMサブシステム(CD再生機能)を初期化
+:SDL::INIT_JOYSTICK
+  ジョイスティックサブシステム(ジョイスティック入力機能)を初期化
+:SDL::INIT_EVERYTHING
+  上に挙げた機能を全て初期化します。
+
+EXCEPTION
+失敗すると例外@[Error]が発生します。
+
+%%
+NAME quit
+TYPE .
+PURPOSE SDLをシャットダウンします。
+
+PROTO
+quit
+
+DESC
+全てのSDLサブシステムをシャットダウンし、それらが確保したリソースをすべて解
+放します。通常は自動で呼ばれるためユーザが明示的に呼びだす必要はありません。
+
+SDLおよびRuby/SDLの仕様を理解した上で必要な場合のみ使ってください。
+
+%%
+NAME inited_system
+TYPE .
+PURPOSE サブシステムが初期化されているかどうかをチェックします。
+RVAL UINT
+
+PROTO
+inited_system(flags)
+initedSystem(flags)
+
+DESC
+これは、どのSDLサブシステムが@[初期化されているか|init]を報告します。
+$[flags]には、調べたいサブシステムの論理和を指定します
+(指定できるサブシステムのフラグについては@[init]の項を参照してください)。
+
+RET
+初期化されているサブシステムの論理和を返します。
+
+EXAMPLE
+# SDL.inited_systemの使いかた
+
+# 全てのサブシステムの初期化状態を得ます
+subsystem_init = SDL.inited_system(SDL::INIT_EVERYTHING)
+
+if subsystem_init & SDL::INIT_VIDEO
+  puts "ビデオは初期化されています。"
+else
+  puts "ビデオは初期化されていません。"
+end
+
+
+
+# 1つのサブシステムだけをチェックします
+
+if SDL.inited_system(SDL::INIT_VIDEO) != 0
+  puts "ビデオは初期化されています。"
+else
+  puts "ビデオは初期化されていません。"
+end
+
+
+
+# 2つのサブシステムをチェックします
+
+subsystem_mask = SDL::INIT_VIDEO|SDL::INIT_AUDIO;
+
+if SDL.inited_system(subsystem_mask) == subsystem_mask
+  puts "ビデオとオーディオはどちらも初期化されています。"
+else
+  puts "ビデオとオーディオのどちらか、または両方が初期化されていません。"
+end
+
+SEEALSO
+init
+
+%%
+NAME getenv
+TYPE .
+PURPOSE 環境変数を得ます。
+RVAL String
+
+PROTO
+getenv(var)
+
+DESC
+$[var]で指定した環境変数を得ます。
+
+RET
+環境変数の値を文字列で返します。
+
+%%
+NAME putenv
+TYPE .
+PURPOSE 環境変数を変更します。
+
+PROTO
+putenv(string)
+
+DESC
+環境変数の追加または値の変更を行います。$[string] は "name=value"
+という形式を取ります。
+
+Windows上でSDL_WINDOWIDやSDL_VIDEODRIVERといった環境変数を使って
+SDLの実行に影響を与えたいときに利用します。
+SDLの仕様によりWindowsでは ENV を直接変更してもこれらの機能が使え
+ないためこのような関数が存在しま。Unix上では ENV を使うのと同じ
+効果があります。
+
+EXCEPTION
+失敗時には例外@[Error]を発生させます。
+
+EXAMPLE
+# http://moriq.tdiary.net/20051006.html より
+# Ruby/SDL と Apolloの併用
+require 'phi'
+require 'sdl'
+
+# フォームの生成
+form = Phi::Form.new
+$terminated = false
+form.on_close{ $terminated = true }
+form.caption = "Ruby/SDL on Phi::Form"
+# パネルをフォームの上に作る
+panel = Phi::Panel.new(form)
+panel.align = Phi::AL_LEFT
+
+# WINDOWID hackを使い、パネルにSDLのウインドウをのせる
+SDL.putenv("SDL_VIDEODRIVER=windib")
+SDL.putenv("SDL_WINDOWID=#{panel.handle}")
+form.show
+
+# SDL本体の初期化など
+SDL.init(SDL::INIT_VIDEO)
+screen = SDL.setVideoMode(640, 480, 16, SDL::SWSURFACE)
+
+# メインループ、とりあえず何もしない
+unless $terminated
+  while event = SDL::Event2.poll
+    case event
+    when SDL::Event2::KeyDown, SDL::Event2::Quit
+      exit
+    end
+  end
+
+  sleep 0.05
+end
+

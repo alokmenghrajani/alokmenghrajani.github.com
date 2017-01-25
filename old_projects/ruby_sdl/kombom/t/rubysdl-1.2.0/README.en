@@ -1,0 +1,115 @@
+
+Ruby/SDL 1.2.0
+Ohbayashi Ippei
+
+1 What's Ruby/SDL
+
+Ruby/SDL is the ruby extension library to use SDL.
+SDL(Simple DirectMedia Layer) is a cross-platform multimedia library      
+designed to provide fast access to the graphics framebuffer and audio    
+device. See http://www.libsdl.org/ if you want to know SDL in detail.
+
+2 Platform
+This library supports 
+Linux on X,Win32,FreeBSD and BeOS.
+
+3 Library Needed
+
+Ruby/SDL needs Ruby and SDL and optionally uses SDL_image,SDL_mixer,
+SDL_ttf, SGE, OpenGL  and SMPEG.
+
+Indispensable
+Ruby   http://www.ruby-lang.org/
+SDL   http://www.libsdl.org/
+
+Optional
+SDL_mixer   http://www.libsdl.org/projects/SDL_mixer/index.html
+SDL_ttf   http://www.libsdl.org/projects/SDL_ttf/index.html
+SDL_image   http://www.libsdl.org/projects/SDL_image/index.html
+SGE   http://www.etek.chalmers.se/~e8cal1/sge/
+SMPEG  http://www.icculus.org/smpeg/
+SDLSKK http://www.kmc.gr.jp/~ohai/sdlskk.en.html
+
+4 INSTALL
+
+install on FreeBSD
+Use Port.
+
+install on Linux
+(1)install Ruby
+  See Ruby's document and install.
+(2)install SDL
+  Extract SDL's source and run './configure' with '--disable-pthreads'
+  option.
+  On Linux using pthread with Ruby/SDL makes problem.
+  You can avoid this problem by other way (Please see rubysdl_doc.en.rd).
+  And run 'make','make install'.
+
+(3)install SGE
+  Run 'make' and 'make install'.
+  
+(4)install SDL_mixer, SDL_ttf, SDL_image, SMPEG and SDLSKK
+  See documents of these libraries and install them .
+
+(5)install this extension library,Ruby/SDL
+  Run 'ruby extconf.rb','make' and 'make install'.
+
+5 USE Ruby/SDL
+  Write "require 'sdl'" in your Ruby script.
+  See following documents and samples if you want to know the detail.
+
+  sample/*.rb
+    Ruby/SDL samples.In some script, you have to prepare data such as
+    "sample.wav" and "sample.mpg".
+  rubysdl_doc.en.rd
+    Simple reference manual
+  document of SDL
+    This is in SDL archive.
+    Please read this when you want to know what does't describe
+    these documents.
+
+6 OpenGL
+  You can use OpenGL with this library.
+
+  (1) Setup OpenGL and SDL.
+  (2) Get OpenGL Interface (http://raa.ruby-lang.org/project/opengl/)
+  (3) Install OpenGL Interface
+  (4) Run "ruby extconf.rb" with "--enable-opengl".
+  (5) Run "make" and "make install"
+  (6) Write "require 'sdl'; require 'opengl'"  in your script.
+
+  The interface of OpenGL is same as "OpenGL Interface".
+  Please see SDL's document,OpenGL document and sample/testgl.rb .
+
+  Each OpenGL implementation are a little different in API, so
+  you may fail to compile Ruby's OpenGL Interface. If you can't
+  compile, but if you want to complile it, you should modify
+  sources.
+
+7 LICENSE
+  This library is distributed under GNU LGPL version 2.1 or later,
+  which can be found in the file "LICENSE".
+  But samples, the Ruby scripts sample/*.rb, are not under LGPL, and
+  you can use their files freely.
+ 
+8 Thanks
+  Thanks to ...
+  Tamura : some patches and advertising
+  Akinori MUSHA : Porting on FreeBSD
+  Danny van Bruggen : some ideas are from his library "RUDL"
+  akira yamada : patch of SDL::TTF, making packages of Vine and Debian.
+  Wayne Conrad : some patches
+  Christian Neukirchen, Kent Dahl : send a patch
+  Keffin Barnaby : some patches
+  Rorien Dunn, Dennis Ranke, Keita Urashima : bug reports and useful information
+  Yusuke TABATA : introduce me into SDL world
+  SDLdoc Japanese translation project : base of Ruby/SDL's reference manual
+
+9 OTHER
+  Some functions, especially SDL::MPEG methods and pallete handling methods,
+  are not tested.
+
+  Please send comments and bug reports to the author.
+  Author's mail address: ohai@kmc.gr.jp
+
+  

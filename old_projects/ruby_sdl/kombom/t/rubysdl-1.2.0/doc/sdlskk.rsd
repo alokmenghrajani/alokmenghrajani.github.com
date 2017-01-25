@@ -1,0 +1,496 @@
+= SDLSKK
+* ((<SDLSKKによる日本語入力について>))
+* ((<SDL::SKK::Context>))
+* ((<SDL::SKK::Dictionary>))
+* ((<SDL::SKK::Keybind>))
+* ((<SDL::SKK::RomKanaRuleTable>))
+* ((<SDLSKK関連メソッド>))
+TOC
+
+== SDLSKKによる日本語入力について
+Ruby/SDL には ((<SDLSKK|URL:http://www.kmc.gr.jp/~ohai/sdlskk.html>))
+を利用した ((<SKK|URL:http://openlab.jp/skk/index-j.html>))
+に似た日本語入力システムがあります。
+
+これは日本語入力ができるだけでなく、
+カット&ペーストを含む簡単な行編集機能を持っています。
+
+sample/sdlskk.rb も参考にしてください。
+
+== SDL::SKK
+SDLSKK関連のモジュール関数およびクラスを持つモジュールです。
+
+METHODS(SKK)
+
+== SDL::SKK::Context
+入力の状態などを表わすクラスで、SDL::SKKの中心的なクラスです。
+
+METHODS(SKK::Context)
+
+== SDL::SKK::Dictionary
+辞書を表わすクラスです。ファイルから SKK 形式の辞書を読み込むこと
+ができます。
+
+METHODS(SKK::Dictionary)
+
+== SDL::SKK::Keybind
+入力のキーバインドを表わすクラスです。
+
+METHODS(SKK::Keybind)
+
+== SDL::SKK::RomKanaRuleTable
+ローマ字 -> 仮名 の変換テーブルを表わすクラスです。
+この変換テーブルは、SDLSKK独自の形式のテキストファイルで、
+それを読み込んでインスタンスを生成します。
+
+変換テーブルファイルは SDLSKK に付属しています。
+
+METHODS(SKK::RomKanaRuleTable)
+
+== SDLSKK関連メソッド
+%%%
+NAME encoding=
+MOD SKK
+TYPE .
+DEP SDLSKK
+PURPOSE SDLSKK内部のエンコーディングを指定します。
+
+PROTO
+encoding=(encoding)
+
+DESC
+SDLSKK内部のエンコーディングを $[encoding] に指定します。
+* SDL::SKK::EUCJP
+* SDL::SKK::UTF8
+* SDL::SKK::SJIS
+のいずれかを指定してください。SDL::SKK::EUCJP がデフォルトです。
+また、これはSDLSKK関連の他のメソッドを呼ぶ前に呼んでください。
+
+これは、@[SKK::Dictionary#load]と@[SKK::RomKanaRuleTable.new]で
+読み込むファイルおよび @[SKK::Context#str] で得られる文字列、
+@[SKK::Dictionary#save] で書き出すファイルの
+エンコードを決定します。
+
+NOTES
+このモジュール関数は最初に1回だけ呼んでください。
+途中でエンコーディングを変更すると正しく動作しません。
+
+SEEALSO
+SKK.encoding
+SKK::Dictionary#load
+SKK::Dictionary#save
+SKK::RomKanaRuleTable.new
+
+%%
+NAME encoding
+MOD SKK
+TYPE .
+DEP SDLSKK
+PURPOSE SDLSKKの内部エンコーディングを得ます。
+RVAL UINT
+
+PROTO
+encoding
+
+DESC
+SDLSKKの内部エンコーディングを返します。詳しくは @[SKK.encoding=] を
+見てください。
+
+SEEALSO
+SKK.encoding=
+
+%%
+NAME new
+MOD SKK::RomKanaRuleTable
+TYPE .
+DEP SDLSKK
+PURPOSE アルファベットからかなへの変換テーブルを読み込みます。
+RVAL SDL::SKK::RomKanaRuleTable
+
+PROTO
+new(filename)
+
+DESC
+$[filename]で指定したファイルをアルファベットからかなへの変換テーブル
+として読み込みます。
+ファイルの形式は以下の通りです。
+* 「;;」 で始まる行はコメント
+* 空行は無視される
+* それ以外の行は1行1エントリーで、以下のような形式
+    入力アルファベット<TAB>かな変換後に残るアルファベット<TAB>片仮名<TAB>平仮名
+
+  
+NOTES
+このファイルのエンコーディングは @[SKK.encoding=] であらかじめ指定しておいて
+ください。
+
+SEEALSO
+SKK::Context.new
+
+%%
+NAME new
+MOD SKK::Dictionary
+TYPE .
+DEP SDLSKK
+PURPOSE 空の辞書を生成します。
+RVAL SDL::SKK::Dictionary
+
+PROTO
+new
+
+DESC
+空の辞書として @[SKK::Dictionary] のインスタンスを生成します。
+適当な辞書をこれに読み込んでください。
+
+SEEALSO
+SKK::Dictionary#load
+
+%%
+NAME load
+MOD SKK::Dictionary
+TYPE #
+DEP SDLSKK
+PURPOSE 辞書ファイルを読み込みます。
+
+PROTO
+load(filename, user)
+
+DESC
+$[filename] で指定した辞書を読み込みます。辞書の形式は SKK のものと
+同一です(ただしannotationを含むものは不可です)。
+$[user] を真にすると
+その辞書はユーザ辞書であると扱われ、そこに含まれる
+エントリーすべてにユーザ入力マークが付きます。
+
+ユーザ入力マークが付いたエントリーのみが @[SKK::Dictionary#save] で
+ユーザ辞書に出力されます。
+
+NOTES
+このファイルのエンコーディングは @[SKK.encoding=] であらかじめ指定しておいて
+ください。
+
+EXCEPTION *
+
+SEEALSO
+SKK::Dictionary.new
+SKK::Dictionary#save
+SKK::Context.new
+
+%%
+NAME save
+MOD SKK::Dictionary
+TYPE #
+DEP SDLSKK
+PURPOSE ユーザ辞書をファイルに出力します。
+
+PROTO
+save(filename)
+
+DESC
+$[filename] で指定したファイルにユーザ辞書を出力します。
+ユーザが利用した変換と、
+@[SKK::Dictionary#load] で「ユーザ辞書」として読み込まれた
+項とをあわせたものを、ユーザ辞書として扱います。
+
+SEEALSO
+SKK::Dictionary.new
+SKK::Dictionary#load
+
+%%
+NAME new
+MOD SKK::Keybind
+TYPE .
+DEP SDLSKK
+PURPOSE 空のキーバインドを作ります。
+RVAL SDL::SKK::Keybind
+
+PROTO
+new
+
+DESC
+空のキーバインドに対応する @[SKK::Keybind] のインスタンスを返します。
+これに @[SKK::Keybind#set_key] や @[SKK::Keybind#set_default_key]
+などを使ってキーバインドを追加して使います。
+
+SEEALSO
+SKK::Keybind#set_key
+SKK::Keybind#set_default_key
+SKK::Context.new
+
+%%
+NAME set_key
+MOD SKK::Keybind
+TYPE #
+DEP SDLSKK
+PURPOSE キーバインドを設定します。
+
+PROTO
+set_key(key_str, cmd_str)
+
+DESC
+$[key_str] に設定したいキーを示す文字列を、$[cmd_str] に設定したい
+動作を示す文字列を与え、キーバインドを設定します。
+
+$[key_str] としては以下のような文字列を与えることができます。
+* アルファベット、"%" などのasciiの記号
+* "SPC" "TAB" "DEL" "RET" "UP" "DOWN" "RIGHT" "LEFT" "INSERT" "HOME" "END"
+  "PAGEUP" "PAGEDOWN" "F1" "F2" "F3" "F4" "F5" "F6" "F7" "F8" "F9" "F10"
+  "F11" "F12" "F13" "F14" "F15" "HELP"
+* "C-a" "M-C-a" などといった修飾キーの付いた文字列
+_
+また、$[cmd_str] には以下の文字列を与えることができます。
+* "backward-char",
+* "forward-char",
+* "backward-delete-char",
+* "delete-char",
+* "kakutei",
+* "kettei",
+* "space",
+* "keyboard-quit",
+* "set-mark-command",
+* "kill-region",
+* "yank",
+* "copy",
+* "graph-char",
+* "upper-char",
+* "lower-char",
+* "abbrev-input",
+* "latin-mode",
+* "previous-candidate",
+* "jisx0208-mode",
+* "toggle-kana",
+* "beginning-of-line"
+* "end-of-line"
+* "do-nothing"
+
+ただし、"a" や "/" といったアスキー文字1文字のキーにはデフォルト
+以外のキーバインドはしないようにしてください。
+
+標準のキーバインドを少し変更したいという場合は、まず
+@[SKK::Keybind#set_default_key] を呼んで、デフォルトのキーバインドを
+設定してからこのメソッドを呼んでください
+
+SEEALSO
+SKK::Keybind#set_default_key
+SKK::Keybind#unset_key
+
+%%
+NAME set_default_key
+MOD SKK::Keybind
+TYPE #
+DEP SDLSKK
+PURPOSE Emacsに似た標準的なキーバインドを設定します。
+
+PROTO
+set_default_key
+
+DESC
+Emacsに似た標準的なキーバインドを設定します。
+
+SEEALSO
+SKK::Keybind#set_key
+
+%%
+NAME unset_key
+MOD SKK::Keybind
+TYPE #
+DEP SDLSKK
+PURPOSE 指定したキーのキーバインドを無効にします。
+
+PROTO
+unset_key(key_str)
+
+DESC
+$[key_str] で指定したキーのキーバインドを無効にします。
+$[key_str] には @[SKK::Keybind#set_key] と同じ値を使います。
+
+%%
+NAME new
+MOD SKK::Context
+TYPE .
+DEP SDLSKK
+PURPOSE 入力コンテキストを生成する。
+RVAL SKK::Context
+
+PROTO
+new(dict, romkama_table, bind, use_minibuffer)
+
+DESC
+入力コンテキストを生成し、@[SKK::Context] のインスタンスを返します。
+$[dict] は利用する辞書として @[SKK::Dictionary] のインスタンスを、
+$[romkama_table] はローマ字かな変換規則として @[SKK::RomKanaRuleTable]
+のインスタンスを、$[bind] にはキーバインドとして @[SKK::Keybind] のインスタンス
+を与える。
+use_minibuffer に真値を与えるとミニバッファを利用するようになります。
+偽では利用しません。
+
+EXAMPLE
+# 辞書を生成し、ファイルから辞書データを読み込む
+dict = SDL::SKK::Dictionary.new
+dict.load( 'jisyo', false )
+# ローマ字仮名変換テーブルを読み込む
+table = SDL::SKK::RomKanaRuleTable.new( 'rule_table' )
+# キーバインドを設定する
+bind = SDL::SKK::Keybind.new
+bind.set_default_key
+
+# コンテキストを生成
+context = SDL::SKK::Context.new( dict, table, bind, use_minibuffer )
+
+SEEALSO
+SKK::Context#input
+SKK::Context#str
+
+%%
+NAME input
+MOD SKK::Context
+TYPE #
+DEP SDLSKK
+PURPOSE キーボードからの入力を受け付けます。
+
+PROTO
+input(event)
+
+DESC
+イベント経由でキーボードからの入力を受け付け、
+コンテキストの状態を変更します。
+$[event] には @[Event2] のインスタンスを与えます。
+@[Event2::KeyDown] 以外のイベントは無視します。
+
+EXAMPLE
+while event = SDL::Event2.poll do
+  case event
+  when SDL::Event2::Quit
+    exit
+  when SDL::Event2::KeyDown
+    if event.sym == SDL::Key::ESCAPE then
+      exit
+    end
+    if event.sym == SDL::Key::F1
+      dict.save("test_user_dict")
+    end
+    context.input( event )      
+  end
+end
+
+%%
+NAME str
+MOD SKK::Context
+TYPE #
+DEP SDLSKK
+PURPOSE 入力途中の文字列を得ます。
+RVAL String
+
+PROTO
+str
+
+DESC
+入力途中の文字列を返します。
+
+SEEALSO
+SKK::Context#render_str
+SKK::Context#clear
+SKK::Context#clear_text
+
+%%
+NAME render_str
+MOD SKK::Context
+TYPE #
+DEP SDLSKK
+PURPOSE 入力文字列をレンダリングします。
+RVAL SDL::Surface
+
+PROTO
+render_str(font, r, g, b)
+
+DESC
+$[self] が持っている入力途中の文字列をレンダリングして
+@[Surface] のインスタンスを返します。
+$[font] はレンダリングに利用するフォントを @[TTF] のインスタンスで与え、
+その色を ($[r], $[g], $[b]) で指定します。
+
+SEEALSO
+SKK::Context#render_minibuffer_str
+
+%%
+NAME render_minibuffer_str
+MOD SKK::Context
+TYPE #
+DEP SDLSKK
+PURPOSE ミニバッファの文字列をレンダリングします。
+
+PROTO
+render_minibuffer_str(font, r, g, b)
+
+DESC
+$[self] が持っている入力途中のミニバッファの状態をレンダリングして
+@[Surface] のインスタンスを返します。
+$[font] はレンダリングに利用するフォントを @[TTF] のインスタンスで与え、
+その色を ($[r], $[g], $[b]) で指定します。
+
+%%
+NAME clear
+MOD SKK::Context
+TYPE #
+DEP SDLSKK
+PURPOSE 入力状態をクリアします。
+
+PROTO
+clear
+
+DESC
+力文字列と入力状態をクリアして初期状態に戻します。
+
+SEEALSO
+SKK::Context#clear_text
+
+%%
+NAME clear_text
+MOD SKK::Context
+TYPE #
+DEP SDLSKK
+PURPOSE 入力テキストをクリアします。
+
+PROTO
+clear_text
+
+DESC
+$[self] の入力モードが、確定入力モード、アルファベット入力モード、
+JISX0208アルファベット入力モードのいずれかであればそのモードを
+維持したまま入力テキストを空にします。
+
+複数行の入力を実現したい場合、@[SKK::Context] を呼ぶと
+モードが確定入力モードに戻ってしまうのが不自然である場合、
+この関数を呼ぶとよい。
+
+また、カットバッファの内容も保存されます。
+
+SEEALSO
+SKK::Context#get_basic_mode
+
+%%
+NAME get_basic_mode
+MOD SKK::Context
+TYPE #
+DEP SDLSKK
+PURPOSE 状態が入力途中の状態でないかどうかを得る。
+RVAL true/false
+
+PROTO
+get_basic_mode
+
+DESC
+@[self] の入力モードが、確定入力モード、アルファベット入力モード、
+JISX0208アルファベット入力モードのいずれかであれば真を、それ
+以外では偽を返す。辞書登録モードのときなども偽を返します。
+
+これが真のときにリターンキーを押したら入力終了とみなす、
+などといった処理に利用します。
+
+NOTES
+入力モードの名前やその内容については 
+((<SKK|URL:http://openlab.jp/skk/index-j.html>))
+のマニュアルなどを参考にしてください。
+
+SEEALSO
+SKK::Context#clear_text

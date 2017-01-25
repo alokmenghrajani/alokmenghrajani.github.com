@@ -1,0 +1,162 @@
+= 衝突判定
+* ((<衝突判定システムの概要>))
+* ((<SDL::CollisionMap>))
+
+* ((<衝突判定関連メソッド>))
+TOC
+
+== 衝突判定システムの概要
+Ruby/SDL には ((<SGE|URL:http://www.etek.chalmers.se/~e8cal1/sge/index.html>))
+由来の衝突判定システムがあります。
+基本的な仕組みは、判定のある部分と無い部分の2値の長方形画像を生成し、
+それを2つ持ってきて、重なっている部分を1ピクセルずつ見ていくことで
+その2つが衝突しているか、つまり重なっているかどうかを判定します。
+
+sample/collision.rb も参考にしてください。
+
+== SDL::CollisionMap
+衝突判定のための2値画像を表わすクラスです。
+@[Surface#make_collision_map] によってのみインスタンスが作れます。
+
+METHODS(CollisionMap)
+
+== 衝突判定関連メソッド
+%%%
+NAME make_collision_map
+MOD Surface
+TYPE #
+DEP SGE
+PURPOSE 衝突判定のためのCollisionMapを生成する。
+RVAL SDL::CollisionMap
+
+PROTO
+make_collision_map
+makeCollisionMap
+
+DESC
+@[Surface] のインスタンスから @[CollisionMap] を生成します。
+$[self] のピクセルのうちカラーキーで透明ピクセルになっている
+所が衝突しない所、そうでないピクセルが衝突するピクセルになります。
+
+EXCEPTION *
+
+SEEALSO
+Surface#set_color_key
+CollisionMap#collision_check
+CollisionMap#clear
+CollisionMap#set
+
+%%
+NAME collision_check
+MOD CollisionMap
+TYPE #
+DEP SGE
+PURPOSE 衝突判定をします。
+RVAL true/false
+
+PROTO
+collision_check(x1, y1, cmap, x2, y2)
+
+DESC
+$[self] の左上が 座標 ($[x1], $[y1])、もうひとつの
+@[CollisionMap] のインスタンス $[cmap] の左上が ($[x2], $[y2])に
+ある場合に、この2つが重なっているかどうかを判定し、重なっている
+なら true を、いないなら false を返します。
+
+このメソッドは内部で @[CollisionMap#bounding_box_check] を
+呼んでいます。
+
+SEEALSO
+CollisionMap#bounding_box_check
+
+%%
+NAME bounding_box_check
+MOD CollisionMap
+TYPE #
+DEP SGE
+PURPOSE 2つの長方形が重なっているかどうかを判定します。
+RVAL true/false
+
+PROTO
+bounding_box_check(x1, y1, cmap, x2, y2)
+boundingBoxCheck(x1, y1, cmap, x2, y2)
+
+DESC
+@[CollisionMap] のインスタンスを長方形と見なし、
+$[self] の左上が ($[x1], $[y1])、$[cmap] の左上の点が ($[x2], $[y2])に
+あるとして2つの長方形が重なっているかどうかを判定します。
+
+RET
+長方形が重なっていれば true を、いなければ false を返します。
+
+SEEALSO
+CollisionMap#collision_check
+CollisionMap#w
+CollisionMap#h
+
+%%
+NAME clear
+MOD CollisionMap
+TYPE #
+DEP SGE
+PURPOSE 指定した範囲を衝突なしの状態にします。
+
+PROTO
+clear(x, y, w, h)
+
+DESC
+引数で指定した長方形を衝突なしの状態にします。
+
+SEEALSO
+CollisionMap#set
+
+%%
+NAME set
+MOD CollisionMap
+TYPE #
+DEP SGE
+PURPOSE 指定した範囲を衝突ありの状態にします。
+
+PROTO
+set(x, y, w, h)
+
+DESC
+引数で指定した長方形を衝突ありの状態にします。
+
+SEEALSO
+CollisionMap#set
+
+%%
+NAME w
+MOD CollisionMap
+TYPE #
+DEP SGE
+PURPOSE 衝突判定用画像の幅を返します。
+RVAL Integer
+
+PROTO
+w
+
+DESC
+衝突判定用画像の幅を返します。
+
+SEEALSO
+CollisionMap#h
+
+%%
+NAME h
+MOD CollisionMap
+TYPE #
+DEP SGE
+PURPOSE 衝突判定用画像の高さを返します。
+RVAL Integer
+
+PROTO
+h
+
+DESC
+衝突判定用画像の高さを返します。
+
+SEEALSO
+CollisionMap#w
+

@@ -1,0 +1,805 @@
+= Audio
+* ((<Audio 機能概説>))
+* ((<利用可能な音楽/音声フォーマット>))
+* ((<SDL::Mixer::Wave>))
+* ((<SDL::Mixer::Music>))
+* Audio関連メソッド
+TOC
+
+== Audio 機能概説
+SDLはポータブルで低レベルなオーディオ出力機能を持っています。
+低レベルな機能をRubyから直接利用するのは問題があるため、
+Ruby/SDLでは高レベルな SDL_mixer ライブラリを経由した
+音声出力機能のみ提供します。そのためオーディオ出力機能を利用するため
+には SDL_mixer ライブラリをインストールする必要があります。
+
+SDL_mixer ライブラリは一般的な需要に答えるため、
+単純は複数チャンネル同時演奏ができる音声ミキシング機能を提供します。
+16ビットステレオが8チャンネル音声出力と、
+MOD/MIDI/MP3などによる音楽演奏1チャンネルが利用可能です。
+
+このように音声出力と音楽演奏が分けられているのは、主に実装上の
+理由です。「音声出力」が効果音、「音楽演奏」がBGMと考えれば良いでしょう。
+音声には @[Mixer::Wave] クラスが、音楽には @[Mixer::Music] クラスが対応し
+ています。
+
+MIDIファイルの演奏はCPUに負荷をかけるため、普通のWAVEファイルは
+ちゃんと聞こえるのに、MIDIファイルを演奏するとひどい音がする
+ということがあります。
+その場合は、8-bit出力やモノラル出力、低い周波数を試してください。
+
+MIDIファイルを演奏するためには、
+((<Timidity GUS Patches|URL:http://www.libsdl.org/projects/mixer/timidity/timidity.tar.gz>))
+を適切な場所(UNIXでは /use/local/lib, Windowsでは C:\)に展開してください。
+
+== 利用可能な音楽/音声フォーマット
+
+Ruby/SDL では以下の音楽/音声フォーマットが利用可能です。
+* WAVE/RIFF (.wav)
+* AIFF (.aiff)
+* VOC (.voc)
+* MOD (.mod .xm .s3m .669 .it .med など)
+* MIDI (.mod) timidity利用もしくはMIDIハードウェアを利用
+* OggVorbis (.ogg) ogg/vorbis ライブラリが必要
+* MP3 (.mp3) SMPEG ライブラリが必要
+
+== SDL::Mixer
+audio関連のクラスや関数を持つモジュールです。
+
+== SDL::Mixer::Wave
+複数チャンネルによる合成が可能な音声データを表わすクラスです。
+WAVE,  AIFF, RIFF, OGG, VOC に対応しています。
+
+== SDL::Mixer::Music
+音楽データを表わすクラスです。
+WAVE, MOD, MIDI, OGG, MP3 に対応しています。
+
+== Audio関連メソッド
+%%%
+NAME open
+MOD Mixer
+TYPE .
+PURPOSE Audio関連APIの初期化をします。
+
+PROTO
+open(frequency=Mixer::DEFAULT_FREQUENCY,format=Mixer::DEFAULT_FORMAT,cannels=Mixer::DEFAULT_CHANNELS,chunksize=4096)
+
+DESC
+Audio関連APIの初期化をします。他のAudio関連のメソッドを呼ぶ前にこれを
+呼ぶ必要があります。またこれを呼ぶ前に@[init](SDL::INIT_AUDIO)を呼ば
+なくてはなりません。
+CDと同じ44.1KHzのサンプリングレートを使いたいときは $[frequency] として
+44100を与えてください。44100では古いコンピュータではCPUパワーを使いすぎる
+のでゲームではたいてい22050を使います。
+定数 Mixer::DEFAULT_FREQUENCY はこの 22050 を表わします。
+$[chunksize] はそれぞれのチャンネルに割当てられるメモリの量(byte単位)です。
+遅いコンピュータ上で $[chunksize] を小さくすると、音が途切れる可能性が
+あります。また、$[chunksize] を大きくしすぎると、効果音の発生が遅延します。
+対象のコンピュータに合わせてちょうどよい値を設定してください。
+単に音楽を演奏したいだけなら、4096以上にしておけば良いでしょう。
+デフォルトでは8(定数Mixer::CHANNELS)チャンネルが確保されます。
+
+$[format] は以下のものが利用できます。
+:SDL::Mixer::AUDIO_U8
+    Unsigned 8-bit samples
+:SDL::Mixer::AUDIO_S8
+    Signed 8-bit samples
+:SDL::Mixer::AUDIO_U16LSB
+    Unsigned 16-bit samples, in little-endian byte order
+:SDL::Mixer::AUDIO_S16LSB
+    Signed 16-bit samples, in little-endian byte order
+:SDL::Mixer::AUDIO_U16MSB
+    Unsigned 16-bit samples, in big-endian byte order
+:SDL::Mixer::AUDIO_S16MSB
+    Signed 16-bit samples, in big-endian byte order
+:SDL::Mixer::AUDIO_U16
+    same as AUDIO_U16LSB (for backwards compatability probably)
+:SDL::Mixer::AUDIO_S16
+    same as AUDIO_S16LSB (for backwards compatability probably)
+:SDL::Mixer::AUDIO_U16SYS
+    Unsigned 16-bit samples, in system byte order
+:SDL::Mixer::AUDIO_S16SYS
+    Signed 16-bit samples, in system byte order
+
+SDL::DEFAULT_FORMAT は SDL::Mixer::AUDIO_S16SYS を指します。
+
+$[channels] は 1 でモノラル、2でステレオ出力を指定します。
+Mixer::DEFAULT_CHANNELS は 2 です。
+
+EXAMPLE
+# SDLを初期化、Audio機能を有効にする。
+SDL.init(SDL::INIT_AUDIO)
+# 44.1KHz, signed 16bit, system byte order, ステレオ出力、
+# 1024 byte チャンクサイズ
+SDL::Mixer.open(44100, SDL::Mixer::DEFAULT_FORMAT, 2, 1024)
+
+EXCEPTION *
+
+SEEALSO
+Mixer.spec
+Mixer.allocate_channels
+
+%%
+NAME spec
+MOD Mixer
+TYPE .
+PURPOSE 初期化したデバイスが実際に使っているフォーマットを得ます。
+RVAL [Integer, UINT, Integer]
+
+PROTO
+spec
+
+DESC
+初期化したデバイスが実際に使っているフォーマットを得ます。これは
+@[Mixer.open] に与えたパラメータと同じ場合もありますし違う場合もあります。
+返り値は [frequency, format, channels] という配列です。詳しい意味は
+@[Mixer.open] を参照してください。
+
+EXAMPLE
+frequency, format, channels = SDL::Mixer.spec
+format_str = case format
+when SDL::Mixer::AUDIO_U8 then "U8"
+when SDL::Mixer::AUDIO_S8 then "S8"
+when SDL::Mixer::AUDIO_U16LSB then "U16LSB"
+when SDL::Mixer::AUDIO_S16LSB then "S16LSB"
+when SDL::Mixer::AUDIO_U16MSB then "U16MSB"
+when SDL::Mixer::AUDIO_S16MSB then "S16MSB"
+end
+
+printf "frequency=%dHz format=%s channels=%d", frequency, format_str, channels
+
+EXCEPTION *
+
+SEEALSO
+Mixer.open
+
+%%
+NAME load
+MOD Mixer::Wave
+TYPE .
+PURPOSE ファイルから音声をロードする。
+RVAL Mixer::Wave
+
+PROTO
+load(filename)
+
+DESC
+$[filename] から音声をロードします。
+WAVE, AIFF, RIFF, OGG, VOC に対応しています。
+
+NOTES
+これを呼ぶ前に @[Mixer.open] を呼んでおく必要があります。
+
+OGGをロードした場合、ロード時にすべてのデータがメモリ上にRAWデータとして
+展開されるので、メモリ使用量に注意してください。
+
+EXCEPTION *
+
+%%
+NAME load_from_io
+MOD Mixer::Wave
+TYPE .
+PURPOSE IOオブジェクトから音声をロードする。
+RVAL Mixer::Wave
+
+PROTO
+load_from_io(io)
+loadFromIO(io)
+
+DESC
+$[io]から音声をロードします。$[io]にはRubyのIOオブジェクト
+(IO, StringIOなどread, tell, rewindを持つオブジェクト)を指定します。
+WAVE, AIFF, RIFF, OGG, VOC に対応しています。
+
+NOTES
+これを呼ぶ前に @[Mixer.open] を呼んでおく必要があります。
+
+OGGをロードした場合、ロード時にすべてのデータがメモリ上にRAWデータとして
+展開されるので、メモリ使用量に注意してください。
+
+EXCEPTION *
+
+%%
+NAME load
+MOD Mixer::Music
+TYPE .
+PURPOSE ファイルから音楽データをロードする。
+RVAL Mixer::Music
+nn
+PROTO
+load(filename)
+
+DESC
+$[filename] から音楽データをロードします。
+WAVE, MOD, MIDI, OGG, MP3 に対応しています。
+
+EXCEPTION *
+
+%%
+NAME load_from_string
+MOD Mixer::Music
+TYPE .
+PURPOSE 文字列から音楽データをロードする。
+RVAL Mixer::Music
+
+PROTO
+load_from_string(str)
+loadFromString(str)
+
+DESC
+$[str]から音楽データをロードします。$[str]には音楽データのバイナリ文字列
+を与えます。
+MOD, OGG に対応しています。
+
+NOTES
+内部的に $[str] をコピーして別に保持しているため、メモリの使用量に
+注意してください。
+
+EXCEPTION *
+
+%%
+NAME set_volume
+MOD Mixer::Wave
+TYPE #
+PURPOSE ボリュームを設定します。
+
+PROTO
+set_volume(volume)
+setVolume(volume)
+
+DESC
+ボリュームを $[volume] に設定します。ボリュームは 0 から 128 までの
+値を指定します。
+
+%%
+NAME allocate_channels
+MOD Mixer
+TYPE .
+PURPOSE チャンネル数を設定します。
+RVAL Integer
+
+PROTO
+allocate_channels(num_channels)
+allocateChannels(num_channels)
+
+DESC
+ミキシングするチャンネル数を設定します。この関数は何度呼んでもかまいません。
+音声再生中に呼んでもかまいません。もし新たなチャンネル数が以前のものより
+小さいならば、大きいほうのチャンネルは再生を停止し、リソースを解放し、
+ミキシングされなくなります。1秒間に1000回もチャンネル数を変更させるような
+ことはしないほうがよいでしょう。
+
+NOTES
+もし $[num_channels] に 0 を与えたならば、たとえ再生中でも
+すべてのチャンネルを解放してしまいます。
+
+RET
+確保したチャンネル数を返します。
+
+EXAMPLE
+# 16チャンネル確保
+SDL::Mixer.allocate_channels(16)
+
+%%
+NAME set_volume
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルのボリュームを変更します。
+RVAL Integer
+
+PROTO
+set_volume(channel, volume)
+setVolume(channel, volume)
+
+DESC
+$[channel] で指定したチャンネルのボリュームを $[volume] に設定します。
+$[channel] に -1 を指定した場合はすべてのチャンネルのボリュームを
+一度に変更します。このボリュームは最終ミキシング時に適用されるものであり、
+@[Wave#set_volume] で指定したものとは独立に作用します。つまり指定したチャンネル
+で再生する音をすべて半分の大きさにしたい場合は、 $[volume] として64を指定
+してください。すべてのチャンネルはデフォルトでは音量は 128、 つまり最大
+の値に設定されています。@[Mixer.allocate_channels] で新たに確保された
+チャンネルの音量は 128 に設定されます。そのため $[volume] に -1 を指定して
+すべてのチャンネルの音量を変更した後、新たなチャンネルを確保すると、
+そのチャンネルは音量変更の効果を受けません。
+
+RET
+現在のボリュームを返します。$[channel] として -1 を与えた場合は
+すべてのチャンネルの平均を返します。
+
+SEEALSO
+Mixer::Wave#set_volume
+Mixer.set_volume_music
+
+%%
+NAME play_channel
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルで音声を再生します。
+RVAL Integer
+
+PROTO
+play_channel(channel, wave, loops)
+playChannel(channel, wave, loops)
+
+DESC
+$[channel] で指定したチャンネルで $[wave] で指定した音声(@[Mixer::Wave]
+のインスタンス)を再生します。 $[channel] に -1 を指定した場合は使われていない
+チャンネルの中で一番若いものが使われます。$[loops] + 1 回繰り返し演奏されます。
+$[loops] に -1 を指定すると無限に繰り返します。
+
+RET
+どのチャンネルを使って再生したかを整数で返します。
+
+EXAMPLE
+# 使われていないチャンネルを使って sample を再生する
+# 繰り返しはしない
+SDL::Mixer.play_channel(-1, sample, 0)
+
+SEEALSO
+Mixer.play_channel_timed
+Mixer.fade_in_channel
+Mixer.halt
+Mixer.expire
+
+%%
+NAME play_channel_timed
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルで指定した時間だけ音声を再生します。
+RVAL Integer
+
+PROTO
+play_channel_timed(channel, wave, loops, ticks)
+playChannelTimed(channel, wave, loops, ticks)
+
+DESC
+$[wave] が十分長い、もしくは $[loops] が十分大きい場合に
+$[ticks] ミリ秒だけ再生します。
+他は @[Mixer.play_channel] と同じです。
+
+EXAMPLE
+# 使われていないチャンネルを使って sample を 1/2秒再生する
+SDL::Mixer.play_channel(-1, sample, -1, 500)
+
+SEEALSO
+Mixer.play_channel
+Mixer.fade_in_channel_timed
+Mixer.fade_out
+Mixer.halt
+Mixer.expire
+
+%%
+NAME fade_in_channel
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルで音声をフェイドインして再生します。
+RVAL Integer
+
+PROTO
+fade_in_channel(channel, wave, loops, ms)
+fadeInChannel(channel, wave, loops, ms)
+
+DESC
+指定したチャンネルで音声をフェイドインして再生します。
+$[ms] ミリ秒かけてフェイドイン再生する点以外は @[Mixer.play_channel] と
+同じです。
+
+EXAMPLE
+# 使われていないチャンネルを使って
+# sample を1秒かけてフェードインして3回再生する
+SDL::Mixer.fade_in_channel(-1, sample, 2, 1000)
+
+SEEALSO
+Mixer.play_channel
+Mixer.fade_in_channel_timed
+Mixer.fading
+Mixer.fade_out
+Mixer.halt
+Mixer.expire
+
+%%
+NAME fade_in_channel_timed
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルで音声をフェイドインして指定した時間だけ再生します。
+RVAL Integer
+
+PROTO
+fade_in_channel_timed(channel, wave, loops, ms, ticks)
+fadeInChannelTimed(channel, wave, loops, ms, ticks)
+
+DESC
+指定したチャンネルで音声をフェイドインして指定した時間だけ再生します。
+$[ms] ミリ秒かけてフェイドイン再生する点以外は @[Mixer.play_channel_timed] と
+同じです。
+
+SEEALSO
+Mixer.play_channel_timed
+Mixer.fade_in_channel
+Mixer.fading
+Mixer.fade_out
+Mixer.halt
+Mixer.expire
+
+%%
+NAME pause
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルの再生を一時停止します。
+
+PROTO
+pause(channel)
+
+DESC
+$[channel] で指定したチャンネルの再生を一時停止します。
+$[channel] に -1 を指定するとすべてのチャンネルを停止します。
+これで一時停止したチャンネルを @[Mixer.halt] で完全に停止してもかま
+いません。
+
+EXAMPLE
+# すべての音声再生を停止する
+SDL::Mixer.pause(-1)
+
+SEEALSO
+Mixer.resume
+Mixer.pause?
+Mixer.halt
+
+%%
+NAME resume
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルの再生を再開する。
+
+PROTO
+resume(channel)
+
+DESC
+@[Mixer.pause] で再生を停止していたチャンネルの再生を再開します。
+$[channel] で再開するチャンネルを指定します。-1 を与えると
+すべてのチャンネルで再開します。
+
+SEEALSO
+Mixer.pause
+Mixer.pause?
+
+%%
+NAME halt
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルの再生を止めます。
+
+PROTO
+halt(channel)
+
+DESC
+$[channel] で指定したチャンネルの再生を止めます。-1を与えた場合は
+すべてのチャンネルの再生を止めます。
+
+SEEALSO
+Mixer.expire
+Mixer.fade_out
+
+%%
+NAME expire
+MOD Mixer
+TYPE .
+PURPOSE 指定したミリ秒後に再生を停止します。
+RVAL Integer
+
+PROTO
+expire(channel, ticks)
+
+DESC
+$[ticks] ミリ秒後に、$[channel] で指定したチャンネルの再生を停止します。
+$[channel] に -1 を与えるとすべてのチャンネルを停止します
+
+RET
+停止するチャンネルの数を返します。
+
+EXAMPLE
+# 2秒後に全てのチャンネルの再生を停止する
+SDL::Mixer.expire(-1, 2000)
+
+SEEALSO
+Mixer.halt
+Mixer.fade_out
+
+%%
+NAME fade_out
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルをフェードアウトします。
+RVAL Integer
+
+PROTO
+fade_out(channel, ms)
+fadeOut(channel, ms)
+
+DESC
+この関数を呼んだ時点から $[ms] ミリ秒かけて $[channel] をフェードアウトします。
+フェードアウトが完了したらそのチャンネルは再生を停止します。
+また、$[channel] に-1を渡すとすべてのチャンネルをフェードアウトします。
+再生中のチャンネルしか影響を及ぼしませんが、一時停止中のものも
+影響を受けます。
+
+RET
+フェードアウトするチャンネルの数を返します。
+
+EXAMPLE
+# すべてのチャンネルを3秒でフェードアウトする
+printf "starting fade out of %d channels", SDL::Mixer.fade_out(-1, 3000)
+
+SEEALSO
+Mixer.fade_in_channel
+Mixer.fade_in_channel_timed
+Mixer.fading
+
+%%
+NAME play?
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルが再生中であるかどうかを得る。
+RVAL true/false
+
+PROTO
+play?(channel)
+
+DESC
+$[channel] で指定したチャンネルが再生中であるなら
+true を、なければ false を返す。
+
+SEEALSO
+Mixer.pause?
+Mixer.fading
+Mixer.play_channel
+Mixer.pause
+
+%%
+NAME pause?
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルが一時停止中かどうかを得る。
+RVAL true/false
+
+PROTO
+pause?(channel)
+
+DESC
+指定したチャンネルが一時停止中なら真を、なければ偽を返す。
+
+SEEALSO
+Mixer.play?
+Mixer.pause
+Mixer.resume
+
+%%
+NAME fading
+MOD Mixer
+TYPE .
+PURPOSE 指定したチャンネルがフェードイン/フェードアウトしているかどうかを得る
+RVAL Integer
+
+PROTO
+fading(which)
+
+DESC
+指定したチャンネルがフェードアウトしているなら SDL::Mixer::FADING_OUT を、
+フェードインしている最中なら SDL::Mixer::FADING_IN を、
+どちらでもなければ SDL::Mixer::NO_FADING を返す。
+
+SEEALSO
+Mixer.play?
+Mixer.pause?
+Mixer.fade_in_channel
+Mixer.fade_in_channel_timed
+Mixer.fade_out
+
+%%
+NAME play_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽を演奏します。
+
+PROTO
+play_music(music, loops)
+playMusic(music, loops)
+
+DESC
+$[music] で指定した音楽を
+$[loop] 回最初から最後まで演奏します。$[loops] に -1 を指定すると
+永遠に演奏を繰り返します。
+前に演奏していていた音楽は演奏を停止します。フェードアウトの最中にある
+場合はフェードアウトが終わってから次のを演奏します。
+
+EXCEPTION *
+
+SEEALSO
+Mixer.fade_in_music
+
+%%
+NAME fade_in_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽をフェードインして演奏します。
+
+PROTO
+fade_in_music(music, loops, ms)
+fadeInMusic(music, loops, ms)
+
+DESC
+$[music] で指定した音楽を $[ms] ミリ秒かけてフェードインして演奏を開始します。
+$[loops] 回繰り返し演奏します。-1 を与えると永遠に繰り返します。
+繰り返しの最初の1回目のみフェードインします。
+その時点で演奏していた曲は停止します。フェードアウトの最中にある
+場合はフェードアウトが終わってから次のを演奏します。
+
+EXCEPTION *
+
+SEEALSO
+Mixer.play_music
+
+%%
+NAME set_volume_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽演奏の音量を設定します。
+
+PROTO
+set_volume_music(volume)
+setVolumeMusic(volume)
+
+DESC
+音楽演奏の音量を $[volume] に設定します。0 が最小で 128 が最大です。
+フェードイン/アウト中にこのモジュール関数を呼んでも効果がありません。
+なぜならフェードイン/アウトを実現するためにこれを使っているからです。
+
+SEEALSO
+Mixer.fade_in_music
+Mixer.fade_out_music
+
+%%
+NAME pause_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽の演奏を一時停止します。
+
+PROTO
+pause_music
+pauseMusic
+
+DESC
+音楽の演奏を一時停止します。時停止中でも @[Mixer.halt_music] で
+演奏を止めることができます。
+
+SEEALSO
+Mixer.resume_music
+Mixer.pause_music?
+Mixer.halt_music
+
+%%
+NAME resume_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽の演奏を再開します。
+
+PROTO
+resume_music
+resumeMusic
+
+DESC
+@[Mixer.pause_music] で一時停止している音楽を再開します。
+
+SEEALSO
+Mixer.pause_music
+Mixer.pause_music?
+
+%%
+NAME rewind_music
+MOD Mixer
+TYPE .
+PURPOSE 演奏位置を最初に移動します。
+
+PROTO
+rewind_music
+rewindMusic
+
+DESC
+演奏位置を最初に移動します。音楽が演奏中、停止中、一時停止中、いずれの
+場合に呼んでも問題ありません。
+
+このモジュール関数は MOD, OGG, MP3, Native MIDI の場合のみに
+使えます。
+
+%%
+NAME halt_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽の演奏を止めます。
+
+PROTO
+halt_music
+haltMusic
+
+DESC
+音楽の演奏を止めます。
+フェードイン/アウト中でもすぐ停止します。
+
+SEEALSO
+Mixer.fade_out_music
+
+%%
+NAME fade_out_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽演奏をフェードアウトして停止します。
+
+PROTO
+fade_out_music(ms)
+fadeOutMusic(ms)
+
+DESC
+音楽演奏を $[ms] ミリ秒かけてフェードアウトして停止します。
+一時停止中の場合にも効果があります。
+
+%%
+NAME play_music?
+MOD Mixer
+TYPE .
+PURPOSE 音楽が演奏中かどうかを得ます。
+RVAL true/false
+
+PROTO
+play_music?
+playMusic?
+
+DESC
+音楽が演奏中なら真を、なければ偽を返します。
+
+SEEALSO
+Mixer.pause_music?
+Mixer.fading_music
+Mixer.play_music
+
+%%
+NAME pause_music?
+MOD Mixer
+TYPE .
+PURPOSE 音楽が一時停止中かどうかを得る。
+RVAL true/false
+
+PROTO
+pause_music?
+pauseMusic?
+
+DESC
+一時停止中なら true を、なければ false を返す。
+
+SEEALSO
+Mixer.play_music?
+Mixer.pause_music
+Mixer.resume_music
+
+%%
+NAME fading_music
+MOD Mixer
+TYPE .
+PURPOSE 音楽演奏のフェードイン/アウトの情報を得ます。
+RVAL Integer
+
+PROTO
+fading_music
+fadingMusic
+
+DESC
+音楽演奏がフェードアウトしているなら SDL::Mixer::FADING_OUT を、
+フェードインしている最中なら SDL::Mixer::FADING_IN を、
+どちらでもなければ SDL::Mixer::NO_FADING を返す。
+
+SEEALSO
+Mixer.fading
+Mixer.pause_music?
+Mixer.play_music?
+Mixer.fade_out_music
+
