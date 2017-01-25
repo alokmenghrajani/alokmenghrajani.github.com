@@ -1,0 +1,1681 @@
+          1
+B-A-
+DCC-
+D-C-
+DDC-
+
+
+          2
+B--A
+-CCD
+-C-D
+-CDD
+
+
+          3
+B--A
+DCC-
+D-C-
+DDC-
+
+
+          4
+B---
+DACC
+D-C-
+DDC-
+
+
+          5
+BDDD
+-A-D
+-CCC
+-C--
+
+
+          6
+B---
+DCCA
+D-C-
+DDC-
+
+
+          7
+BDDD
+-C-D
+ACCC
+----
+
+
+          8
+BDDD
+-CCD
+-C-A
+-C--
+
+
+          9
+BDDD
+-C-D
+-CCC
+A---
+
+
+         10
+B---
+-CCC
+-C-D
+ADDD
+
+
+         11
+BDDD
+-C-D
+-CCC
+-A--
+
+
+         12
+B---
+DCCC
+DC--
+DDA-
+
+
+         13
+-B-A
+-CCD
+-C-D
+-CDD
+
+
+         14
+-B--
+ADCC
+-DC-
+DDC-
+
+
+         15
+-B--
+AC--
+DCCC
+DDD-
+
+
+         16
+-BDD
+A-CD
+--CD
+-CC-
+
+
+         17
+-B-D
+ADDD
+-CCC
+-C--
+
+
+         18
+-BDD
+ACCD
+--CD
+--C-
+
+
+         19
+-B--
+A--C
+DCCC
+DDD-
+
+
+         20
+-BDD
+--AD
+CCCD
+--C-
+
+
+         21
+-B--
+DDA-
+DCCC
+DC--
+
+
+         22
+-B--
+C--A
+CCCD
+-DDD
+
+
+         23
+-B--
+--CA
+CCCD
+-DDD
+
+
+         24
+-BDD
+--CD
+A-CD
+-CC-
+
+
+         25
+-BDD
+-CCD
+A-CD
+--C-
+
+
+         26
+-B-D
+CDDD
+CCCA
+----
+
+
+         27
+-BDD
+-CD-
+-CDA
+-CC-
+
+
+         28
+-B--
+-CCC
+-C-D
+ADDD
+
+
+         29
+-BDD
+CCCD
+--CD
+--A-
+
+
+         30
+-B--
+DC--
+DCCC
+DDA-
+
+
+         31
+-B--
+DCCC
+DC--
+DDA-
+
+
+         32
+-BDD
+--CD
+CCCD
+--A-
+
+
+         33
+-BDD
+--CD
+CCCD
+---A
+
+
+         34
+A-B-
+DCC-
+D-C-
+DDC-
+
+
+         35
+--B-
+AC--
+DCCC
+DDD-
+
+
+         36
+--B-
+A--C
+DCCC
+DDD-
+
+
+         37
+--B-
+-ADD
+CCCD
+--CD
+
+
+         38
+DDB-
+DA--
+DCCC
+-C--
+
+
+         39
+D-B-
+DDDA
+CCC-
+--C-
+
+
+         40
+DDB-
+DCCA
+DC--
+-C--
+
+
+         41
+--B-
+C--A
+CCCD
+-DDD
+
+
+         42
+--B-
+CCDA
+-CD-
+-CDD
+
+
+         43
+--B-
+--CA
+CCCD
+-DDD
+
+
+         44
+DDB-
+DC-A
+DC--
+-CC-
+
+
+         45
+DDB-
+-DC-
+ADC-
+-CC-
+
+
+         46
+D-B-
+DDDC
+ACCC
+----
+
+
+         47
+DDB-
+DCC-
+DC-A
+-C--
+
+
+         48
+DDB-
+DC--
+DC-A
+-CC-
+
+
+         49
+DDB-
+DC--
+DCCC
+A---
+
+
+         50
+--B-
+CCCD
+--CD
+-ADD
+
+
+         51
+DDB-
+DC--
+DCCC
+-A--
+
+
+         52
+DDB-
+DCCC
+DC--
+-A--
+
+
+         53
+--B-
+--CD
+CCCD
+-ADD
+
+
+         54
+--B-
+CCC-
+D-C-
+DDDA
+
+
+         55
+A--B
+-CCD
+-C-D
+-CDD
+
+
+         56
+A--B
+DCC-
+D-C-
+DDC-
+
+
+         57
+-A-B
+-CCD
+-C-D
+-CDD
+
+
+         58
+---B
+ACCD
+-C-D
+-CDD
+
+
+         59
+DDDB
+D-A-
+CCC-
+--C-
+
+
+         60
+---B
+CCAD
+-C-D
+-CDD
+
+
+         61
+DDDB
+DCC-
+A-C-
+--C-
+
+
+         62
+DDDB
+D-C-
+CCCA
+----
+
+
+         63
+---B
+CCCD
+--CD
+-ADD
+
+
+         64
+DDDB
+D-C-
+CCC-
+--A-
+
+
+         65
+---B
+CCC-
+D-C-
+DDDA
+
+
+         66
+DDDB
+D-C-
+CCC-
+---A
+
+
+         67
+-A--
+BDCC
+-DC-
+DDC-
+
+
+         68
+-A--
+BC--
+DCCC
+DDD-
+
+
+         69
+-ADD
+B-CD
+--CD
+-CC-
+
+
+         70
+-A-D
+BDDD
+-CCC
+-C--
+
+
+         71
+-ADD
+BCCD
+--CD
+--C-
+
+
+         72
+-A--
+B--C
+DCCC
+DDD-
+
+
+         73
+--A-
+BC--
+DCCC
+DDD-
+
+
+         74
+--A-
+B--C
+DCCC
+DDD-
+
+
+         75
+---A
+BCCD
+-C-D
+-CDD
+
+
+         76
+-DDD
+BDCC
+-AC-
+--C-
+
+
+         77
+--C-
+B-C-
+DACC
+DDD-
+
+
+         78
+-DDD
+BCCD
+-C-A
+-C--
+
+
+         79
+--C-
+B-C-
+DCCA
+DDD-
+
+
+         80
+-DDD
+BCCD
+--CA
+--C-
+
+
+         81
+-C--
+BC--
+DCCA
+DDD-
+
+
+         82
+----
+BCCC
+-C-D
+ADDD
+
+
+         83
+--C-
+B-CD
+-CCD
+-ADD
+
+
+         84
+-CC-
+B-CD
+--CD
+-ADD
+
+
+         85
+----
+BCCC
+DDDC
+D-A-
+
+
+         86
+-CC-
+BDC-
+-DC-
+DDA-
+
+
+         87
+--C-
+B-C-
+DCC-
+DDDA
+
+
+         88
+A---
+DBCC
+D-C-
+DDC-
+
+
+         89
+ADDD
+-B-D
+-CCC
+-C--
+
+
+         90
+--A-
+-BDD
+CCCD
+--CD
+
+
+         91
+DDA-
+DB--
+DCCC
+-C--
+
+
+         92
+DDD-
+DBCC
+A-C-
+--C-
+
+
+         93
+--C-
+-BC-
+ADCC
+-DDD
+
+
+         94
+-ADD
+--BD
+CCCD
+--C-
+
+
+         95
+-A--
+DDB-
+DCCC
+DC--
+
+
+         96
+DDDA
+D-B-
+CCC-
+--C-
+
+
+         97
+---A
+CCBD
+-C-D
+-CDD
+
+
+         98
+-C--
+-CB-
+CCDA
+DDD-
+
+
+         99
+-DDD
+CCBD
+-C-A
+-C--
+
+
+        100
+A---
+DCCB
+D-C-
+DDC-
+
+
+        101
+-A--
+C--B
+CCCD
+-DDD
+
+
+        102
+-A--
+--CB
+CCCD
+-DDD
+
+
+        103
+D-A-
+DDDB
+CCC-
+--C-
+
+
+        104
+DDA-
+DCCB
+DC--
+-C--
+
+
+        105
+--A-
+C--B
+CCCD
+-DDD
+
+
+        106
+--A-
+CCDB
+-CD-
+-CDD
+
+
+        107
+--A-
+--CB
+CCCD
+-DDD
+
+
+        108
+DDA-
+DC-B
+DC--
+-CC-
+
+
+        109
+DDD-
+DCCB
+AC--
+-C--
+
+
+        110
+--C-
+--CB
+ACCD
+-DDD
+
+
+        111
+DDD-
+DCCB
+A-C-
+--C-
+
+
+        112
+-C--
+-C-B
+ACCD
+-DDD
+
+
+        113
+-C--
+-C-B
+CCAD
+-DDD
+
+
+        114
+DDD-
+CCDB
+-CA-
+-C--
+
+
+        115
+-C--
+-C-B
+-CCD
+ADDD
+
+
+        116
+-CC-
+-CDB
+-CD-
+-ADD
+
+
+        117
+----
+CCCB
+CDDD
+-A-D
+
+
+        118
+-CC-
+DC-B
+DC--
+DDA-
+
+
+        119
+-C--
+DC-B
+DCC-
+DDA-
+
+
+        120
+----
+CCCB
+D-C-
+DDDA
+
+
+        121
+ADDD
+-C-D
+BCCC
+----
+
+
+        122
+-ADD
+--CD
+B-CD
+-CC-
+
+
+        123
+-ADD
+-CCD
+B-CD
+--C-
+
+
+        124
+DDA-
+-DC-
+BDC-
+-CC-
+
+
+        125
+D-A-
+DDDC
+BCCC
+----
+
+
+        126
+DDDA
+DCC-
+B-C-
+--C-
+
+
+        127
+DDD-
+DACC
+B-C-
+--C-
+
+
+        128
+--C-
+-AC-
+BDCC
+-DDD
+
+
+        129
+DDD-
+DCCA
+BC--
+-C--
+
+
+        130
+--C-
+--CA
+BCCD
+-DDD
+
+
+        131
+DDD-
+DCCA
+B-C-
+--C-
+
+
+        132
+-C--
+-C-A
+BCCD
+-DDD
+
+
+        133
+DDD-
+DCCC
+B--C
+-A--
+
+
+        134
+-C--
+-CCC
+BDDD
+-A-D
+
+
+        135
+--C-
+--CD
+BCCD
+-ADD
+
+
+        136
+DDD-
+DCCC
+BC--
+-A--
+
+
+        137
+-CC-
+--CD
+B-CD
+-ADD
+
+
+        138
+DDC-
+-DC-
+BDCC
+-A--
+
+
+        139
+DDD-
+DCCC
+B--C
+--A-
+
+
+        140
+DDD-
+DCCC
+BC--
+--A-
+
+
+        141
+-CDD
+-C-D
+BCCD
+---A
+
+
+        142
+-DDD
+ADCC
+-BC-
+--C-
+
+
+        143
+--C-
+A-C-
+DBCC
+DDD-
+
+
+        144
+-C--
+-CCC
+-B-D
+ADDD
+
+
+        145
+DDC-
+D-C-
+DBCC
+A---
+
+
+        146
+-C--
+DCCC
+DB--
+DDA-
+
+
+        147
+--CD
+CCCD
+-BDD
+--A-
+
+
+        148
+-C--
+-C-A
+CCBD
+-DDD
+
+
+        149
+DDD-
+CCDA
+-CB-
+-C--
+
+
+        150
+DC--
+DCCC
+DDB-
+-A--
+
+
+        151
+--C-
+CCCD
+--BD
+-ADD
+
+
+        152
+-CDD
+-C-D
+CCBD
+---A
+
+
+        153
+--C-
+CCC-
+D-B-
+DDDA
+
+
+        154
+ADDD
+-CCD
+-C-B
+-C--
+
+
+        155
+-A-D
+CDDD
+CCCB
+----
+
+
+        156
+-ADD
+-CD-
+-CDB
+-CC-
+
+
+        157
+DDA-
+DCC-
+DC-B
+-C--
+
+
+        158
+DDA-
+DC--
+DC-B
+-CC-
+
+
+        159
+DDDA
+D-C-
+CCCB
+----
+
+
+        160
+-DDD
+ACCD
+-C-B
+-C--
+
+
+        161
+--C-
+A-C-
+DCCB
+DDD-
+
+
+        162
+-DDD
+ACCD
+--CB
+--C-
+
+
+        163
+-C--
+AC--
+DCCB
+DDD-
+
+
+        164
+-C--
+-CA-
+CCDB
+DDD-
+
+
+        165
+-DDD
+CCAD
+-C-B
+-C--
+
+
+        166
+DDC-
+D-C-
+DCCB
+A---
+
+
+        167
+-DDD
+CCCD
+--CB
+-A--
+
+
+        168
+-DDD
+CCCD
+C--B
+-A--
+
+
+        169
+-DDD
+CCCD
+--CB
+--A-
+
+
+        170
+-CC-
+DC--
+DC-B
+DDA-
+
+
+        171
+-CDD
+-CD-
+CCDB
+--A-
+
+
+        172
+-DDD
+CCCD
+C--B
+--A-
+
+
+        173
+--C-
+CCC-
+DDDB
+D-A-
+
+
+        174
+-C--
+DC--
+DCCB
+DDA-
+
+
+        175
+ADDD
+-C-D
+-CCC
+B---
+
+
+        176
+A---
+-CCC
+-C-D
+BDDD
+
+
+        177
+-A--
+-CCC
+-C-D
+BDDD
+
+
+        178
+DDA-
+DC--
+DCCC
+B---
+
+
+        179
+----
+ACCC
+-C-D
+BDDD
+
+
+        180
+-C--
+-C-A
+-CCD
+BDDD
+
+
+        181
+-C--
+-CCC
+-A-D
+BDDD
+
+
+        182
+DDC-
+D-C-
+DACC
+B---
+
+
+        183
+DDC-
+D-C-
+DCCA
+B---
+
+
+        184
+DDC-
+D-C-
+DCC-
+B-A-
+
+
+        185
+DDC-
+D-C-
+DCC-
+B--A
+
+
+        186
+-CDD
+-C-D
+-CCD
+B--A
+
+
+        187
+ADDD
+-C-D
+-CCC
+-B--
+
+
+        188
+--A-
+CCCD
+--CD
+-BDD
+
+
+        189
+DDA-
+DC--
+DCCC
+-B--
+
+
+        190
+DDA-
+DCCC
+DC--
+-B--
+
+
+        191
+--A-
+--CD
+CCCD
+-BDD
+
+
+        192
+---A
+CCCD
+--CD
+-BDD
+
+
+        193
+--C-
+A-CD
+-CCD
+-BDD
+
+
+        194
+-CC-
+A-CD
+--CD
+-BDD
+
+
+        195
+-CC-
+-CDA
+-CD-
+-BDD
+
+
+        196
+----
+CCCA
+CDDD
+-B-D
+
+
+        197
+DDD-
+DCCC
+A--C
+-B--
+
+
+        198
+-C--
+-CCC
+ADDD
+-B-D
+
+
+        199
+--C-
+--CD
+ACCD
+-BDD
+
+
+        200
+DDD-
+DCCC
+AC--
+-B--
+
+
+        201
+-CC-
+--CD
+A-CD
+-BDD
+
+
+        202
+DDC-
+-DC-
+ADCC
+-B--
+
+
+        203
+DC--
+DCCC
+DDA-
+-B--
+
+
+        204
+--C-
+CCCD
+--AD
+-BDD
+
+
+        205
+-DDD
+CCCD
+--CA
+-B--
+
+
+        206
+-DDD
+CCCD
+C--A
+-B--
+
+
+        207
+-CDD
+-C-D
+-CCD
+-B-A
+
+
+        208
+A---
+DCCC
+DC--
+DDB-
+
+
+        209
+-ADD
+CCCD
+--CD
+--B-
+
+
+        210
+-A--
+DC--
+DCCC
+DDB-
+
+
+        211
+-A--
+DCCC
+DC--
+DDB-
+
+
+        212
+-ADD
+--CD
+CCCD
+--B-
+
+
+        213
+DDDA
+D-C-
+CCC-
+--B-
+
+
+        214
+----
+ACCC
+DDDC
+D-B-
+
+
+        215
+-CC-
+ADC-
+-DC-
+DDB-
+
+
+        216
+-CC-
+DC-A
+DC--
+DDB-
+
+
+        217
+-C--
+DC-A
+DCC-
+DDB-
+
+
+        218
+DDD-
+DCCC
+A--C
+--B-
+
+
+        219
+DDD-
+DCCC
+AC--
+--B-
+
+
+        220
+-C--
+DCCC
+DA--
+DDB-
+
+
+        221
+--CD
+CCCD
+-ADD
+--B-
+
+
+        222
+-DDD
+CCCD
+--CA
+--B-
+
+
+        223
+-CC-
+DC--
+DC-A
+DDB-
+
+
+        224
+-CDD
+-CD-
+CCDA
+--B-
+
+
+        225
+-DDD
+CCCD
+C--A
+--B-
+
+
+        226
+--C-
+CCC-
+DDDA
+D-B-
+
+
+        227
+-C--
+DC--
+DCCA
+DDB-
+
+
+        228
+DDC-
+D-C-
+DCC-
+A-B-
+
+
+        229
+-ADD
+--CD
+CCCD
+---B
+
+
+        230
+--A-
+CCC-
+D-C-
+DDDB
+
+
+        231
+---A
+CCC-
+D-C-
+DDDB
+
+
+        232
+DDDA
+D-C-
+CCC-
+---B
+
+
+        233
+--C-
+A-C-
+DCC-
+DDDB
+
+
+        234
+----
+CCCA
+D-C-
+DDDB
+
+
+        235
+-CDD
+-C-D
+ACCD
+---B
+
+
+        236
+-CDD
+-C-D
+CCAD
+---B
+
+
+        237
+--C-
+CCC-
+D-A-
+DDDB
+
+
+        238
+DDC-
+D-C-
+DCC-
+A--B
+
+
+        239
+-CDD
+-C-D
+-CCD
+A--B
+
+
+        240
+-CDD
+-C-D
+-CCD
+-A-B
+
+
+

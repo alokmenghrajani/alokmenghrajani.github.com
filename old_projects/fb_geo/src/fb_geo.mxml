@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" applicationComplete="app_init()" xmlns:ns="fb_geo.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import fb_geo.Destination;
+			import fb_geo.FuelIndicator;
+			import fb_geo.Helicopter;
+			import fb_geo.Map;
+			
+			import flash.utils.flash_proxy;
+			
+			import flashx.textLayout.formats.Float;
+			
+			// todo:
+			//       - better next destination selection (don't select something too close)
+			//       - show country name when flying over it ?
+			// 		 - sound
+			//		 - fix edge case of helicopter-destination distance
+			//       - box cropping ?
+			//         [ Instructions ]
+			//         [ Start over after game over ]
+			//         [ ] Facebook connect			
+			//       - Different game levels
+			//       - clean up refresh() and game logic code
+			
+			protected var game_mode:int;
+			protected var game_level:int;
+			protected var score:int;
+			
+			protected var helicopter:Helicopter;			
+			protected var destination:Destination;
+			protected var map:Map;
+			protected var fuel:FuelIndicator;
+			
+			public function app_init():void {
+				// Game modes:
+				// -1 => transition
+				// 0 => splash screen
+				// 1 => playing
+				// 2 => game over
+				// 3 => show instructions
+				this.game_mode = -1;
+				
+				// Setup Map, Helicopter and Destination
+				this.map = new Map(1, 800, 600, Bitmap(map_image.content).bitmapData);
+				box.addChild(this.map.getSprite());
+	
+				this.helicopter = new Helicopter(map_image.width, map_image.height, helicopter_sprite, shadow_sprite);
+				
+				this.destination = new Destination(destination_sprite, destination_label);
+				
+				this.fuel = new FuelIndicator(fuel_sprite);
+
+				shadow_sprite.setBodyColor(0x000000);
+				shadow_sprite.setRotarColor(0x000000);
+								
+				// Setup event handler
+				this.stage.addEventListener(KeyboardEvent.KEY_DOWN, this.handleKeyDown);
+				
+				// Setup game event loop
+				var t:Timer = new Timer(10, 0);
+				t.addEventListener(TimerEvent.TIMER, this.timer);
+				t.start();
+				
+				// Setup button handlers
+				// TODO: easier way to do this ?
+				button_easy.addEventListener(MouseEvent.CLICK, this.handleButton);
+				button_medium.addEventListener(MouseEvent.CLICK, this.handleButton);
+				button_hard.addEventListener(MouseEvent.CLICK, this.handleButton);
+				
+				end_screen_done.addEventListener(MouseEvent.CLICK, this.handleButton2);
+				
+				button_instructions.addEventListener(MouseEvent.CLICK, this.handleButton3);
+				instructions_screen_done.addEventListener(MouseEvent.CLICK, this.handleButton2);
+				
+				handleStateChange(0);
+			}
+
+			
+			public function refresh():void {
+				this.map.refresh();
+				this.helicopter.refresh(this.map);
+				
+				this.score += this.destination.refresh(this.map, this.helicopter);
+				score_label.text = "Score: " + this.score;
+				score_label.left = 790 - score_label.width;
+				this.fuel.refresh();
+				
+				if (this.fuel.getLevel() == 0) {
+					// The game has ended
+					end_screen_score.text = "Your score: " + this.score;
+					this.handleStateChange(2);
+				}
+			}
+			
+			public function timer(Event:TimerEvent):void {
+				if (this.game_mode != 1) {
+					return;
+				}
+				
+				this.helicopter.move();
+
+				// Update console
+				console.text = "x = " + int(this.helicopter.getX());
+				console.text += ", y = " + int(this.helicopter.getY());
+				console.text += ", screen_x = " + this.map.globalToScreenX(this.helicopter.getX());
+				console.text += ", screen_y = " + this.map.globalToScreenY(this.helicopter.getY());
+				console.text += ", scroll_x = " + this.map.getScrollX();
+				console.text += ", scroll_y = " + this.map.getScrollY();
+				console.text += ", quad_x = " + Math.floor(this.helicopter.getX() / this.map.getWidth());
+				console.text += ", quad_y = " + Math.floor(this.helicopter.getY() / this.map.getHeight());
+				
+				// Scroll the map
+				this.map.scroll(this.helicopter);
+						
+				this.refresh();
+			}
+			
+			public function handleKeyDown(event:KeyboardEvent):void {
+				if (this.game_mode != 1) {
+					return;
+				}
+
+				switch (event.keyCode) {
+					case Keyboard.RIGHT:
+						this.helicopter.rotate(10);
+						break;
+					case Keyboard.LEFT:
+						this.helicopter.rotate(-10);
+						break;
+					case Keyboard.SPACE:
+						this.helicopter.toggleSpeed();
+						break
+				}
+			}
+			
+			public function handleButton(event:MouseEvent):void {
+				handleStateChange(1);
+			}
+			
+			public function handleButton2(event:MouseEvent):void {
+				handleStateChange(0);
+			}
+			
+			public function handleButton3(event:MouseEvent):void {
+				handleStateChange(3);
+			}
+			
+			public function handleStateChange(newState:int):void {
+				var oldState:int = this.game_mode;
+				
+				// prevent race condition with timer
+				this.game_mode = -1;
+				
+				// Hide everything
+				intro_screen.visible = false;
+				end_screen.visible = false;
+				instructions_screen.visible = false;
+				
+				shadow_sprite.visible = false;
+				helicopter_sprite.visible = false;
+				destination_label.visible = false;
+				score_label.visible = false;
+				fuel_sprite.visible = false;
+				
+				switch (newState) {
+					case 0:
+						intro_screen.visible = true;
+						if (oldState != 3) {
+							// If we are coming from the instructions screen, we don't want to reset the position
+							this.helicopter.reset();
+						
+							this.map.center(this.helicopter);
+							this.map.refresh();
+						}
+
+						break;
+					case 1:
+						shadow_sprite.visible = true;
+						helicopter_sprite.visible = true;
+						destination_label.visible = true;
+						score_label.visible = true;
+						fuel_sprite.visible = true;
+						
+						this.score = 0;
+						
+						// start a new game
+						this.fuel.reset();
+						this.destination.reset();
+						
+						// Draw everything
+						this.refresh();
+
+						break;
+					case 2:
+						end_screen.visible = true;
+						break;
+					case 3:
+						instructions_screen.visible = true;
+						break;
+				}
+				
+				this.game_mode = newState;
+			}
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>	
+	<mx:Image id="map_image" source="@Embed(source='map.gif')" visible="false"/>
+
+	<mx:UIComponent id="box"/>
+	<mx:Image id="destination_sprite" source="@Embed(source='target.gif')" height="15" width="15"/>
+	<mx:Box borderStyle="solid" width="800" height="600" verticalAlign="middle" horizontalAlign="center">
+		<mx:VBox id="intro_screen" horizontalAlign="center" borderStyle="solid" backgroundColor="0xa0a0ff" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<s:Label text="Ready to play?"/>
+			<s:Button id="button_easy" label="Easy"/>
+			<s:Button id="button_medium" label="Medium"/>
+			<s:Button id="button_hard" label="Hard"/>
+			<mx:Spacer height="10"/>
+			<s:Button id="button_instructions" label="Instructions"/>
+			<mx:Spacer height="10"/>
+			<s:CheckBox label="Sound"/>
+		</mx:VBox>
+		<mx:VBox visible="false" id="end_screen" horizontalAlign="center" borderStyle="solid" backgroundColor="0xa0a0ff" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<s:Label text="Game Over!"/>
+			<s:Label id="end_screen_score"/>
+			<s:Button id="end_screen_done" label="Play again"/>
+		</mx:VBox>
+		<mx:VBox visible="false" id="instructions_screen" horizontalAlign="center" borderStyle="solid" backgroundColor="0xa0a0ff" paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10">
+			<s:Label text="Instructions"/>
+			<s:Label text="Left arrow: turn left"/>
+			<s:Label text="Right arrow: turn right"/>			
+			<s:Label text="Space: stop/go"/>
+			<s:Label text="Goal: fly the helicopter to the city indicated in the bottom left"/>
+			<s:Label text="Bottom right is your fuel indicator"/>
+			<s:Button id="instructions_screen_done" label="Ok"/>
+		</mx:VBox>
+	</mx:Box>
+
+	<ns:HelicopterSprite id="shadow_sprite" width="25" height="25" visible="false"/>	
+	<ns:HelicopterSprite id="helicopter_sprite" width="100" height="100" visible="false"/>
+
+	<s:Label id="destination_label" left="10" top="610" visible="false"/>
+	<s:Label id="score_label" left="700" top="610" text="Score: 0" visible="false"/>
+	
+	<s:TextArea id="console" left="810" top="10" width="200"/>
+
+	<mx:UIComponent id="fuel_sprite" width="50" height="20" left="740" top="570" visible="false"/>
+	
+</s:Application>
