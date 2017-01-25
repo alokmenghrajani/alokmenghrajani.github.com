@@ -1,0 +1,159 @@
+<?php 
+  $title = "Programmation 3";
+  $meta_keywords = "";
+  $meta_description="Complement du cours programmation 3.";
+
+  include $_SERVER['DOCUMENT_ROOT']."/design/header.html"
+?>
+
+<div class="path">
+  <a href="../../index.html">teaching / slides</a> &gt; <a href="../index.html">programmation 3</a> &gt; <a href="index.html">s&eacute;rie 3</a> 
+</div>
+
+<div class="main">
+  <div class="content">
+
+
+<h1>S&eacute;rie 3: Bases</h1>
+
+<h2><a name="exo2">Exercice 2</a></h2>
+
+<table cellpadding=1 cellspacing=0 align=center>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+<tr align=center><td width=1 bgcolor=navy></td><td>Entrée</td><td width=50></td><td>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>-2.5</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>-1</td><td></td><td>x appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>0.5</td><td></td><td>x appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>1</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>1.5</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+</table>
+
+<h2><a name="exo3">Exercice 3</a></h2>
+
+<table cellspacing=0 cellpadding=1 align=center>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+<tr align=center><td width=1 bgcolor=navy></td><td>Entr&eacute;e</td><td width=50></td><td>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>-20</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>-10</td><td></td><td>x appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>-2</td><td></td><td>x appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>-1</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>0</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>1</td><td></td><td>x n'appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>1.5</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>2</td><td></td><td>x n'appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>3</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>4</td><td></td><td>x n'appartient pas à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>-5</td><td></td><td>x n'appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>0.2</td><td></td><td>x n'appartient à I</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>2.6</td><td></td><td>x n'appartient à I</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+</table>
+
+<h2><a name="exo5">Exercice 5</a></h2>
+<p>Dans le premier cas:</p>
+<p>a=6, b=-2, c=8, d=0</p>
+<p>Dans le deuxième cas:</p>
+<p>a=6.0, b=-2.0, c=8.0, d=0.5</p>
+
+<h2><a name="exo6">Exercice 6</a></h2>
+<table cellspacing=0 cellpadding=1 align=center>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr align=center><td width=1 bgcolor=navy></td><td colspan=5>Entrée</td><td width=50></td><td>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>H0</td><td width=5></td><td>eps</td><td width=5></td><td>nbr</td><td></td><td>(au dernier rebond)</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>10</td><td></td><td>0.9</td><td></td><td>20</td><td></td><td>0.147809</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>0</td><td></td><td>0.5</td><td></td><td>1</td><td></td><td>0.000000</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>15</td><td></td><td>0.5</td><td></td><td>0</td><td></td><td>15.000000</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>10</td><td></td><td>0</td><td></td><td>20</td><td></td><td>0.000000</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>9</td><td></td><td>0.999</td><td></td><td>9</td><td></td><td>8.8393370</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr align=center><td></td><td colspan=7>Essayez avec H0&lt;0, eps&lt;0, eps&ge;1 ou nbr&lt;0</td><td></td></tr>
+</table>
+
+<h2><a name="exo7">Exercice 7</a></h2>
+<table cellspacing=0 cellpadding=1 align=center>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr align=center><td width=1 bgcolor=navy></td><td colspan=5>Entrée</td><td width=50></td><td>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>H0</td><td width=5></td><td>eps</td><td width=5></td><td>h_fin</td><td></td><td>(nombre de rebonds)</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>10</td><td></td><td>0.9</td><td></td><td>0.5</td><td></td><td>15</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>0</td><td></td><td>0.5</td><td></td><td>0</td><td></td><td>1</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>15</td><td></td><td>0.999</td><td></td><td>0.001</td><td></td><td>4806 (*)</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>10</td><td></td><td>0</td><td></td><td>5</td><td></td><td>1</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>20</td><td></td><td>0.6</td><td></td><td>5</td><td></td><td>2</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr align=center><td></td><td colspan=7>Essayez avec H0&lt;0, eps&lt;0, eps&ge;1, h_fin&le;0 ou h_fin&ge;H0</td><td></td></tr>
+</table>
+<p>* il est possible que cette valeur soit diff&eacute;rente en fonction de la machine.</p>
+
+<h2><a name="exo8">Exercice 8</a></h2>
+<table cellspacing=0 cellpadding=1 align=center>
+
+<tr height=1><td colspan=11 bgcolor=navy></td></tr>
+<tr align=center>
+<td width=1 bgcolor=navy></td><td colspan=5>Entr&eacute;e</td><td width=50></td><td colspan=3>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>S0</td><td width=5></td><td>r</td><td width=5></td><td>ir</td><td></td><td>Somme des inter&ecirc;ts</td><td width=5></td><td>Dur&eacute;e du remboursement</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=11 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>30000</td><td></td><td>1300</td><td></td><td>0.01</td><td></td><td>3612.00</td><td></td><td>24</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>5000</td><td></td><td>10000</td><td></td><td>0.01</td><td></td><td>50.00</td><td></td><td>1</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=11 bgcolor=navy></td></tr>
+<tr align=center><td></td><td colspan=9>Essayez avec S0&lt;0, r&le;0, ir&lt;0 ou ir&ge;1</td><td></td></tr>
+</table>
+
+<h2><a name="exo9">Exercice 9</a></h2>
+
+<table cellpadding=1 cellspacing=0 align=center>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+<tr align=center><td width=1 bgcolor=navy></td><td>Entr&eacute;e</td><td width=50></td><td>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>2</td><td></td><td>premier</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>16</td><td></td><td>divisible par 2</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>17</td><td></td><td>premier</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>91</td><td></td><td>divisible par 7</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>589</td><td></td><td>divisible par 19</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>1001</td><td></td><td>divisible par 7</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>1009</td><td></td><td>premier</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>1299827</td><td></td><td>premier</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>2146654199</td><td></td><td>divisible par 46327</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=5 bgcolor=navy></td></tr>
+<tr align=center><td></td><td colspan=3>Essayez avec N&le;1</td><td></td></tr>
+</table>
+<p>Note: L'algorithm le plus rapid pour factorizer les nombres premiers s'appelle 'General Number Field Sieve'. Avec cet algorithm, il est actuellement possible de factorizer en quelques mois des nombres long de 512 chiffres.</p>
+
+<h2><a name="exo10">Exercice 10</a></h2>
+
+<table cellspacing=0 cellpadding=1 align=center>
+<tr height=1><td colspan=11 bgcolor=navy></td></tr>
+<tr align=center><td width=1 bgcolor=navy></td><td>Entr&eacute;e</td><td width=50></td><td colspan=7>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td></td><td></td><td><img src="formule01.gif"></td><td width=5></td><td><img src="formule02.gif"></td><td width=5></td><td><img src="formule03.gif"></td><td width=5></td><td><img src="formule04.gif"></td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=11 bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>-1</td><td></td><td>-1.58198</td><td></td><td>indéfinie</td><td></td><td>-0.666667</td><td></td><td>ind&eacute;finie</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>0</td><td></td><td>ind&eacute;finie</td><td></td><td>ind&eacute;finie</td><td></td><td>-0.000000</td><td></td><td>ind&eacute;finie</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>1</td><td></td><td>-0.581977</td><td></td><td>indéfinie</td><td></td><td>indéfinie</td><td></td><td>ind&eacute;finie</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>2</td><td></td><td>-0.313035</td><td></td><td>10.2434</td><td></td><td>indéfinie</td><td></td><td>0.711989</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>3</td><td></td><td>-0.157187</td><td></td><td>8.95901</td><td></td><td>indéfinie</td><td></td><td>ind&eacute;finie</td><td bgcolor=navy></td></tr>
+<tr align=center><td bgcolor=navy></td><td>8</td><td></td><td>-0.0026846</td><td></td><td>22.1371</td><td></td><td>1.33333</td><td></td><td>1.10678</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=11 bgcolor=navy></td></tr>
+</table>
+
+<h2><a name="exo11">Exercice 11</a></h2>
+<table cellspacing=0 cellpadding=1 align=center>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr align=center><td width=1 bgcolor=navy></td><td colspan=5>Entr&eacute;e</td><td width=50></td><td>Sortie</td><td width=1 bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td>a2</td><td width=5></td><td>a1</td><td width=5></td><td>a0</td><td></td><td></td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>0</td><td></td><td align=right>0</td><td></td><td align=right>8</td><td></td><td>une seule racine: -2.00000</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>3</td><td></td><td align=right>3</td><td></td><td align=right>12</td><td></td><td>une seule racine: -3.22398</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>1</td><td></td><td align=right>-54</td><td></td><td align=right>4</td><td></td><td>trois racines: 6.825569, -7.899753, 0.074184</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>0</td><td></td><td align=right>-1</td><td></td><td align=right>0</td><td></td><td>trois racines: 1, -1, 0</td><td bgcolor=navy></td></tr>
+<tr><td bgcolor=navy></td><td align=right>0</td><td></td><td align=right>-3</td><td></td><td align=right>2</td><td></td><td>deux racines, l'une simple: -2, l'autre double: 1</td><td bgcolor=navy></td></tr>
+<tr height=1><td colspan=9 bgcolor=navy></td></tr>
+</table>
+
+
+  </div>
+
+<?php include $_SERVER['DOCUMENT_ROOT']."/design/footer.html" ?>

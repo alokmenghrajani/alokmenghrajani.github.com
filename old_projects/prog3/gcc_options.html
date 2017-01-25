@@ -1,0 +1,26 @@
+<html>
+<body>
+<h1>Options de compilation pour GCC</h1>
+
+<p>Voici quelques options de compilation pour gcc que je vous conseil d'utiliser.</p>
+
+<table>
+<tr valign=top><td>-Wall, -W</td><td>-Wall va provoquer l'affichage de warnings supplémentaire. Les warnings sont une façon pour le compilateur de vous indiquer qu'il y a peut-être une erreur (mais le code compile quand même). Quelques warning ne sont pas inclues dans -Wall dont -W.</td></tr>
+<tr valign=top><td>-Werror</td><td>Il faut toujours essayer d'éliminer les warnings, même ceux qui sont un peu ambêtant (par ex: -Wall va vous afficher un message si vous déclarez une variable et que vous ne l'utilisez jamais). -Werror va dire au compilateur de traiter les warnings comme des erreurs (et donc de refuser de compiler s'il y a le moindre warning).</td></tr>
+
+<tr valign=top><td>-Wuninitialized, -O</td><td>-Wuninitialized est une option inclue dans -Wall (donc pas besoin de l'activer si vous utilisez -Wall) mais qui a aussi besoin de -O. -Wuninitialized permet de générer des avertissements quand vous utilisez une variable avant de lui avoir donné une valeur. Malheureusement, il arrive que gcc se trompe (lire la man page pour mieux comprendre pourquoi et un example de cas), et donc si vous utilisez à la fois -O et -Werror vous pouvez vous retrouver avec des problèmes de compilation.
+</td></tr>
+<tr valign=top><td>-pedantic, -ansi</td><td>Ces options activent la norme C89.</td></tr>
+<tr valign=top><td>--std=c99</td><td>Cette option active la norme C99.</td></tr>
+
+</table>
+<br>
+
+<i><a href="index.html">retour à la page complément</a></i>
+
+<br><br>
+<!--#config timefmt="%d/%m/%Y" -->
+<table width=100% style="font-size: small; border-top: thin solid navy"><tr><td>Alok Menghrajani &lt;<a href="mailto: alok.menghrajani@epfl.ch">alok.menghrajani@epfl.ch</a>&gt;</td><td align=right><i><!--#flastmod file="gcc_options.html" --></i></td></tr></table>
+
+</body>
+</html>

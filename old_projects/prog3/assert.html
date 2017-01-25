@@ -1,0 +1,84 @@
+<?php 
+  $title = "Programmation 3";
+  $meta_keywords = "";
+  $meta_description="Complement du cours programmation 3.";
+
+  include $_SERVER['DOCUMENT_ROOT']."/design/header.html"
+?>
+
+<div class="path">
+  <a href="../index.html">teaching / slides</a> &gt; <a href="index.html">programmation 3</a> &gt; <a href="assert.html">utilisation d'assertion</a>
+</div>
+
+<div class="main">
+  <div class="content">
+
+<h1>utilisation d'assertions</h1>
+
+<p>L'utilisation d'assertion losque vous programmez est très important. Cela permet de réduire le risque
+d'erreur et facilite le debugage.</p>
+
+<p>Une assertion est un petit morceau de code supplémentaire qui va vérifier qu'une condition donnée est vraie. Si la condition n'est pas vraie, l'application va afficher un message d'erreur et quitter. En règle générale, le fait qu'une assertion échoue veut dire que quelque chose que le programmeur n'avait pas prévu s'est produit.</p>
+
+<p>Voici un example simple:</p>
+
+<code>
+#<B><FONT COLOR="#5F9EA0">include</FONT></B> <B><FONT COLOR="#BC8F8F">&lt;stdio.h&gt;</FONT></B><br/>
+<br/>
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#228B22">int</FONT></B> i;<br/>
+&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Entrez un nombre: &quot;</FONT></B>);<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#A020F0">while</FONT></B> (scanf(<B><FONT COLOR="#BC8F8F">&quot;%d&quot;</FONT></B>, &amp;i)!=1) {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Un nombre SVP: &quot;</FONT></B>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<B><FONT COLOR="#A020F0">while</FONT></B>(getc(stdin)!=<B><FONT COLOR="#BC8F8F">'\n'</FONT></B>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#A020F0">if</FONT></B> (i%3==0) {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Le nombre est divisible par 3.\n&quot;</FONT></B>);<br/>
+&nbsp;&nbsp;} <B><FONT COLOR="#A020F0">else</FONT></B> <B><FONT COLOR="#A020F0">if</FONT></B>(i%3==1) {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Le nombre divisé par trois donne un reste de 1.\n&quot;</FONT></B>);<br/>
+&nbsp;&nbsp;} <B><FONT COLOR="#A020F0">else</FONT></B> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Je suis sûr que le nombre divisé par trois donne un reste de 2.\n&quot;</FONT></B>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Vérification: %d \% 3 = %d\n&quot;</FONT></B>, i, i%3);<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#A020F0">return</FONT></B> 0;<br/>
+}
+</code>
+
+<p>Ce petit programme a l'air correct, n'est-ce pas ? Malheureusement ce n'est pas le cas. Si le nombre entré en parametre est négatif, le reste de la division sera aussi négatif.</p>
+
+<p>Voici donc une version du code renforcé par une assertion:</p>
+
+<code>
+<FONT STYLE="background-color: yellow">
+#<B><FONT COLOR="#5F9EA0">define</FONT></B> <B><FONT COLOR="#0000FF">ASSERT</FONT></B>(ex) if (!(ex)) {printf(<B><FONT COLOR="#BC8F8F">&quot;Assert (%s) failed line %d,
+file %s\n&quot;</FONT></B>, __STRING(ex), __LINE__, __FILE__); exit(-1);}</FONT><br/>
+#<B><FONT COLOR="#5F9EA0">include</FONT></B> <B><FONT COLOR="#BC8F8F">&lt;stdio.h&gt;</FONT></B><br/>
+<br/>
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#228B22">int</FONT></B> i;<br/>
+&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Entrez un nombre: &quot;</FONT></B>);<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#A020F0">while</FONT></B> (scanf(<B><FONT COLOR="#BC8F8F">&quot;%d&quot;</FONT></B>, &amp;i)!=1) {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Un nombre SVP: &quot;</FONT></B>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<B><FONT COLOR="#A020F0">while</FONT></B>(getc(stdin)!=<B><FONT COLOR="#BC8F8F">'\n'</FONT></B>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;;<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#A020F0">if</FONT></B> (i%3==0) {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Le nombre est divisible par 3.\n&quot;</FONT></B>);<br/>
+&nbsp;&nbsp;} <B><FONT COLOR="#A020F0">else</FONT></B> <B><FONT COLOR="#A020F0">if</FONT></B>(i%3==1) {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Le nombre divisé par trois donne un reste de 1.\n&quot;</FONT></B>);<br/>
+&nbsp;&nbsp;} <B><FONT COLOR="#A020F0">else</FONT></B> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<FONT STYLE="background-color: yellow">ASSERT(i%3==2);</FONT><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Je suis sûr que le nombre divisé par trois donne un reste de 2.\n&quot;</FONT></B>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;printf(<B><FONT COLOR="#BC8F8F">&quot;Vérification: %d \% 3 = %d\n&quot;</FONT></B>, i, i%3);<br/>
+&nbsp;&nbsp;}<br/>
+&nbsp;&nbsp;<B><FONT COLOR="#A020F0">return</FONT></B> 0;<br/>
+}<br/>
+</code>
+
+<p>Si l'assertion venait a être négative, alors le programme va afficher "Assert (i%3==2) failed
+line xx, file yyy.c" et quitter, ce qui est très pratique pour retrouver la faute.</p>
+
+  </div>
+
+<?php include $_SERVER['DOCUMENT_ROOT']."/design/footer.html" ?>

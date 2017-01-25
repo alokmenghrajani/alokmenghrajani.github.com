@@ -1,0 +1,75 @@
+<html>
+<body>
+<h1>Piège avec feof</h1>
+
+<p>Si vous avez déjà programmé en Pascal, Perl ou certains autres language, vous risquez de mal interpréter le fonctionnement de feof().</p>
+
+<p>feof ne test pas si vous êtes à la fin d'un fichier, mais si la dernière fonction de manipulation des fichiers (par ex: fscanf ou fgets) a échoué à cause de la fin du fichier. Ainsi le programme suivant affiche la dernière ligne du fichier data.txt deux fois.</p>
+
+<p>Pour corriger le problème il faut effectuer le test feof(f) entre la lecture (fgets) et le printf, ou alors tester la valeur de retour de fgets (ce qui nous permet même d'enlever l'appel à feof):</p>
+
+
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+#<B><FONT COLOR="#5F9EA0">include</FONT></B> <B><FONT COLOR="#BC8F8F">&lt;stdio.h&gt;</FONT></B>
+
+<I><FONT COLOR="#B22222">/*
+  Alok Menghrajani &lt;alok.menghrajani@epfl.ch&gt;
+  
+  Ce fichier demontre une erreur assez courante avec feof.
+  En effet, la dernière ligne va être affichée deux fois.
+*/</FONT></I>
+
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {
+  FILE *f = fopen(<B><FONT COLOR="#BC8F8F">&quot;data.txt&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;r&quot;</FONT></B>);
+  <B><FONT COLOR="#228B22">char</FONT></B> s[100];
+  <B><FONT COLOR="#228B22">int</FONT></B> lignes=0;
+
+  <B><FONT COLOR="#A020F0">if</FONT></B> (!f) {
+    printf(<B><FONT COLOR="#BC8F8F">&quot;Le fichier data.txt n'a pas pu être ouvert.\n&quot;</FONT></B>);
+    exit(1);
+  }
+  <B><FONT COLOR="#A020F0">while</FONT></B> (!feof(f)) {
+    fgets(s, 100, f);
+    printf(<B><FONT COLOR="#BC8F8F">&quot;(%d) %s&quot;</FONT></B>, feof(f),s);
+    lignes++;
+  }
+  fclose(f);
+  printf(<B><FONT COLOR="#BC8F8F">&quot;\nJ'ai lu %d lignes.\n&quot;</FONT></B>, lignes);
+  <B><FONT COLOR="#A020F0">return</FONT></B> 0;
+}
+</PRE>
+
+<p>Voici deux versions corrigées:</p>
+
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+...
+  <font style="background-color:yellow"><B><FONT COLOR="#A020F0">while</FONT></B> (1) {</font>
+    fgets(s, 100, f);
+    <font style="background-color:yellow"><B><FONT COLOR="#A020F0">if</FONT></B> (feof(f))</font>
+      <font style="background-color:yellow"><B><FONT COLOR="#A020F0">break</FONT></B>;</font>
+    printf(<B><FONT COLOR="#BC8F8F">&quot;(%d) %s&quot;</FONT></B>, feof(f),s);
+    lignes++;
+  }
+...
+</PRE>
+
+<p>Ou:</p>
+
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+...
+  <font style="background-color:yellow"><B><FONT COLOR="#A020F0">while</FONT></B> (fgets(s, 100, f)!=NULL) {</font>
+    printf(<B><FONT COLOR="#BC8F8F">&quot;(%d) %s&quot;</FONT></B>, feof(f),s);
+    lignes++;
+  }
+...
+</PRE>
+
+
+<i><a href="index.html">retour à la page complément</a></i>
+
+<br><br>
+<!--#config timefmt="%d/%m/%Y" -->
+<table width=100% style="font-size: small; border-top: thin solid navy"><tr><td>Alok Menghrajani &lt;<a href="mailto: alok.menghrajani@epfl.ch">alok.menghrajani@epfl.ch</a>&gt;</td><td align=right><i><!--#flastmod file="feof_piege.html" --></i></td></tr></table>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<html>
+<body>
+<h1>Manipulation de bits</h1>
+
+<ul>
+<li><a href="#func">Fonctions</a>
+<li><a href="#puzz">Puzzles</a>
+<li><a href="#sol">Solutions</a>
+</ul>
+
+<h2><a name="func">Fonctions</a></h2>
+
+<p>Le C possède plusieurs fonctions pour manipuler les bits d'une variable. Après l'introduction de ces fonctions, vous pourrez essayer de resoudre quelques petits puzzles.</p>
+
+<ul>
+<li>!x - Inverse logique, TRUE devient FALSE et vice versa (0! => 1; x! avec x&ne;0 => 0)
+<li>~x - Inverse binaire, chaque bit est inversé (~0110b => 1001b)
+<li>a & b - ET binaire (0110b & 1100b => 0100b)
+<li>a ¦ b - OU binaire (0110b ¦ 1100b => 1110b)
+<li>a ^ b - OU exclusif (0110b ^ 1100b => 1010b)
+<li>a &gt;&gt; b - Décalage droite de b bits
+<li>a &lt;&lt; b - Décalage gauche de b bits
+<p>Note: x << 32 n'est pas la même chose que x << 31 << 1.</p>
+<p>Note: le standard C ne défini pas si le décalage à droite est logique ou arithmétique (dans le cas des nombres signés). Pour les type unsigned, le décalage est toujours logique.</p>
+</ul>
+
+<p>Voici quelques petits puzzles. Le but est d'écrire quelques fonctions simple en utilisant un nombre restreint d'opérateurs et avec des constantes entre 0 et 255 seulement. Vous n'avez entre autre pas le droit d'utiliser de boucles, de conditionels, pointeurs, tableaux, macros, casts...</p>
+
+<p>Vous devez aussi essayer de <b>réduire le nombre d'opérations</b> nécessaire dans chaque cas; c'est ça qui est le plus amusant. Si vous arrivez a améillorer la meilleur solution, contactez moi et vous aurez votre nom sur cette page (vous pouvez choisir entre publier votre solution, ou juste avoir votre nom avec votre performance. Si vous trouver une solution aussi optimale qu'une déjà présente, mais dont l'auteur à decidé de ne pas publier la solution, vous pouvez le faire).</p>
+
+<p>Note: Vous pouvez utilisez autant de variables que vous voulez, l'assignation à une variable ne compte pas comme une instruction. Ainsi le code suivant a 5 instructions:</p>
+
+<pre style="padding-left: 50px; background-color: lightblue">
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">foo</FONT></B>(<B><FONT COLOR="#228B22">int</FONT></B> x, <B><FONT COLOR="#228B22">int</FONT></B> y) {
+  <B><FONT COLOR="#228B22">int</FONT></B> a = x & y;
+  <B><FONT COLOR="#228B22">int</FONT></B> b = (a ^ x) | y;
+  <B><FONT COLOR="#228B22">int</FONT></B> c = (a & b) | a;
+  <B><FONT COLOR="#A020F0">return</FONT></B> c;
+}
+</pre>
+
+<h2><a name="puzz">Puzzles</a></h2>
+
+<ol>
+<li>int bitOr(int x, int y) 
+<ul>
+But: Calculer x | y (OU binaire) en utilisant seulement ~ et &.<br>
+Example: bitOr(5, 9) = 13<br>
+Difficulté: <img src="star.gif"><br>
+Opérateurs permis: ~ et &<br>
+Meilleur solution: <a href="#sol_bitor">4 instructions</a> - <a href="bits_proposer.html"><i>Proposer une meilleur solution</i></a><br>
+</ul>
+
+<li>int tmax(void)
+<ul>
+But: Retourner le plus grand entier positif (en complément à deux).<br>
+Difficulté: <img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int evenBits(void)
+<ul>
+But: Retourner le nombre qui a tous ses bits pair à 1.<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt:&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int getByte(int x, int n)
+<ul>
+But: Extraire le nième byte de x.<br>
+Example: getByte(0x12345678, 1) = 0x56<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int isNegative(int x)
+<ul>
+But: Retourner 1 si x &lt; 0, sinon 0.<br>
+Example: isNegative(-1) = 1<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int bitMask(int h, int l)
+<ul>
+But: Générer un mask dont les bits de l à h sont à 1, et le reste à 0.<br>
+Example: bitMask(5, 3) = 0x38<br>
+Note: Vous pouvez assumer que 0&le;l&le;31 et que 0&le;h&le;31. Si l&gt;h, alors le mask doit être nul.<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="#sol_bitmask">5 instructions</a> - <a href="bits_proposer.html"><i>Proposer une meilleur solution</i></a><br>
+</ul>
+
+<li>int reverseBytes(int x)
+<ul>
+But: Inverse les bytes de x.<br>
+Example: reverseBytes(0x01020304) = 0x04030201<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int isLess(int x, int y)
+<ul>
+But: Retourner 1 si x&lt;y.<br>
+Example: isLess(4, 5) = 1<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int conditional(int x, int y, int z)
+<ul>
+But: Retourner y si x est TRUE sinon z (x ? y : z).<br>
+Example: conditional(2, 4, 5) = 4<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int logicalNeg(int x)
+<ul>
+But: Implémenter l'opérateur ! (non logique) sans utiliser !<br>
+Example: logicalNeg(3) = 0, logicalNeg(0) = 1<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int tc2sm(int x)
+<ul>
+But: Convertir le nombre x donné en complément à deux, en un nombre en magnitude-signée.<br>
+Example: tc2sm(-5) = 0x80000005<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+
+<li>int bitParity(int x)
+<ul>
+But: Retourner 1 si x contient un nombre impaire de 0.<br>
+Example: bitParity(5) = 0, bitParity(7) = 1<br>
+Difficulté: <img src="star.gif"><img src="star.gif"><img src="star.gif"><img src="star.gif"><br>
+Opérateurs permis: ! ~ & ^ | + &lt;&lt; &gt;&gt;<br>
+Meilleur solution: <a href="bits_proposer.html"><i>Proposer une solution</i></a><br>
+</ul>
+</ol>
+
+<h2><a name="sol">Solutions</a></h2>
+
+<ol>
+<li value=1><a name="sol_bitor">int bitOr(int x, int y)</a>
+<ul>
+1/12/2003 Alok Menghrajani - 4 instructions<br>
+Solution:<br>
+<pre style="padding-left: 50px; background-color: lightblue">
+<I><FONT COLOR="#B22222">/* en utilisant les règles de l'algèbre boolean */</FONT></I>
+<B><FONT COLOR="#228B22">int</FONT></B> bitOr(<B><FONT COLOR="#228B22">int</FONT></B> x, <B><FONT COLOR="#228B22">int</FONT></B> y) {
+  <B><FONT COLOR="#A020F0">return</FONT></B> (~((~x) & (~y)));
+}
+</pre>
+</ul>
+<li value=6><a name="sol_bitmask">int bitMask(int h, int l)</a>
+<ul>
+1/12/2003 Alok Menghrajani - 5 instructions<br>
+Remarques: je préfère vous laisser chercher la réponse.
+</ul>
+<br>
+<ul style="text-decoration: line-through">
+30/11/2003 Example de solution - 25 instructions<br>
+Remarques: Toutes les anciennes contributions restent.
+</ul>
+
+</ol>
+
+<i><a href="index.html">retour à la page complément</a></i>
+
+<br><br>
+<!--#config timefmt="%d/%m/%Y" -->
+<table width=100% style="font-size: small; border-top: thin solid navy"><tr><td>Alok Menghrajani &lt;<a href="mailto: alok.menghrajani@epfl.ch">alok.menghrajani@epfl.ch</a>&gt;</td><td align=right><i><!--#flastmod file="bits.html" --></i></td></tr></table>
+
+</body>
+</html>
+

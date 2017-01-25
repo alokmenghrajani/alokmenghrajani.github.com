@@ -1,0 +1,90 @@
+<?php 
+  $title = "Programmation 3";
+  $meta_keywords = "";
+  $meta_description="Complement du cours programmation 3.";
+
+  include $_SERVER['DOCUMENT_ROOT']."/design/header.html"
+?>
+
+<div class="path">
+  <a href="../../index.html">teaching / slides</a> &gt; <a href="../index.html">programmation 3</a> &gt; <a href="assert.html">erreurs classiques</a>
+</div>
+
+<div class="main">
+  <div class="content">
+
+<?php multiPage(1, 2) ?>
+<h1>erreurs classiques</h1>
+
+<p>Cette page contient une liste de quelques erreurs classiques que l'on peut faire en programmant en C. Un des gros problèmes de la programmation (en générale, mais surtout en C) est qu'on peut avoir des programmes faux qui ont l'air de marcher mais vont planter dans certaines situations (dans un environement different ou après un long moment).</p>
+
+<div class=code><font style="font-weight: bold">*ptr++</font></div>
+<ul>
+Cette expression n'incrémente pas la valeur stockée dans *ptr (ce n'est pas la même chose que (*ptr)++), mais la valeur de ptr (*ptr++ = *(ptr++)). Il est donc conseillé d'utiliser des parenthèses dans ce genre de cas, afin d'être sûr de ce qui se passe.
+</ul>
+<hr width=75%>
+
+<div class=code>
+<font style="font-weight: bold">sizeof(void)</font></div>
+<ul>
+sizeof(void) vaut 1, même si ça paraît un peu illogique (puisque void veut dire 'rien').
+</ul>
+<hr width=75%>
+
+<div class=code>
+<font style="font-weight: bold">int i;<br>scanf("%d", i);</font></div>
+<ul>
+scanf prend des pointeurs (puisque ça modifie l'entrée). Il faut donc faire scanf("%d", <font style="background-color: yellow">&amp;</font>i).
+</ul>
+<hr width=75%>
+
+<div class=code>
+<font style="font-weight: bold">#define f(p) p*5<br>
+...<br>
+f(3+4)</font></div>
+<ul>
+Il faut faire très attention avec l'utilisation des macros, car il est facile d'introduire des erreurs, et il est très difficile de retrouver ces erreurs. Il faut se rappeler que les macros se font recopier tel quel dans le code, donc ce petit bout de code va retourner 23 (et non 45). Il aurait été plus judicieux de déclarer la macro ainsi: #define f(p) <font style="background-color: yellow">(</font>p<font style="background-color: yellow">)</font>*5.<br>
+C'est pour cette même raison qu'il faut toujours essayer d'utiliser des fonctions et constantes à la place des macros.<br>
+<a href="http://gcc.gnu.org/onlinedocs/gcc-2.95.3/cpp_1.html#SEC20">Pitfalls and Subtleties of Macros.</a>
+</ul>
+<hr width=75%>
+
+<div class=code>
+<font style="font-weight: bold">if (a=10) {...</font></div>
+<ul>
+Le language C n'a pas de type boolean. Le code ci-dessus va donc assigner la valeur 10 à la variable a et ensuite retourner 10 (qui est vrai). La condition sera donc toujours vrai. Le code correct aurait été: if (a<font style="background-color: yellow">=</font>=10) {...<br>
+Note: je vous conseil de toujours choisir une police qui permet de facilement distinguer la différence entre = et ==.
+</ul>
+<hr width=75%>
+
+<div class=code>
+<font style="font-weight: bold">for (i=0; i&lt;10; i++);<br>
+&nbsp;&nbsp;faire_qqch_plusieurs_fois;</font></div>
+<ul>
+Le ; à la fin du for va faire que la boucle est vide. La partie
+faire_qqch_plusieurs_fois ne sera en fait exécuté qu'une seule fois.
+</ul>
+<hr width=75%>
+
+<div class=code>
+<font style="font-weight: bold">char* a, b</font></div>
+<ul>
+b est un char (et non un char*) !<br>
+Je conseil d'écrire de tel lignes comme: char *a, *b ou sur plusieurs lignes.
+</ul>
+<hr width=75%>
+
+<div class=code>
+<font style="font-weight: bold">int i;<br>int t[10];<br>
+for (i=0; i&lt;=10; i++)<br>
+&nbsp;&nbsp;t[i]=...;
+</font></div>
+<ul>
+Les tableaux en C vont de 0 à N-1. La condition de la boucle for est fausse (devrai être: for (i=0; i&lt;10; i++).
+</ul>
+
+<?php multiPage(1,2); ?>
+
+  </div>
+
+<?php include $_SERVER['DOCUMENT_ROOT']."/design/footer.html" ?>

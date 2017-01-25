@@ -1,0 +1,142 @@
+<?php 
+  $title = "Programmation 3";
+  $meta_keywords = "";
+  $meta_description="Complement du cours programmation 3.";
+
+  include $_SERVER['DOCUMENT_ROOT']."/design/header.html"
+?>
+
+<div class="path">
+  <a href="../../index.html">teaching / slides</a> &gt; <a href="../index.html">programmation 3</a> &gt; <a href="assert.html">erreurs classiques</a>
+</div>
+
+<div class="main">
+  <div class="content">
+
+<?php multiPage(2, 2) ?>
+<h1>erreurs classiques</h1>
+
+<p>Il y a deux fautes que beaucoup d'étudiants font, surtout s'ils savent
+programmer en Java:<br>
+<ul><li>Mauvaise utilisation des structures au niveau des fonctions:<br>
+<i>Il ne faut jamais passer directement des structures comme type d'entrée ou de
+sortie d'une fonction; il faut toujours passer par un pointeur sur une structure.</i>
+<br><br>
+<li>Mauvaise utilisation des pointeurs dans les fonctions:<br>
+<i>Il ne faut jamais retourner (depuis une fonction) un pointeur sur la
+pile d'une fonction; car cette zone mémoire va disparaître quand la fonction va
+retourner. (Les variables locales "vivent" sur la pile.)</i>
+</ul>
+</p>
+
+<p>Petit rappel, soit le code C suivant:</p>
+
+<!-- "enscript --highlight=c -p - --language=html xxx.c" -->
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+<B><FONT COLOR="#228B22">int</FONT></B> n=5;
+
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">foo</FONT></B>() {
+  <B><FONT COLOR="#228B22">int</FONT></B> b;
+}
+
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {
+  <B><FONT COLOR="#228B22">int</FONT></B> a;
+  foo();
+}
+</PRE>
+<p>Voici ce qui se passe au niveau de la pile:<br>
+<ol>
+<li>la pile de main est crée. Elle contient entre autre la variable a.
+<li style="padding-left:30px">le code de main est executé.
+<li style="padding-left:30px">main va appeler foo.
+<li style="padding-left:30px">la pile de foo est crée. Elle contient entre autre la variable b.
+<li style="padding-left:60px">le code de foo est executé.
+<li style="padding-left:30px">la pile de foo est détruite. La variable b n'existe plus.
+<li style="padding-left:30px">on revient dans main.
+<li>la pile de main est détruite. La variable a n'existe plus.
+</ol>
+Note: la variable n n'est pas crée sur une pile, mais ailleurs (sur le heap).
+</p>
+
+<p>Voici maintenant une série de différents code C qui essayent de faire
+la même chose, créer un "objet" rectangle, mais qui contiennent tous des grosses
+erreurs:</p>
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+<B><FONT COLOR="#228B22">typedef</FONT></B> <B><FONT COLOR="#228B22">struct</FONT></B> _rectangle {
+  <B><FONT COLOR="#228B22">int</FONT></B> width;
+  <B><FONT COLOR="#228B22">int</FONT></B> height;
+} rectangle;
+</PRE>
+
+<h2>Code 1 - ne repect pas la première règle</h2>
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+rectangle <B><FONT COLOR="#0000FF">create</FONT></B>(<B><FONT COLOR="#228B22">int</FONT></B> w, <B><FONT COLOR="#228B22">int</FONT></B> h) {
+  rectangle r;
+  r.width = w;
+  r.height = h;
+  <B><FONT COLOR="#A020F0">return</FONT></B> r;
+}
+
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {
+  rectangle r1 = create(5, 6);
+  rectangle r2 = create(12, 3);
+}
+</PRE>
+
+<p>Ce code (qui marche) provoque des copies de la structure au niveau du return.</p>
+
+<h2>Code 2 - ne respect pas la deuxième règle</h2>
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+rectangle* <B><FONT COLOR="#0000FF">create</FONT></B>(<B><FONT COLOR="#228B22">int</FONT></B> w, <B><FONT COLOR="#228B22">int</FONT></B> h) {
+  rectangle r;
+  r.width = w;
+  r.height = h;
+  <B><FONT COLOR="#A020F0">return</FONT></B> &amp;r;
+}
+
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {
+  rectangle* r1 = create(5, 6);
+  rectangle* r2 = create(12, 3);
+}
+</PRE>
+
+<p>Ce code est faux !</p>
+
+<p>Voici donc deux solutions qui sont bonnes:</p>
+
+<h2>Solution 1 - create va allouer l'"objet" (sur le heap)</h2>
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+rectangle* <B><FONT COLOR="#0000FF">create</FONT></B>(<B><FONT COLOR="#228B22">int</FONT></B> w, <B><FONT COLOR="#228B22">int</FONT></B> h) {
+  rectangle* r = (rectangle*)malloc(<B><FONT COLOR="#A020F0">sizeof</FONT></B>(rectangle));
+  r-&gt;width = w;
+  r-&gt;height = h;
+  <B><FONT COLOR="#A020F0">return</FONT></B> r;
+}
+
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {
+  rectangle* r1 = create(5, 6);
+  rectangle* r2 = create(12, 3);
+  <I><FONT COLOR="#B22222">// ne pas oublier ensuite de faire free(r1) et free(r2) !</FONT></I>
+}
+</PRE>
+
+<h2>Solution 2 - on va allouer rectangle sur la pile, mais de main</h2>
+<PRE STYLE="padding-left: 50px; background-color: lightblue">
+<B><FONT COLOR="#228B22">void</FONT></B> <B><FONT COLOR="#0000FF">create</FONT></B>(rectangle* r, <B><FONT COLOR="#228B22">int</FONT></B> w, <B><FONT COLOR="#228B22">int</FONT></B> h) {
+  r-&gt;width = w;
+  r-&gt;height = h;
+}
+
+<B><FONT COLOR="#228B22">int</FONT></B> <B><FONT COLOR="#0000FF">main</FONT></B>() {
+  rectangle r1, r2;
+  create(&amp;r1, 5, 6);
+  create(&amp;r2, 12, 3);
+}
+</PRE>
+
+
+<?php multiPage(2,2); ?>
+
+  </div>
+
+<?php include $_SERVER['DOCUMENT_ROOT']."/design/footer.html" ?>
