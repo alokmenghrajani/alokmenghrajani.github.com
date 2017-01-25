@@ -1,0 +1,36 @@
+Operating System Design and Implementation, 15-412
+
+README for project 1:
+
+  Everything works all right (or at least it seems so).
+  The clock runs at about half the speed on the linux clusters (wean), but
+  runs more or less accuratly when doing remote login.
+
+  I'm using a ring buffer of size 128 bytes to save the keys in the keyboard
+  handler. I don't have any concurrency problem at this level, but I'm still
+  disabling the interrupts as requested. Anything that comes in when the buffer
+  is full is ignored. Reading from the empty buffer returns -1.
+  
+  The format for setting the clock is exactly the same as sscanf("%d %d %d\n")
+  (one or two digits for hour, any number of spaces, one or two digits for
+  minutes, any number of spaces, one or two digits for seconds, new line)
+
+  I'm using two variables to keep track of the time. One variable is the timer
+  value that starts at 0 and keeps on incrementing. The other one is
+  the previous time displayed, which is updated by calculating how much time
+  has elapsed since last update.
+
+  The \r is added to the \n in the kernel when the keys are extracted by
+  readchar(). It seems some people are doing this in the console.
+
+  The console.h has two extra functions: isHidden and getLine. Get line
+  just returns a pointer to the beginning of the line in console memory where
+  the cursor is. isHidden is used to check the cursor state and restore it
+  exactly (in display time).
+
+Alok Menghrajani
+amenghra@andrew.cmu.edu
+
+
+  
+  

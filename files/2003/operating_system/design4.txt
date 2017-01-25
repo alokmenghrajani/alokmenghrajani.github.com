@@ -1,0 +1,186 @@
+********************************************************************************
+
+IMPORTANT NOTES:
+
+- We believe our filesystem is conform to what you expected us to do. We have no
+  abnormalaties to report. We pass all test cases.
+  We seek in constant time (altough our constant is larger than linux' log n time).
+
+- We found several bugs in our kernel. We weren't able to solve all of them.
+  That explains why we disabled error checking in syscalls.c
+
+- We sometimes had corrupted hd.img files. It made our kernel/filesystem crash.
+  There is no way we can deal with this problem.
+
+
+********************************************************************************
+Hdsim:
+
+We developed a major part of the filesystem in hdsim. It simulates a
+hd using stdio calls. This saved us a lot of time, since debugging was faster
+(no need to wait for simics to load) and easier (gdb is so much more complete/
+nicer).
+
+--------------------------------------------------------------------------------
+
+Shell:
+
+We rewrote the shell. If a command is ended by &, it is launched in background.
+Note: We don't reap the background process' (We could launch an intermediate process
+and have it spawn the background thread and then exit, so that the background process
+self-reaps since it would be an orphan).
+
+Here are the new functionalities:
+
+cat filename: display the content of filename.
+
+append filename text: appends text to filename.
+
+pwd: display current working directory.
+
+cd dir: change to dir.
+
+exit: sync harddisk and exit.
+
+format: formats the disk.
+
+touch filename: creates a file
+
+ls: lists the current directory (ls dir not implemented).
+
+ln newname oldname: hardlink newname to oldname.
+
+ln -s newname oldname: symlink newname to oldname.
+
+size file: returns filesize of file.
+
+rmdir dir: remove directory.
+
+rm file: unlinks file.
+
+--------------------------------------------------------------------------------
+
+User programs:
+
+We wrote a vi to test our filesystem. Type vi at our shell. Read vi.c for more info.
+vi (filename): launches vi (creates/open filename).
+
+We also wrote userlib.c, which contains a few useful functions that user
+programs can call.
+--------------------------------------------------------------------------------
+
+Buffer Cache:
+
+The buffer cache has 128 lines (blocks). Since each block is 2 sectors,
+the size of the cache is 256 sectors. 
+
+An LRU eviction policy is used. For this, each line in the cache has an
+"access stamp". Every time a read/write is made to that line, the access 
+stamp is updated. If the "current time" variable (an int) overflows, we
+reset all the values to 0. 
+
+Our locking (mutex) system is a three state lock. The three states being
+shared (for reads), exclusive (writes) and unlocked.
+
+Concurrency issues are entirely handled here.
+For this purpose, there are multiple locks. Each line in the cache has an
+individual lock. Thisis used totake care of reads or writes to a particular 
+block which is cached. For example, if line n is in the cache, then if I
+have found it, (and am looking for it), then I get the write lock for it.
+and I modify it. Anyone else who wants to modify it must wait for the lock.
+
+To take care of the cache lines themselves, a "big lock" is used. This 
+means, that if one were to wish to evict a line, he needs to lock the entire
+cache. To search for a particular line, one needs to have a read lock 
+over the entire cache.
+
+--------------------------------------------------------------------------------
+
+file descriptors:
+There is a system wide array of size 32 which holds file descriptors. Each
+of these has an inode that it points to, an offset into the file and a counter
+of how many processes have a this filedescriptor.
+
+Each PCB has an integer and if the ith bit in this integer is 1, then that 
+process has access to the ith filedescriptor in the global table. So, each
+filedesccriptor is simply an offset into the global table.
+
+--------------------------------------------------------------------------------
+
+File ref counts and sizes.
+The file ref count (use for hard link) are used to keep track of what to 
+do when a file gets deleted. If it is 0, free that disk space, else 
+leave it alone. Both this ref count and the size are written in the first block 
+of the file, ie. the disc block directory.
+
+In order to handle unlinking of an open file, we increment the ref count when
+a file is opened, and decrement it when it is closed.
+
+For keeping track of the blocks, we used a two level structure, much like a 
+page table directory/ page table.
+The first two entries in the directory are the ref count and the size.
+The reason for this is that they must both be visible to different 
+links to the file. In our system, there is no difference between a file
+and a hard link.
+
+--------------------------------------------------------------------------------
+
+Reads and Writes:
+
+nothing fancy here.
+We just make sure that no more than one process can write to a given file 
+at a given time, this is done via write locks. And to read you need a
+read lock on that file. These are the functions taht take care of allocating
+new blocks and updating the two level tables.
+
+--------------------------------------------------------------------------------
+
+Free blocks:
+We keep track of free blocks in a global freeblock bitvector.
+
+--------------------------------------------------------------------------------
+
+Queueing for IO:
+
+There is a global queue that constists of blocked processes that are waiting
+for disk IO. The first thing on the list is always a process whos request has
+already been made. The reason that this process is there is in order to wake 
+it up since the IO is done. Once that is done, the next process on the queue 
+has its request serviced.
+A flag for asynchronous version is used. This means that the process is not
+sleeping and so it doesn't need to be woken up. We use this for reading the
+formatting when the kernel boots.
+
+--------------------------------------------------------------------------------
+
+Linking files:
+
+Hard links are just normal files that have the same block_index.
+Symlinks store the target link in the block pointed by block_index.
+When resolving a pathname, symlinks are resolved by keeping a recursion level
+counter. This allows us to easily detect circular depedencies.
+
+--------------------------------------------------------------------------------
+
+Directory:
+
+The directory structure is kept in the inodes. There is a linked list of
+siblings, a parent and a son fields. The main routine is resolve_pathname. It
+takes a string and returns the inode of the last directory. It also returns the
+filename. This way if you give something like /a/b/ or /a/b/file, you will get
+the inode corresponding to be. Two or more consecutive slashes (//) are treated
+as one (so ///a////b is equivalent to /a/b). The reason we parse our pathnames
+this way, is so we have a single routine to handle various cases (eg: when you
+unlink, you don't want to resolve the final symlink, when you delete a directory
+you want /a/b to be equivalent to /a/b/, etc...)
+
+Directories must be empty in order to be removed.
+
+--------------------------------------------------------------------------------
+
+Fork, minclone, etc...
+
+Process' inherit their parent's working directories. So there is no undefinied
+working directory.
+
+

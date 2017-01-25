@@ -1,0 +1,66 @@
+All the tests that we have written ( that are in the usercode/ directory) seem to work.
+We have also tested programs that use the thread library from proj2. They too seem to work.
+We have not handed in out proj2 again. We did not try to use the game :)
+
+We don't have an idle process, we just launch the shell. When the shell exits (or gets killed because it's using
+too much memory, we launch a new shell (and if we can't eg no more memory left, we display a message)).
+
+
+We don't have any init process or C runtime.
+The loader will load the code starting at USER_MEM (16MB). 
+
+our_exit is the exact funtion that is called in syscalls.c in the case
+of a SYS_EXIT. In this function, the current process checks if its parent is alive,
+if so, if he/she is waiting on a child. The appropriate action is taken in either case.
+
+We context switch anywhere (no restrictions), except when pcb->state is STOPPED or 
+when the interrupts are disabled.
+
+When we enter an interrupts handler, we normalize the stack (eg add an error code in case of software interrupts). Makes things easier for switching back.
+
+Since we can context switch from many places (context_switch and exit), we have to save the kesp and kebp. Our code depends on the standard 
+of having the ebp point to the previous stack frame. The reason we have this is due to the
+ evolution of our code (and also that our design was  rejetcted when we did "unsavory" things like not switch while in kernel mode). (incremental hacking)
+
+
+Exec   kills off anyone sharing memory with the current process.
+
+Then it purges the virtual memory and replaces it with a new one. Finally, it loads the code and sets up a user stack in order to launch the program aksed for.
+NOTE: the first process (Shell) should not (NOT... NEVER!!) call minclone (to make sure that this doesn't happen, the process with pid 0 is precluded from 
+successfully calling minclone).
+
+
+Fork: copy immediatly. We have not implemented a copy on write mechanism.
+While forking, in order to do the copy of all the memory held by the parent, we switch off paging and work in real mode. We take care to
+switch it back on in the case of a context switch while still in real mode.
+
+
+there is only one console logical cursor for all processes. This is due to the heritage from proj1. And it
+make more sense...
+
+To build user code you must modify the makefile in usercode directory.
+
+we don't have  a crt. Code to convert a return from main to an exit is put at the end of the data segment.
+User code must be compiled at 16MB (USER_MEM_START).
+
+
+In order to keep track of the processes that are sharing memory, we have a notion of a group id. This is something that is inherited in the case
+of a minclone and newly generated in the case of a fork. This way all processes related in terms of memory are unified by a group id. This helps
+in exit and exec. 
+Our notions of clones and children are identical. The only difference is the shared memory in the former. Wait, exit, scheduling etc. work in exactly
+the same way for both.
+
+We return error if a fork on thread happens. (fork after minclone). The reason for this decision is that it would make no sense to spawn a child
+that had a copy of memory that (possibly) many other processes are using.
+
+We keep track of the parent's pid only (no list of children). When a child is exiting, it checks if it's parent still exists. If it doesn't it reaps itself (borowing anyone else's stack). If the parent is waiting it wakes it up. Otherwise it saves the exit code for the parent and waits for the parent to reap it (free its kernel stack).
+
+when we call sbrk, we just change the mem_limit pointer. Then on page faults, we allocate memory.
+
+when loading a a.out we are loading the data section on a page boundary, and zeroing the bss
+
+
+
+
+
+
