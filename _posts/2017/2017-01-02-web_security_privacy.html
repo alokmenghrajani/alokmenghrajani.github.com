@@ -1,0 +1,30 @@
+---
+layout: post
+title:  'Thoughts on web security &amp; privacy'
+permalink: '/web_security_and_privacy/'
+tags: ['web security', 'privacy', 'random thoughts']
+---
+<p>Web browsers have come a long way in terms of security. For example, you can
+protect against cross site scripting attacks by enable a header called CSP
+(Content-Security-Policy). You can prevent a lot of CSRF attacks by checking
+the Origin header. Etc.</p>
+<p>One area which continues to fail open is privacy. Most web application
+frameworks require implementing explicit privacy checks. The privacy check
+is there to see if a given user is allowed to view or edit a specific piece
+of content. Currently, if such a check is missing, the failure mode is to
+allow anyone to view or edit the data.</p>
+<p>As a result, most web applications are filled with privacy bugs! From a
+security point of view, we call this kind of failure mode "fail open", and it's
+a bad thing.</p>
+<p>Here are some ideas that might be worth exploring:</p>
+<ul>
+<li>Some kind of proxy/middleware that sits between the web application and the
+database. The proxy could track who created every row in the database and
+enforce a unix-like (user/group/other) permission system).</li>
+<li>A key-value or graph oriented datastore which enforces privacy checks and
+can be extended with custom checks.</li>
+<li>A SQL database which implements the same type system as the web application.
+It could then disallow joining tables on unrelated columns.</li>
+<li>Something leveraging Postgres' row level security.</li>
+<li>etc.</li>
+</ul>
