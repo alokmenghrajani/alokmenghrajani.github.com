@@ -1,0 +1,279 @@
+---
+layout: post
+title:  'Hugi: taquin'
+permalink: '/hugi/'
+tags: ['hugi', 'coding competition', 'size optimization', 'taquin', 'fifteen puzzle']
+---
+<p>Hugi is a size optimization competition. I participated in the taquin challenge and placed last :(</p>
+<p>The best entry was 273 bytes, mine was almost double at 474 bytes. Download the <a href="/files/2000/hugi/hc10fin.zip">rules, examples and all entries</a>.</p>
+<p><a href="http://www.hugi.scene.org/compo/compoold.htm">Hugi compo website</a></p>
+
+<pre class="code">
+; Programmed by Alok Menghrajani
+; Join the SWISS TEAM !!!
+; swiss-team@aloksoft.hypermart.net
+
+; Special thanks to everybody at hugi !!!
+; Vielen Dank Blick...
+
+; Version 3.0
+;  111111   (n mod 2 == 0) => ver
+; 0      2  vert and >3 => length 7 else length 6
+; 0      2
+;  333333
+; 4      6
+; 4      6
+;  555555
+    .model tiny
+
+    .data
+; LED = Light Emitting Diode.
+;                       6543210
+Led   db  11101110b ;0
+    db  10001000b ;1
+    db  01111100b ;2
+    db  11011100b ;3
+    db  10011010b ;4
+    db  11010110b ;5
+    db  11110110b ;6
+    db  10001110b ;7
+    db  11111110b ;8
+    db  11011110b ;9
+
+LedSeg    dw      6+8*320   ;0
+    dw  7+7*320   ;1
+    dw  13+8*320  ;2
+    dw  7+14*320  ;3
+    dw  6+15*320  ;4
+    dw  7+22*320  ;5
+    dw  13+15*320 ;6
+
+Grid            db      0, 13, 10, 07
+                db      04, 01, 14, 11
+                db      08, 05, 02, 15
+                db      12, 09, 06, 03
+
+
+
+msgWin          db  'Winning field after $'
+msgEsc          db  'You have quit after $'
+msgMoves        db  ' moves',0dh,0ah,'$'
+MovesCounter    dw      0
+szOutFile       db      'keys',0
+fHandle         dw      ?
+holePosN  dw      0
+holePosX  db  0
+checkWin  db  0   
+
+    .486
+    .code
+    org 256
+Start:
+;***********************************************
+; Set mode 13h
+    mov al,13h      ;2
+    int 10h     ;2
+;***********************************************
+; Save VRAM in es
+    push  0a000h      ;3
+    pop es      ;1
+;***********************************************
+; Create key file
+    mov     dx,offset szOutFile ;3
+    xor     cx,cx     ;2
+          mov     ah,3ch      ;2
+          int     21h     ;2
+          mov     fHandle,ax    ;3 (4?)
+    xor cx,cx     ;2
+;***********************************************
+; Draw border (size=22)
+; using two filled rect.
+    mov di,95+35*320    ;3
+    mov al,7      ;2
+    mov dx,130      ;3
+    call  myBox     ;3
+    mov al,0      ;2
+    mov di,96+36*320    ;3
+    mov dx,128      ;3
+    call  myBox     ;3
+;***********************************************
+; Draw Board & Check win simultaneously.
+MainLoop: mov di,97+3*32+(37+3*32)*320  ;3
+    mov si,4*4-1    ;3
+    mov cl,4      ;2
+    mov [checkWin],0ffh   ;4 (5?)
+db_outer: push  cx      ;1
+    mov cl,4      ;2
+db_inner: mov     al, Grid[si]            ;3 (4?) the tile value & also color
+    xor ah,ah     ;2
+    cmp ax,si     ;2
+    je  db_cont     ;2
+    mov [checkWin],0    ;4 (5?)
+db_cont:  mov dx,30     ;3
+    call  myBox     ;3
+    add di,-30*320    ;4
+; draw leds
+    aam     10                      ;2 ah = al/10,   al = al MOD 10
+    push  cx      ;1
+    push  ax      ;1
+    mov bl,ah     ;2
+    call  drawDigit   ;3
+    pop bx      ;1
+    add di,10     ;3
+    call  drawDigit   ;3
+    pop cx      ;1
+; next tile
+    add di,-32-10   ;3
+    dec si      ;1
+    loop  db_inner    ;2
+    add di,-32*320+32*4   ;4
+    pop cx      ;1
+    loop  db_outer    ;2
+;***********************************************
+; Check win
+    mov     dx,offset msgWin  ;3
+    mov al,[checkWin]   ;2
+    cmp al,0FFh     ;2
+    jz  Quit      ;2
+;***********************************************
+; Wait for keyboard...
+    mov ah,00h      ;2 function 00h of
+    int 16h     ;2 interrupt 16h
+;***********************************************
+; Save key in file...
+    push    ax      ;1
+          mov     cl,1      ;3
+          mov     dx,sp     ;2
+          mov     bx,fHandle    ;3
+          mov     ah,40h      ;2
+          int     21h     ;2
+          pop     ax      ;1
+;***********************************************
+; Check case
+    cmp al,'8'      ;2
+    jne cc_2      ;2
+    cmp [holePosN],12   ;3 (4/5?)
+    jae cc_2      ;2
+    mov di,4      ;3
+    jmp swap      ;2
+
+cc_2:   cmp al,'2'
+    jne cc_3
+    cmp [holePosN],3
+    jbe cc_3
+    mov di,-4
+    jmp swap
+
+cc_3:   cmp al,'4'
+    jne cc_4
+    cmp [holePosX],3
+    je  cc_4
+    mov di,1
+    inc [holePosX]
+    jmp swap
+
+cc_4:   cmp al,'6'
+    jne cc_s
+    cmp [holePosX],0
+    je  cc_s
+    mov di,-1
+    dec [holePosX]
+    jmp swap
+
+swap:   mov bx,[holePosN]   ;3
+    mov     ah, Grid[bx+di]   ;3
+    mov     Grid[bx], ah    ;3
+          mov     Grid[bx+di], 0          ;3 replace hole
+          add     [holePosN],  di         ;3 update hole (x, y) position
+    inc     [MovesCounter]          ;3 MovesCounter + 1
+    
+cc_s:         mov     dx,offset msgEsc  ;3
+          cmp     al,' '      ;2
+    jne MainLoop    ;2 [SPACE] ?
+
+;***********************************************
+; Get ready to quit...
+; Set back mode 3
+Quit:   mov ax,3h     ;3
+    int 10h     ;2
+;***********************************************
+; Display msg stored in dx
+    mov ah,09h      ;2 game ended after
+    int 21h     ;2
+;***********************************************
+; Convert number to string
+    mov ax,[MovesCounter] ;3
+    xor cx,cx     ;2 length of digits..
+    mov bx,10     ;3
+decompose:  mov dx,0      ;3
+    div bx      ;2
+    push  dx      ;1
+    inc cx      ;1
+    or  ax,ax
+    jnz decompose   ;2
+disp:   pop dx      ;1
+    add dl,48     ;2
+    mov ah,2      ;2
+    int 21h     ;2 Digits...
+    loop  disp      ;2
+
+    mov dx,offset msgMoves  ;3 moves !!!
+    mov ah,09h      ;2
+    int 21h     ;2
+;***********************************************
+; Quit to dos
+    ret       ;1
+;*********************************************************************************;
+; Routine size:
+; al: digit.
+drawDigit:  
+  xor bh,bh       ;2
+        mov     ah, Led[bx]     ;4
+        xor al,al                   ;2 color 0 (all LED use color 0)
+        mov     bx,12       ;3
+dl_LOOP:
+        shl     ah, 1       ;2
+        jnc     dl_next               ;2 don't draw line section ?
+
+        ;; now draw a LED section (either vert or horz line) ;;
+  push  di        ;1
+        push  bx        ;1
+  xor dx,dx       ;2
+  add     di,LedSeg[bx]     ;4 ?
+        mov     cx,6        ;3
+  shr bx,1        ;2
+  shr bx,1        ;2
+  pop bx        ;1
+  jc  dl_odd        ;2
+  mov dx,319        ;3 vert
+  cmp bx,8        ;4
+  jb  dl_odd        ;2
+  mov cx,7        ;3
+dl_odd: stosb
+        add     di,dx           ;2 advance DI by +1 or +320
+        loop    dl_odd        ;2
+  
+        pop di        ;1
+dl_next:
+        sub     bx,2        ;3
+        jns     dl_loop               ;2 repeat for all 7 LED sections
+
+  ret         ;1
+
+;*********************************************************************************;
+; Routine size:
+; al: color   dx: width    di:changed
+myBox:    push  cx      ;1
+    mov cx,dx     ;2
+mb_loop:  push  cx      ;1
+    mov cx,dx     ;2
+    rep stosb     ;2
+    sub di,dx     ;2
+    add di,320      ;4
+    pop cx      ;1
+    loop  mb_loop     ;2
+    pop cx      ;1
+    ret       ;1
+;*********************************************************************************;
+    end     start
+</pre>
