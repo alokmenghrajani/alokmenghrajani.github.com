@@ -1,0 +1,49 @@
+---
+layout: post
+title:  'Compiler design &amp; implementation'
+permalink: '/compiler/'
+tags: ['compiler']
+---
+<p>The goal of the compilers course is to give students an overview of how
+compilers work and let them experience the challenges of an actual
+implementation.</p>
+
+<p>The course, thought by Prof. Peter Lee, used Andrew Appel's very reputated
+book: "Modern Compiler Implementation in ML". I however programmed in
+<a href="http://caml.inria.fr/">OCaml</a>, which is similar to ML (both are
+functional programming languages).</p>
+
+<p>You might wonder why functional programming is well suited for writing
+compilers. There are two reasons: processing tree structures is easier with
+functional programming. Support for complete case matching provides errors at
+compilation vs run time.</p>
+
+<p>The compiler was implemented in 3 phases:</p>
+<ul>
+<li>the first phase was a compiler for a very simple (assignments-only)
+language, that we called 'A'. The goal was to learn how to use our tools (parser
+and grammar) and write a code generator.</li>
+<li>the second phase was a compiler for a language which had conditionals (basic blocks)
+ called 'B'. <a href="/files/2002/compiler/simpleb.tar.gz">source</a></li>
+<li>the third phase was a compiler for a safe subset of C. I implemented type checking,
+fat pointers and garbage collection.</li>
+</ul>
+
+<p>The main challenge was writing the type checker and doing register allocation
+for x86. In order to allocate the variables to registers, I first did liveness
+analysis and then register allocation using graph coloring.</p>
+
+<p>I used the <a href="http://www.hpl.hp.com/personal/Hans_Boehm/gc/">Boehm-Demers-Weiser garbage collectory</a>.</p>
+
+<p>Finally I also wrote a PS libary, which allowed me to write small programs
+that would generate nice graphics in PS format.</p>
+
+<p>For more information about C like safe languages, have a look these projects:</p>
+<ul>
+<li><a href="http://cyclone.thelanguage.org/">Cyclone</a></li>
+<li><a href="http://www.cs.wisc.edu/~austin/scc.html">SCC</a></li>
+<li><a href="http://research.microsoft.com/vault/">Microsoft Research - Vault</a></li>
+</ul>
+
+<p>Compilers are an interesting piece of software. More and more applications,
+such as Office or Photoshop, have built-in runtime engines or compilers, which let the user write macros.</p>
