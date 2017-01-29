@@ -1,0 +1,88 @@
+<html>
+<body>
+<p>
+The first thing is to write a function to draw a bezier curve. I could have used
+lines, but I feel bezier curves look nicer.
+</p>
+
+<p>I use a very simple algorithm, which can be visualized with this animation:
+<div><img src="https://upload.wikimedia.org/wikipedia/commons/d/db/B%C3%A9zier_3_big.gif"></div>
+https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+
+<ul>
+  <li>We have point Q0(t) which varies from P0 to P1.</li>
+  <li>We have another point Q1(t) which varies from P1 to P2.</li>
+  <li>A third point Q2(t) varies from P2 to P3.</li>
+  <li>We then compute R0(t) which varies from Q0 to Q1</li>
+  <li>We compute R1(t) which varies from Q1 to Q2</li>
+  <li>We then get the final point we are interested by varying R0 to R1.</li>
+</ul>
+
+https://pomax.github.io/bezierjs/
+http://pomax.github.io/bezierinfo/
+http://microbians.com/?page=math&id=math-quadraticbezieroffseting
+
+http://www.scratchapixel.com/lessons/advanced-rendering/bezier-curve-rendering-utah-teapot
+</p>
+
+<div>
+  <div><label>precision:</label><span id="prec_value"></span></div>
+  <input id="precision" type="range" min=3 max=30 value=10 step=1 onChange="render()">
+</div>
+<div>
+  <canvas id="canvas" width="300" height="250" style="border: 1px solid blue; width: 300px; height: 250px"></canvas>
+</div>
+
+<script>
+var points = [];
+var ctx = canvas.getContext('2d');
+
+function render() {
+  ctx.clearRect(0, 0, canvas.scrollWidth, canvas.scrollHeight);
+
+  // draw a bezier curve from points[0] to points[1]
+  drawBezierCurve({x: points[0].start_x, y: points[0].start_y},
+    {x: points[0].end_x, y: points[0].end_y},
+    {x: points[1].end_x, y: points[1].end_y},
+    {x: points[1].start_x, y: points[1].start_y});
+
+  prec_value.textContent = precision.value;
+}
+function drawBezierCurve(p0, c0, c1, p1) {
+  // let p2 = a point on [p0, c0]
+  // let p3 = a point on [c0, c1]
+  // let p4 = a point on [c1, p1]
+  // let x = a point on [p2, p3]
+  // let y = a point on [p3, p4]
+  // we want to draw the point o [x, y]
+  ctx.beginPath();
+  ctx.moveTo(p0.x, p0.y);
+
+  var n = precision.value;
+  for (var i=1; i<n; i++) {
+    var t = i/n;
+    var p2 = pointOn(p0, c0, t);
+    var p3 = pointOn(c0, c1, t);
+    var p4 = pointOn(c1, p1, t);
+    var x = pointOn(p2, p3, t);
+    var y = pointOn(p3, p4, t);
+    var p = pointOn(x, y, t);
+    ctx.lineTo(p.x, p.y);
+  }
+
+  ctx.lineTo(p1.x, p1.y);
+  ctx.stroke();
+}
+
+function pointOn(p0, p1, t) {
+  return {
+    x: (p1.x - p0.x)*t+p0.x,
+    y: (p1.y - p0.y)*t+p0.y
+  };
+}
+
+points = [{"start_x":47,"start_y":162,"end_x":82,"end_y":25},{"start_x":245,"start_y":39,"end_x":225,"end_y":194}];
+render();
+</script>
+</body>
+</html>

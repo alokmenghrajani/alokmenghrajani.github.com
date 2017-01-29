@@ -1,0 +1,42 @@
+<html>
+<body>
+<h1>3d printed chess set</h1>
+<p>
+  This page documents my adventure 3d printing a chess set from scratch. I
+  used javascript + the browser for all the steps of the process.
+</p>
+<p>
+  I started by building a library to manipulate bezier curves. I then created a
+  three dimensional toolbox which allowed me to combine bezier curves to create
+  objects. My idea was to treat curves as functions, and use inspiration by
+  lighttable/bret victor and https://github.com/damelang/nile.
+</p>
+<p>
+  Finally, I implemented CSG and tesselation to generate the final file for
+  3d printing.
+</p>
+
+<ol>
+  <li><a href="drawing_a_bezier_curve.html">Drawing a bezier curve</a></li>
+  <li><a href="drawing_a_bezier_curve_v2.html">Drawing a bezier curve (v2)</a></li>
+  <li><a href="bezier_curve_editor.html">Editing bezier curve</a></li>
+</ol>
+
+<!--
+  Overview
+3d printing a chess set from scratch. I created a bezier curve editor,
+a 3d modeller, CSG operations and a mesh generator (all in JavaScript).
+I then took the resulting files and 3d printed them.
+
+I wanted to model the chess set by using a combination of bezier curves and
+math functions. At some point, I figured a bezier curve is just a way to
+visually represent and manipulate a math function of the form f(x). I then
+built a modeling framework where transformations on properties (e.g. object
+width or rotation) could be described either using math functions or bezier
+curves.
+
+If you think about it, it's a generalization of the bowl/rotation.
+-->
+
+</body>
+</html>

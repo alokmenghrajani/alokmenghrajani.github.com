@@ -1,0 +1,124 @@
+<html>
+<body onload="webGLStart();">
+
+<script type="text/javascript" src="csg.js"></script>
+<script type="text/javascript" src="../glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="../webgl-utils.js"></script>
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+</script>
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    }
+</script>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   width="100"
+   height="200"
+   style="border: 1px solid black">
+  <path
+    id="king_base_path"
+    style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+    d="m 60,40 21.913385,0 c 1.962993,0 3.543308,1.58031 3.543308,3.5433 l 0,21.91339 c 0,1.96299 -1.580315,3.54331 -3.543308,3.54331 l -21.913385,0 c -1.962992,0 -3.543307,-1.58032 -3.543307,-3.54331 l 0,-21.91339 c 0,-1.96299 1.580315,-3.5433 3.543307,-3.5433 z"/>
+  <path
+    id="king_profile_path"
+    style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+    d="m 63.32885,176.86218 c 0,0 0.61568,-5.35552 -0.32385,-7.77235 -0.48578,-1.2496 -2.51581,-1.73795 -2.59078,-3.07656 -0.087,-1.55443 3.0332,-2.39349 2.59078,-3.88617 -2.2293,-7.52145 -11.81944,-12.30666 -14.57315,-17.8926 -0.68779,-15.61378 -5.40328,-12.52858 -8.74389,-15.3018 -3.29406,-8.01128 -4.87085,-35.02454 -3.96952,-52.75942 5.40839,-0.38644 18.2208,-3.69069 4.29336,-9.09552 0.39248,-3.92677 -1.88715,-5.03981 -4.53387,-5.82926 0.21109,-1.93342 0.59794,-3.92439 0.081,-5.99119 C 39.379,54.12435 37.50165,51.1215 35.80181,50.88537 36.1954,33.6535 54.87394,18.61596 30.45832,16.88135 29.82952,15.40876 23.62167,13.86332 20.5,14.69538"/>
+</svg><br/><br/>
+<canvas id="canvas" width="300" height="300" style="border: 1px solid black"></canvas>
+<br/>
+<i>use your mouse to rotate the piece</i>
+<p>-- Alok</p>
+
+<script src="piece_data.js"></script>
+<script src="shared.js"></script>
+<script>
+var pieceBuffer;
+var crawnBuffer;
+
+function drawScene() {
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+
+    mat4.identity(mvMatrix);
+
+    // Setup camera 
+    mat4.translate(mvMatrix, [0, 0.0, -2.0]);
+    mat4.rotate(mvMatrix, -1.13, [1, 0, 0]);
+
+    // Mouse induced rotation
+    var newRotationMatrix = mat4.create();
+    mat4.identity(newRotationMatrix);
+    mat4.rotate(pos, lastMouseDX * 0.002, [0, 0, 1]);
+    mat4.rotate(newRotationMatrix, lastMouseDY * 0.002, [1, 0, 0]);
+    mat4.multiply(newRotationMatrix, pos, pos);
+    mat4.multiply(mvMatrix, pos);
+
+    if (pieceBuffer) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pieceBuffer);
+      gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, pieceBuffer.itemSize, gl.FLOAT, false, 0, 0);
+      setMatrixUniforms();
+
+      gl.drawArrays(gl.LINES, 0, pieceBuffer.numItems);
+
+      mat4.rotate(mvMatrix, Math.PI/2, [1, 0, 0]);
+      mat4.translate(mvMatrix, [0, 0.71, 0]);
+      mat4.scale(mvMatrix, [0.3, 0.3, 0.3]);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, crawnBuffer);
+      gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, crawnBuffer.itemSize, gl.FLOAT, false, 0, 0);
+      setMatrixUniforms();
+
+      gl.drawArrays(gl.LINES, 0, crawnBuffer.numItems);
+    }
+}
+
+function webGLStart() {
+  var canvas = document.getElementById("canvas");
+  initGL(canvas);
+  initShaders();
+
+  // Handle mouse movements
+  canvas.onmousedown = handleMouseDown;
+  document.onmouseup = handleMouseUp;
+  document.onmousemove = handleMouseMove;
+
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.enable(gl.DEPTH_TEST);
+
+  PathToPoints(king_base_path, 100, function(king_base_points) {
+    PathToPoints(king_profile_path, 250, function(king_profile_points) {
+//      console.log(JSON.stringify(king_profile_points));
+//      console.log(JSON.stringify(king_base_points));
+    });
+  });
+
+  // The main body
+  pieceBuffer = PointsTo3D(king_profile, king_base);
+
+  // The crown
+  var points = [];
+  points.push({x: 40, y: 10});  
+  points.push({x: 40, y: 0});
+  points.push({x: 0, y: 0});
+
+  crawnBuffer = PointsTo3D(points, king_base);
+
+  tick();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<html>
+<body onload="webGLStart();">
+
+<script type="text/javascript" src="../glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="../webgl-utils.js"></script>
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+</script>
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    }
+</script>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   width="100"
+   height="200"
+   style="border: 1px solid black">
+  <path
+    id="queen_base_path"
+    style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+    d="m 60,40 21.913385,0 c 1.962993,0 3.543308,1.58031 3.543308,3.5433 l 0,21.91339 c 0,1.96299 -1.580315,3.54331 -3.543308,3.54331 l -21.913385,0 c -1.962992,0 -3.543307,-1.58032 -3.543307,-3.54331 l 0,-21.91339 c 0,-1.96299 1.580315,-3.5433 3.543307,-3.5433 z"/>
+  <path
+    id="queen_profile_path"
+    style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+    d="m 59.19979,176.86218 c 0,0 0.61568,-5.35552 -0.32385,-7.77235 -0.48578,-1.2496 -2.51581,-1.73795 -2.59078,-3.07656 -0.087,-1.55443 3.0332,-2.39349 2.59078,-3.88617 -2.2293,-7.52145 -11.81944,-12.30666 -14.57315,-17.8926 -0.68779,-15.61378 -5.40328,-12.52858 -8.74389,-15.3018 -3.29406,-8.01128 -4.51923,-28.48052 -4.45529,-53.351547 10.01369,-0.0903 18.70657,-3.09856 4.77913,-8.50339 0.39248,-3.92677 -1.88715,-5.03981 -4.53387,-5.82926 0.0492,-2.17631 -0.0613,-4.27602 0.081,-5.99119 3.82007,-1.13296 1.94272,-4.13581 0.24288,-4.37194 0.48882,-11.81117 9.81995,-24.2467 11.07531,-24.99091 1.25536,-0.74421 -0.50964,-2.17227 -2.13537,-1.74577 -3.71364,0.97426 -12.78035,14.95455 -15.20563,22.6702 -1.28822,2.4774 -1.97095,-22.32291 1.64668,-25.52789 3.03587,-2.68958 6.48951,-10.32015 -6.55374,-10.15796"/>
+</svg><br/><br/>
+<canvas id="canvas" width="300" height="300" style="border: 1px solid black"></canvas>
+<br/>
+<i>use your mouse to rotate the piece</i>
+<p>-- Alok</p>
+
+<script src="piece_data.js"></script>
+<script>
+/**
+ * Converts a path into an array of points.
+ *
+ * Uses animateMotion and setInterval to "steal" the points from the path.
+ * It's very hacky and I have no idea how well it works.
+ *
+ * @param SVGPathElement  path to convert
+ * @param int             approximate number of points to read
+ * @param callback        gets called once the data is ready
+ */
+function PathToPoints(path, resolution, onDone) {
+  var ctx = {};
+  ctx.resolution = resolution;
+  ctx.onDone = onDone;
+  ctx.points = [];
+  ctx.interval = null;
+
+  // Walk up nodes until we find the root svg node
+  var svg = path;
+  while (!(svg instanceof SVGSVGElement)) {
+    svg = svg.parentElement;
+  }
+
+  // Create a rect, which will be used to trace the path
+  var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  ctx.rect = rect;
+  rect.setAttribute("width", "2");
+  rect.setAttribute("height", "2");  
+  svg.appendChild(rect);
+
+  var motion = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
+  motion.setAttribute("path", path.getAttribute("d"));
+  motion.setAttribute("begin", "indefinite");
+  motion.setAttribute("dur", "2"); // TODO: set this to some larger value, e.g. 10 seconds?
+  motion.setAttribute("repeatCount", "1");
+  motion.onbegin = PathToPoints.beginRecording.bind(this, ctx);
+  motion.onend = PathToPoints.stopRecording.bind(this, ctx);
+
+  // Add rect
+  rect.appendChild(motion);
+  motion.beginElement();
+};
+
+PathToPoints.beginRecording = function(ctx) {
+  var m = ctx.rect.getScreenCTM();
+  ctx.points.push({x: m.e, y: m.f});
+  ctx.interval = setInterval(PathToPoints.recordPosition.bind(this, ctx), 1000*3/ctx.resolution);
+};
+
+PathToPoints.stopRecording = function(ctx) {
+  clearInterval(ctx.interval);
+
+  // Remove the rect
+  ctx.rect.remove();
+
+  // TODO: I sometimes get outliers (probably first or last point). Find a way
+  // to remove outliers (using some stats or maybe running the scan multiple
+  // times)?
+
+  ctx.onDone(ctx.points);
+}
+
+PathToPoints.recordPosition = function(ctx) {
+  var m = ctx.rect.getScreenCTM();
+  ctx.points.push({x: m.e, y: m.f});
+};
+
+// -----------------------------------------------------------------------------
+
+var pieceVertices;
+var pieceBuffer;
+
+function rotate(point, angle) {
+  return {x: Math.sin(angle) * point, y: Math.cos(angle) * point};
+}
+
+function getBounds(points) {
+  var min_x = points[0].x;
+  var max_x = points[0].x;
+  var min_y = points[0].y;
+  var max_y = points[0].y;
+  for (var i=1; i<points.length; i++) {
+    min_x = Math.min(min_x, points[i].x);
+    max_x = Math.max(max_x, points[i].x);
+    min_y = Math.min(min_y, points[i].y);
+    max_y = Math.max(max_y, points[i].y);
+  }
+  return {min_x: min_x, max_x: max_x, min_y: min_y, max_y: max_y};
+}
+
+/**
+ * Creates various instances of closed_path:
+ * - the vertical position is based on open_path's y coordinate.
+ * - the scale is based on open_path's x coordinate.
+ */ 
+function PointsTo3D(profile_path, base_path) {
+  pieceVertices = [];
+
+  // We need to move + resize open_path to fit inside [0, -0.5]-[1, 0.5]
+  var bounds1 = getBounds(profile_path);
+  var factor = 120; //Math.max(bounds1.max_x - bounds1.min_x, bounds1.max_y - bounds1.min_y);
+
+  for (var i=0; i<profile_path.length; i++) {
+    profile_path[i].x = (profile_path[i].x - bounds1.min_x) / factor;
+    profile_path[i].y = -(profile_path[i].y - bounds1.min_y - (bounds1.max_y - bounds1.min_y)/2) / factor;
+  }
+
+  // Resize based_path by the same factor. Center it.
+  var bounds2 = getBounds(base_path);
+  for (var i=0; i<base_path.length; i++) {
+    base_path[i].x = (base_path[i].x - (bounds2.max_x + bounds2.min_x)/2) / factor;
+    base_path[i].y = (base_path[i].y - (bounds2.max_y + bounds2.min_y)/2) / factor;
+  }
+  // We add an extra point, to close the path
+  base_path[base_path.length] = base_path[0];
+
+  // Create vertices by "cloning" base path
+  for (var i=0; i<profile_path.length; i++) {
+    for (var j=0; j<base_path.length-1; j++) {
+      // For now, vertices will be rendered as lines, so we need to compute two
+      // points. Once we switch to triangles, we'll have to compute 4 points.
+
+      var p0 = {
+        x: base_path[j].x * (profile_path[i].x / profile_path[0].x),
+        z: profile_path[i].y,
+        y: base_path[j].y * (profile_path[i].x / profile_path[0].x)
+      }
+
+      var p1 = {
+        x: base_path[j+1].x * (profile_path[i].x / profile_path[0].x),
+        z: profile_path[i].y,
+        y: base_path[j+1].y * (profile_path[i].x / profile_path[0].x)
+      }
+
+      // build line P0-P1
+      pieceVertices.push(p0.x, p0.y, p0.z);
+      pieceVertices.push(p1.x, p1.y, p1.z);
+    }
+  }
+
+  pieceBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, pieceBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pieceVertices), gl.STATIC_DRAW);
+  pieceBuffer.itemSize = 3;
+  pieceBuffer.numItems = pieceVertices.length/3;
+}
+
+// Lots more webgl boiler plate.
+
+var gl;
+function initGL(canvas) {
+  try {
+    gl = canvas.getContext("experimental-webgl");
+    gl.viewportWidth = canvas.width;
+    gl.viewportHeight = canvas.height;
+  } catch (e) {
+  }
+  if (!gl) {
+    alert("Could not initialise WebGL, sorry :-(");
+  }
+}
+
+function getShader(gl, id) {
+  var shaderScript = document.getElementById(id);
+  if (!shaderScript) {
+    return null;
+  }
+
+  var str = "";
+  var k = shaderScript.firstChild;
+  while (k) {
+    if (k.nodeType == 3) {
+      str += k.textContent;
+    }
+    k = k.nextSibling;
+  }
+
+  var shader;
+  if (shaderScript.type == "x-shader/x-fragment") {
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+  } else if (shaderScript.type == "x-shader/x-vertex") {
+      shader = gl.createShader(gl.VERTEX_SHADER);
+  } else {
+      return null;
+  }
+
+  gl.shaderSource(shader, str);
+  gl.compileShader(shader);
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    alert(gl.getShaderInfoLog(shader));
+    return null;
+  }
+
+  return shader;
+}
+
+var shaderProgram;
+
+function initShaders() {
+  var fragmentShader = getShader(gl, "shader-fs");
+  var vertexShader = getShader(gl, "shader-vs");
+
+  shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
+  gl.linkProgram(shaderProgram);
+
+  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      alert("Could not initialise shaders");
+  }
+
+  gl.useProgram(shaderProgram);
+
+  shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+  shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+  shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+}
+
+var mvMatrix = mat4.create();
+var pMatrix = mat4.create();
+
+function setMatrixUniforms() {
+  gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+  gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+}
+
+// Keeps track of the mouse related angle
+var pos = mat4.create();
+mat4.identity(pos);
+
+function drawScene() {
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+
+    mat4.identity(mvMatrix);
+
+    // Setup camera 
+    mat4.translate(mvMatrix, [0, 0.0, -2.0]);
+    mat4.rotate(mvMatrix, -1.13, [1, 0, 0]);
+
+    // Mouse induced rotation
+    var newRotationMatrix = mat4.create();
+    mat4.identity(newRotationMatrix);
+    mat4.rotate(pos, lastMouseDX * 0.002, [0, 0, 1]);
+    mat4.rotate(newRotationMatrix, lastMouseDY * 0.002, [1, 0, 0]);
+    mat4.multiply(newRotationMatrix, pos, pos);
+    mat4.multiply(mvMatrix, pos);
+
+    if (pieceBuffer) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pieceBuffer);
+      gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, pieceBuffer.itemSize, gl.FLOAT, false, 0, 0);
+      setMatrixUniforms();
+
+      gl.drawArrays(gl.LINES, 0, pieceBuffer.numItems);
+    }
+}
+
+function tick() {
+  // make sure we come back here for the next frame
+  requestAnimFrame(tick);
+
+  // draw everything
+  drawScene();
+}
+
+var mouseDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
+var lastMouseDX = 10;
+var lastMouseDY = 0;
+var lastMouseDownX = null;
+var lastMouseDownY = null;
+
+function handleMouseDown(event) {
+  mouseDown = true;
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+  lastMouseDownX = event.clientX;
+  lastMouseDownY = event.clientY;
+}
+
+function handleMouseUp(event) {
+  mouseDown = false;
+  var newX = event.clientX;
+  var newY = event.clientY;
+
+  if (((newX - lastMouseDownX)*(newX - lastMouseDownX)
+       + (newY - lastMouseDownY)*(newY - lastMouseDownY)) < 10) {
+    // the mouse was released close to where it went down, so we'll
+    // stop rotating things
+    lastMouseDX = 0;
+    lastMouseDY = 0;
+  }
+}
+
+function handleMouseMove(event) {
+  if (!mouseDown) {
+    return;
+  }
+  var newX = event.clientX;
+  var newY = event.clientY;
+
+  lastMouseDX = newX - lastMouseX;
+  lastMouseDY = newY - lastMouseY;
+  lastMouseX = newX;
+  lastMouseY = newY;
+}
+
+function webGLStart() {
+  var canvas = document.getElementById("canvas");
+  initGL(canvas);
+  initShaders();
+
+  // Handle mouse movements
+  canvas.onmousedown = handleMouseDown;
+  document.onmouseup = handleMouseUp;
+  document.onmousemove = handleMouseMove;
+
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.enable(gl.DEPTH_TEST);
+
+  PathToPoints(queen_base_path, 100, function(queen_base_points) {
+    PathToPoints(queen_profile_path, 250, function(queen_profile_points) {
+//      console.log(JSON.stringify(queen_profile_points));
+//      console.log(JSON.stringify(queen_base_points));
+    });
+  });
+
+  PointsTo3D(queen_profile, queen_base);
+
+  tick();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<html>
+<body>
+<p>
+  I revist the previous code, and improve it by cursively drawing the curve
+  until each piece is "flat enough". It's interesting to note that
+  the improvement is minor in terms of # segments; it however makes it easier
+  to not have to hardcode a precision value.
+</p>
+
+<div>
+  <div><label>precision:</label><span id="prec_value"></span></div>
+  <div><label># segments:</label><span id="segments"></span></div>
+  <input id="precision" type="range" min=1 max=12 value=2 step=1 onChange="render()">
+</div>
+<div>
+  <canvas id="canvas" width="300" height="250" style="border: 1px solid blue; width: 300px; height: 250px"></canvas>
+</div>
+
+<script>
+var points = [];
+var ctx = canvas.getContext('2d');
+var lines_drawn;
+
+function render() {
+  ctx.clearRect(0, 0, canvas.scrollWidth, canvas.scrollHeight);
+
+  // draw a bezier curve from points[0] to points[1]
+  lines_drawn = 0;
+  drawBezierCurve({x: points[0].start_x, y: points[0].start_y},
+    {x: points[0].end_x, y: points[0].end_y},
+    {x: points[1].end_x, y: points[1].end_y},
+    {x: points[1].start_x, y: points[1].start_y});
+
+  prec_value.textContent = precision.value;
+  segments.textContent = lines_drawn;
+}
+
+function distance(p1, p2) {
+  return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+}
+
+function drawBezierCurve(p0, c0, c1, p1) {
+  // if p0-c0 + c0-c1 + c1-p1 is roughly
+  // equal to p0-p1, then we are done.
+  var d1 = distance(p0, c0) + distance(c0, c1) + distance(c1, p1)
+  var d2 = distance(p0, p1);
+  var prec = 1/Math.pow(2, precision.value);
+  if (1 - d2/d1 <= prec) {
+    ctx.beginPath();
+    ctx.moveTo(p0.x, p0.y);
+    ctx.lineTo(p1.x, p1.y);
+    lines_drawn++;
+    ctx.stroke();
+    return;
+  }
+
+  // let p2 = midpoint on [p0, c0]
+  // let p3 = midpoint on [c0, c1]
+  // let p4 = midpoint on [c1, p1]
+  // let x = midpoint on [p2, p3]
+  // let y = midpoint on [p3, p4]
+  // let p = midpoint on [x, y]
+  // recurively draw both halves
+  var p2 = pointOn(p0, c0, 0.5);
+  var p3 = pointOn(c0, c1, 0.5);
+  var p4 = pointOn(c1, p1, 0.5);
+  var x = pointOn(p2, p3, 0.5);
+  var y = pointOn(p3, p4, 0.5);
+  var p = pointOn(x, y, 0.5);
+
+  drawBezierCurve(p0, p2, x, p);
+  drawBezierCurve(p, y, p4, p1);
+}
+
+function pointOn(p0, p1, t) {
+  return {
+    x: (p1.x - p0.x)*t+p0.x,
+    y: (p1.y - p0.y)*t+p0.y
+  };
+}
+
+points = [{"start_x":47,"start_y":162,"end_x":82,"end_y":25},{"start_x":245,"start_y":39,"end_x":225,"end_y":194}];
+render();
+</script>
+</body>
+</html>

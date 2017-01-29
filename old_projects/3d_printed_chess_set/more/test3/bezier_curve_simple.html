@@ -1,0 +1,130 @@
+<html>
+<body>
+<pre>
+Overview
+3d printing a chess set from scratch. I created a bezier curve editor,
+a 3d modeller, CSG operations and a mesh generator (all in JavaScript).
+I then took the resulting files and 3d printed them.
+
+I wanted to model the chess set by using a combination of bezier curves and
+math functions. At some point, I figured a bezier curve is just a way to
+visually represent and manipulate a math function of the form f(x). I then
+built a modeling framework where transformations on properties (e.g. object
+width or rotation) could be described either using math functions or bezier
+curves.
+
+If you think about it, it's a generalization of the bowl/rotation.
+</pre>
+
+<canvas id="canvas" width="500" height="500" style="border: 1px solid blue; width: 500px; height: 500px"></canvas>
+<script>
+var points = [];
+var drag = null;
+var ctx = canvas.getContext('2d');
+var moving = null;
+function handleMouseDown(e) {
+  console.log("handling mouse down");
+//  drag = {start_x: e.offsetX, start_y: e.offsetY};
+  moving = null;
+  for (var i=0; i<points.length; i++) {
+    if (Math.abs(e.offsetX - points[i].start_x) < 5 &&
+      Math.abs(e.offsetY - points[i].start_y) < 5) {
+      moving = {point: points[i], el: 'start'};
+    }
+    if (Math.abs(e.offsetX - points[i].end_x) < 5 &&
+      Math.abs(e.offsetY - points[i].end_y) < 5) {
+      moving = {point: points[i], el: 'end'};
+    }
+  }
+}
+function handleMouseUp(e) {
+  console.log("handling mouse up");
+  handleMouseMove(e);
+  moving = null;
+}
+function handleMouseMove(e) {
+  if (moving != null) {
+    if (moving.el == 'start') {
+      var delta_x = e.offsetX - moving.point.start_x;
+      var delta_y = e.offsetY - moving.point.start_y;
+      moving.point.start_x += delta_x;
+      moving.point.start_y += delta_y;
+      moving.point.end_x += delta_x;
+      moving.point.end_y += delta_y;
+    } else {
+      // todo: assert moving.el is end
+      moving.point.end_x = e.offsetX;
+      moving.point.end_y = e.offsetY;
+    }
+    render();
+  }
+//  var point = drag;
+//  point.end_x = e.offsetX;
+//  point.end_y = e.offsetY;
+//  points.push(point);
+//  render();
+}
+function render() {
+  ctx.clearRect(0, 0, canvas.scrollWidth, canvas.scrollHeight);
+  for (var i=0; i<points.length; i++) {
+    ctx.beginPath();
+    ctx.arc(points[i].start_x,points[i].start_y,5,0,2*Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(points[i].end_x,points[i].end_y,5,0,2*Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(points[i].start_x,points[i].start_y);
+    ctx.lineTo(points[i].end_x,points[i].end_y);
+    ctx.stroke();  
+  }
+  if (points.length == 2) {
+    // draw a bezier curve from points[0] to points[1]
+    drawBezierCurve({x: points[0].start_x, y: points[0].start_y},
+      {x: points[0].end_x, y: points[0].end_y},
+      {x: points[1].end_x, y: points[1].end_y},
+      {x: points[1].start_x, y: points[1].start_y});
+  }
+}
+function drawBezierCurve(p0, c0, c1, p1) {
+  // let p2 = a point on [p0, c0]
+  // let p3 = a point on [c0, c1]
+  // let p4 = a point on [c1, p1]
+  // let x = a point on [p2, p3]
+  // let y = a point on [p3, p4]
+  // we want to draw the point o [x, y]
+  ctx.beginPath();
+  ctx.moveTo(p0.x, p0.y);
+
+  var n = 20;
+  for (var i=1; i<n; i++) {
+    var t = i/n;
+    var p2 = pointOn(p0, c0, t);
+    var p3 = pointOn(c0, c1, t);
+    var p4 = pointOn(c1, p1, t);
+    var x = pointOn(p2, p3, t);
+    var y = pointOn(p3, p4, t);
+    var p = pointOn(x, y, t);
+    ctx.lineTo(p.x, p.y);
+  }
+
+  ctx.lineTo(p1.x, p1.y);
+  ctx.stroke();  
+}
+
+function pointOn(p0, p1, t) {
+  return {
+    x: (p1.x - p0.x)*t+p0.x,
+    y: (p1.y - p0.y)*t+p0.y
+  };
+}
+
+canvas.addEventListener('mousedown', handleMouseDown)
+canvas.addEventListener('mouseup', handleMouseUp)
+canvas.addEventListener('mousemove', handleMouseMove)
+
+points = [{"start_x":47,"start_y":162,"end_x":82,"end_y":25},{"start_x":245,"start_y":39,"end_x":225,"end_y":194}];
+render();
+</script>
+</body>
+</html>

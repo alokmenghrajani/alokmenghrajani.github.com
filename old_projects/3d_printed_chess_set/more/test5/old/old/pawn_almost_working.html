@@ -1,0 +1,477 @@
+<html>
+<body onload="webGLStart();">
+<script type="text/javascript" src="../glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="../webgl-utils.js"></script>
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    }
+</script>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   width="100"
+   height="100"
+   style="border: 1px solid black">
+  <path
+    id="base"
+    style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+    d="m 22.002637,40 21.913385,0 c 1.962993,0 3.543308,1.58031 3.543308,3.5433 l 0,21.91339 c 0,1.96299 -1.580315,3.54331 -3.543308,3.54331 l -21.913385,0 c -1.962992,0 -3.543307,-1.58032 -3.543307,-3.54331 l 0,-21.91339 c 0,-1.96299 1.580315,-3.5433 3.543307,-3.5433 z"/>
+  <path
+    id="pawn"
+    style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+    d="M 85,67.095298 C 85.108176,67.046138 84.9586,64.458001 84.204068,63.077386 81.267769,57.70464 75.992301,65.528666 72.476919,48.008208 68.961537,30.48775 81.22169,36.217432 76.942321,31.978547 72.662952,27.739662 70.507976,28.539664 75.568351,26.368162 80.900871,24.079877 81.190767,12.974835 70,13.362183"
+    />
+</svg><br/><br/>
+<canvas id="canvas" width="300" height="300" style="border: 1px solid black"></canvas>
+
+<script>
+var pawn_data = JSON.parse('[{"x":94,"y":76.09529876708984},{"x":94.00048065185547,"y":76.09506225585938},{"x":94.00048065185547,"y":76.09506225585938},{"x":93.98258972167969,"y":75.04510498046875},{"x":93.98258972167969,"y":75.04510498046875},{"x":93.98258972167969,"y":75.04510498046875},{"x":93.76261901855469,"y":73.68934631347656},{"x":93.76261901855469,"y":73.68934631347656},{"x":93.40396118164062,"y":72.50263595581055},{"x":93.40396118164062,"y":72.50263595581055},{"x":92.74261474609375,"y":71.36040878295898},{"x":92.74261474609375,"y":71.36040878295898},{"x":91.8636703491211,"y":70.50439834594727},{"x":91.8636703491211,"y":70.50439834594727},{"x":90.8575210571289,"y":69.99588394165039},{"x":90.8575210571289,"y":69.99588394165039},{"x":90.8575210571289,"y":69.99588394165039},{"x":89.73470306396484,"y":69.69635009765625},{"x":89.73470306396484,"y":69.69635009765625},{"x":89.73470306396484,"y":69.69635009765625},{"x":88.540283203125,"y":69.4281997680664},{"x":88.540283203125,"y":69.4281997680664},{"x":88.540283203125,"y":69.4281997680664},{"x":87.38774108886719,"y":69.02252578735352},{"x":87.38774108886719,"y":69.02252578735352},{"x":87.38774108886719,"y":69.02252578735352},{"x":86.36079406738281,"y":68.39908599853516},{"x":86.36079406738281,"y":68.39908599853516},{"x":86.36079406738281,"y":68.39908599853516},{"x":86.36079406738281,"y":68.39908599853516},{"x":85.5113296508789,"y":67.60380172729492},{"x":85.5113296508789,"y":67.60380172729492},{"x":85.5113296508789,"y":67.60380172729492},{"x":84.75763702392578,"y":66.6162223815918},{"x":84.75763702392578,"y":66.6162223815918},{"x":84.75763702392578,"y":66.6162223815918},{"x":84.75763702392578,"y":66.6162223815918},{"x":84.14542388916016,"y":65.56986618041992},{"x":84.14542388916016,"y":65.56986618041992},{"x":84.14542388916016,"y":65.56986618041992},{"x":83.66448211669922,"y":64.56318664550781},{"x":83.66448211669922,"y":64.56318664550781},{"x":83.66448211669922,"y":64.56318664550781},{"x":83.66448211669922,"y":64.56318664550781},{"x":83.18331909179688,"y":63.36478805541992},{"x":83.18331909179688,"y":63.36478805541992},{"x":83.18331909179688,"y":63.36478805541992},{"x":82.76822662353516,"y":62.15275955200195},{"x":82.76822662353516,"y":62.15275955200195},{"x":82.76822662353516,"y":62.15275955200195},{"x":82.76822662353516,"y":62.15275955200195},{"x":82.45928192138672,"y":61.12797164916992},{"x":82.45928192138672,"y":61.12797164916992},{"x":82.45928192138672,"y":61.12797164916992},{"x":82.14972686767578,"y":59.98245620727539},{"x":82.14972686767578,"y":59.98245620727539},{"x":82.14972686767578,"y":59.98245620727539},{"x":81.8528823852539,"y":58.75879669189453},{"x":81.8528823852539,"y":58.75879669189453},{"x":81.8528823852539,"y":58.75879669189453},{"x":81.8528823852539,"y":58.75879669189453},{"x":81.56231689453125,"y":57.42717742919922},{"x":81.56231689453125,"y":57.42717742919922},{"x":81.56231689453125,"y":57.42717742919922},{"x":81.2906265258789,"y":56.018619537353516},{"x":81.2906265258789,"y":56.018619537353516},{"x":81.2906265258789,"y":56.018619537353516},{"x":81.2906265258789,"y":56.018619537353516},{"x":81.0865707397461,"y":54.71860122680664},{"x":81.0865707397461,"y":54.71860122680664},{"x":81.0865707397461,"y":54.71860122680664},{"x":80.93949890136719,"y":53.454654693603516},{"x":80.93949890136719,"y":53.454654693603516},{"x":80.93949890136719,"y":53.454654693603516},{"x":80.93949890136719,"y":53.454654693603516},{"x":80.8615951538086,"y":52.3837776184082},{"x":80.8615951538086,"y":52.3837776184082},{"x":80.8615951538086,"y":52.3837776184082},{"x":80.834716796875,"y":51.291019439697266},{"x":80.834716796875,"y":51.291019439697266},{"x":80.834716796875,"y":51.291019439697266},{"x":80.834716796875,"y":51.291019439697266},{"x":80.89269256591797,"y":49.929569244384766},{"x":80.89269256591797,"y":49.929569244384766},{"x":80.89269256591797,"y":49.929569244384766},{"x":81.05082702636719,"y":48.7344856262207},{"x":81.05082702636719,"y":48.7344856262207},{"x":81.05082702636719,"y":48.7344856262207},{"x":81.05082702636719,"y":48.7344856262207},{"x":81.29969024658203,"y":47.68692398071289},{"x":81.29969024658203,"y":47.68692398071289},{"x":81.29969024658203,"y":47.68692398071289},{"x":81.29969024658203,"y":47.68692398071289},{"x":81.78303527832031,"y":46.447532653808594},{"x":81.78303527832031,"y":46.447532653808594},{"x":81.78303527832031,"y":46.447532653808594},{"x":82.3857421875,"y":45.46779251098633},{"x":82.3857421875,"y":45.46779251098633},{"x":82.3857421875,"y":45.46779251098633},{"x":82.3857421875,"y":45.46779251098633},{"x":83.23914337158203,"y":44.56128692626953},{"x":83.23914337158203,"y":44.56128692626953},{"x":83.23914337158203,"y":44.56128692626953},{"x":83.23914337158203,"y":44.56128692626953},{"x":84.25794982910156,"y":43.85947799682617},{"x":84.25794982910156,"y":43.85947799682617},{"x":84.25794982910156,"y":43.85947799682617},{"x":85.5391845703125,"y":43.271175384521484},{"x":85.5391845703125,"y":43.271175384521484},{"x":85.5391845703125,"y":43.271175384521484},{"x":85.5391845703125,"y":43.271175384521484},{"x":86.46493530273438,"y":42.864418029785156},{"x":86.46493530273438,"y":42.864418029785156},{"x":86.46493530273438,"y":42.864418029785156},{"x":86.71945190429688,"y":41.90510940551758},{"x":86.71945190429688,"y":41.90510940551758},{"x":86.71945190429688,"y":41.90510940551758},{"x":86.71945190429688,"y":41.90510940551758},{"x":85.84312438964844,"y":40.880815505981445},{"x":85.84312438964844,"y":40.880815505981445},{"x":85.84312438964844,"y":40.880815505981445},{"x":84.82275390625,"y":39.93351745605469},{"x":84.82275390625,"y":39.93351745605469},{"x":84.82275390625,"y":39.93351745605469},{"x":84.82275390625,"y":39.93351745605469},{"x":83.91250610351562,"y":39.16864013671875},{"x":83.91250610351562,"y":39.16864013671875},{"x":83.91250610351562,"y":39.16864013671875},{"x":83.03350067138672,"y":38.48379898071289},{"x":83.03350067138672,"y":38.48379898071289},{"x":83.03350067138672,"y":38.48379898071289},{"x":83.03350067138672,"y":38.48379898071289},{"x":82.00837707519531,"y":37.671579360961914},{"x":82.00837707519531,"y":37.671579360961914},{"x":82.00837707519531,"y":37.671579360961914},{"x":82.00837707519531,"y":37.671579360961914},{"x":81.84232330322266,"y":36.72037887573242},{"x":81.84232330322266,"y":36.72037887573242},{"x":81.84232330322266,"y":36.72037887573242},{"x":82.68061828613281,"y":36.21114540100098},{"x":82.68061828613281,"y":36.21114540100098},{"x":82.68061828613281,"y":36.21114540100098},{"x":82.68061828613281,"y":36.21114540100098},{"x":82.68061828613281,"y":36.21114540100098},{"x":82.68061828613281,"y":36.21114540100098},{"x":82.68061828613281,"y":36.21114540100098},{"x":85.16730499267578,"y":35.06234169006348},{"x":85.16730499267578,"y":35.06234169006348},{"x":85.16730499267578,"y":35.06234169006348},{"x":85.16730499267578,"y":35.06234169006348},{"x":86.14410400390625,"y":34.312660217285156},{"x":86.14410400390625,"y":34.312660217285156},{"x":86.14410400390625,"y":34.312660217285156},{"x":86.14410400390625,"y":34.312660217285156},{"x":86.94821166992188,"y":33.35295867919922},{"x":86.94821166992188,"y":33.35295867919922},{"x":86.94821166992188,"y":33.35295867919922},{"x":87.55440521240234,"y":32.24118232727051},{"x":87.55440521240234,"y":32.24118232727051},{"x":87.55440521240234,"y":32.24118232727051},{"x":87.55440521240234,"y":32.24118232727051},{"x":87.94358825683594,"y":31.062026977539062},{"x":87.94358825683594,"y":31.062026977539062},{"x":87.94358825683594,"y":31.062026977539062},{"x":87.94358825683594,"y":31.062026977539062},{"x":88.12784576416016,"y":29.82230567932129},{"x":88.12784576416016,"y":29.82230567932129},{"x":88.12784576416016,"y":29.82230567932129},{"x":88.12784576416016,"y":29.82230567932129},{"x":88.09626770019531,"y":28.561134338378906},{"x":88.09626770019531,"y":28.561134338378906},{"x":88.09626770019531,"y":28.561134338378906},{"x":87.8592758178711,"y":27.39021110534668},{"x":87.8592758178711,"y":27.39021110534668},{"x":87.8592758178711,"y":27.39021110534668},{"x":87.8592758178711,"y":27.39021110534668},{"x":87.3971176147461,"y":26.239639282226562},{"x":87.3971176147461,"y":26.239639282226562},{"x":87.3971176147461,"y":26.239639282226562},{"x":86.76151275634766,"y":25.249011993408203},{"x":86.76151275634766,"y":25.249011993408203},{"x":86.76151275634766,"y":25.249011993408203},{"x":86.76151275634766,"y":25.249011993408203},{"x":85.90625,"y":24.349651336669922},{"x":85.90625,"y":24.349651336669922},{"x":85.90625,"y":24.349651336669922},{"x":85.90625,"y":24.349651336669922},{"x":84.89341735839844,"y":23.62068748474121},{"x":84.89341735839844,"y":23.62068748474121},{"x":84.89341735839844,"y":23.62068748474121},{"x":83.8642578125,"y":23.109689712524414},{"x":83.8642578125,"y":23.109689712524414},{"x":83.8642578125,"y":23.109689712524414},{"x":83.8642578125,"y":23.109689712524414},{"x":82.65316772460938,"y":22.711403846740723},{"x":82.65316772460938,"y":22.711403846740723},{"x":82.65316772460938,"y":22.711403846740723},{"x":82.65316772460938,"y":22.711403846740723},{"x":81.53105163574219,"y":22.488420486450195},{"x":81.53105163574219,"y":22.488420486450195},{"x":81.53105163574219,"y":22.488420486450195},{"x":80.31483459472656,"y":22.37088394165039},{"x":80.31483459472656,"y":22.37088394165039},{"x":80.31483459472656,"y":22.37088394165039},{"x":79.00455474853516,"y":22.362025260925293},{"x":79.00455474853516,"y":22.362025260925293},{"x":79.00455474853516,"y":22.362025260925293},{"x":79.00455474853516,"y":22.362025260925293}]');
+var base_data = JSON.parse('[{"x":31.00263786315918,"y":49},{"x":31.00263786315918,"y":49},{"x":31.00263786315918,"y":49},{"x":34.647932052612305,"y":49},{"x":34.647932052612305,"y":49},{"x":34.647932052612305,"y":49},{"x":34.647932052612305,"y":49},{"x":34.647932052612305,"y":49},{"x":34.647932052612305,"y":49},{"x":34.647932052612305,"y":49},{"x":34.647932052612305,"y":49},{"x":37.11630630493164,"y":49},{"x":37.11630630493164,"y":49},{"x":37.11630630493164,"y":49},{"x":38.90180778503418,"y":49},{"x":38.90180778503418,"y":49},{"x":38.90180778503418,"y":49},{"x":38.90180778503418,"y":49},{"x":40.736412048339844,"y":49},{"x":40.736412048339844,"y":49},{"x":40.736412048339844,"y":49},{"x":42.558109283447266,"y":49},{"x":42.558109283447266,"y":49},{"x":42.558109283447266,"y":49},{"x":42.558109283447266,"y":49},{"x":44.377620697021484,"y":49},{"x":44.377620697021484,"y":49},{"x":44.377620697021484,"y":49},{"x":46.20140075683594,"y":49},{"x":46.20140075683594,"y":49},{"x":46.20140075683594,"y":49},{"x":46.20140075683594,"y":49},{"x":48.14251708984375,"y":49},{"x":48.14251708984375,"y":49},{"x":48.14251708984375,"y":49},{"x":49.85223388671875,"y":49},{"x":49.85223388671875,"y":49},{"x":49.85223388671875,"y":49},{"x":49.85223388671875,"y":49},{"x":51.675682067871094,"y":49},{"x":51.675682067871094,"y":49},{"x":51.675682067871094,"y":49},{"x":53.5478515625,"y":49.055686950683594},{"x":53.5478515625,"y":49.055686950683594},{"x":53.5478515625,"y":49.055686950683594},{"x":53.5478515625,"y":49.055686950683594},{"x":55.207908630371094,"y":49.83680725097656},{"x":55.207908630371094,"y":49.83680725097656},{"x":55.207908630371094,"y":49.83680725097656},{"x":56.24222183227539,"y":51.3149528503418},{"x":56.24222183227539,"y":51.3149528503418},{"x":56.24222183227539,"y":51.3149528503418},{"x":56.24222183227539,"y":51.3149528503418},{"x":56.45933151245117,"y":53.1686897277832},{"x":56.45933151245117,"y":53.1686897277832},{"x":56.45933151245117,"y":53.1686897277832},{"x":56.45933151245117,"y":54.99235534667969},{"x":56.45933151245117,"y":54.99235534667969},{"x":56.45933151245117,"y":54.99235534667969},{"x":56.45933151245117,"y":54.99235534667969},{"x":56.45933151245117,"y":56.82411575317383},{"x":56.45933151245117,"y":56.82411575317383},{"x":56.45933151245117,"y":56.82411575317383},{"x":56.45933151245117,"y":58.63991165161133},{"x":56.45933151245117,"y":58.63991165161133},{"x":56.45933151245117,"y":58.63991165161133},{"x":56.45933151245117,"y":58.63991165161133},{"x":56.45933151245117,"y":60.45821762084961},{"x":56.45933151245117,"y":60.45821762084961},{"x":56.45933151245117,"y":60.45821762084961},{"x":56.45933151245117,"y":62.296321868896484},{"x":56.45933151245117,"y":62.296321868896484},{"x":56.45933151245117,"y":62.296321868896484},{"x":56.45933151245117,"y":62.296321868896484},{"x":56.45933151245117,"y":64.11529159545898},{"x":56.45933151245117,"y":64.11529159545898},{"x":56.45933151245117,"y":64.11529159545898},{"x":56.45933151245117,"y":65.93502044677734},{"x":56.45933151245117,"y":65.93502044677734},{"x":56.45933151245117,"y":65.93502044677734},{"x":56.45933151245117,"y":65.93502044677734},{"x":56.45933151245117,"y":67.7470932006836},{"x":56.45933151245117,"y":67.7470932006836},{"x":56.45933151245117,"y":67.7470932006836},{"x":56.45933151245117,"y":69.58235168457031},{"x":56.45933151245117,"y":69.58235168457031},{"x":56.45933151245117,"y":69.58235168457031},{"x":56.45933151245117,"y":69.58235168457031},{"x":56.45933151245117,"y":71.40066528320312},{"x":56.45933151245117,"y":71.40066528320312},{"x":56.45933151245117,"y":71.40066528320312},{"x":56.45933151245117,"y":73.22378540039062},{"x":56.45933151245117,"y":73.22378540039062},{"x":56.45933151245117,"y":73.22378540039062},{"x":56.45933151245117,"y":73.22378540039062},{"x":56.40546417236328,"y":75.07826232910156},{"x":56.40546417236328,"y":75.07826232910156},{"x":56.40546417236328,"y":75.07826232910156},{"x":55.62294006347656,"y":76.74807739257812},{"x":55.62294006347656,"y":76.74807739257812},{"x":55.62294006347656,"y":76.74807739257812},{"x":55.62294006347656,"y":76.74807739257812},{"x":54.143531799316406,"y":77.78319549560547},{"x":54.143531799316406,"y":77.78319549560547},{"x":54.143531799316406,"y":77.78319549560547},{"x":52.2778434753418,"y":78},{"x":52.2778434753418,"y":78},{"x":52.2778434753418,"y":78},{"x":52.2778434753418,"y":78},{"x":50.45843505859375,"y":78},{"x":50.45843505859375,"y":78},{"x":50.45843505859375,"y":78},{"x":48.61989974975586,"y":78},{"x":48.61989974975586,"y":78},{"x":48.61989974975586,"y":78},{"x":48.61989974975586,"y":78},{"x":46.79021453857422,"y":78},{"x":46.79021453857422,"y":78},{"x":46.79021453857422,"y":78},{"x":44.984153747558594,"y":78},{"x":44.984153747558594,"y":78},{"x":44.984153747558594,"y":78},{"x":44.984153747558594,"y":78},{"x":43.138065338134766,"y":78},{"x":43.138065338134766,"y":78},{"x":43.138065338134766,"y":78},{"x":41.32205581665039,"y":78},{"x":41.32205581665039,"y":78},{"x":41.32205581665039,"y":78},{"x":41.32205581665039,"y":78},{"x":39.5201530456543,"y":78},{"x":39.5201530456543,"y":78},{"x":39.5201530456543,"y":78},{"x":37.69221115112305,"y":78},{"x":37.69221115112305,"y":78},{"x":37.69221115112305,"y":78},{"x":37.69221115112305,"y":78},{"x":35.86756706237793,"y":78},{"x":35.86756706237793,"y":78},{"x":35.86756706237793,"y":78},{"x":35.86756706237793,"y":78},{"x":33.932355880737305,"y":78},{"x":33.932355880737305,"y":78},{"x":33.932355880737305,"y":78},{"x":32.226247787475586,"y":78},{"x":32.226247787475586,"y":78},{"x":32.226247787475586,"y":78},{"x":30.279027938842773,"y":77.92667388916016},{"x":30.279027938842773,"y":77.92667388916016},{"x":30.279027938842773,"y":77.92667388916016},{"x":30.279027938842773,"y":77.92667388916016},{"x":28.703235626220703,"y":77.15680694580078},{"x":28.703235626220703,"y":77.15680694580078},{"x":28.703235626220703,"y":77.15680694580078},{"x":28.703235626220703,"y":77.15680694580078},{"x":27.63948631286621,"y":75.57927703857422},{"x":27.63948631286621,"y":75.57927703857422},{"x":27.63948631286621,"y":75.57927703857422},{"x":27.459331512451172,"y":73.6991958618164},{"x":27.459331512451172,"y":73.6991958618164},{"x":27.459331512451172,"y":73.6991958618164},{"x":27.459331512451172,"y":73.6991958618164},{"x":27.459331512451172,"y":71.89871215820312},{"x":27.459331512451172,"y":71.89871215820312},{"x":27.459331512451172,"y":71.89871215820312},{"x":27.459331512451172,"y":70.14087677001953},{"x":27.459331512451172,"y":70.14087677001953},{"x":27.459331512451172,"y":70.14087677001953},{"x":27.459331512451172,"y":68.33317947387695},{"x":27.459331512451172,"y":68.33317947387695},{"x":27.459331512451172,"y":68.33317947387695},{"x":27.459331512451172,"y":68.33317947387695},{"x":27.459331512451172,"y":66.50458908081055},{"x":27.459331512451172,"y":66.50458908081055},{"x":27.459331512451172,"y":66.50458908081055},{"x":27.459331512451172,"y":64.67818832397461},{"x":27.459331512451172,"y":64.67818832397461},{"x":27.459331512451172,"y":64.67818832397461},{"x":27.459331512451172,"y":64.67818832397461},{"x":27.459331512451172,"y":62.85648727416992},{"x":27.459331512451172,"y":62.85648727416992},{"x":27.459331512451172,"y":62.85648727416992},{"x":27.459331512451172,"y":60.97026443481445},{"x":27.459331512451172,"y":60.97026443481445},{"x":27.459331512451172,"y":60.97026443481445},{"x":27.459331512451172,"y":60.97026443481445},{"x":27.459331512451172,"y":59.20270538330078},{"x":27.459331512451172,"y":59.20270538330078},{"x":27.459331512451172,"y":59.20270538330078},{"x":27.459331512451172,"y":57.394012451171875},{"x":27.459331512451172,"y":57.394012451171875},{"x":27.459331512451172,"y":57.394012451171875},{"x":27.459331512451172,"y":57.394012451171875},{"x":27.459331512451172,"y":55.55918884277344},{"x":27.459331512451172,"y":55.55918884277344},{"x":27.459331512451172,"y":55.55918884277344},{"x":27.459331512451172,"y":53.74394226074219},{"x":27.459331512451172,"y":53.74394226074219},{"x":27.459331512451172,"y":53.74394226074219},{"x":27.459331512451172,"y":53.74394226074219},{"x":27.542158126831055,"y":51.77501678466797},{"x":27.542158126831055,"y":51.77501678466797},{"x":27.542158126831055,"y":51.77501678466797},{"x":28.311288833618164,"y":50.233646392822266},{"x":28.311288833618164,"y":50.233646392822266},{"x":28.311288833618164,"y":50.233646392822266},{"x":28.311288833618164,"y":50.233646392822266},{"x":29.81208038330078,"y":49.203468322753906},{"x":29.81208038330078,"y":49.203468322753906},{"x":29.81208038330078,"y":49.203468322753906}]');
+
+/**
+ * Converts a path into an array of points.
+ *
+ * Uses animateMotion and setInterval to "steal" the points from the path.
+ * It's very hacky and I have no idea how well it works.
+ *
+ * @param SVGPathElement  path to convert
+ * @param int             approximate number of points to read
+ * @param callback        gets called once the data is ready
+ */
+function PathToPoints(path, resolution, onDone) {
+  var ctx = {};
+  ctx.resolution = resolution;
+  ctx.onDone = onDone;
+  ctx.points = [];
+  ctx.interval = null;
+
+  // Walk up nodes until we find the root svg node
+  var svg = path;
+  while (!(svg instanceof SVGSVGElement)) {
+    svg = svg.parentElement;
+  }
+  // Create a rect, which will be used to trace the path
+
+  var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  ctx.rect = rect;
+  rect.setAttribute("width", "50");
+  rect.setAttribute("height", "50");  
+  svg.appendChild(rect);
+
+  var motion = document.createElementNS("http://www.w3.org/2000/svg", "animateMotion");
+  motion.setAttribute("path", path.getAttribute("d"));
+  motion.setAttribute("begin", "indefinite");
+  motion.setAttribute("dur", "1"); // TODO: set this to some larger value, e.g. 10 seconds?
+  motion.setAttribute("repeatCount", "1");
+  motion.onbegin = PathToPoints.beginRecording.bind(this, ctx);
+  motion.onend = PathToPoints.stopRecording.bind(this, ctx);
+  alok = motion;
+
+  // Add rect
+  rect.appendChild(motion);
+  motion.beginElement();
+};
+
+PathToPoints.beginRecording = function(ctx) {
+  var m = ctx.rect.getScreenCTM();
+  ctx.points.push({x: m.e, y: m.f});
+  ctx.interval = setInterval(PathToPoints.recordPosition.bind(this, ctx), 1000*3/ctx.resolution);
+};
+
+PathToPoints.stopRecording = function(ctx) {
+  clearInterval(ctx.interval);
+
+  // Remove the rect
+  ctx.rect.remove();
+
+  ctx.onDone(ctx.points);
+}
+
+PathToPoints.recordPosition = function(ctx) {
+  var m = ctx.rect.getScreenCTM();
+  ctx.points.push({x: m.e, y: m.f});
+};
+
+var pieceVertices;
+var pieceBuffer;
+
+function rotate(point, angle) {
+  return {x: Math.sin(angle) * point, y: Math.cos(angle) * point};
+}
+
+/**
+ * Rotates open_path around closed_path
+ */ 
+function PointsTo3D(open_path, closed_path) {
+  // For now, rotate open_path around y axis
+  pieceVertices = [];
+
+  // resize open_path
+  var min_x = 100000;
+  var max_x = -100000;
+  var min_y = 100000;
+  var max_y = -100000;
+  for (var i=0; i<open_path.length; i++) {
+    min_x = Math.min(min_x, open_path[i].x);
+    max_x = Math.max(max_x, open_path[i].x);
+    min_y = Math.min(min_y, open_path[i].y);
+    max_y = Math.max(max_y, open_path[i].y);
+  }
+  var d = Math.max(max_x-min_x, max_y-min_y);
+  for (var i=0; i<open_path.length; i++) {
+    open_path[i] = {x: (open_path[i].x - min_x)/d, y: -(open_path[i].y - min_y - (max_y-min_y)/2)/d};
+  }
+
+  // resize closed_path
+  min_x = 100000;
+  max_x = -100000;
+  min_y = 100000;
+  max_y = -100000;
+  for (var i=0; i<closed_path.length; i++) {
+    min_x = Math.min(min_x, closed_path[i].x);
+    max_x = Math.max(max_x, closed_path[i].x);
+    min_y = Math.min(min_y, closed_path[i].y);
+    max_y = Math.max(max_y, closed_path[i].y);    
+  }
+  for (var i=0; i<closed_path.length; i++) {
+    closed_path[i].x = (closed_path[i].x - (max_x + min_x)/2) / d;
+    closed_path[i].y = (closed_path[i].y - (max_y + min_y)/2) / d;
+  }
+  closed_path[closed_path.length] = {x: closed_path[0].x, y: closed_path[0].y};
+
+  for (var i=0; i<open_path.length; i++) {
+    for (var j=0; j<closed_path.length-1; j++) {
+      // compute 4 points
+      // compute rotation for closed_path[j]
+      var r1 = Math.atan2(closed_path[j].x, closed_path[j].y);
+      var r2 = Math.atan2(closed_path[j+1].x, closed_path[j+1].y);
+      // compute length delta
+/*      var d1 = Math.sqrt((closed_path[j].x * closed_path[j].x) +
+                (closed_path[j].y * closed_path[j].y)) /
+              Math.sqrt((closed_path[0].x * closed_path[0].x) +
+                (closed_path[0].y * closed_path[0].y))
+      var d2 = Math.sqrt((closed_path[j+1].x * closed_path[j+1].x) +
+                (closed_path[j].y * closed_path[j].y)) /
+              Math.sqrt((closed_path[0].x * closed_path[0].x) +
+                (closed_path[0].y * closed_path[0].y))
+*/
+
+      var p0 = rotate(open_path[i].x, r1);
+//      var p1 = rotate(open_path[i+1].x, r1);
+      var p2 = rotate(open_path[i].x, r2);
+//      var p3 = rotate(open_path[i+1].x, r2);
+
+      var px = rotate(open_path[0].x, r1);
+      var py = rotate(open_path[0].x, r2);
+
+      // build line P0-P2
+      pieceVertices.push(
+        closed_path[j].x + p0.x - px.x,
+        closed_path[j].y + p0.y - px.y,
+        open_path[i].y);
+      pieceVertices.push(
+        closed_path[j+1].x + p2.x - py.x,
+        closed_path[j+1].y + p2.y  - py.y,
+        open_path[i].y);
+
+/*
+      // build first triangle, P0-P2-P1
+      pieceVertices.push(
+        closed_path[j].x + p0.x - px.x,
+        closed_path[j].y + p0.y - px.y,
+        open_path[i].y);
+      pieceVertices.push(
+        closed_path[j+1].x + p2.x - py.x,
+        closed_path[j+1].y + p2.y  - py.y,
+        open_path[i].y);
+      pieceVertices.push(
+        closed_path[j].x + p1.x - px.x,
+        closed_path[j].y + p1.y - px.y,
+        open_path[i+1].y);
+
+      // build second triangle, P1-P2-P3
+      pieceVertices.push(
+        closed_path[j].x + p1.x - px.x,
+        closed_path[j].y + p1.y - px.y,
+        open_path[i+1].y);
+      pieceVertices.push(
+        closed_path[j+1].x + p2.x - py.x,
+        closed_path[j+1].y + p2.y - py.y,
+        open_path[i].y);
+      pieceVertices.push(
+        closed_path[j].x + p3.x - px.x,
+        closed_path[j].y + p3.y - px.y,
+        open_path[i+1].y);
+*/
+
+/*
+      var p0 = {
+        x: closed_path[j].x + open_path[i].x - open_path[0].x,
+        y: open_path[i].y,
+        z: closed_path[j].y + open_path[i].y - open_path[0].y
+      };
+
+      var p1 = {
+        x: closed_path[j].x + open_path[i+1].x - open_path[0].x,
+        y: open_path[i+1].y,
+        z: closed_path[j].y + open_path[i+1].y - open_path[0].y
+      };
+
+      var p2 = {
+        x: closed_path[(j+1)%closed_path.length].x + open_path[i].x - open_path[0].x,
+        y: open_path[i].y,
+        z: closed_path[(j+1)%closed_path.length].y + open_path[i].y - open_path[0].y
+      };
+
+      var p3 = {
+        x: closed_path[(j+1)%closed_path.length].x + open_path[i+1].x - open_path[0].x,
+        y: open_path[i+1].y,
+        z: closed_path[(j+1)%closed_path.length].y + open_path[i+1].y - open_path[0].y
+      };
+*/
+
+      // build first triangle, P0-P2-P1
+/*      pieceVertices.push(p0.x, p0.y, p0.z);
+      pieceVertices.push(p2.x, p2.y, p2.z);
+      pieceVertices.push(p1.x, p1.y, p1.z);
+
+      // build second triangle, P1-P2-P3
+      pieceVertices.push(p1.x, p1.y, p1.z);
+      pieceVertices.push(p2.x, p2.y, p2.z);
+      pieceVertices.push(p3.x, p3.y, p3.z);*/      
+    }
+  }
+/*
+  var n_rotation = 4;
+  for (var i=0; i<open_path.length-1; i++) {
+    for (var j=0; j<n_rotation; j++) {
+      // compute 4 points
+      var p0 = rotate(open_path[i].x, 2*Math.PI / n_rotation * j);
+      var p1 = rotate(open_path[i+1].x, 2*Math.PI / n_rotation * j);
+      var p2 = rotate(open_path[i].x, 2*Math.PI / n_rotation * (j+1));
+      var p3 = rotate(open_path[i+1].x, 2*Math.PI / n_rotation * (j+1));
+
+      // build first triangle, P0-P2-P1
+      pieceVertices.push(p0.x, p0.y, open_path[i].y);
+      pieceVertices.push(p2.x, p2.y, open_path[i].y);
+      pieceVertices.push(p1.x, p1.y, open_path[i+1].y);
+
+      // build second triangle, P1-P2-P3
+      pieceVertices.push(p1.x, p1.y, open_path[i+1].y);
+      pieceVertices.push(p2.x, p2.y, open_path[i].y);
+      pieceVertices.push(p3.x, p3.y, open_path[i+1].y);
+    }
+  }*/
+
+  pieceBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, pieceBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pieceVertices), gl.STATIC_DRAW);
+  pieceBuffer.itemSize = 3;
+  pieceBuffer.numItems = pieceVertices.length/3;
+}
+
+// Lots more webgl boiler plate.
+
+var gl;
+function initGL(canvas) {
+  try {
+    gl = canvas.getContext("experimental-webgl");
+    gl.viewportWidth = canvas.width;
+    gl.viewportHeight = canvas.height;
+  } catch (e) {
+  }
+  if (!gl) {
+    alert("Could not initialise WebGL, sorry :-(");
+  }
+}
+
+function getShader(gl, id) {
+  var shaderScript = document.getElementById(id);
+  if (!shaderScript) {
+    return null;
+  }
+
+  var str = "";
+  var k = shaderScript.firstChild;
+  while (k) {
+    if (k.nodeType == 3) {
+      str += k.textContent;
+    }
+    k = k.nextSibling;
+  }
+
+  var shader;
+  if (shaderScript.type == "x-shader/x-fragment") {
+      shader = gl.createShader(gl.FRAGMENT_SHADER);
+  } else if (shaderScript.type == "x-shader/x-vertex") {
+      shader = gl.createShader(gl.VERTEX_SHADER);
+  } else {
+      return null;
+  }
+
+  gl.shaderSource(shader, str);
+  gl.compileShader(shader);
+
+  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    alert(gl.getShaderInfoLog(shader));
+    return null;
+  }
+
+  return shader;
+}
+
+var shaderProgram;
+
+function initShaders() {
+  var fragmentShader = getShader(gl, "shader-fs");
+  var vertexShader = getShader(gl, "shader-vs");
+
+  shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
+  gl.linkProgram(shaderProgram);
+
+  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      alert("Could not initialise shaders");
+  }
+
+  gl.useProgram(shaderProgram);
+
+  shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+  shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+  shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+}
+
+var mvMatrix = mat4.create();
+var pMatrix = mat4.create();
+
+function setMatrixUniforms() {
+  gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+  gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+}
+
+// Keeps track of the mouse related angle
+var pos = mat4.create();
+mat4.identity(pos);
+
+function drawScene() {
+    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+
+    mat4.identity(mvMatrix);
+
+    // Setup camera 
+    mat4.translate(mvMatrix, [0, 0.0, -2.0]);
+    mat4.rotate(mvMatrix, -1.13, [1, 0, 0]);
+
+    // Mouse induced rotation
+    var newRotationMatrix = mat4.create();
+    mat4.identity(newRotationMatrix);
+    mat4.rotate(newRotationMatrix, lastMouseDX * 0.002, [0, 0, 1]);
+    mat4.rotate(newRotationMatrix, lastMouseDY * 0.002, [1, 0, 0]);
+    mat4.multiply(newRotationMatrix, pos, pos);
+    mat4.multiply(mvMatrix, pos);
+
+    if (pieceBuffer) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pieceBuffer);
+      gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, pieceBuffer.itemSize, gl.FLOAT, false, 0, 0);
+      setMatrixUniforms();
+      gl.drawArrays(gl.LINES, 0, pieceBuffer.numItems);
+    }
+}
+
+function tick() {
+  // make sure we come back here for the next frame
+  requestAnimFrame(tick);
+
+  // draw everything
+  drawScene();
+}
+
+var mouseDown = false;
+var lastMouseX = null;
+var lastMouseY = null;
+var lastMouseDX = 10;
+var lastMouseDY = 0;
+var lastMouseDownX = null;
+var lastMouseDownY = null;
+
+function handleMouseDown(event) {
+  mouseDown = true;
+  lastMouseX = event.clientX;
+  lastMouseY = event.clientY;
+  lastMouseDownX = event.clientX;
+  lastMouseDownY = event.clientY;
+}
+
+function handleMouseUp(event) {
+  mouseDown = false;
+  var newX = event.clientX;
+  var newY = event.clientY;
+
+  if (((newX - lastMouseDownX)*(newX - lastMouseDownX)
+       + (newY - lastMouseDownY)*(newY - lastMouseDownY)) < 10) {
+    // the mouse was released close to where it went down, so we'll
+    // stop rotating things
+    lastMouseDX = 0;
+    lastMouseDY = 0;
+  }
+}
+
+function handleMouseMove(event) {
+  if (!mouseDown) {
+    return;
+  }
+  var newX = event.clientX;
+  var newY = event.clientY;
+
+  lastMouseDX = newX - lastMouseX;
+  lastMouseDY = newY - lastMouseY;
+  lastMouseX = newX;
+  lastMouseY = newY;
+}
+
+function webGLStart() {
+  var canvas = document.getElementById("canvas");
+  initGL(canvas);
+  initShaders();
+
+  // Handle mouse movements
+  canvas.onmousedown = handleMouseDown;
+  document.onmouseup = handleMouseUp;
+  document.onmousemove = handleMouseMove;
+
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.enable(gl.DEPTH_TEST);
+
+  PathToPoints(base, 1000, function(base_points) {
+    PathToPoints(pawn, 100, function(pawn_points) {
+      PointsTo3D(pawn_points, base_points);
+    });
+  });
+
+//  PointsTo3D(pawn_data, base_data);
+
+  tick();
+}
+
+</script>
+</body>
+</html>

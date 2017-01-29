@@ -1,0 +1,48 @@
+<html>
+<body>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="600"
+  height="600"
+  style="border: 1px solid black;">
+  <path
+    id="path"
+    style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
+    d="m 228.57143,385.21933 c 112.85714,-108.57143 85.71428,-14.28572 254.28571,-62.85715 236.88942,-68.25628 -37.97795,449.4328 -220,365.71429 C 73.053002,600.77869 585.71429,545.21932 585.71429,545.21932"/>
+</svg>
+<canvas id="canvas" style="border: 1px solid black; width: 500px; height: 500px">
+</canvas>
+
+<script src="function.js"></script>
+<script>
+var p = path.getAttribute('d');
+// convert SVG path into bezier curve
+
+
+
+var start = [20, 20],
+    c1 = [100, 159],
+    c2 = [50, 200],
+    end = [200, 20],
+    scale = 2
+
+var points = createBezierBuilder()(start, c1, c2, end, scale);
+ctx = canvas.getContext('2d');
+ctx.moveTo(points[0][0], points[0][1]);
+for (var i=1; i<points.length; i++) {
+  ctx.lineTo(points[i][0], points[i][1]);
+}
+ctx.strokeStyle="red";
+ctx.lineWidth=10;
+ctx.stroke();
+
+ctx.moveTo(20, 20);
+ctx.bezierCurveTo(100, 159, 50, 200, 200, 20);
+ctx.strokeStyle="black";
+ctx.lineWidth=1;
+ctx.stroke();
+
+</script>
+
+</body>
+</html>
