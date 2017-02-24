@@ -1,0 +1,808 @@
+Courtenay, 1868
+2, , 0
+Qf1, Kf6
+Kf8
+Qf1, Qc4, Kf8, Ke8, Qc4, Qc8
+;;
+Speckmann, 1964
+2, , 0
+Kg6, Rh7
+Kg8
+Rh7, Rf7, Kg8, Kh8, Rf7, Rf8
+;;
+Powell, 1857
+2, , 0
+Qc1, Kc4
+Ka5
+Qc1, Qh6, Ka5, Ka4, Qh6, Qa6
+;;
+Speckmann, 1964
+2, , 0
+Rg4, Kg6
+Kg8
+Rg4, Rf4, Kg8, Kh8, Rf4, Rf8
+;;
+Shinkman, 1871
+2, , 0
+Kc6, Qg6
+Ka6
+Qg6, Qb1, Ka6, Ka5, Qb1, Qb5
+Qg6, Qb1, Ka6, Ka7, Qb1, Qb7
+;;
+Speckmann, 1975
+2, , 0
+Kc6, Re7
+Ka8
+Kc6, Kb6, Ka8, Kb8, Re7, Re8
+;;
+Bakke, 1990
+2, , 0
+Kc6, Rd7
+Ka6
+Kc6, Kc5, Ka6, Ka5, Rd7, Ra7
+;;
+Kotrc, 1920
+2, , 0
+Qe7, Ke8
+Kh8
+Ke8, Kf7, Kh8, Kh7, Qe7, Qh4
+;;
+Kardos, 1971
+2, , 0
+Kd4, Qg7
+Ka4
+Kd4, Kc4, Ka4, Ka5, Qg7, Qa7
+Kd4, Kc4, Ka4, Ka3, Qg7, Qa1
+;;
+Kardos, 1970
+2, , 0
+Ra5, Kf6
+Kh6
+Kf6, Kf7, Kh6, Kh7, Ra5, Rh5
+;;
+Kniest, 1964
+2, , 0
+Rc4, Kd6
+Ka5
+Kd6, Kc6, Ka5, Ka6, Rc4, Ra4
+;;
+Farber, 1899
+2, , 0
+Ke3, Qe6
+Bc2, Ke1
+Qe6, Qc6, Bc2, Be4, Qc6, Qc1
+Qe6, Qc6, Bc2, Bd3, Qc6, Qc1
+;;
+Galitznin, 1859
+2, , 0
+Kc1, Rd4, Qd7
+Kc3
+Kc1, Kb1, Kc3, Kb3, Qd7, Qh3
+;;
+Gruber, 1981
+2, , 0
+Qa7, Ke2, Ng3
+Kh2
+Ke2, Kf3, Kh2, Kh3, Qa7, Qh7
+;;
+Kardos, 1968
+2, , 0
+Qe2, Ke6
+Pe5, Ke8
+Qe2, Qe5, Ke8, Kd8, Qe5, Qb8
+Qe2, Qe5, Ke8, Kf8, Qe5, Qh8
+;;
+Kaiser, 1939
+2, , 0
+Ka4, Bd3, Qe2
+Ka1
+Qe2, Qe7, Ka1, Kb2, Qe7, Qa3
+;;
+Korft, 1886
+2, , 0
+Kc4, Qg2, Rg5
+Ke3
+Kc4, Kd5, Ke3, Kd3, Rg5, Rg3
+Kc4, Kd5, Ke3, Kf4, Qg2, Qg3
+;;
+Kubecka, 1988
+2, , 0
+Ra6, Kb5, Rc8
+Kb7
+Ra6, Rc6, Kb7, Ka7, Rc6, Rc7
+;;
+Schultz, 1898
+2, , 0
+Qc2, Ke6
+Ba5, Ke8
+Qc2, Qh2, Ba5, Bc3, Qh2, Qb8
+Qc2, Qh2, Ba5, Bb4, Qh2, Qb8
+Qc2, Qh2, Ke8, Kd8, Qh2, Qb8
+Qc2, Qh2, Ke8, Kf8, Qh2, Qh8
+;;
+Mortensen, 1967
+2, , 0
+Ba2, Rb4, Kc3
+Ka1
+Kc3, Kc2, Ka1, Ka2, Rb4, Ra4
+;;
+Ivanovski , 1936
+2, , 0
+Ra1, Kf2
+Kh2, Ph3
+Ra1, Ra3, Kh2, Kh1, Ra3, Rh3
+;;
+Shinkman, 1905
+2, , 0
+Kc2, Rc6
+Ka1, Pb7
+Rc6, Rc8, Ka1, Ka2, Rc8, Ra8
+;;
+Speckmann, 1968
+2, , 0
+Ke3, Qf3, Ng1
+Kh2
+Qf3, Qf1, Kh2, Kh1, Ng1, Nf3
+Qf3, Qf1, Kh2, Kg3, Qf1, Qh3
+;;
+Dehler & Speckmann, 1975
+2, , 0
+Kb6, Rf7
+Na6, Ka8
+Rf7, Rd7, Na6, Nb8, Rd7, Ra7
+Rf7, Rd7, Ka8, Kb8, Rd7, Rd8
+Rf7, Rd7, Na6, Nc7, Rd7, Rd8
+;;
+Jespersen, 1880
+2, , 0
+Qf3, Kf4, Rh5
+Kg6
+Qf3, Qb7, Kg6, Kh5, Qb7, Qh7
+Qf3, Qb7, Kg6, Kf6, Rh5, Rh6
+;;
+Blumenthal, 1907
+2, , 0
+Kb4, Nc1, Qg7
+Kb1
+Kb4, Kc3, Kb1, Ka1, Kc3, Kc2
+Kb4, Kc3, Kb1, Kc1, Qg7, Qg1
+;;
+Courtenay, 1870
+2, , 0
+Qb1, Kf5
+Bf2, Kh5
+Qb1, Qb8, Bf2, Be3, Qb8, Qh2
+Qb1, Qb8, Kh5, Kh4, Qb8, Qh2
+Qb1, Qb8, Bf2, Bd4, Qb8, Qh2
+Qb1, Qb8, Kh5, Kh6, Qb8, Qh8
+;;
+Potter, 1868
+2, , 0
+Kd6, Ne7, Qh1
+Kb8
+Ne7, Nc8, Kb8, Kc8, Qh1, Qa8
+;;
+Bonus Socius, circa 1266
+2, , 1
+Ra7, Kd3, Rh7
+Nd6, Kd8
+Rh7, Rg7, Kd8, Kc8, Ra7, Ra8
+Rh7, Rg7, Kd8, Ke8, Rg7, Rg8
+Rh7, Rg7, Nd6, Nf7, Rg7, Rg8
+;;
+Evans, 1865
+2, , 1
+Kc4, Qe7, Bf4
+Kb6
+Bf4, Bb8, Kb6, Kc6, Qe7, Qc7
+Bf4, Bb8, Kb6, Ka6, Qe7, Qa7
+Bf4, Bb8, Kb6, Ka5, Qe7, Qa7
+;;
+Carpenter, 1901
+2, , 1
+Rc2, Kd6, Qf3
+Kd4
+Qf3, Qh3, Kd4, Ke4, Rc2, Rc4
+;;
+Holladay, 1990
+2, , 1
+Kb3, Rc2, Qf6
+Kd5
+Qf6, Qe7, Kd5, Kd4, Rc2, Rd2
+;;
+Deveer, 1914
+2, , 1
+Kc5, Qe5, Bh5
+Kf8
+Qe5, Qg3, Kf8, Ke7, Qg3, Qd6
+;;
+Schonberger, 1926
+2, , 1
+Qf1, Kg3
+Ng1, Kh1, Ph3
+Kg3, Kf2, Ph3, Ph2, Qf1, Qg2
+Kg3, Kf2, Kh1, Kh2, Qf1, Qh3
+;;
+Loyd, 1859
+2, , 1
+Kc3, Re4, Qg5
+Bf1, Kf2, Pf3
+Re4, Re1, Kf2, Ke1, Qg5, Qd2
+Re4, Re1, Bf1, Bg2, Qg5, Qh4
+Re4, Re1, Bf1, Be2, Qg5, Qg1
+;;
+Shinkman, 1903
+2, , 1
+Ka2, Rd7, Re2
+Pb7, Kc1, Nh1
+Re2, Re8, Kc1, Kc2, Re8, Rc8
+Re2, Re8, Pb7, Pb5, Re8, Rc8
+Re2, Re8, Nh1, Nf2, Re8, Rc8
+;;
+Baird, 1924
+2, , 1
+Kb1, Nd5, Re4, Nf3, Bg6
+Kd3
+Kb1, Ka2, Kd3, Kc2, Re4, Re1
+;;
+Barda, 1961
+2, , 1
+Ke8, Qf7, Ng8
+Bb1, Pf2, Kh8
+Ng8, Ne7, Bb1, Bh7, Qf7, Qf6
+Ng8, Ne7, Bb1, Ba2, Ne7, Ng6
+;;
+Loyd, 1877
+2, , 1
+Qa6, Kf6
+Na8, Pg6, Bh7, Kh8
+Qa6, Qa1, Kh8, Kg8, Qa1, Qa8
+Qa6, Qa1, Bh7, Bg8, Kf6, Kg6
+;;
+Fokin, 1989
+2, , 1
+Pf5, Qf8, Ng8, Kh5
+Kh7, Qh8
+Pf5, Pf6, Qh8, Qg8, Qf8, Qh6
+Pf5, Pf6, Qh8, Qf6, Ng8, Nf6
+Pf5, Pf6, Qh8, Qg7, Qf8, Qg7
+;;
+Bermudez, 1937
+2, , 1
+Qb2, Ne6, Bf3, Kg6
+Bd2, Kd3
+Bf3, Bd1, Kd3, Kc4, Qb2, Qb3
+Bf3, Bd1, Bd2, Be3, Qb2, Qe2
+Bf3, Bd1, Bd2, Bc3, Qb2, Qc2
+;;
+Calko, 1967
+2, , 1
+Rc4, Pd2, Be2, Be7, Kf4
+Kd5
+Rc4, Rc7, Kd5, Kd4, Rc7, Rd7
+Rc4, Rc7, Kd5, Ke6, Be2, Bc4
+;;
+Shinkman, 1882
+3, , 1
+Kd5, Rh1
+Ka8
+Kd5, Kc6, Ka8, Ka7, Rh1, Rh8, Ka7, Ka6, Rh8, Ra8
+Kd5, Kc6, Ka8, Kb8, Rh1, Ra1, Kb8, Kc8, Ra1, Ra8
+;;
+Camponovo, 1945
+2, , 1
+Pc4, Kd2, Nd7, Pe4, Qh1
+Kd4
+Qh1, Qd1, Kd4, Kc4, Qd1, Qa4
+Qh1, Qd1, Kd4, Ke4, Qd1, Qg4
+;;
+Kubbel, 1934
+2, , 1
+Ka7, Ba8, Pb2, Pb4, Bc7, Nd2, Pd3, Pe2, Qg7, Rh3, Rh4
+Nc1, Kd4, Pe4, Pe7, Rf6, Bg4, Ph5
+Ba8, Bc6, Nc1, Nd3, Pe2, Pe3
+Ba8, Bc6, Nc1, Ne2, Nd2, Nb3
+Ba8, Bc6, Pe7, Pe6, Qg7, Qd7
+Ba8, Bc6, Pe7, Pe5, Bc7, Bb6
+Ba8, Bc6, Bg4, Bh3, Rh4, Re4
+Ba8, Bc6, Bg4, Bf3, Qg7, Qg1
+Ba8, Bc6, Pe4, Pe3, Nd2, Nf3
+;;
+Fokin, 1974
+2, , 1
+Rf6, Qg7, Kh1, Rh2
+Ba7, Rb8, Ke1
+Rf6, Rb6, Rb8, Rb6, Qg7, Qg1
+Rf6, Rb6, Ba7, Bb6, Qg7, Qa1
+;;
+Williams, 1929
+2, , 1
+Kb3, Nd8, Qe6, Nf8
+Pb4, Be7, Ke8
+Qe6, Qe5, Ke8, Kd8, Qe5, Qb8
+Qe6, Qe5, Ke8, Kf8, Qe5, Qh8
+;;
+Fokin, 1983
+2, , 1
+Qa1, Pb2, Kf7
+Pa3, Pg2, Pg7, Kh8
+Qa1, Qg1, Pg7, Pg5, Qg1, Qh2
+;;
+Galitzky, 1905
+2, , 1
+Qa1, Ra2, Pd3, Nf5, Kh5
+Bc1, Kf3
+Ra2, Rd2, Kf3, Kf4, Rd2, Rf2
+Ra2, Rd2, Bc1, Bd2, Qa1, Qf1
+;;
+Williams, 1897
+2, , 1
+Qa1, Ra2, Ka8, Bd7
+Ba5, Kb6
+Ra2, Rd2, Kb6, Ka6, Rd2, Rd6
+Ra2, Rd2, Kb6, Kc5, Qa1, Qd4
+Ra2, Rd2, Kb6, Kc7, Qa1, Qa5
+;;
+Fokin, 2005
+2, , 1
+Rc5, Kc7, Qh1
+Ka6, Pb3, Pd7, Rg2
+Qh1, Qh8, Pd7, Pd5, Qh8, Qa8
+Qh1, Qh8, Rg2, Rg8, Qh8, Qa1
+Qh1, Qh8, Ka6, Ka7, Rc5, Ra5
+;;
+Fokin, 2001
+2, , 1
+Bc1, Qd1, Ke1, Ng1
+Pg4, Pg7, Kh4
+Qd1, Qd2, Kh4, Kh5, Qd2, Qg5
+Qd1, Qd2, Kh4, Kg3, Qd2, Qf2
+Qd1, Qd2, Pg7, Pg5, Qd2, Qh2
+;;
+Shinkman, 1915
+2, , 1
+Qa6, Kb4, Pd2, Rh1
+Kb2, Ng4, Bh8
+Qa6, Qe2, Kb2, Ka2, Pd2, Pd4
+Qa6, Qe2, Ng4, Ne3, Pd2, Pe3
+Qa6, Qe2, Bh8, Bd4, Pd2, Pd3
+Qa6, Qe2, Bh8, Bc3, Pd2, Pc3
+;;
+Knotek, 1922
+2, , 2
+Qd7, Re6, Kg1, Ng2, Ng5
+Pe7, Kg4
+Ng5, Nh3, Kg4, Kh5, Qd7, Qd1
+Ng5, Nh3, Kg4, Kh3, Re6, Re3
+Ng5, Nh3, Kg4, Kf5, Ng2, Ne3
+;;
+Baird, 1902
+2, , 2
+Kb2, Nb3, Nd3, Qf3
+Pb5, Kc4, Pd6, Nf6
+Qf3, Qe2, Pd6, Pd5, Qe2, Qc2
+Qf3, Qe2, Pb5, Pb4, Nd3, Nf4
+Qf3, Qe2, Kc4, Kd5, Nd3, Nb4
+;;
+Fokin, 1992
+2, , 2
+Ba7, Ke1, Ng7, Qh6
+Kg2, Pg3, Pg4
+Ng7, Nh5, Kg2, Kh1, Nh5, Nf4
+Ng7, Nh5, Kg2, Kf3, Qh6, Qc6
+;;
+Fokin & Sushkov, 1996
+2, , 2
+Nd1, Kd2, Pf4, Rf8, Qg8
+Pc6, Ke4
+Nd1, Ne3, Ke4, Kd4, Qg8, Qc4
+Nd1, Ne3, Ke4, Kf3, Qg8, Qg2
+Nd1, Ne3, Pc6, Pc5, Qg8, Qd5
+;;
+Seneca, 1949
+2, , 2
+Na3, Qb6, Pc2, Bd1, Rf3, Kh1
+Ka4, Bc4
+Na3, Nb1, Bc4, Bd3, Pc2, Pd3
+Na3, Nb1, Bc4, Bd5, Pc2, Pc4
+Na3, Nb1, Bc4, Bb3, Pc2, Pb3
+Na3, Nb1, Bc4, Bb5, Pc2, Pc3
+;;
+Mansfield, 1933
+2, , 2
+Qa2, Rb6, Kd1, Rd3, Nd7, Bg2
+Pa4, Nc4, Pd4, Kd5, Ne4, Pg5
+Rd3, Rb3, Pa4, Pb3, Qa2, Qa8
+Rd3, Rb3, Nc4, Ne3, Rb3, Re3
+Rd3, Rb3, Nc4, Nb6, Rb3, Rb6
+;;
+Bonus Socius, circa 1266
+2, , 2
+Ra7, Ke1, Ne5, Nf6
+Ra2, Kf8, Ng7, Rh2, Nh8
+Ra7, Rf7, Nh8, Nf7, Ne5, Ng6
+;;
+Losinskij, 1929
+2, , 2
+Nb5, Bc4, Rc7, Pd4, Ke8, Qf4
+Ra7, Ba8, Nd5, Ke6, Pf7, Rh7, Bh8
+Bc4, Bb3, Pf7, Pf5, Qf4, Qd6
+Bc4, Bb3, Ra7, Rb7, Rc7, Re7
+Bc4, Bb3, Ra7, Rc7, Nb5, Nc7
+Bc4, Bb3, Bh8, Bg7, Qf4, Qf7
+Bc4, Bb3, Bh8, Bf6, Qf4, Qg4
+Bc4, Bb3, Bh8, Be5, Qf4, Qe5
+Bc4, Bb3, Bh8, Bd4, Nb5, Nd4
+Bc4, Bb3, Ba8, Bc6, Rc7, Rc6
+Bc4, Bb3, Pf7, Pf6, Qf4, Qe4
+;;
+Gavrilov, 1907
+2, , 2
+Ka5, Nb2, Rd5, Qe8, Rg2, Nh2
+Ba6, Pb4, Nc2, Pd6, Rd8, Ke1, Qe5, Rf4, Ng4
+Qe8, Qb5, Rf4, Rd4, Nh2, Nf3
+Qe8, Qb5, Qe5, Qd5, Rg2, Re2
+Qe8, Qb5, Nc2, Nd4, Qb5, Qb4
+Qe8, Qb5, Ng4, Nf2, Rg2, Rg1
+;;
+Gulajev, 1927
+2, , 2
+Rd2, Re3, Qe4, Bf2, Bf5, Kh1
+Ba1, Ra3, Ra4, Qa8, Nb8, Bc8, Ne5, Pf3, Pf7, Pg4, Pg6, Kh3
+Rd2, Rd8, Ne5, Nd3, Re3, Rf3
+Rd2, Rd8, Ne5, Nd7, Bf5, Bg4
+Rd2, Rd8, Ne5, Nc4, Qe4, Qg4
+Rd2, Rd8, Ne5, Nc6, Qe4, Qf3
+;;
+Kubbel, 1941
+2, , 2
+Qa2, Kd4, Re4, Pe5, Ng4, Rg8, Nh1, Bh5
+Pc3, Pd3, Be1, Pe7, Pf2, Qg1, Kg2, Ph2, Ph3
+Qa2, Qa8, Kg2, Kf1, Ng4, Ne3
+Qa2, Qa8, Kg2, Kf3, Ng4, Nh2
+Qa2, Qa8, Qg1, Qf1, Ng4, Nf2
+Qa2, Qa8, Pf2, Nf1, Re4, Re3
+;;
+Barulin, 1932
+2, , 2
+Pa3, Nb4, Qb8, Rd8, Nf5, Kf7, Rh3, Bh7, Bh8
+Ba2, Pa5, Na7, Kc4, Pc5, Nf6
+Nb4, Nd5, Nf6, Nd5, Nf5, Ne3
+Nb4, Nd5, Nf6, Ne4, Nd5, Ne3
+Nb4, Nd5, Nf6, Nd7, Nf5, Ne3
+Nb4, Nd5, Na7, Nb5, Nd5, Nb6
+;;
+Lacny, 1954
+2, , 2
+Ka2, Pb4, Rb6, Nc2, Pc5, Bd7, Pe2, Ne7, Pg4, Qh6, Bh8
+Pc3, Pc4, Nc7, Rd3, Pe3, Ke4, Pe6, Pf3
+Ne7, Nd5, Nc7, Ne8, Qh6, Qe6
+Ne7, Nd5, Pe6, Pe5, Nd5, Nf6
+Ne7, Nd5, Rd3, Rd2, Nd5, Nc3
+Ne7, Nd5, Ke4, Kd5, Bd7, Bc6
+Ne7, Nd5, Nc7, Nd5, Rb6, Re6
+Ne7, Nd5, Rd3, Rd5, Qh6, Qe3
+Ne7, Nd5, Pf3, Pe2, Qh6, Qh1
+Ne7, Nd5, Pe6, Pd5, Bd7, Bf5
+;;
+White, 1951
+2, , 2
+Ka2, Bb2, Pb3, Pb4, Nd3, Pd4, Ne5, Pf4, Rf5, Rg2, Qh5, Bh7
+Kc2, Pd2, Pf2, Pg3, Nh1, Ph6
+Ne5, Nf3, Pd2, Nd1, Nd3, Ne1
+Ne5, Nf3, Kc2, Kd1, Nf3, Ne1
+Ne5, Nf3, Pf2, Qf1, Rg2, Rd2
+Ne5, Nf3, Kc2, Kd3, Rf5, Re5
+Ne5, Nf3, Pd2, Qd1, Rf5, Rc5
+;;
+Schneider, 1953
+2, , 2
+Ka1, Ra2, Nc2, Qe1, Ne3, Re4, Be6
+Kd3, Pe2, Rf4, Rf8, Ng5
+Ne3, Nd5, Ng5, Ne4, Nd5, Nb4
+Ne3, Nd5, Rf4, Re4, Qe1, Qc3
+Ne3, Nd5, Rf4, Rf1, Re4, Rd4
+;;
+Lindner, 1955
+2, , 2
+Ba7, Pb4, Kc2, Nc3, Nc4, Pd3, Rh4, Qh7
+Ba6, Qb6, Pc7, Kd4, Rd8, Pe3, Ne6, Pf6, Ng4, Pg6, Ph5
+Qh7, Qe7, Rd8, Rd5, Nc3, Ne2
+Qh7, Qe7, Rd8, Rf8, Qe7, Qd7
+Qh7, Qe7, Ne6, Nf4, Qe7, Qe4
+Qh7, Qe7, Ne6, Nc5, Qe7, Qe3
+;;
+Goldschmeding, 1952
+2, , 2
+Ra4, Rc1, Bc5, Kd1, Nd4, Qe1, Pf5, Pg3, Ng6
+Ba7, Pc6, Kd5, Pd6, Nd7, Ne8, Pf4, Qf7, Rh4
+Nd4, Nc2, Kd5, Kc5, Qe1, Qa5
+Nd4, Nc2, Nd7, Nc5, Ra4, Rd4
+Nd4, Nc2, Pd6, Pc5, Qe1, Qd2
+Nd4, Nc2, Ba7, Bc5, Qe1, Qe4
+Nd4, Nc2, Pf4, Pg3, Nc2, Ne3
+;;
+Cate, 1950
+2, , 2
+Qb2, Rb8, Be1, Kf1, Rf3, Ng1, Bg2, Pg3, Pg4
+Pa7, Qa8, Pb3, Rc7, Pd6, Pe5, Pg6, Kh2
+Rf3, Rf7, Rc7, Rc2, Rf7, Rh7
+Rf3, Rf7, Rc7, Rf7, Bg2, Bf3
+Rf3, Rf7, Pe5, Pe4, Qb2, Qh8
+Rf3, Rf7, Qa8, Qf3, Rb8, Rh8
+Rf3, Rf7, Qa8, Qg2, Qb2, Qg2
+;;
+Mari, 1952
+2, , 2
+Qa2, Bb3, Pe2, Be7, Re8, Rf3, Nf4, Kf8
+Pb4, Pd5, Nd6, Ke1, Bf1, Qf5, Pf7, Ng3, Rh1, Ph2
+Pe2, Pe4, Ng3, Ne2, Nf4, Nd3
+Pe2, Pe4, Ng3, Ne4, Be7, Bh4
+Pe2, Pe4, Nd6, Ne4, Be7, Bb4
+Pe2, Pe4, Bf1, Be2, Nf4, Ng2
+;;
+Mach, 1974
+2, , 2
+Ba5, Kb1, Qb3, Pe2, Re5, Nf1, Nh2
+Na4, Qc3, Ke1, Pf2, Nf4, Pg2, Pg3
+Kb1, Ka2, Nf4, Nd3, Pe2, Pd3
+Kb1, Ka2, Pg2, Qf1, Nh2, Nf3
+Kb1, Ka2, Qc3, Qd2, Ba5, Bd2
+Kb1, Ka2, Na4, Nb2, Ba5, Bc3
+;;
+Stocchi, 1954
+2, , 2
+Ba6, Na7, Kb7, Rc8, Re8, Qf7, Bh8
+Pc3, Kd4, Pd5, Bd8, Rg3, Rg7
+Ba6, Bc4, Bd8, Be7, Qf7, Qf4
+Ba6, Bc4, Bd8, Bc7, Qf7, Qd5
+Ba6, Bc4, Pd5, Pc4, Qf7, Qd7
+;;
+Macleod, 1951
+2, , 2
+Ba1, Rb6, Nb8, Pc4, Pc5, Rf8, Qg2, Kh1, Bh5
+Ra6, Bb1, Qc6, Ke6, Pe7, Rf3, Ng1, Ph2
+Rf8, Rf5, Ke6, Kf5, Qg2, Qg4
+Rf8, Rf5, Rf3, Rf5, Qg2, Qc6
+Rf8, Rf5, Rf3, Rd3, Qg2, Qe4
+Rf8, Rf5, Bb1, Bf5, Qg2, Qg8
+;;
+Ellerman, 1951
+2, , 2
+Ba4, Ba5, Rb4, Qe1, Ne8, Rf7, Kh1
+Kc5, Pc7, Pd4, Pd5, Pe7, Pg7, Ph5, Qh6
+Ne8, Nd6, Kc5, Kd6, Qe1, Qe7
+Ne8, Nd6, Pc7, Pd6, Ba5, Bb6
+Ne8, Nd6, Pe7, Pd6, Rf7, Rc7
+Ne8, Nd6, Qh6, Qd6, Qe1, Qc1
+;;
+Macleod, 1896
+2, , 2
+Ra3, Bc3, Kc6, Pd5, Qf8, Ng3
+Ke3, Pg2, Nh3
+Qf8, Qb4, Ke3, Kd3, Qb4, Qe4
+Qf8, Qb4, Ke3, Kf2, Bc3, Bd4
+Qf8, Qb4, Nh3, Nf2, Bc3, Bd2
+;;
+Macleod, 1958
+2, , 2
+Rb1, Pe2, Kf2, Pf3, Ng1, Pg2, Qg3, Bh2, Rh8
+Rb5, Kh1
+Qg3, Qb8, Rb5, Rb8, Bh2, Bb8
+Qg3, Qb8, Rb5, Rb4, Bh2, Bf4
+Qg3, Qb8, Rb5, Rh5, Ng1, Nh3
+;;
+Fokin, 1986
+2, , 2
+Ba3, Ba4, Ra7, Rd4, Nd5, Nf5, Qg4, Kh5
+Ba2, Na8, Nb2, Rb5, Pb6, Kc6, Pd3, Qe2, Pf3, Pf6, Pf7, Pg2
+Nd5, Ne3, Ba2, Bd5, Nf5, Ne7
+;;
+Fokin & Ivanov (Ver. A), 1996
+3, , 2
+Qd3, Nf5, Kh8
+Pb3, Kc1, Pc2
+Nf5, Nd4, Kc1, Kb2, Qd3, Qb3, Kb2, Ka1, Nd4, Nc2
+Nf5, Nd4, Kc1, Kb2, Qd3, Qb3, Kb2, Kc1, Qb3, Qc2
+;;
+Fokin & Ivanov (Ver. B), 1996
+3, , 2
+Qd3, Nf5, Kh8
+Kc1, Pc2, Pc3
+Nf5, Nd4, Kc1, Kb2, Qd3, Qc2, Kb2, Ka1, Nd4, Nb3
+Nf5, Nd4, Kc1, Kb2, Qd3, Qc2, Kb2, Ka3, Qc2, Qb3
+;;
+De Musset, 1849
+3, , 3
+Ne5, Ng4, Kg8, Rh7
+Nb8, Ke8
+Rh7, Rd7, Nb8, Nd7, Ne5, Nc6, Nd7, Ne5, Ng4, Nf6
+;;
+Fokin, 2003
+3, , 3
+Ka8, Qc5, Bd1, Ng2
+Kd3
+Bd1, Bb3, Kd3, Ke2, Qc5, Qf5, Ke2, Kd2, Qf5, Qc2
+;;
+Fokin & Pochtarev, 1991
+3, , 3
+Pd2, Ne2, Ne3, Qf2, Kh3
+Kd3, Ph4
+Ne2, Ng3, Kd3, Kd4, Qf2, Qf5, Ph4, Pg3, Qf5, Qd5
+Ne2, Ng3, Ph4, Pg3, Qf2, Qg2, Kd3, Kd4, Qg2, Qd5
+;;
+Loyd, 1857
+3, , 3
+Qb2, Kc7, Nf2, Rg8
+Pf4, Kg2, Pg3
+Nf2, Ng4, Kg2, Kh3, Ng4, Nh2, Pg3, Ph2, Qb2, Qh8
+Nf2, Ng4, Kg2, Kf3, Qb2, Qc2, Pg3, Pg2, Qc2, Qd3
+Nf2, Ng4, Kg2, Kh1, Qb2, Qh2, Pg3, Ph2, Ng4, Nf2
+;;
+Loyd, 1859
+3, , 3
+Ne1, Kf5, Pg2, Rg7, Ph2
+Bf2, Pg3, Kh5, Ph6
+Rg7, Rg3, Bf2, Bg3, Ne1, Nf3, Bg3, Bh2, Pg2, Pg4
+;;
+Fokin, 2000
+3, , 3
+Qa8, Kf3, Rf7
+Nd1, Pg2, Kh3, Ph4
+Qa8, Qg8, Nd1, Ne3, Qg8, Qg3, Ph4, Pg3, Rf7, Rh7
+Qa8, Qg8, Pg2, Qg1, Qg8, Qg1, Nd1, Nf2, Qg1, Qg2
+Qa8, Qg8, Pg2, Qg1, Qg8, Qg1, Nd1, Ne3, Qg1, Qh1
+;;
+Shinkman, 1905
+3, , 3
+Ba5, Qb5, Ke4
+Kc8
+Qb5, Qb2, Kc8, Kd7, Qb2, Qe5, Kd7, Kc8, Qe5, Qc7
+Qb5, Qb2, Kc8, Kd7, Qb2, Qe5, Kd7, Kc6, Qe5, Qd5
+;;
+Fokin, 2001
+3, , 3
+Nb1, Bc1, Ke1, Bf1, Rh1
+Kg3, Pg4
+Nb1, Nc3, Kg3, Kf3, Rh1, Rg1, Pg4, Pg3, Bf1, Be2
+;;
+Fokin, 2001
+3, , 3
+Ra1, Bc1, Ke1, Bf1
+Kh4, Ph5
+Ke1, Kf2, Kh4, Kg4, Ra1, Ra5, Kg4, Kh4, Ra5, Ra4
+Ke1, Kf2, Kh4, Kg4, Ra1, Ra5, Ph5, Ph4, Ra5, Rg5
+;;
+Fokin, 1977
+3, , 3
+Ra8, Pf5, Nf7, Kf8
+Bf1, Kh7
+Ra8, Ra1, Bf1, Be2, Ra1, Rh1, Be2, Bh5, Rh1, Rh5
+Ra8, Ra1, Bf1, Bg2, Ra1, Rg1, Bg2, Bh3, Rg1, Rg7
+Ra8, Ra1, Bf1, Bh3, Ra1, Ra6, Bh3, Bf5, Ra6, Rh6
+;;
+Fokin, 1983
+3, , 3
+Ka5, Nc4, Qf7, Rh7
+Ke4, Ph3
+Qf7, Qf2, Ke4, Kd5, Rh7, Rd7, Kd5, Kc4, Qf2, Qc2
+Qf7, Qf2, Ke4, Kd5, Rh7, Rd7, Kd5, Kc6, Nc4, Ne5
+Qf7, Qf2, Ke4, Kd5, Rh7, Rd7, Kd5, Ke6, Qf2, Qf7
+Qf7, Qf2, Ke4, Kd5, Rh7, Rd7, Kd5, Ke4, Rd7, Rd4
+Qf7, Qf2, Ke4, Kd3, Nc4, Nd6, Kd3, Kc3, Rh7, Rh3
+;;
+Fokin & Koschakin, 1987
+3, , 3
+Kd2, Bh1, Ph4, Qh7
+Kh2, Ph3, Ph5
+Qh7, Qf5, Kh2, Kh1, Qf5, Qf2, Ph3, Ph2, Qf2, Qf1
+Qh7, Qf5, Kh2, Kg1, Qf5, Qh3, Kg1, Kf2, Qh3, Qg2
+Qh7, Qf5, Kh2, Kg3, Qf5, Qe5, Kg3, Kf2, Qe5, Qe1
+Qh7, Qf5, Kh2, Kg3, Qf5, Qe5, Kg3, Kh4, Qe5, Qf4
+Qh7, Qf5, Kh2, Kg3, Qf5, Qe5, Kg3, Kg4, Qe5, Qg5
+;;
+Cieslak, 1950
+3, , 3
+Ka1, Rb1, Pc2, Pe3, Rf2
+Ka8, Pd4, Pd5, Pe5, Pe7, Pf3, Pf4, Pf6, Bg5, Bh1, Rh5, Nh6
+Rf2, Rd2, Bg5, Bh4, Pc2, Pc3, Bh4, Be1, Rd2, Ra2
+Rf2, Rd2, Bh1, Bg2, Pc2, Pc4, Bg2, Bf1, Rd2, Ra2
+Rf2, Rd2, Pf3, Pf2, Pc2, Pc3, Pf2, Qf1, Rd2, Ra2
+Rf2, Rd2, Pe5, Pe4, Rd2, Rd4, Pf3, Pf2, Rd4, Ra4
+;;
+Jakab, 1950
+3, , 3
+Ba6, Bb8, Qd8, Pe5, Rf8, Kg3, Ph5
+Pc4, Rc5, Ke6, Pf7, Pg5, Bh1, Nh8
+Qd8, Qd1, Bh1, Bc6, Ba6, Bc8, Bc6, Bd7, Qd1, Qd7
+Qd8, Qd1, Bh1, Bd5, Qd1, Qg4, Ke6, Ke7, Bb8, Bd6
+Qd8, Qd1, Rc5, Re5, Qd1, Qd6, Ke6, Kf5, Qd6, Qe5
+Qd8, Qd1, Nh8, Ng6, Qd1, Qd6, Ke6, Kf5, Qd6, Qg6
+;;
+Wrobel, 1952
+3, , 3
+Na3, Pb3, Rb8, Bc5, Kd8
+Ka5, Pa6, Pa7, Pb4, Pc6, Pd5, Be1, Pe3, Pe7, Be8, Nf1, Rg1, Pg3
+Na3, Nb5, Pa6, Pb5, Rb8, Rb7, Pa7, Pa6, Bc5, Bb6
+Na3, Nb5, Pc6, Pb5, Bc5, Ba7, Pd5, Pd4, Ba7, Bb6
+Na3, Nb5, Nf1, Nd2, Nb5, Nc3, Pb4, Pc3, Bc5, Bb4
+;;
+Herland, 1953
+3, , 3
+Pa3, Pa4, Rb8, Pc2, Qc3, Nd7, Pf4, Bf5, Kg1
+Na5, Ba6, Pc6, Pc7, Kd5, Bd6, Pe3, Pe7, Pf7, Pg4, Nh1
+Rb8, Rd8, Pe3, Pe2, Qc3, Qd2, Kd5, Kc4, Qd2, Qd3
+Rb8, Rd8, Pe3, Pe2, Qc3, Qd2, Ba6, Bd3, Qd2, Qd3
+Rb8, Rd8, Na5, Nb3, Qc3, Qc6, Kd5, Kd4, Pc2, Pc3
+Rb8, Rd8, Na5, Nb3, Qc3, Qc6, Kd5, Kc6, Bf5, Be4
+Rb8, Rd8, Na5, Nb7, Qc3, Qc6, Kd5, Kc6, Bf5, Be4
+Rb8, Rd8, Ba6, Bc4, Nd7, Nb6, Pc7, Pb6, Qc3, Qe5
+Rb8, Rd8, Pc6, Pc5, Qc3, Qe5, Bd6, Be5, Nd7, Ne5
+;;
+Breuer, 1951
+3, , 3
+Kb1, Qc2, Nd4, Be5, Nf4
+Pb2, Nc1, Pd5, Ke3, Pe4, Qg8
+Qc2, Qh2, Qg8, Qe6, Nd4, Nc2, Ke3, Kf3, Qh2, Qg2
+Qc2, Qh2, Qg8, Qg1, Nf4, Nd5, Ke3, Kd3, Qh2, Qc2
+;;
+Moravec, 1953
+3, , 3
+Ka1, Qb6, Pc2, Bd1, Pd2, Nd7, Re4, Pg3, Nh4
+Pa5, Pa6, Ra7, Pc3, Nc7, Kd5, Pd6, Be7, Pf6, Qf8, Ng8, Ph2
+Nh4, Nf5, Pc3, Pd2, Pc2, Pc4, Kd5, Ke4, Qb6, Qb1
+Nh4, Nf5, Kd5, Ke4, Qb6, Qd4, Ke4, Kf5, Qd4, Qg4
+Nh4, Nf5, Qf8, Qh6, Nf5, Nd4, Kd5, Ke4, Bd1, Bf3
+;;
+Sheel, 1954
+3, , 3
+Ka2, Pd2, Qd3, Nd8, Be7, Bf5
+Pa3, Ra4, Ra7, Bb2, Pd5, Pd7, Kf4, Ph5, Ph7
+Be7, Bh4, Bb2, Bf6, Bh4, Bg3, Kf4, Kg5, Nd8, Nf7
+Be7, Bh4, Bb2, Bd4, Bf5, Bh7, Bd4, Bf2, Qd3, Qf5
+Be7, Bh4, Ra4, Re4, Qd3, Qg3, Kf4, Kf5, Qg3, Qg5
+Be7, Bh4, Ra4, Rd4, Qd3, Qf1, Kf4, Ke5, Nd8, Nf7
+Be7, Bh4, Pd7, Pd6, Qd3, Qf1, Kf4, Ke5, Nd8, Nc6
+;;
+Palkoska, 1951
+3, , 3
+Ka5, Nb4, Bc2, Ne6, Qg3
+Na4, Pc3, Kc4, Pd6, Pe7, Qf1, Pf2, Pg2, Ng6, Bh1, Ph5, Bh6
+Nb4, Nd5, Kc4, Kd5, Qg3, Qf3, Kd5, Ke6, Qf3, Qf5
+Nb4, Nd5, Bh6, Bd2, Qg3, Qe3, Bd2, Be3, Nd5, Ne3
+;;
+Havel, 1954
+3, , 3
+Bc7, Qd3, Nd6, Ke8, Bg2
+Ba1, Rc4, Ke5, Ph7
+Ke8, Kf8, Rc4, Rc7, Qd3, Qe4, Ke5, Kd6, Qe4, Qd5
+Ke8, Kf8, Rc4, Rc5, Qd3, Qe4, Ke5, Kf6, Bc7, Bd8
+Ke8, Kf8, Ke5, Kf4, Nd6, Nf7, Rc4, Rc7, Qd3, Qf3
+;;
+Dombrovskis, 1955
+3, , 3
+Qa3, Rb4, Nc6, Pe2, Pf2, Kh1, Ph3, Rh5, Bh8
+Nb2, Bc4, Pc5, Bd4, Pe3, Pf3, Kf4, Nf8
+Nc6, Ne7, Bc4, Bb3, Ne7, Nd5, Bb3, Bd5, Qa3, Qe3
+Nc6, Ne7, Bc4, Bb3, Ne7, Nd5, Kf4, Ke4, Rh5, Re5
+;;
+Bolton, 1842
+3, , 3
+Pa2, Kb1, Pb2, Nc5, Pd5, Pe3, Ne5, Pg3, Qh3, Ph4
+Ra7, Ra8, Nb7, Pd7, Pe4, Kf6, Qf8, Pg7
+Qh3, Qf5, Kf6, Kf5, Nc5, Nd7, Ra8, Re8, Pg3, Pg4
+Qh3, Qf5, Kf6, Ke7, Qf5, Qd7, Ke7, Kf7, Qd7, Qe6
+;;
+Fokin, 2004
+4, , 3
+Ba2, Ka8, Qd2, Ng1
+Ke4
+Ng1, Nh3, Ke4, Kf5, Qd2, Qg2, Kf5, Ke5, Qg2, Qd5, Ke5, Kf6, Qd5, Qg5
+Ng1, Nh3, Ke4, Kf3, Qd2, Qf2, Kf3, Ke4, Ba2, Bc4, Ke4, Ke5, Qf2, Qf4
+Ng1, Nh3, Ke4, Kf3, Qd2, Qf2, Kf3, Kg4, Ba2, Bf7, Kg4, Kh3, Bf7, Be6
+;;
+Fokin, 2003
+4, , 3
+Kd3, Nd7, Nd8, Be6, Bh4
+Kf4
+Be6, Bh3, Kf4, Kf3, Bh4, Be1, Kf3, Kf4, Nd8, Ne6, Kf4, Kf3, Nd7, Ne5
