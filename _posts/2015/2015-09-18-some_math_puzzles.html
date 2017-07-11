@@ -237,4 +237,10 @@ How old are the daughters?
   <h3>25 horses</h3>
   <p>You have 25 horses and you can race them 5 at a time.</p>
   <p>What is the minimum number of races required to find the 3 fastest horses without using a stopwatch?</p>
+  <a onclick="$(event.target).hide();$('#25horses').fadeIn()">(solution)</a>
+  <p class="hint" id="25horses" style="display: none;">This problem can be solved in 7 races: group the horses (A-E) by 5 and race them (first 5 races).
+    Race the winner of each heat (A1, B1, C1, D1, E1). This tells you the fastest horse and also which heat is the fastest, second fastest and third fastest.
+    For the 7th and final race, take the 2nd and 3rd horse from the fastest heat, the 1st and 2nd horse from the second fastest heat and the fastest horse from
+    the third fastest heat. The final result is the fastest horse from race 6 followed by the two fastest horses from race 7.
+  </p>  
 </section>
