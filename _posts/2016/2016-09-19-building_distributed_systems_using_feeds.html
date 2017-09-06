@@ -376,6 +376,10 @@ function feed_listener() {
     views on their data or if they need to apply some kind of re-ordering logic.
   </p>
   <p>
+    Developers don't get to control their consistency model: feeds provide eventual
+    consistency and you have to build on top of that.
+  </p>
+  <p>
     In practice, it is easier to handle data which has an inherent order (e.g.
     counters or timestamps) or store unordered sets.
   </p>
@@ -384,8 +388,13 @@ function feed_listener() {
     fails to sync a few rows when some rare conditions are met.
   </p>
   <p>
+    Failure to properly monitor feeds or perform the right administrative operations
+    leads to outages.
+  </p>
+  <p>
     Given these findings, we tend to write our applications with a fallback to
     query all the remote datacenters if a piece of information is missing. This
-    feature has saved us multiple times!
+    is only possible for specific kinds of datastructures but it has saved us
+    multiple times!
   </p>
 </section>
