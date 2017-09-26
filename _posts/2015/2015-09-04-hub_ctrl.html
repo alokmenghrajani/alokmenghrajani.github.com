@@ -1,0 +1,26 @@
+---
+layout: post
+title:  'Hub-ctrl'
+permalink: '/hub_ctrl/'
+tags: ['usb', 'hub', 'Yubikey', 'control']
+---
+<div class="lead">
+  <p>How can you cheaply control the ports on a usb hub?</p>
+</div>
+<img src="/files/2015/hub_ctrl/hub-ctrl.gif">
+<p>
+  On a build server, we wanted to sign various builds using Yubikeys.
+  For various reasons, we wanted to use several Yubikeys. Unfortunately,
+  simply plugging multiple Yubikeys on a single host doesn't work because
+  there's no API to pick which token you want to communicate with.
+</p>
+<p>
+  There are various ways to solve this problem, such as buying expensive
+  USB hubs. I however figured out that some cheap D-Link hubs let you control
+  the power at the individual port level.
+<p>
+<p>
+  This technique is also useful when you need to copy a file to a hundred USB flash
+  drives.
+</p>
+<p>Some useful source code: <a href="https://github.com/alokmenghrajani/hub-ctrl.c">https://github.com/alokmenghrajani/hub-ctrl.c</a></p>
