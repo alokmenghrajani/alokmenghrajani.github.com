@@ -257,10 +257,11 @@ source_code.innerText = html_whitelisted_sanitizer.innerText
 </section>
 
 <section>
-  <h3>Next steps and links</h3>
-  <p>If people find this sanitizer useful I'm going to turn it in
-    "production" code by adding some tests, getting it peer reviewed and
-    packaging it into a NPM.</p>
+  <h3>Notes and links</h3>
+  <p>If you plan to post-process the sanitized DOM, keep in mind that some attribute have side effects which might have already
+    taken effect. E.g. setting the src attribute on an image fires an http request right away (even before the image is actually
+    added to the DOM). You are probably better off performing all your processing as the new nodes get created.
+  </p>
   <p>Credits to Erling for pointing out the need for <code>document.implementation.createHTMLDocument()</code>!</p>
   <ul>
     <li><a href="http://theory.stanford.edu/~jcm/papers/esorics09-camera-ready.pdf" class="external">Isolating JavaScript with Filters, Rewriting, and
