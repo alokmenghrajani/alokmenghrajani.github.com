@@ -121,6 +121,15 @@ function HtmlWhitelistedSanitizer(escape, tags, css, urls) {
   this.allowedTags = tags;
   this.allowedCss = css;
 
+  // Use the browser to parse the input but create a new HTMLDocument.
+  // This won't evaluate any potentially dangerous scripts since the element
+  // isn't attached to the window's document. It also won't cause img.src to
+  // preload images.
+  //
+  // To be extra cautious, you can dynamically create an iframe, pass the
+  // input to the iframe and get back the sanitized string.
+  this.doc = document.implementation.createHTMLDocument();
+
   if (urls == null) {
     urls = ['http://', 'https://'];
   }
@@ -189,12 +198,7 @@ HtmlWhitelistedSanitizer.mergeMap = function(/*...*/) {
 }
 
 HtmlWhitelistedSanitizer.prototype.sanitizeString = function(input) {
-  // Use the browser to parse the input. This won't evaluate any potentially
-  // dangerous scripts since the element isn't attached to the window's document.
-  // To be extra cautious, we could dynamically create an iframe, pass the
-  // input to the iframe and get back the sanitized string.
-  var doc = document.implementation.createHTMLDocument();
-  var div = doc.createElement('div');
+  var div = this.doc.createElement('div');
   div.innerHTML = input;
 
   // Return the sanitized version of the node.
@@ -211,19 +215,19 @@ HtmlWhitelistedSanitizer.prototype.sanitizeNode = function(node) {
   }
   if (node_name == '#comment') {
     // always strip comments
-    return document.createTextNode('');
+    return this.doc.createTextNode('');
   }
   if (!this.allowedTags.hasOwnProperty(node_name)) {
     // this node isn't allowed
     console.log("forbidden node: " + node_name);
     if (this.escape) {
-      return document.createTextNode(node.outerHTML);
+      return this.doc.createTextNode(node.outerHTML);
     }
-    return document.createTextNode('');
+    return this.doc.createTextNode('');
   }
 
   // create a new node
-  var copy = document.createElement(node_name);
+  var copy = this.doc.createElement(node_name);
 
   // copy the whitelist of attributes using the per-attribute sanitizer
   for (var n_attr=0; n_attr < node.attributes.length; n_attr++) {
@@ -257,12 +261,13 @@ source_code.innerText = html_whitelisted_sanitizer.innerText
 </section>
 
 <section>
-  <h3>Notes and links</h3>
+  <h3>Notes, credits and links</h3>
   <p>If you plan to post-process the sanitized DOM, keep in mind that some attribute have side effects which might have already
     taken effect. E.g. setting the src attribute on an image fires an http request right away (even before the image is actually
     added to the DOM). You are probably better off performing all your processing as the new nodes get created.
   </p>
   <p>Credits to Erling for pointing out the need for <code>document.implementation.createHTMLDocument()</code>!</p>
+  <p>Credits to Ben Gotow for suggesting some improvements.</p>
   <ul>
     <li><a href="http://theory.stanford.edu/~jcm/papers/esorics09-camera-ready.pdf" class="external">Isolating JavaScript with Filters, Rewriting, and
 Wrappers</a></li>
