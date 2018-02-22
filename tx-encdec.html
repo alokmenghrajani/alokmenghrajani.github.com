@@ -22,38 +22,38 @@ function decode() {
   encoded.value = '';
   var r = '';
   var version = read_chars(8);
-  r += version + "\n";
+  r += version + " // version\n";
 
   var n_inputs = read_varint();
-  r += last + "\n";
+  r += last + " // n_inputs\n";
   for (var i=0; i<n_inputs; i++) {
     var prev_hash = read_chars(64);
-    r += " " + prev_hash + "\n";
+    r += " " + prev_hash + " // prev_hash\n";
     var index = read_chars(8);
-    r += " " + index + "\n";
+    r += " " + index + " // index\n";
     var script_len = read_varint();
     r += " " + last + " ";
     var script = read_chars(script_len * 2);
-    r += script + "\n";
+    r += script + " // script\n";
     var sequence = read_chars(8);
-    r += " " + sequence + "\n";
+    r += " " + sequence + " // sequence\n";
     r += "\n";
   }
 
   var n_outputs = read_varint();
-  r += last + "\n";
+  r += last + " // n_outputs\n";
   for (var i=0; i<n_outputs; i++) {
     var amount = read_chars(16);
-    r += " " + amount + "\n";
+    r += " " + amount + " // amount\n";
     var script_len = read_varint();
     r += " " + last + " ";
     var script = read_chars(script_len * 2);
-    r += script + "\n";
+    r += script + " // script\n";
     r += "\n";
   }
 
   var timelock = read_chars(8);
-  r += timelock + "\n";
+  r += timelock + " // timelock\n";
   if (buf != "") {
     alert("non-empty buffer!");
     console.warn(buf);
@@ -93,13 +93,14 @@ function encode() {
     return;
   }
   decoded.value = '';
-  t = t.replace(/\s/g, "")
+  t = t.replace(/\/\/.*?\n/g, '')
+  t = t.replace(/\s/g, '')
   encoded.value = t;
 }
   </script>
 
   <p>Very simple tool to decode/encode <em>basic</em> Bitcoin transactions.</p>
-  <input type="text" id="encoded" placeholder="01000000..." value="">
+  <input type="text" id="encoded" placeholder="01000000...">
   <textarea id="decoded"></textarea>
   <div><button onclick="decode()">decode</button> <button onclick="encode()">encode</button> </div>
 </body>
