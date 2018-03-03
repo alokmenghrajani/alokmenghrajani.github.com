@@ -23,8 +23,17 @@ function decode() {
   var r = '';
   var version = read_chars(8);
   r += version + " // version\n";
-
+  var segwit = false;
   var n_inputs = read_varint();
+  if (n_inputs == 0) {
+    // SegWit
+    segwit = true;
+    r += last + " // segwit marker\n";
+    var flag = read_varint();
+    r += last + " // segwit flag\n";
+    n_inputs = read_varint();
+  }
+
   r += last + " // n_inputs\n";
   for (var i=0; i<n_inputs; i++) {
     var prev_hash = read_chars(64);
@@ -52,8 +61,20 @@ function decode() {
     r += "\n";
   }
 
+  if (segwit) {
+    var n_witness = read_varint();
+    r += last + " // witness\n";
+    for (var i=0; i<n_witness; i++) {
+      var witness_len = read_varint();
+      r += " " + last + " ";
+      var witness = read_chars(witness_len * 2);
+      r += witness + " // witness\n";
+    }
+  }
+
   var timelock = read_chars(8);
   r += timelock + " // timelock\n";
+
   if (buf != "") {
     alert("non-empty buffer!");
     console.warn(buf);
