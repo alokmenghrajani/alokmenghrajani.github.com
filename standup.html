@@ -1,7 +1,7 @@
 <html>
 <head>
   <title>2-min timer for standups</title>
-  <meta name="viewport" content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <style>
 @font-face {
   font-family: sevenseg;
@@ -78,6 +78,7 @@ window.addEventListener("keypress", (e) => {if (e.code == "Space") {
     restart();
   }});
 window.addEventListener("click", restart);
+window.addEventListener("touchstart", restart);
 </script>
 </body>
 </html>
