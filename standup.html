@@ -78,7 +78,13 @@ window.addEventListener("keypress", (e) => {if (e.code == "Space") {
     restart();
   }});
 window.addEventListener("click", restart);
-window.addEventListener("touchstart", restart);
+window.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  restart();
+});
+window.addEventListener("touchmove", (e) => e.preventDefault());
+window.addEventListener("touchend", (e) => e.preventDefault());
+window.addEventListener("gesturestart", (e) => e.preventDefault());
 </script>
 </body>
 </html>
