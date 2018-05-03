@@ -36,7 +36,7 @@ div {
 </head>
 <body id="body">
 <div id="timer"></div>
-<div>[hit space to reset]
+<div>[click, touch or hit space to reset]
 <script>
 var total = 0;
 var start_time = 0;
@@ -75,6 +75,7 @@ setInterval(update, 100);
 window.addEventListener("keypress", (e) => {if (e.code == "Space") {
     restart();
   }});
+window.addEventListener("click", restart);
 </script>
 </body>
 </html>
