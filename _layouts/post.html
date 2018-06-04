@@ -20,9 +20,11 @@ layout: quaxio
   <div class="post-metadata">
     <h1 class="post-metadata-title">{{ page.title }}</h1>
     {% if page.subtitle %}<p>{{ page.subtitle }}</p>{% endif %}
-    <div class="post-metadata-date">
-      <time>{{ page.date | date: '%b %-d, %Y' }}</time>
-    </div>
+    {% unless page.nodate %}
+      <div class="post-metadata-date">
+        <time>{{ page.date | date: '%b %-d, %Y' }}</time>
+      </div>
+    {% endunless %}
     {% if page.tags.size > 0 %}
       <div class="post-metadata-tags">tags: {{ page.tags | join: ' | '}}</div>
     {% endif %}

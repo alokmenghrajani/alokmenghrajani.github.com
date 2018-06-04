@@ -33,9 +33,11 @@ layout: quaxio
               {% if post.subtitle %}<div class="index-post-title-subtitle">{{ post.subtitle}}</div>
               {% endif %}
             </h3>
-            <div class="index-post-date">
-              <time>{{ post.date | date: '%b %-d, %Y' }}</time>
-            </div>
+            {% unless post.nodate %}
+              <div class="index-post-date">
+                <time>{{ post.date | date: '%b %-d, %Y' }}</time>
+              </div>
+            {% endunless %}
             {% if post.tags.size > 0 %}
               <div class="index-post-tags">{{ post.tags | join: ' | '}}</div>
             {% endif %}
