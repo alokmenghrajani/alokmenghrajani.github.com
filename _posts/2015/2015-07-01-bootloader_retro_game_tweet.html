@@ -12,7 +12,7 @@ tags: ['bootloader', 'operating systems', 'nibbles', 'code golf']
     </p>
     <p>
       I decided to revisit one such piece of code (nibbles.asm) but turn
-      it into a bootable image which can fit in a tweet (140 characters):
+      it into a bootable floppy image which can fit in a tweet (140 characters):
     </p>
     <pre style="code">perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hISH
 IFLAJrwLCJwgHWtQa0C80Q4vwmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img</pre>
@@ -20,7 +20,7 @@ IFLAJrwLCJwgHWtQa0C80Q4vwmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img</pre>
   <p>
     * Technically, my code isn't a bootloader. A real bootloader does things
     like setup the x86 machine in protected mode, load more data from the
-    disk (the BIOS only loads the 512 bytes), etc. I skip all of that
+    disk (the BIOS only loads the first 512 bytes), etc. I skip all of that
     and instead setup some registers and jump straight into the game.
   </p>
 </div>
