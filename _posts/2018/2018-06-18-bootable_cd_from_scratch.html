@@ -1,0 +1,174 @@
+---
+layout: post
+title:  'Bootable CD + retro game in a tweet'
+permalink: '/bootable_cd_retro_game_tweet/'
+tags: ['bootloader', 'iso', 'el torito', 'tron', 'code golf']
+---
+ <img src="/files/2018/bootable_cd_retro_game_tweet/screenshot.png">
+ 
+<p>A few years ago, I crafted a <a href="/bootloader_retro_game_tweet/">bootable floppy disk and a retro game</a> which fit
+in a tweet. Since then, Twitter doubled the length of tweets, so I decided to
+handcraft a bootable CD. The bootable disk runs a slightly improved version of
+tron.</p>
+
+<pre>
+perl -E 'say"A"x46422,"BDRDAwMQFFTCBUT1JJVE8gU1BFQ0lGSUNBVElPTg","A"x54,"Ew","A"x2634,"/0NEMDAxAQ","A"x2721,"BAAAAYQ","A"x30,"SVVVqogAAAAAAAEAF","A"x2676,"LMBaACgB76gfbgTAM0Qv8D4uYAI86qqgcc+AXP45GA8SHIRPFB3DTeYSEhyBSwCa8CwicMB3rSGtkDNFSYwJHvc68MA","VapVqlWq"x330'|base64 -D>cd.iso
+</pre>
+<div style="width: 75%; margin: 1rem auto">
+  <small>
+  The code in the tweet creates a bootable CDROM disk image: <code>cd.iso</code>. You
+  can boot the code in qemu, virtual box or your favorite virtualization
+  software and play the game with the arrow keys. You can even burn the iso to
+  a blank CD and boot real hardware.
+  </small>
+</div>
+
+<p>To handcraft a CD disk image, you must first get a basic understanding of <a href="https://en.wikipedia.org/wiki/ISO_9660">ISO 9660</a>. ISO standards unfortunately are usually expensive. ISO 9660 is however the same as <a href="/files/2018/bootable_cd_retro_game_tweet/ecma-119.pdf">ECMA 119</a>, which means you can read the specification for free.</p>
+
+<p>ISO 9660 has many extensions, such as UDF, El Torito, RockRidge, Joliet, etc. For bootable images, we only
+care about <a href="/files/2018/bootable_cd_retro_game_tweet/el_torito.pdf">El Torito</a>. The El Torito specification is, in my opinion, poorly written. There are mistakes (e.g. figure 7, last row), it's easy to forget that values are hex (no <code>0x</code> prefixes), the figures aren't sorted in an intuitive order, etc. Thankfully, the document is fairly
+short.</p>
+
+<p>To create a bootable disk, we start by writing 17 empty sectors followed by the Volume Descriptor Set. A sector is 2048 bytes.</p>
+<p>Note: The ISO-9660 specification says the Volume Descriptor Set starts at sector 16. The El Torito specification calls for the Boot Record to live at sector 17. Technically, we should put a dummy Volume Descriptor in sector 16, but things seem to work fine without.</p>
+
+<p>We write the first Volume Descriptor:</p>
+<pre>
+0x00                      // Type (0 = boot record)
+'CD001'                   // Identifier
+0x01                      // Version
+'EL TORITO SPECIFICATION' // Boot System Identifier
+9 x 0x00                  // Padding
+32 x 0x00                 // Unused
+0x13 0x00 0x00 0x00       // Boot Catalog address (in absolute sectors)
+1973 x 0x00               // Unused
+</pre>
+
+<p>The next sector is the Volume Descriptor Set Terminator:</p>
+<pre>
+0xff                      // Type (255 = terminator)
+'CD001'                   // Identifier
+0x01                      // Version
+2041 x 0x00               // Unused
+</pre>
+
+<p>The Volume Descriptors are followed by the Boot Catalog. El Torito supports various emulation modes. The CD-ROM
+can emulate a bootable floppy, bootable harddrive, etc. I picked no emulation, which implies the BIOS will
+load a specific number of sectors and jump into our bootloader.</p>
+<p>The checksum is computed such that all 16-bit values in the record sum to 0 (mod 65535).</p>
+
+<p>First entry in the Boot Catalog (Validation Entry):</p>
+<pre>
+0x01                      // Header ID
+0x00                      // Platform ID (0 = Intel x86)
+0x00 0x00                 // Reserved
+'a'                       // ID string
+23 x 0x00                 // Padding
+cksum cksum               // Checksum (2 bytes)
+0x55 0xaa                 // Key bytes
+</pre>
+
+<p>Second entry (Default Entry):</p>
+<pre>
+0x88                      // Boot Indicator (0x88 = bootable)
+0x00                      // Boot Media Type (0 = no emulation)
+0x00 0x00                 // Load segment
+0x00                      // System Type
+0x00                      // Unused
+0x01 0x00                 // Number of sectors to load
+0x14 0x00 0x00 0x00       // Virtual disk address (in absolute sectors)
+20 x 0x00                 // Unused
+</pre>
+
+<p>Followed by zeros until the end of the sector:</p>
+<pre>
+1984 x 0x00               // Unused
+</pre>
+
+<p>The next sector is the bootloader / retro game:</p>
+<pre>
+; to compile:
+; nasm bootloader.asm -o bootloader.img
+          [bits 16]                    ; Pragma, tells the assembler that we
+                                       ; are in 16 bit mode (which is the state
+                                       ; of x86 when booting from a floppy).
+          [org 0x7C00]                 ; Pragma, tell the assembler where the
+                                       ; code will be loaded.
+
+          mov bl, 1                    ; Starting direction for the worm.
+          push 0xa000                  ; Load address of VRAM into es.
+          pop es
+
+restart_game:
+          mov       si, 320*100+160    ; worm's starting position, center of
+                                       ; screen
+
+          ; Set video mode. Mode 13h is VGA (1 byte per pixel with the actual
+          ; color stored in a palette), 320x200 total size.
+          mov       ax, 0x0013
+          int       0x10
+
+          ; Draw borders. We assume the default palette will work for us.
+          ; We also assume that starting at the bottom and drawing 2176 pixels
+          ; wraps around and ends up drawing the top + bottom borders.
+          mov       di, 320*199
+          mov       cx, 2176
+          rep
+draw_loop:
+          stosb                        ; draw right border
+          stosb                        ; draw left border
+          add       di, 318
+          jnc       draw_loop          ; notice the jump in the middle of the
+                                       ; rep stosb instruction.
+
+game_loop:
+          ; We read the keyboard input from port 0x60. This also reads bytes from
+          ; the mouse, so we need to only handle [up (0x48), left (0x4b),
+          ; right (0x4d), down (0x50)]
+          in        al, 0x60
+          cmp       al, 0x48
+          jb        kb_handle_end
+          cmp       al, 0x50
+          ja        kb_handle_end
+
+          ; At the end bx contains offset displacement (+1, -1, +320, -320)
+          ; based on pressed/released keypad key. I bet there are a few bytes
+          ; to shave around here given the bounds check above.
+          aaa
+          cbw
+          dec       ax
+          dec       ax
+          jc        kb_handle
+          sub       al, 2
+          imul      ax, ax, byte -0x50
+kb_handle:
+          mov       bx, ax
+
+kb_handle_end:
+          add       si, bx
+
+          ; The original code used set pallete command (10h/0bh) to wait for
+          ; the vertical retrace. Today's computers are however too fast, so
+          ; we use int 15h 86h instead. This also shaves 2 bytes.
+          mov       ah, 0x86
+          mov       dh, 0x40
+          int       0x15
+
+          ; Draw worm and check for collision with parity
+          ; (even parity=collision).
+          xor [es:si], ah
+
+          ; Go back to the main game loop.
+          jpo       game_loop
+
+          ; We hit a wall or the worm. Restart the game.
+          jmp       restart_game
+
+TIMES 2048 - ($ - $$) db 0             ; Fill the rest of the sector with 0
+</pre>
+
+<p>I then wrote a script to compile the bootloader, assemble the image, and
+generate the tweet. I then burned a CD and tested that things work on a real
+machine.</p>
+
+
