@@ -4,15 +4,15 @@ title:  'Bootable CD + retro game in a tweet'
 permalink: '/bootable_cd_retro_game_tweet/'
 tags: ['bootloader', 'iso', 'el torito', 'tron', 'code golf']
 ---
- <img src="/files/2018/bootable_cd_retro_game_tweet/screenshot.png">
- 
+<img src="/files/2018/bootable_cd_retro_game_tweet/screenshot.png">
+
 <p>A few years ago, I crafted a <a href="/bootloader_retro_game_tweet/">bootable floppy disk and a retro game</a> which fit
 in a tweet. Since then, Twitter doubled the length of tweets, so I decided to
 handcraft a bootable CD. The bootable disk runs a slightly improved version of
 tron.</p>
 
 <pre>
-perl -E 'say"A"x46422,"BDRDAwMQFFTCBUT1JJVE8gU1BFQ0lGSUNBVElPTg","A"x54,"Ew","A"x2634,"/0NEMDAxAQ","A"x2721,"BAAAAYQ","A"x30,"SVVVqogAAAAAAAEAF","A"x2676,"LMBaACgB76gfbgTAM0Qv8D4uYAI86qqgcc+AXP45GA8SHIRPFB3DTeYSEhyBSwCa8CwicMB3rSGtkDNFSYwJHvc68MA","VapVqlWq"x330'|base64 -D>cd.iso
+perl -E 'say"A"x46422,"BDRDAwMQFFTCBUT1JJVE8gU1BFQ0lGSUNBVElPTg","A"x54,"Ew","A"x2634,"/0NEMDAxAQ","A"x2721,"BAAAAYQ","A"x30,"SVVVqogAAAAAAAEAF","A"x2676,"LMBaACgB76gfbgTAM0Qv8D4uYAI86qqgcc+AXP45GA8SHIRPFB3DTeYSEhyBSwCa8CwicMB3rSG/sHNFbRFJjAke9rrwQ","A"x2638'|base64 -D>a.iso
 </pre>
 <div style="width: 75%; margin: 1rem auto">
   <small>
@@ -149,9 +149,9 @@ kb_handle_end:
 
           ; The original code used set pallete command (10h/0bh) to wait for
           ; the vertical retrace. Today's computers are however too fast, so
-          ; we use int 15h 86h instead. This also shaves 2 bytes.
+          ; we use int 15h 86h instead. This also shaves a few bytes.
           mov       ah, 0x86
-          mov       dh, 0x40
+          inc       cl
           int       0x15
 
           ; Draw worm and check for collision with parity
@@ -171,4 +171,4 @@ TIMES 2048 - ($ - $$) db 0             ; Fill the rest of the sector with 0
 generate the tweet. I then burned a CD and tested that things work on a real
 machine.</p>
 
-
+<img src="/files/2018/bootable_cd_retro_game_tweet/it_works.gif">
