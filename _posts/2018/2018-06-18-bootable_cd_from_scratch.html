@@ -150,6 +150,10 @@ kb_handle_end:
           ; The original code used set pallete command (10h/0bh) to wait for
           ; the vertical retrace. Today's computers are however too fast, so
           ; we use int 15h 86h instead. This also shaves a few bytes.
+
+          ; Note: you'll have to tweak cx+dx if you are running this on a virtual
+          ; machine vs real hardware. Casual testing seems to show that virtual machines
+          ; wait ~3-4x longer than physical hardware.
           mov       ah, 0x86
           inc       cl
           int       0x15
