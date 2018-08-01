@@ -55,7 +55,7 @@ short.</p>
 <p>The Volume Descriptors are followed by the Boot Catalog. El Torito supports various emulation modes. The CD-ROM
 can emulate a bootable floppy, bootable harddrive, etc. I picked no emulation, which implies the BIOS will
 load a specific number of sectors and jump into our bootloader.</p>
-<p>The checksum is computed such that all 16-bit values in the record sum to 0 (mod 65535).</p>
+<p>The checksum is computed such that all 16-bit values in the record sum to 0 (mod 65536).</p>
 
 <p>First entry in the Boot Catalog (Validation Entry):</p>
 <pre>
