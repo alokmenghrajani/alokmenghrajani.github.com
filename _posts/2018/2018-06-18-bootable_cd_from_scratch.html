@@ -104,7 +104,8 @@ restart_game:
                                        ; screen
 
           ; Set video mode. Mode 13h is VGA (1 byte per pixel with the actual
-          ; color stored in a palette), 320x200 total size.
+          ; color stored in a palette), 320x200 total size. When restarting,
+          ; this also clears the screen.
           mov       ax, 0x0013
           int       0x10
 
