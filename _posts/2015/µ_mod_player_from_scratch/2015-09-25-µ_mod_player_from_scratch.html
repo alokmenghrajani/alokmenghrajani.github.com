@@ -1,0 +1,326 @@
+---
+layout: post
+title:  '&#xb5; mod player from scratch'
+permalink: '/%c2%b5_mod_player_from_scratch/'
+tags: ['demo scene', 'mod file format', 'music', 'javascript']
+---
+<style>
+  #tracker {
+    font-family: monospace;
+    font-size: 1rem;
+    display: block;
+    height: 11rem;
+    overflow: hidden;
+  }
+  #tracker span {width: 100px; display: inline-block;}
+  canvas {width: 600px; height: 100px; border: 1px solid black;}
+</style>
+<div>
+  <button onclick="playHappyBirthday()">play happy birthday</button>
+  <button onclick="playPopcorn()">play popcorn</button>
+  <button onclick="stop()">stop</button>
+</div>
+
+<canvas id="viz"></canvas>
+<div id="tracker"></div>
+
+<p>In the 70s and 80s, people were writing the first computer programs that
+  played music. In 1987, Amiga programmers invented a file format called mod
+  (or module). The file contains samples of instruments, patterns describing
+  which sample to play at what speed and a table listing which patterns to play
+  in which order.</p>
+
+<p>The resulting files were very small (about a thousand times smaller than mp3)
+which was a big deal in a world where software was shared on ~1MB floppy disks.
+Today, mod files continue to exist, mostly in the chiptune/demoscene culture.</p>
+
+<p>The mod file format is very simple. I therefore decided to write <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/blob/master/%C2%B5_mod_player_from_scratch/index.html">the
+skeleton of a simple player from scratch</a>. After a few hours of coding, I was
+able to parse the patterns and play the notes using the Web Audio API and a
+square wave.</p>
+
+<p>A little later I had a nice visualizer too. The Web Audio API is really
+fun to play with.</p>
+
+<p>I am only playing a single channel without any effects. The next steps
+would be to implement the different types of effects (volume, arpeggio, slides,
+vibrato, tremolo, finetune, loops, etc.) and also pipe the instrument samples
+into an AudioBuffer.</p>
+
+<p>If you are interested in full-fledged mod players in javascript, make sure to
+check out <a href="http://mod.haxor.fi/">http://mod.haxor.fi/</a> and
+<a href="http://deskjet.github.io/chiptune2.js">http://deskjet.github.io/chiptune2.js</a></p>
+
+<p>If you are looking for mod files, <a href="http://modarchive.org/">http://modarchive.org/</a> is the place to go.</p>
+
+<h2>Links worth reading:</h2>
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/MOD_(file_format)">https://en.wikipedia.org/wiki/MOD_(file_format)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Module_file">https://en.wikipedia.org/wiki/Module_file</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Chiptune">https://en.wikipedia.org/wiki/Chiptune</a></li>
+</ul>
+
+<h2>Source code for various javascript players:</h2>
+<ul>
+  <li><a href="https://github.com/gasman/jsmodplayer/blob/master/modplayer.js">https://github.com/gasman/jsmodplayer/blob/master/modplayer.js</a></li>
+  <li><a href="https://github.com/deskjet/chiptune.js">https://github.com/deskjet/chiptune.js</a></li>
+  <li><a href="https://github.com/jhalme/webaudio-mod-player/blob/master/js/pt.js">https://github.com/jhalme/webaudio-mod-player/blob/master/js/pt.js</a></li>
+</ul>
+
+<h2>Technical info on the mod file format:</h2>
+<ul>
+  <li><a href="http://www.onicos.com/staff/iz/formats/mod.html">http://www.onicos.com/staff/iz/formats/mod.html</a></li>
+  <li><a href="https://greg-kennedy.com/tracker/modformat.html">https://greg-kennedy.com/tracker/modformat.html</a></li>
+  <li><a href="http://umich.edu/~archive/mac/misc/documentation/amigaprotrackermoduleinfo.txt">http://umich.edu/~archive/mac/misc/documentation/amigaprotrackermoduleinfo.txt</a></li>
+</ul>
+
+<script>
+var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+var gain = audioCtx.createGain();
+gain.connect(audioCtx.destination);
+var is_playing = false;
+var visualizer = new Visualizer(viz, gain, 256);
+
+function Visualizer(canvas, gain, size) {
+  this.canvas = canvas;
+  this.analyser = audioCtx.createAnalyser();
+  this.analyser.smoothingTimeConstant = 0.3;
+  this.analyser.fftSize = size;
+  this.data = new Uint8Array(this.analyser.frequencyBinCount);
+  gain.connect(this.analyser);
+  this.ctx = canvas.getContext('2d');
+}
+
+Visualizer.prototype.render = function() {
+  this.analyser.getByteFrequencyData(this.data);
+  var width = this.canvas.width;
+  var height = this.canvas.height;
+  var l = this.data.length;
+  var w = Math.floor(width/l);
+  this.ctx.clearRect(0, 0, width, height);
+  for (var i=0; i<l; i++) {
+    var h = this.data[i]/256*height;
+    this.ctx.fillStyle = 'rgb(50,50,' + (i*256/l) + ')';
+    this.ctx.fillRect(i*w*2, height-h, w, h);
+  }
+}
+
+function Mod(data) {
+  this.pos = 0;
+  this.data = data;
+
+  this.title = "";
+  this.magic = "";
+  this.length = 0;
+  this.channels = 0;
+  this.order = [];
+  this.patterns = [];
+  this.currentPattern = 0;
+  this.currentRow = 0;
+  this.next_note = 0;
+}
+
+Mod.prototype.byte = function() {
+  return this.data[this.pos++];
+}
+
+Mod.prototype.str = function(len) {
+  var r = "";
+  for (var i=0; i<len; i++) {
+    r += String.fromCharCode(this.data[this.pos++]);
+  }
+  return r;
+}
+
+Mod.prototype.parse = function() {
+  // 20 bytes: title
+  this.title = this.str(20);
+
+  // ignore the sample metadata
+  for (var i=0; i<31; i++) {
+    this.str(30);
+  }
+
+  // 1 byte: length in patterns
+  this.length = this.byte();
+
+  // 1 byte: ignored
+  this.byte();
+
+  // 128 bytes: pattern order
+  this.total_patterns = 0;
+  for (var i=0; i<128; i++) {
+    this.order[i] = this.byte();
+    this.total_patterns = Math.max(this.total_patterns, this.order[i]);
+  }
+  this.magic = this.str(4);
+  var magic_to_channels = {
+    "2CHN": 2,
+    "M.K.": 4,
+    "M!K!": 4,
+    "4CHN": 4,
+    "FLT4": 4,
+    "6CHN": 6,
+    "8CHN": 8,
+    "OKTA": 8,
+    "CD81": 8
+  }
+  this.channels = magic_to_channels[this.magic]||15;
+
+  // read the patterns
+  for (var i = 0; i <= this.total_patterns; i++) {
+    var p=[];
+    var tracker_pattern = document.createElement('div');
+    tracker_pattern.setAttribute('id', i);
+    tracker_pattern.style.setProperty('display', 'none')
+
+    // each pattern has 64 rows
+    for (var r=0; r<64; r++) {
+      var row = [];
+      var tracker_row = document.createElement('div');
+      tracker_row.setAttribute('id', i+'_'+r);
+      var s = document.createElement('span');
+      s.textContent = r;
+      tracker_row.appendChild(s);
+
+      // each row has this.channels notes
+      for (var c=0; c<this.channels; c++) {
+        // each note is 4 bytes
+        var period = ((this.byte() & 0xf) << 8) | this.byte();
+        this.byte();
+        this.byte();
+
+        // we could compute this table, but I'm being lazy so I'll hardcode it
+        var periods = {
+          856: "C1",808:"C#1",762:"D1",720:"D#1",678:"E1",640:"F1",604:"F#1",570:"G1",538:"G#1",508:"A1", 480:"A#1",453:"B1",
+          428:"C2",404:"C#2",381:"D2",360:"D#2",339:"E2",320:"F2",302:"F#2",285:"G2",269:"G#2",254:"A2",240:"A#2",226:"B2",
+          214:"C3",202:"C#3",190:"D3",180:"D#3",170:"E3",160:"F3",151:"F#3",143:"G3",135:"G#3",127:"A3",120:"A#3",113:"B3"
+        }
+        var span = document.createElement('span')
+        span.textContent = periods[period]||"";
+        tracker_row.appendChild(span);
+
+        row.push({period: period});
+      }
+      tracker_pattern.appendChild(tracker_row);
+      p.push(row);
+    }
+    tracker.appendChild(tracker_pattern);
+    this.patterns.push(p);
+  }
+
+
+  // free memory
+  this.data = "";
+}
+
+Mod.prototype.scheduleNote = function(channel) {
+  if (!is_playing) {
+    return;
+  }
+
+  // render visualizer
+  visualizer.render();
+
+  var duration = 1/16;
+  var scheduleAhead = 0; // scheduling screws up tracker
+  while(1) {
+    if (this.next_note > audioCtx.currentTime + scheduleAhead) {
+      // too early
+      break;
+    }
+
+    var p = this.order[this.currentPattern];
+    var row = this.patterns[p][this.currentRow];
+    for (var t=0; t<this.total_patterns; t++) {
+      var pattern = document.getElementById(t);
+      if (t == p) {
+        pattern.style.setProperty('display', '')
+      } else {
+        pattern.style.setProperty('display', 'none')
+      }
+    }
+    for (var t=0; t<64; t++) {
+      pattern = document.getElementById(p + "_" + t);
+      if ((t < this.currentRow) || (t > (this.currentRow + 8))) {
+        pattern.style.setProperty('display', 'none')
+      } else {
+        pattern.style.setProperty('display', '')
+      }
+    }
+
+    this.currentRow++;
+    this.next_note += duration * 2;
+    if (this.currentRow == 64) {
+      this.currentRow = 0;
+      this.currentPattern++;
+      if (this.currentPattern == this.length) {
+        // we are done
+        return;
+      }
+    }
+
+    // only play a single channel for now
+    var freq = row[channel].period;
+    if (freq == 0) {
+      continue;
+    }
+
+    var oscillator = audioCtx.createOscillator();
+    oscillator.type = 'square';
+    oscillator.start(this.next_note - duration);
+    oscillator.stop(this.next_note + 2 * duration);
+    oscillator.frequency.value = 8 * 27993 / freq; // a little bit of magic
+
+    var subgain = audioCtx.createGain();
+    subgain.gain.linearRampToValueAtTime(1, this.next_note);
+    subgain.gain.linearRampToValueAtTime(0, this.next_note + duration * 3);
+
+    oscillator.connect(subgain);
+    subgain.connect(gain);
+  }
+  requestAnimationFrame(this.scheduleNote.bind(this, channel));
+}
+
+function playPopcorn() {
+  var mod = new Mod(popcorn_data);
+  mod.parse();
+  gain.gain.value = 1;
+  is_playing = true;
+  mod.currentPattern = 1; // skip first pattern
+  mod.next_note = audioCtx.currentTime + 1; // +1 to avoid munching first note
+
+  // hack for mobile Safari, turn on audio on user triggered event
+  var oscillator = audioCtx.createOscillator();
+  oscillator.noteOn && oscillator.noteOn(0);
+
+  requestAnimationFrame(mod.scheduleNote.bind(mod, 2));
+}
+
+function playHappyBirthday() {
+  var mod = new Mod(happy_birthday_data);
+  mod.parse();
+  gain.gain.value = 1;
+  is_playing = true;
+  mod.currentPattern = 1; // skip first pattern
+  mod.next_note = audioCtx.currentTime + 1; // +1 to avoid munching first note
+
+  // hack for mobile Safari, turn on audio on user triggered event
+  var oscillator = audioCtx.createOscillator();
+  oscillator.noteOn && oscillator.noteOn(0);
+
+  requestAnimationFrame(mod.scheduleNote.bind(mod, 0));
+}
+
+function stop() {
+  gain.gain.value = 0;
+  is_playing = false;
+  while (tracker.firstChild) {
+    tracker.removeChild(tracker.firstChild);
+  }
+}
+</script>
+<script src="/files/2015/%c2%b5_mod_player_from_scratch/popcorn.js"></script>
+<script src="/files/2015/%c2%b5_mod_player_from_scratch/happy_birthday.js"></script>
+</body>
+</html>
