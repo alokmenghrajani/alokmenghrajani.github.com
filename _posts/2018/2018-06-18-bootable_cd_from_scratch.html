@@ -12,15 +12,16 @@ handcraft a bootable CD. The bootable disk runs a slightly improved version of
 tron.</p>
 
 <pre>
-perl -E 'say"A"x46422,"BDRDAwMQFFTCBUT1JJVE8gU1BFQ0lGSUNBVElPTg","A"x54,"Ew","A"x2634,"/0NEMDAxAQ","A"x2721,"BAAAAYQ","A"x30,"SVVVqogAAAAAAAEAF","A"x2676,"LMBaACgB76gfbgTAM0Qv8D4uYAI86qqgcc+AXP45GA8SHIRPFB3DTeYSEhyBSwCa8CwicMB3rSG/sHNFbRFJjAke9rrwQ","A"x2638'|base64 -D>cd.iso
+perl -E 'say"A"x46422,"BDRDAwMQFFTCBUT1JJVE8gU1BFQ0lGSUNBVElPTg","A"x54,"Ew","A"x2634,"/0NEMDAxAQ","A"x2721,"BAAAAYQ","A"x30,"SVVVqogAAAAAAAEAF","A"x2676,"LMBaACgB76gfbgTAM0Qv8D4uYAI86qqgcc+AXP45GA8SHIRPFB3DTeYSEhyBSwCa8CwicMB3rSGtu/NFbRFJjAke9rrwQ","A"x2638'|base64 -D>cd.iso
 </pre>
 <div style="width: 75%; margin: 1rem auto">
-  <small>
+  <p><small>
   The code in the tweet creates a bootable CDROM disk image: <code>cd.iso</code>. You
   can boot the code in qemu, virtual box or your favorite virtualization
   software and play the game with the arrow keys. You can even burn the iso to
-  a blank CD and boot real hardware.
-  </small>
+  a blank CD (or USB drive) and boot real hardware.
+</small></p>
+  <p><small>note: on some systems, e.g. Linux, you'll have to use <code>base64 -d</code>.</small></p>
 </div>
 
 <p>To handcraft a CD disk image, you must first get a basic understanding of <a href="https://en.wikipedia.org/wiki/ISO_9660">ISO 9660</a>. ISO standards unfortunately are usually expensive. ISO 9660 is however the same as <a href="/files/2018/bootable_cd_retro_game_tweet/ecma-119.pdf">ECMA 119</a>, which means you can read the specification for free.</p>
@@ -156,11 +157,12 @@ kb_handle_end:
           ; machine vs real hardware. Casual testing seems to show that virtual machines
           ; wait ~3-4x longer than physical hardware.
           mov       ah, 0x86
-          inc       cl
+          mov       dh, 0xef
           int       0x15
 
           ; Draw worm and check for collision with parity
           ; (even parity=collision).
+          mov ah, 0x45                 ; Color (must have odd parity)
           xor [es:si], ah
 
           ; Go back to the main game loop.
