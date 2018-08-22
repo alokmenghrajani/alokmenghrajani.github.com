@@ -18,9 +18,11 @@ tags: ['bootloader', 'operating systems', 'nibbles', 'code golf']
       I decided to revisit one such piece of code (nibbles.asm) but turn
       it into a bootable floppy image which can fit in a tweet (140 characters):
     </p>
-    <pre style="code">perl -E"say'sgFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hISH
-IFLAJrwLCJwgHWtQa0C80Q4vwmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img</pre>
+    <pre style="code">perl -E"say'swFoAKAHvqB9uBMAzRC/wPi5gAjzqqqBxz4Bc/jkYDxIchE8UHcNN5hISH
+      IFLAJrwLCJwwHetIa2780VtEUmMCR72uv','B'x589,'Vao='"|base64 -D>boot.img</pre>
+    <small>note: on some systems, e.g. Linux, you'll have to use <code>base64 -d</code>.</small>
   </div>
+  <br/>
   <p>
     * Technically, my code isn't a bootloader. A real bootloader does things
     like setup the x86 machine in protected mode, load more data from the
@@ -156,6 +158,7 @@ dw 0xaa55                              ; Boot signature at the end of bootloader
     The code in the tweet creates a bootable file <code>boot.img</code>. You
     can boot the code in qemu, virtual box or your favorite virtualization
     software and play the game with the arrow keys.
+    You can also put the code on a floppy and boot it, as seen in the video at the top of this page.
     </small>
   </div>
 </section>
