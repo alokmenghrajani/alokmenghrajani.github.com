@@ -71,6 +71,7 @@ function update() {
   var s = (((t % 3600 % 60)|0)+"").padStart(2, "0");
   show = h + ":" + m + ":" + s;
   timer.innerText = show;
+  document.title = "2-min timer for standups: " + show;
 }
 restart();
 setInterval(update, 100);
