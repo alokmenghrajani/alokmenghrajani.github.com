@@ -172,7 +172,7 @@ marquee {
       d.innerHTML = grid[i].join('');
       document.body.appendChild(d);
     }
-    req = document.documentElement.requestFullscreen();
+    document.body.onclick = () => document.documentElement.requestFullscreen();
   </script>
 </body>
 </html>
