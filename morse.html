@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body style="backgroundColor: black">
+  <script>
+    var s = unescape(window.location.search.substr(1));
+    if (s == "") {
+      s = 'sos'; // something famous...
+    }
+    s = s.toLowerCase().replace(/[^a-z0-9 ]/g, '');
+    var morse={"0":"-----", "1":".----", "2":"..---", "3":"...--", "4":"....-", "5":".....", "6":"-....", "7":"--...", "8":"---..", "9":"----.", "a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.", "g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..", "m":"--", "n":"-.", "o":"---", "p":".--.", "q":"--.-", "r":".-.", "s":"...", "t":"-", "u":"..-", "v":"...-", "w":".--", "x":"-..-", "y":"-.--", "z":"--.."};
+    var timer1 = 300; // .
+    var timer2 = 1000; // -
+    var timer3 = 3000; // inter-word
+    f(0, 0);
+
+    function f(a, b) {
+      if (a == s.length) {
+        setTimeout(() => f(0, 0), timer3);
+        return;
+      }
+      var l = s[a];
+      if (l == ' ') {
+        setTimeout(() => f(a+1, 0), timer3);
+        return;
+      }
+      l = morse[l];
+      if (b == l.length) {
+        setTimeout(() => f(a+1, 0), timer2);
+        return;
+      }
+      l = l[b];
+      document.body.style.backgroundColor = "white";
+      if (l == '.') {
+        setTimeout(() => {
+          document.body.style.backgroundColor = "black";
+          setTimeout(() => f(a, b+1), timer1);
+        }, timer1);
+        return;
+      } else {
+        setTimeout(() => {
+          document.body.style.backgroundColor = "black";
+          setTimeout(() => f(a, b+1), timer1);
+        }, timer2);
+        return;
+      }
+    }
+  </script>
+  </body>
+</html>
