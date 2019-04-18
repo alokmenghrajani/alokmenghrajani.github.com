@@ -11,24 +11,26 @@
     }
     s = s.toLowerCase().replace(/[^a-z0-9 ]/g, '');
     var morse={"0":"-----", "1":".----", "2":"..---", "3":"...--", "4":"....-", "5":".....", "6":"-....", "7":"--...", "8":"---..", "9":"----.", "a":".-", "b":"-...", "c":"-.-.", "d":"-..", "e":".", "f":"..-.", "g":"--.", "h":"....", "i":"..", "j":".---", "k":"-.-", "l":".-..", "m":"--", "n":"-.", "o":"---", "p":".--.", "q":"--.-", "r":".-.", "s":"...", "t":"-", "u":"..-", "v":"...-", "w":".--", "x":"-..-", "y":"-.--", "z":"--.."};
-    var timer1 = 300; // .
-    var timer2 = 1000; // -
-    var timer3 = 3000; // inter-word
+    var dot_length = 500;
+    var dash_length = dot_length * 3;
+    var pause_between_elements = dot_length;
+    var pause_between_characters = dot_length * 3;
+    var pause_between_words = dot_length * 7;
     f(0, 0);
 
     function f(a, b) {
       if (a == s.length) {
-        setTimeout(() => f(0, 0), timer3);
+        setTimeout(() => f(0, 0), pause_between_words);
         return;
       }
       var l = s[a];
       if (l == ' ') {
-        setTimeout(() => f(a+1, 0), timer3);
+        setTimeout(() => f(a+1, 0), pause_between_words);
         return;
       }
       l = morse[l];
       if (b == l.length) {
-        setTimeout(() => f(a+1, 0), timer2);
+        setTimeout(() => f(a+1, 0), pause_between_characters);
         return;
       }
       l = l[b];
@@ -36,14 +38,14 @@
       if (l == '.') {
         setTimeout(() => {
           document.body.style.backgroundColor = "black";
-          setTimeout(() => f(a, b+1), timer1);
-        }, timer1);
+          setTimeout(() => f(a, b+1), pause_between_elements);
+        }, dot_length);
         return;
       } else {
         setTimeout(() => {
           document.body.style.backgroundColor = "black";
-          setTimeout(() => f(a, b+1), timer1);
-        }, timer2);
+          setTimeout(() => f(a, b+1), pause_between_elements);
+        }, dash_length);
         return;
       }
     }
