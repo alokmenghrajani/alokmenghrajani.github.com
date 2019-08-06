@@ -9,7 +9,7 @@ var fireworks = [];
 var particles = [];
 
 var hue = 120;
-var timerTotal = 120;
+var timerTotal = 200;
 var timerTick = 0;
 
 function random(min, max) {
@@ -44,7 +44,7 @@ function Firework(sx, sy, tx, ty) {
   }
   this.angle = Math.atan2( ty - sy, tx - sx );
   this.speed = 2;
-  this.acceleration = 1.05;
+  this.acceleration = 1.02;
   this.brightness = random( 50, 70 );
   // circle target indicator radius
   this.targetRadius = 1;
@@ -58,11 +58,7 @@ Firework.prototype.update = function( index ) {
   this.coordinates.unshift([ this.x, this.y ]);
 
   // cycle the circle target indicator radius
-  if(this.targetRadius < 8) {
-    this.targetRadius += 0.3;
-  } else {
-    this.targetRadius = 1;
-  }
+  this.targetRadius++;
 
   // speed up the firework
   this.speed *= this.acceleration;
@@ -94,10 +90,32 @@ Firework.prototype.draw = function() {
   ctx.strokeStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
   ctx.stroke();
 
-  ctx.beginPath();
   // draw the target for this firework with a pulsing circle
-  ctx.arc( this.tx, this.ty, this.targetRadius, 0, Math.PI * 2 );
+  ctx.beginPath();
+  var R = Math.abs(Math.sin(this.targetRadius / 10)) * 3 + 6;
+  ctx.lineWidth = R * 0.35;
+  var r = R * 0.35;
+  ctx.moveTo(this.tx + r - R, this.ty - R);
+  ctx.arcTo(this.tx + R, this.ty - R, this.tx + R, this.ty + R, r);
+  ctx.arcTo(this.tx + R, this.ty + R, this.tx - R, this.ty + R, r);
+  ctx.arcTo(this.tx - R, this.ty + R, this.tx - R, this.ty - R, r);
+  ctx.arcTo(this.tx - R, this.ty - R, this.tx + R, this.ty - R, r);
+  ctx.closePath();
   ctx.stroke();
+
+  ctx.beginPath();
+  ctx.fillStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
+
+  R = R / 3;
+  r = R * 0.35;
+  ctx.moveTo(this.tx + r - R, this.ty - R);
+  ctx.arcTo(this.tx + R, this.ty - R, this.tx + R, this.ty + R, r);
+  ctx.arcTo(this.tx + R, this.ty + R, this.tx - R, this.ty + R, r);
+  ctx.arcTo(this.tx - R, this.ty + R, this.tx - R, this.ty - R, r);
+  ctx.arcTo(this.tx - R, this.ty - R, this.tx + R, this.ty - R, r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = 1;
 }
 
 // create particle
@@ -114,15 +132,15 @@ function Particle( x, y ) {
   this.angle = random( 0, Math.PI * 2 );
   this.speed = random( 1, 10 );
   // friction will slow the particle down
-  this.friction = 0.95;
+  this.friction = 0.97;
   // gravity will be applied and pull the particle down
-  this.gravity = 1;
+  this.gravity = 1.5;
   // set the hue to a random number +-50 of the overall hue variable
   this.hue = random( hue - 50, hue + 50 );
   this.brightness = random( 50, 80 );
   this.alpha = 1;
   // set how fast the particle fades out
-  this.decay = random( 0.015, 0.03 );
+  this.decay = random(0.015, 0.03);
 }
 
 // update particle
@@ -157,7 +175,7 @@ Particle.prototype.draw = function() {
 
 // create explosion
 function createParticles(x, y) {
-  var particleCount = 30;
+  var particleCount = 300;
   while (particleCount--) {
     particles.push(new Particle(x, y));
   }
@@ -241,7 +259,7 @@ function loop() {
 
   if (timerTick % 2 == 0) {
     if (character[timerTick/2]) {
-      fireworks.push(new Firework(random(cw/2-50, cw/2+50), ch,
+      fireworks.push(new Firework(cw/2, ch * 1.5,
         cw/2 + character[timerTick/2][0]*2 - 500,
         ch/2 + character[timerTick/2][1]*2 - 520));
     }
