@@ -3,15 +3,15 @@
   <style>
     @font-face {
       font-family: "spooky";
-      src: url(https://www.quaxio.com/spooky_fizz_buzz/spooky.otf);
+      src: url(spooky.otf);
     }
     body {
       width: 800px;
       border-left: 1px solid black;
-      padding-left: 10px;
+      padding-left: 5em;
       margin: 0 auto;
     }
-    div {
+    li {
       font-family: "spooky";
     }
     script {
@@ -25,19 +25,12 @@
   <div>IF YOU CAN READ THIS THEN SOMETHING IS WRONG</div>
   <script>
 // 🎃👻🕷️Happy halloween! This is a spooky fizzbuzz!
-// We simply print incrementing numbers in a loop and
-// something takes care of displaying fizz, buzz or fizzbuzz.
+// There's just a loop. No counter. No math. Something
+// takes care of displaying fizz, buzz, or fizzbuzz.
 // note: doesn't seem to work on Safari for some reason...
 
-fizzbuzz = 1;
-setInterval(() => {
-  var div = document.createElement('div');
-  div.textContent = fizzbuzz++;
-  document.body.append(div)
-}, 1000);
+setInterval(() => ol.append(document.createElement('li')), 1000);
   </script>
-
-<!-- check out https://www.quaxio.com/spooky_fizz_buzz/index_v2.html for an alternative version -->
-
+  <ol id="ol"></ol>
 </body>
 </html>
