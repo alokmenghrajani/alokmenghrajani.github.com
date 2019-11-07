@@ -10,10 +10,10 @@
     body {
       width: 800px;
       border-left: 1px solid black;
-      padding-left: 5em;
+      padding-left: 10px;
       margin: 0 auto;
     }
-    body > * {
+    div {
       font-family: "spooky";
     }
     script {
@@ -27,11 +27,16 @@
   <div>IF YOU CAN READ THIS THEN SOMETHING IS WRONG</div>
   <script>
 // 🎃👻🕷️ Happy Halloween! This is a spooky fizzbuzz!
-// There's just a loop. No counter. No math. Something
-// takes care of displaying fizz, buzz, or fizzbuzz.
+// We simply print incrementing numbers in a loop and
+// something takes care of displaying fizz, buzz or fizzbuzz.
 
-setInterval(() => ol.append(document.createElement('li')), 1000);
+fizzbuzz = 1;
+setInterval(() => {
+  var div = document.createElement('div');
+  div.textContent = fizzbuzz++;
+  document.body.append(div)
+}, 1000);
   </script>
-  <ol id="ol"></ol>
+
 </body>
 </html>
