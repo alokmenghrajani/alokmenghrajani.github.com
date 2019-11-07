@@ -1,7 +1,104 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <style>
+    body {
+      width: 800px;
+      border-left: 1px solid black;
+      padding-left: 1em;
+      margin: 0 auto;
+    }
+    pre {
+      font-size: 7pt;
+    }
+  </style>
+</head>
 <body>
-  <h1>An artisanal QR code</h1>
+   <h1>An artisanal QR code</h1>
   <p>Pending publication.</p>
+
+  <h2>Reed-Solomon Error Correcting Code (ECC)</h2>
+  <p>The article contains a JavaScript snippet to compute the Reed-Solomon ECC. Here, we can see the same calculation
+    being performed using middle school style long division. We use xor instead of substraction.</p>
+  <p>Our data is [64,149,6,22,118,86,68,247,87,66,16,236,17,236,17,236] and we are going to divide by [1,216,194,159,111,199,94,95,113,157,193]
+    (the divisor can be computed or we can look up appendix A in the standard and use a log table).</p>
+  <p>note: the powers of x have been omitted — the notation 1, 2, 3, ... is actually 1*x^25 + 2*x^24 + 3*x^23...</p>
+
+  <pre>
+
+                                         ---------------------------------------------------------------------------------------------------------
+1,216,194,159,111,199,94,95,113,157,193 |   64,149,  6, 22,118, 86, 68,247, 87, 66, 16,236, 17,236, 17,236,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+                                         ^  64,  4,202, 20,194,151, 30, 94, 17,148, 10
+                                           -------------------------------------------
+                                               145,204,  2,180,193, 90,169, 70,214, 26,236
+                                             ^ 145,209,247,178, 72, 24,235,122, 16,141, 89
+                                               -------------------------------------------
+                                                    29,245,  6,137, 66, 66, 60,198,151,181, 17
+                                                 ^  29, 16, 15, 80, 47,102,120,101, 68,106, 40
+                                                   -------------------------------------------
+                                                       229,  9,217,109, 36, 68,163,211,223, 57,236
+                                                     ^ 229,145,203,239,244,157, 22,243, 29, 56,249
+                                                       -------------------------------------------
+                                                           152, 18,130,208,217,181, 32,194,  1, 21, 17
+                                                         ^ 152,135,107,161,120,169,127,231,206,140,222
+                                                           -------------------------------------------
+                                                               149,233,113,161, 28, 95, 37,207,153,207,236
+                                                             ^ 149,150,216,244,233, 35,142, 27,201,195,122
+                                                               -------------------------------------------
+                                                                   127,169, 85,245,124,171,212, 80, 12,150,  0
+                                                                 ^ 127,187, 57,109, 82,167,213,170, 49,147,184
+                                                                   -------------------------------------------
+                                                                        18,108,152, 46, 12,  1,250, 61,  5,184,  0
+                                                                     ^  18,172, 37, 38, 96,127, 53, 39,161,  2, 19
+                                                                       -------------------------------------------
+                                                                           192,189,  8,108,126,207, 26,164,186, 19,  0
+                                                                         ^ 192, 12, 67, 60, 91,164, 34,226, 51,161, 30
+                                                                           -------------------------------------------
+                                                                               177, 75, 80, 37,107, 56, 70,137,178, 30,  0
+                                                                             ^ 177,211,146,184, 41,221,228, 85,150,199, 92
+                                                                               -------------------------------------------
+                                                                                   152,194,157, 66,229,162,220, 36,217, 92,  0
+                                                                                 ^ 152,135,107,161,120,169,127,231,206,140,222
+                                                                                   -------------------------------------------
+                                                                                        69,246,227,157, 11,163,195, 23,208,222,  0
+                                                                                     ^  69,155, 39,205, 12,107, 37, 96,185, 71,232
+                                                                                       -------------------------------------------
+                                                                                           109,196, 80,  7,200,230,119,105,153,232,  0
+                                                                                         ^ 109, 23, 28, 75, 50,216,224,141,144,145,171
+                                                                                           -------------------------------------------
+                                                                                               211, 76, 76,250, 62,151,228,  9,121,171,  0
+                                                                                             ^ 211,120,164,133, 84, 28, 73,154,227, 62,204
+                                                                                               -------------------------------------------
+                                                                                                    52,232,127,106,139,173,147,154,149,204,  0
+                                                                                                 ^  52, 68,246, 73,126, 18,227,215, 28, 33,170
+                                                                                                   -------------------------------------------
+                                                                                                       172,137, 35,245,191,112, 77,137,237,170,  0
+                                                                                                     ^ 172,195,157,232,  6,187,156, 48,210,173,116
+                                                                                                       -------------------------------------------
+                                                                                                            74,190, 29,185,203,209,185, 63,  7,116 <= our error correcting code
+  </pre>
+
+  <h2>BCH Correcting Code</h2>
+  <p>Similarly to above, we can use long division with xor to calculate the BCH correcting code.</p>
+  <pre>
+data = 00101
+divisor = 10100110111
+mask = 101010000010010
+
+                 -----------------
+    10100110111 | 001010000000000
+                  ^ 10100110111
+                    -----------
+                    0000011011100  <= remainder
+
+
+
+data + remainder = 001010011011100
+                 ^ 101010000010010 (xor with mask)
+                   ---------------
+                   100000011001110 <= format info
+</pre>
 
   <h2>References</h2>
   <ul>
@@ -10,7 +107,7 @@
     <li><a href="https://github.com/davidshimjs/qrcodejs/blob/master/qrcode.js">qrcode.js</a> is a library written in JavaScript.
       Being browser-based makes it easy to set breakpoints, inspect, hack, etc. Keep in mind that this library seems no longer
       maintained -- some bugs were reported many years ago and never fixed.</li>
-    <li>An online <a href="https://www.thonky.com/qr-code-tutorial/show-division-steps?msg_coeff=64%2C+149%2C+6%2C+22%2C+118%2C+86%2C+68%2C+247%2C+87%2C+66%2C+16%2C+236%2C+17&num_ecc_blocks=13">long division calculator</a>.</li>
+    <li>An online <a href="https://www.thonky.com/qr-code-tutorial/show-division-steps?msg_coeff=64%2C149%2C6%2C22%2C118%2C86%2C68%2C247%2C87%2C66%2C16%2C236%2C17%2C236%2C17%2C236&num_ecc_blocks=10">long division calculator</a>. The <a href="https://www.thonky.com/qr-code-tutorial/log-antilog-table">Log/Antilog table</a> on the same site is useful.</li>
     <li>Wikipedia page about <a href="https://en.wikiversity.org/wiki/Reed%E2%80%93Solomon_codes_for_coders#Polynomials">Reed Solomon</a>.</li>
     <li>Wikipedia page about <a href="https://en.wikipedia.org/wiki/QR_code">QR code</a>.</li>
     <li>Wikipedia page about <a href="https://en.wikipedia.org/wiki/Finite_field_arithmetic">Finite field artihmetic</a>.</li>
@@ -19,7 +116,10 @@
     <li><a href="https://math.stackexchange.com/questions/41365/finite-field-i-dont-quite-understand-the-concept">Finite field question</a> on StackExchange.</li>
   </ul>
 
-  <p>See also <a href="https://www.quaxio.com/qrquine/">qrquine: a QR code based quine</a>.</p>
-  <p>The word "QR Code" is registered trademark of DENSO WAVE INCORPORATED (http://www.denso-wave.com/qrcode/)</p>
+  <h2>And...</h2>
+  <ul>
+    <li><a href="https://www.quaxio.com/qrquine/">qrquine: a QR code based quine</a>.</li>
+    <li>The word "QR Code" is registered trademark of DENSO WAVE INCORPORATED (http://www.denso-wave.com/qrcode/)</li>
+  </ul>
 </body>
 </html>
