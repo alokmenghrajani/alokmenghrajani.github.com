@@ -12,6 +12,18 @@
     pre {
       font-size: 7pt;
     }
+    .hidden {
+      display: none;
+    }
+    #qr div {
+      width: 400px;
+      display: inline-block;
+      vertical-align: top;
+    }
+    #qr svg {
+      margin-top: 16px;
+      margin-left: 16px;
+    }
   </style>
 </head>
 <body>
@@ -99,6 +111,156 @@ data + remainder = 001010011011100
                    ---------------
                    100000011001110 <= format info
 </pre>
+
+  <h2>Step-by-step drawing</h2>
+  <button onclick="prev()">prev</button>
+  <button onclick="next()">next</button>
+
+  <div id="title" class="hidden">
+    <p>See the "PagedOut!" QR code drawn step-by-step.</p>
+  </div>
+  <div id="sizing" class="hidden">
+    <p>Choose the size and amount of error correcting code.</p>
+    <div>
+      <p>QR codes come in various sizes. The smallest is 21x21 cells and the largest
+        is 177x177. For each size, the data can be encoded in different ways
+        and with different levels of error correction.</p>
+      <p>Error correction helps read the data even if the QR code is slightly
+        damaged.</p>
+      <p>The combination of size, encoding and error correction determines the
+        total amount of data we can store.</p>
+      <p>A 21x21 QR code can store 14 bytes with an error correcting level M,
+        which works for us.</p>
+    </div>
+  </div>
+  <div id="position-patterns" class="hidden">
+    <p>Position patterns.</p>
+    <div>
+      <p>Three of the four corners of the QR code contain a position pattern. This is distinctive mark used by the
+        decoder to locate QR codes. The pattern also provides orientation and scale information.</p>
+    </div>
+  </div>
+  <div id="timing-pattern" class="hidden">
+    <p>Timming pattern.</p>
+    <div>
+      <p>The three corners are connected with alternating colors. This provides
+        alignment information to the decoder for each row and column.</p>
+    </div>
+  </div>
+  <div id="mask-pattern-1" class="hidden">
+    <p>Error correction level and mask.</p>
+    <div>
+      <p>The error correction level (00b) and the mask (101b)
+        are encoded horizontally. Encoders should pick the mask which minimizes large clusters of identical color.</p>
+    </div>
+  </div>
+  <div id="mask-pattern-2" class="hidden">
+    <p>Error correction level and mask.</p>
+    <div>
+      <p>The same data is repeated in the other direction for redundancy
+        purpose.</p>
+    </div>
+  </div>
+  <div id="mode" class="hidden">
+    <p>Mode</p>
+    <div>
+      <p>The actual data is layed out from bottom-right in a drunken-snake like pattern.</p>
+      <p>Data in the QR code can be encoded in several ways. We use binary (0100b). Other modes
+        include numeric, alphanumeric and Kanji.</p>
+    </div>
+  </div>
+  <div id="length" class="hidden">
+    <p>Length.</p>
+    <div>The next 8 cells are the actual data's length. In our case, we have
+      9 characters, which is 0000 1001b.</div>
+  </div>
+  <div id="char-P" class="hidden">
+    <p>P</p>
+    <div>Binary mode is the simplest mode to encode. Each letter is simply
+        encoded using its ASCII value. P is encoded as 80 (0101 0000b).</div>
+  </div>
+  <div id="char-a" class="hidden">
+    <p>a</p>
+    <div>In a similar way, a is 97 (0110 0001b).</div>
+  </div>
+  <div id="char-g" class="hidden">
+    <p>g</p>
+    <div>g is 103 (0110 0111b).</div>
+  </div>
+  <div id="char-e" class="hidden">
+    <p>e</p>
+    <div>e is 101 (0110 0101b).</div>
+  </div>
+  <div id="char-d" class="hidden">
+    <p>d</p>
+    <div>d is 100 (0110 0100b).</div>
+  </div>
+  <div id="char-O" class="hidden">
+    <p>O</p>
+    <div>O is 79 (0100 1111b).</div>
+  </div>
+  <div id="char-u" class="hidden">
+    <p>u</p>
+    <div>u is 117 (0111 0101b).</div>
+  </div>
+  <div id="char-t" class="hidden">
+    <p>t</p>
+    <div>t is 116 (0111 0100b).</div>
+  </div>
+  <div id="char-!" class="hidden">
+    <p>!</p>
+    <div>! is 33 (0010 0001b).</div>
+  </div>
+  <div id="padding" class="hidden">
+    <p>Padding</p>
+    <div>At the end, we need to put some padding: 0000b followed by 0xec 0xfd 0xec 0xfd 0xec.</div>
+  </div>
+  <div id="ecc" class="hidden">
+    <p>Error correcting code</p>
+    <div>Finally, we lay the error correcting code we computed above.</div>
+  </div>
+  <div id="done" class="hidden">
+    <p>That's it!</p>
+    <div>
+      <p>The final step is to apply the right mask. Each QR code is XORed with one
+        of 8 different masks. The encoder tries each mask and computes a score
+        which takes into account how many consecutive cells are the same color.
+      </p>
+      <p>
+        The mask with the most number of alternating cells is chosen as it
+        leads to better scannability.
+      </p>
+    </div>
+  </div>
+
+  <div id="qr"></div>
+  <script src="an_artisanal_qr_code.js"></script>
+  <script>
+  var current_value = 1;
+  render();
+  function next() {
+    if ((current_value < qrcode._oQRCode.modules.step) && (current_value == Math.floor(current_value))) {
+      increment(current_value, 1, 10);
+      render();
+    }
+  }
+  function increment(start, i, n) {
+    current_value = start + i/n;
+    render();
+    if (i < n) {
+      setTimeout(function(){increment(start, i+1, n)}, 20);
+    }
+  }
+  function prev() {
+    if (current_value > 1) {
+      current_value--;
+      render();
+    }
+  }
+  function render() {
+    qrcode.render(qr, current_value, 128, 128);
+  }
+  </script>
 
   <h2>References</h2>
   <ul>
