@@ -32,7 +32,8 @@
 
   <h2>Reed-Solomon Error Correcting Code (ECC)</h2>
   <p>The article contains a JavaScript snippet to compute the Reed-Solomon ECC. Here, we can see the same calculation
-    being performed using middle school style long division. We use xor instead of substraction.</p>
+    being performed using middle school style long division. We use xor instead of substraction. It is feasible to
+    perform these calculations using just pen and paper.</p>
   <p>Our data is [64,149,6,22,118,86,68,247,87,66,16,236,17,236,17,236] and we are going to divide by [1,216,194,159,111,199,94,95,113,157,193]
     (the divisor can be computed or we can look up appendix A in the standard and use a log table).</p>
   <p>note: the powers of x have been omitted — the notation 1, 2, 3, ... is actually 1*x^25 + 2*x^24 + 3*x^23...</p>
@@ -41,8 +42,8 @@
 
                                          ---------------------------------------------------------------------------------------------------------
 1,216,194,159,111,199,94,95,113,157,193 |   64,149,  6, 22,118, 86, 68,247, 87, 66, 16,236, 17,236, 17,236,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
-                                         ^  64,  4,202, 20,194,151, 30, 94, 17,148, 10
-                                           -------------------------------------------
+                                         ^  64,  4,202, 20,194,151, 30, 94, 17,148, 10     <= if computing by hand, the multiplication of the divisor
+                                           -------------------------------------------        is easiest to compute with log/antilog tables.
                                                145,204,  2,180,193, 90,169, 70,214, 26,236
                                              ^ 145,209,247,178, 72, 24,235,122, 16,141, 89
                                                -------------------------------------------
