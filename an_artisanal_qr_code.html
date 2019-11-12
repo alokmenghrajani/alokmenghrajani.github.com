@@ -104,6 +104,9 @@ dec:
                                                                                                        -------------------------------------------
                                                                                                             74,190, 29,185,203,209,185, 63,  7,116 <= our error correcting code
   </pre>
+  <p>Note: these multiplications and divisions using xor are basic Galois Field operations. If you understand these,
+    you can perform AES encryption or decryption by hand — AES requires similar operations in addition to swapping
+    bytes around using predefined tables.</p>
 
   <h2>BCH Correcting Code</h2>
   <p>Similarly to above, we can use long division with xor to calculate the BCH correcting code.</p>
