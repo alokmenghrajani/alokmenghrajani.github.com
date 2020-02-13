@@ -21,7 +21,7 @@ tags: ['crypto', 'rsa', 'chinese remainder theorem']
   <p>RSA is a public key cryptosystem developed by Rivest, Shamir and Adleman in
   1977. It is still the main primitive used by TLS (https), GPG, ssh, etc.</p>
   <p>Public key crypto involves two keys: a public key and a private key. A user (Bob) publishes their public key and keeps the private key secure. Anyone can securely send messages to Bob by encrypting the contents using the public key. Only Bob who knows the private key can decrypt the messages.</p>
-  <p>RSA is based on the fact that it's easy to create and multiply two large prime numbers but it's hard to factorize the product. RSA also relies on modular exponentiation (<code>a^e mod n</code>) being a one-way function (given <code>c &#x2261; a^e mod n</code>, computing <code>c</code> is easy but finding <code>e</code> given <code>c</code>, <code>a</code> and <code>n</code> is hard).</p>
+  <p>RSA is based on the fact that it's easy to create and multiply two large prime numbers but it's hard to factorize the product. RSA also relies on modular exponentiation (<code>a^e mod n</code>) being a one-way function (given <code>c &#x2261; a^e mod n</code>, computing <code>c</code> is easy but finding <code>a</code> given <code>c</code>, <code>e</code> and <code>n</code> is hard).</p>
   <p>The key generation algorithm boils down to:
   <ol>
     <li>choose two distinct prime numbers <code>p</code> and <code>q</code>. (Look up how this is
@@ -47,7 +47,7 @@ tags: ['crypto', 'rsa', 'chinese remainder theorem']
   <li>compute <code>c &#x2261; m^e mod n</code></li>
   </ul>
   </p>
-  
+
   <p>And decryption ends up being the same operation with a different exponent:
   <ul>
   <li><code>c^d &#x2261; (m^e)^d &#x2261; m (mod n)</code></li>
@@ -75,7 +75,7 @@ MD8CAQACCQDCX12/CM4MOQIDAQABAgh0j4YCTp0HdQIFAOq31rsCBQDT/wubAgUA
 -----END RSA PRIVATE KEY-----
 
 To see what’s in the key, use openssl rsa -text:
-$ openssl rsa -text -in small.pem 
+$ openssl rsa -text -in small.pem
 Private-Key: (64 bit)
 modulus: 14006016441213389881 (0xc25f5dbf08ce0c39)
 publicExponent: 65537 (0x10001)
@@ -227,7 +227,7 @@ end
 
 <p>This means we can convert three identical messages encrypted to three recipients into the weak message case above. This is possible because the message is going to be smaller than the product A*B*C.</p>
 
-<pre>$ openssl genrsa -3 128 | tee key1.pem 
+<pre>$ openssl genrsa -3 128 | tee key1.pem
 Generating RSA private key, 128 bit long modulus
 ..+++++++++++++++++++++++++++
 .+++++++++++++++++++++++++++
@@ -237,7 +237,7 @@ MGICAQACEQDSqVXh6LYTArm4OiIDupGVAgEDAhEAjHDj6/B5YgCbaxSUePbjKwIJ
 AO33P5tsUQuxAgkA4qBbp+H3MSUCCQCepNUSSDYHywIJAJcVkm/r+iDDAggJ6hBR
 5pRslA==
 -----END RSA PRIVATE KEY-----
-$ openssl genrsa -3 128 | tee key2.pem 
+$ openssl genrsa -3 128 | tee key2.pem
 Generating RSA private key, 128 bit long modulus
 ...+++++++++++++++++++++++++++
 ....+++++++++++++++++++++++++++
@@ -247,7 +247,7 @@ MGICAQACEQDEtWSUEvnIiKUrAb9BqE7bAgEDAhEAgyOYYrdRMFnrimfrJUiquwIJ
 APwgNlor+6pVAgkAx7svhF2/pG8CCQCoFXmRcqfG4wIJAIUndQLpKm2fAghyf0MX
 IZWaZw==
 -----END RSA PRIVATE KEY-----
-$ openssl genrsa -3 128 | tee key3.pem 
+$ openssl genrsa -3 128 | tee key3.pem
 Generating RSA private key, 128 bit long modulus
 .+++++++++++++++++++++++++++
 .....+++++++++++++++++++++++++++
@@ -258,11 +258,11 @@ APICm09QDGXtAgkA3EH7bi10v9sCCQChVxI04AhD8wIJAJLWp57I+H/nAggXDoxS
 56i64g==
 -----END RSA PRIVATE KEY-----
 
-$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key1.pem -raw  | base64 
+$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key1.pem -raw  | base64
 pAvH0C8oeAF0PUX4ntQOJw==
-$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key2.pem -raw  | base64 
+$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key2.pem -raw  | base64
 p+XoMuN1JKzZI2L/EDF2xQ==
-$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key3.pem -raw  | base64 
+$ echo -en 'hello world !!!!' | openssl rsautl -encrypt -inkey key3.pem -raw  | base64
 a+GgTrVXCGWWL9JO7CPhxA==
 
 $ irb
@@ -308,4 +308,8 @@ end
 &gt; puts [r.to_s(16)].pack('H*')
 hello world !!!!</pre>
 <p><em>This is why RSA needs a randomized padding scheme.</em></p>
+</section>
+
+<section>
+Fixes: Feb 12, 2020: Masel reported a mistake in the introduction (2 minute refresher on RSA).
 </section>
