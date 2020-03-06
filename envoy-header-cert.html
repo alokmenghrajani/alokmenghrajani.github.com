@@ -1,0 +1,37 @@
+<html>
+<head>
+  <style>
+    body {
+      font-size: x-small;
+      width: 60em;
+      margin: auto auto;
+      border-left: 2px solid #288;
+      padding: 10px 10px
+    }
+    div {
+      font-family: monospace;
+      word-break:break-all;
+    }
+    p {
+      font-size: medium;
+    }
+    textarea {
+      font-family: monospace;
+      width: 100%;
+      height: 40em;
+    }
+  </style>
+</head>
+<body>
+<p>Tool to encode PEM certs as envoy XFCC headers.</p>
+<textarea id="pem" placeholder="paste PEM certificate"></textarea>
+
+<p>Output:</p>
+<div id="output"></div>
+<script>
+pem.addEventListener("input", () => {
+  output.innerText = "-H \"X-Forwarded-Client-Cert: Cert=\\\"" + encodeURIComponent(pem.value) + "\\\"\"";
+})
+</script>
+</body>
+</html>
