@@ -94,11 +94,12 @@ h1 {
 }
 
 h2 {
-  font-size: 150%;
-  font-weight: 400;
+  font-size: 150% !important;
+  font-weight: 400 !important;
   @media (min-width: 38rem){
-    font-size: 175%;
+    font-size: 175% !important;
   }
+  color: #000 !important;
 }
 
 h3 {
