@@ -5,7 +5,7 @@
  * Some variables
  */
 
-$text-color:       #333;
+$text-color:       #555;
 $link-color:       #268bd2;
 $grey-color:       #828282;
 $grey-color-light: lighten($grey-color, 40%);
@@ -30,24 +30,25 @@ html, body {
 html {
   font-family: 'Helvetica Neue';
   font-weight: 300;
-  line-height: 1.5;
+  font-size: 18px;
 }
 
 body {
   color: $text-color;
-  background-color: #f5f5f5;
+  background-color: #f2f2f2;
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
 
 .container {
-  max-width: 38rem;
+  background-color: #fff;
+  max-width: 40rem;
   padding: 2rem 1.5rem;
   margin-left:  auto;
   margin-right: auto;
 
-  @media (min-width: 38rem){
-    padding: 5rem 1rem;
+  @media (min-width: 40rem){
+    padding: 5rem 4rem;
   }
 }
 
@@ -112,6 +113,7 @@ h3 {
  */
 header {
   padding-bottom: 2rem;
+  line-height: 1em;
 
   h1 {
     font-weight: 300;
@@ -127,6 +129,9 @@ header {
       text-decoration: none;
       border-bottom: 0;
     }
+  }
+  p {
+    font-size: 80%;
   }
   span {
     margin-bottom: .75rem;
@@ -159,7 +164,7 @@ footer .icons a {
     span {
       width: 60px;
       overflow: visible;
-      color: #fff;
+      color: $text-color;
       display: block;
     }
     svg {
@@ -174,6 +179,9 @@ footer .icons a {
  */
 
 .index {
+  line-height: 1em;
+  font-size: 14px;
+
   header {
     .first {
       float: left;
