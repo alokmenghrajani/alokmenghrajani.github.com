@@ -27,10 +27,18 @@ html, body {
   padding: 0;
 }
 
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: url(https://quaxio.com/Roboto-Light.ttf) format('truetype');
+}
+
 html {
-  font-family: 'Helvetica Neue';
+  font-family: 'Roboto',sans-serif;
   font-weight: 300;
   font-size: 18px;
+  line-height: 30px;
 }
 
 body {

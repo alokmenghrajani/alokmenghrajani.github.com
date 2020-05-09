@@ -1,7 +1,205 @@
 ---
 layout: post
-title: "IBM Ponder This April 2020 Solution"
+title: "IBM Ponder This · April 2020 Solution"
 permalink: '/ponder_this_april_2020_writeup/'
 tags: ['ponder this']
 ---
-<i>write up will be posted here once challenge is over</i>
+<h2>COVID-19 outbreak</h2>
+
+<p><a href="http://www.research.ibm.com/haifa/ponderthis/index.shtml">IBM Ponder This</a> is a monthly puzzle. Most
+  people find the puzzles fairly difficult to solve. Solutions typically require a combination of software engineering
+  (encoding the problem as a search) and math (or some other form of insight) to reduce the search space. Simple
+  bruteforce usually doesn’t lead anywhere.</p>
+
+<p>Each previous month’s solution is made available. However, solutions are typically very succinct and don’t explain
+  how the solution was obtained. The purpose of this write up is to expose my thought process (and wrong turns) which
+  eventually lead me to solve <a href="http://www.research.ibm.com/haifa/ponderthis/challenges/April2020.html">April
+  2020’s challenge</a>. Companion code, written in Go, is available at
+  <a href="https://github.com/alokmenghrajani/ponderthis-april2020">github.com/alokmenghrajani/ponderthis-april2020</a></p>
+
+<h2>Puzzle</h2>
+<blockquote style="border-left-color: #0bc">
+  <p>This month's challenge is inspired by the COVID-19 pandemic.</p>
+  <p>Suppose that the world has five cities and they are all connected to one another as depicted by the five-verticed
+    graph in the following picture:</p>
+  <p><img src="/files/2020/ponder-this-april-2020-writeup/image2.png"></p>
+  <p>Let's assume that the infection passes daily along the edges. So, if on day t, "D" is infected and "C" is healthy,
+    then "C" has a 10% chance of getting infected, by "D", on day t+1. If "A" is infected at time 0, after ten days,
+    there is about a 29.16521896% probability that all five will be infected.</p>
+  <p>Find a graph with no more than eight vertices that gives a probability of 70.00% (accurate to the second decimal
+    digit after the decimal point) of all cities/vertices being infected after ten days.</p>
+  <p>Give your answer as an adjacency matrix.<br>
+  For example, the adjacency matrix of the graph depicted above is</p>
+  <pre>01110
+10001
+10010
+10101
+01010
+</pre>
+<p>Bonus '*' for getting the closest to 70% in 19 days; and ’**' for getting even closer. Current best is less than
+  1.9E-7 away from 0.7.</p>
+<p>We were seeking the answer of Day 19 (which can give a solution with a better approximation), but we also accepted
+  answers for Day 10.</p>
+</blockquote>
+
+<h2>Part 1: computing probability after N days</h2>
+<p>The first step is to implement code which computes the probability for a given graph to have all its vertices
+  infected after N days. We have a sample input and answer, so we’ll know if our first step is maybe correct or
+  definitely wrong.</p>
+
+<h3>Recursive function to compute exact value</h3>
+<p>The simplest way to compute the exact value is to use a recursive function <i>f(days, graph, state)</i>, where
+<i>days</i> represents the number of days left and <i>state</i> tracks which vertices in <i>graph</i> are infected.
+We define <i>f</i> as following:</p>
+<ol>
+  <li><i>f(..., graph, state)</i> is 1.0 if all the vertices are infected</li>
+  <li><i>f(0, ..., ...)</i> is 0.0. The base case.</li>
+  <li><i>f(N, graph, state)</i> is equal to <i>r</i>:
+    <ul>
+      <li>Starting with <i>r</i> = 0.0</li>
+      <li>For every combination of edge with exactly one infected vertex,<br/><i>r</i> += 10% * <i>f(N-1, graph, state
+        with both vertices infected)</i> + 90% * <i>f(N-1, graph, unchanged state)</i></li>
+    </ul>
+  </li>
+</ol>
+
+<p>The following commands will show you part 1 in action. We can confirm that we get the expected value for the sample:</p>
+<pre style="background-color: #000; color: #0bc">$ git clone https://github.com/alokmenghrajani/ponderthis-april2020.git
+
+$ go build
+
+$ ./ponderthis-april2020 compute --algorithm recursive --graph 01110,10001,10010,10101,01010 --days 10
+probability of all vertices infected after 10 days: 29.16521896015063%
+</pre>
+
+<p>The <a href="https://github.com/alokmenghrajani/ponderthis-april2020/blob/master/solution.go">source code</a> lets you peek at the exact details. Computing every combination of edges requires its
+own recursive function and combining probabilities.</p>
+
+<p>At this point, we don’t know whether or not our code is correct. One way to build some confidence is to implement a
+few test cases which are easy to reason about. E.g. increasing the number of days should make the result go towards
+100%:</p>
+<pre style="background-color: #000; color: #0bc">$ ./ponderthis-april2020 compute --algorithm recursive --graph 01110,10001,10010,10101,01010 --days 20
+probability of all vertices infected after 20 days: 79.42213869586355%
+
+$ ./ponderthis-april2020 compute --algorithm recursive --graph 01110,10001,10010,10101,01010 --days 30
+probability of all vertices infected after 30 days: 96.00377231566937%
+
+$ ./ponderthis-april2020 compute --algorithm recursive --graph 01110,10001,10010,10101,01010 --days 40
+probability of all vertices infected after 40 days: 99.3438646251387%
+</pre>
+
+<p>Unless the graph is disconnected, in which case the value should remain 0%:</p>
+<p><img src="/files/2020/ponder-this-april-2020-writeup/image6.svg"></p>
+<pre style="background-color: #000; color: #0bc">$ ./ponderthis-april2020 compute --algorithm recursive --graph 0100,1000,0001,0010 --days 10
+probability of all vertices infected after 10 days: 0%
+</pre>
+
+<p>We can also compare the result of a dense connected graph vs a sparse connected one. We expect dense graphs to
+  converge quicker towards 100% (an intuition which is going to be useful later).</p>
+<p><img src="/files/2020/ponder-this-april-2020-writeup/image7.svg" valign="middle" style="display: inline"> vs
+  <img src="/files/2020/ponder-this-april-2020-writeup/image4.svg" valign="middle" style="display: inline"></p>
+<pre style="background-color: #000; color: #0bc">$ ./ponderthis-april2020 compute --algorithm recursive --graph 01110,10001,10010,10100,01000 --days=10
+probability of all vertices infected after 10 days: 16.051861857290785%
+
+$ ./ponderthis-april2020 compute --algorithm recursive --graph 01110,10111,11010,11101,01010 --days=10
+probability of all vertices infected after 10 days: 43.363910981826784%
+</pre>
+
+<h2>Part 2: graph enumeration</h2>
+<p>Once we can compute a given graph’s probability to have all infected vertices after N days, we need to search for a
+  graph. A naive approach would be to search over all possible adjacency matrices. Assuming our graphs are undirected,
+  there are 2^28 matrices with 8 vertices. This is not a very large number (~270M) as long as our computation function
+  is fast.</p>
+
+<p>Searching for all possible matrices is wasteful: isomorphic graphs (graphs which are identical except for the
+  ordering of the vertices) would yield identical results (ignoring the fact that the first vertex is special since
+  it’s where the infection starts). Telling if two graphs are isomorphic is NP hard (i.e. computationally expensive).
+  We have two options:</p>
+  <ol><li>Enumerate graphs in a way which gives us only one instance of each isomorphism class. To achieve this, you
+    need a bit of math background — a good starting point is Brendan McKay and Adolfo Piperno’s
+    <a href="http://pallini.di.uniroma1.it">Nauty & Traces</a> project.</li>
+  <li>Download a <a href="http://users.cecs.anu.edu.au/~bdm/data/graphs.html">database of graphs</a> from Brendan McKay’s website.</li>
+  </ol>
+
+<p>I downloaded the database of graphs, which reduces the search space to 12,112 graphs (all connected simple graphs
+  with 2-8 vertices). For any given graph, we must however consider any of the vertices as the initially infected
+  vertex, which gives us a total search space of 95,716 (about 3000x more efficient than trying every possible
+  adjacency matrix).</p>
+
+<p>Solving takes a few hours but we eventually get a solution with 7 vertices:</p>
+<pre style="background-color: #000; color: #0bc">$ ./ponderthis-april2020 solve --graphs graphs.txt --algorithm=recursive --days=19
+…
+Improved solution! v=0.6999523879097757
+0011010
+0000111
+1000011
+1000011
+0100001
+1111001
+0111110
+…
+</pre>
+<p><img src="/files/2020/ponder-this-april-2020-writeup/image3.svg"></p>
+
+<h2>Part 3: achieving the bonus ‘*’</h2>
+<p>If we want to get a better solution, we need our computation to happen quicker. There are a few ways to optimize
+  things: rewrite the code to leverage all the cores (the code is “single threaded”), write the code to run on a GPU,
+  sort the graphs based on number of edges and prioritize those more likely to yield a solution (we know that the
+  solution can’t have too few or too many edges), use a simulation to get an approximate value to filter graphs and
+  only compute exact values in a subset of cases, etc.</p>
+
+<p>Two simpler ways to speed things up are to implement memoization or use dynamic programming techniques. I decided
+  to go the dynamic programming way, which is just a fancy way of saying: instead of recursing top-down, build a table
+  of all possible states for each day and replace the recursion with a table lookup. This is a typical cpu-memory
+  tradeoff; a tradeoff software engineers have to often consider. Building the table is done iteratively, starting from
+  the case where there’s 0 days left.</p>
+
+<p>Using a faster function to process each graph, we quickly find the best solution for 19 days (this code is about
+  1,000,000x faster!):</p>
+<pre style="background-color: #000; color: #0bc">$ ./ponderthis-april2020 solve --graphs graphs.txt --algorithm=dp --days=19
+…
+best: 0.7000008653156911, eta: 0s
+best solution
+01110001
+10001000
+10000110
+10000011
+01000011
+00100001
+00111000
+10011100
+</pre>
+<p><img src="/files/2020/ponder-this-april-2020-writeup/image1.svg"></p>
+
+<h2>Part 4: double bonus ‘**’</h2>
+<p>Searching for the best result over any number of days, every graph has an upper bound of days where it crosses our
+  target probability. With some minor changes, computing subsequent days for each graph yields the answer:</p>
+<pre style="background-color: #000; color: #0bc">…
+best: 0.6999998106703065, days: 28, eta: 0s
+best solution
+0100000
+1000111
+0000111
+0000011
+0110001
+0111000
+0111100
+</pre>
+<p><img src="/files/2020/ponder-this-april-2020-writeup/image5.svg"></p>
+
+<h2>Final words</h2>
+<p>Hope you enjoyed this write up and accompanying source code. I left out some of the rabbit holes I stumbled across,
+  such as Markov Models and digraphs (the ‘**’ bonus wasn’t very clear to me). Ponder This challenges can sometimes
+  be solved by finding a clever way to divide and conquer the problem into smaller chunks — my attempt to find
+  such a subdivision was unsuccessful.</p>
+
+<p>Following is a short collection of writeups by various other people for other IBM Ponder This challenges:
+  <ul>
+    <li><a href="https://www.srcmake.com/home/ponderthisjuly2018">July 2018 (Aging Obscure Triplets)</a> by srcmake</li>
+    <li><a href="https://github.com/Gdasl/ponderthis/blob/master/January/January.md">January 2019 (Charlie helps Bob defeat Alice)</a> by Gdasl</li>
+    <li><a href="https://github.com/Gdasl/ponderthis/blob/master/February/February.md">February 2019 (Debater's score)</a> by Gdasl</li>
+    <li><a href="https://anothercasualcoder.blogspot.com/2019/04/ibm-ponder-this-april-2019.html">April 2019 (Prime magic square)</a> by Marcelo M De Barros</li>
+    <li><a href="https://thomash.fr/2019/06/14/ibm-ponder-this-may-2019.html">May 2019 (Longest boat trip)</a> by Thomas Huet</li>
+    <li><a href="https://www.reddit.com/r/ponderthis/wiki/index#wiki_solutions">r/ponderthis</a> has a few solutions from 2015-2016.</li>
+  </ul>
+</p>
