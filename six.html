@@ -1,0 +1,276 @@
+<html>
+<body style="background: #000; margin: 0">
+<!-- By Alok, using code from https://codepen.io/whqet/pen/Auzch -->
+<canvas id="c"></canvas>
+<script>
+var ctx = c.getContext('2d');
+
+var fireworks = [];
+var particles = [];
+
+var hue = 120;
+var timerTotal = 200;
+var timerTick = 0;
+
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function calculateDistance(p1x, p1y, p2x, p2y) {
+  var xDistance = p1x - p2x;
+  var yDistance = p1y - p2y;
+  return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+}
+
+function Firework(sx, sy, tx, ty) {
+  // actual coordinates
+  this.x = sx;
+  this.y = sy;
+  // starting coordinates
+  this.sx = sx;
+  this.sy = sy;
+  // target coordinates
+  this.tx = tx;
+  this.ty = ty;
+  // distance from starting point to target
+  this.distanceToTarget = calculateDistance( sx, sy, tx, ty );
+  this.distanceTraveled = 0;
+  // track the past coordinates of each firework to create a trail effect, increase the coordinate count to create more prominent trails
+  this.coordinates = [];
+  this.coordinateCount = 3;
+  // populate initial coordinate collection with the current coordinates
+  while(this.coordinateCount--) {
+    this.coordinates.push( [ this.x, this.y ] );
+  }
+  this.angle = Math.atan2( ty - sy, tx - sx );
+  this.speed = 2;
+  this.acceleration = 1.02;
+  this.brightness = random( 50, 70 );
+  // circle target indicator radius
+  this.targetRadius = 1;
+}
+
+// update firework
+Firework.prototype.update = function( index ) {
+  // remove last item in coordinates array
+  this.coordinates.pop();
+  // add current coordinates to the start of the array
+  this.coordinates.unshift([ this.x, this.y ]);
+
+  // cycle the circle target indicator radius
+  this.targetRadius++;
+
+  // speed up the firework
+  this.speed *= this.acceleration;
+
+  // get the current velocities based on angle and speed
+  var vx = Math.cos(this.angle) * this.speed;
+  var vy = Math.sin(this.angle) * this.speed;
+  // how far will the firework have traveled with velocities applied?
+  this.distanceTraveled = calculateDistance(this.sx, this.sy, this.x + vx, this.y + vy);
+
+  // if the distance traveled, including velocities, is greater than the initial distance to the target, then the target has been reached
+  if(this.distanceTraveled >= this.distanceToTarget) {
+    createParticles(this.tx, this.ty);
+    // remove the firework, use the index passed into the update function to determine which to remove
+    fireworks.splice(index, 1);
+  } else {
+    // target not reached, keep traveling
+    this.x += vx;
+    this.y += vy;
+  }
+}
+
+// draw firework
+Firework.prototype.draw = function() {
+  ctx.beginPath();
+  // move to the last tracked coordinate in the set, then draw a line to the current x and y
+  ctx.moveTo( this.coordinates[ this.coordinates.length - 1][ 0 ], this.coordinates[ this.coordinates.length - 1][ 1 ] );
+  ctx.lineTo( this.x, this.y );
+  ctx.strokeStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
+  ctx.stroke();
+
+  // draw the target for this firework with a pulsing circle
+  ctx.beginPath();
+  var R = Math.abs(Math.sin(this.targetRadius / 10)) * 3 + 6;
+  ctx.lineWidth = R * 0.35;
+  var r = R * 0.35;
+  ctx.moveTo(this.tx + r - R, this.ty - R);
+  ctx.arcTo(this.tx + R, this.ty - R, this.tx + R, this.ty + R, r);
+  ctx.arcTo(this.tx + R, this.ty + R, this.tx - R, this.ty + R, r);
+  ctx.arcTo(this.tx - R, this.ty + R, this.tx - R, this.ty - R, r);
+  ctx.arcTo(this.tx - R, this.ty - R, this.tx + R, this.ty - R, r);
+  ctx.closePath();
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.fillStyle = 'hsl(' + hue + ', 100%, ' + this.brightness + '%)';
+
+  R = R / 3;
+  r = R * 0.35;
+  ctx.moveTo(this.tx + r - R, this.ty - R);
+  ctx.arcTo(this.tx + R, this.ty - R, this.tx + R, this.ty + R, r);
+  ctx.arcTo(this.tx + R, this.ty + R, this.tx - R, this.ty + R, r);
+  ctx.arcTo(this.tx - R, this.ty + R, this.tx - R, this.ty - R, r);
+  ctx.arcTo(this.tx - R, this.ty - R, this.tx + R, this.ty - R, r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = 1;
+}
+
+// create particle
+function Particle( x, y ) {
+  this.x = x;
+  this.y = y;
+  // track the past coordinates of each particle to create a trail effect, increase the coordinate count to create more prominent trails
+  this.coordinates = [];
+  this.coordinateCount = 5;
+  while( this.coordinateCount-- ) {
+    this.coordinates.push( [ this.x, this.y ] );
+  }
+  // set a random angle in all possible directions, in radians
+  this.angle = random( 0, Math.PI * 2 );
+  this.speed = random( 1, 10 );
+  // friction will slow the particle down
+  this.friction = 0.97;
+  // gravity will be applied and pull the particle down
+  this.gravity = 1.5;
+  // set the hue to a random number +-50 of the overall hue variable
+  this.hue = random( hue - 50, hue + 50 );
+  this.brightness = random( 50, 80 );
+  this.alpha = 1;
+  // set how fast the particle fades out
+  this.decay = random(0.015, 0.03);
+}
+
+// update particle
+Particle.prototype.update = function( index ) {
+  // remove last item in coordinates array
+  this.coordinates.pop();
+  // add current coordinates to the start of the array
+  this.coordinates.unshift( [ this.x, this.y ] );
+  // slow down the particle
+  this.speed *= this.friction;
+  // apply velocity
+  this.x += Math.cos( this.angle ) * this.speed;
+  this.y += Math.sin( this.angle ) * this.speed + this.gravity;
+  // fade out the particle
+  this.alpha -= this.decay;
+
+  // remove the particle once the alpha is low enough, based on the passed in index
+  if (this.alpha <= this.decay) {
+    particles.splice( index, 1);
+  }
+}
+
+// draw particle
+Particle.prototype.draw = function() {
+  ctx. beginPath();
+  // move to the last tracked coordinates in the set, then draw a line to the current x and y
+  ctx.moveTo( this.coordinates[ this.coordinates.length - 1 ][ 0 ], this.coordinates[ this.coordinates.length - 1 ][ 1 ] );
+  ctx.lineTo( this.x, this.y );
+  ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + this.alpha + ')';
+  ctx.stroke();
+}
+
+// create explosion
+function createParticles(x, y) {
+  var particleCount = 300;
+  while (particleCount--) {
+    particles.push(new Particle(x, y));
+  }
+}
+
+function loop() {
+  var cw = window.innerWidth;
+  var ch = window.innerHeight;
+  c.width = cw;
+  c.height = ch;
+
+  requestAnimationFrame(loop);
+  hue = random(0, 360);
+
+  // normally, clearRect() would be used to clear the canvas
+  // we want to create a trailing effect though
+  // setting the composite operation to destination-out will allow us to clear the canvas at a specific opacity, rather than wiping it entirely
+  ctx.globalCompositeOperation = 'destination-out';
+  // decrease the alpha property to create more prominent trails
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.fillRect( 0, 0, cw, ch );
+  // change the composite operation back to our main mode
+  // lighter creates bright highlight points as the fireworks and particles overlap each other
+  ctx.globalCompositeOperation = 'lighter';
+
+  // loop over each firework, draw it, update it
+  var i = fireworks.length;
+  while (i--) {
+    fireworks[i].draw();
+    fireworks[i].update( i );
+  }
+
+  // loop over each particle, draw it, update it
+  var i = particles.length;
+  while(i--) {
+    particles[i].draw();
+    particles[i].update(i);
+  }
+
+  //  *****
+  // **   **
+  // **
+  // *******
+  // **   **
+  // **   **
+  //  *****
+  var character = {
+    0: [300, 220],
+    1: [280, 220],
+    2: [280, 200],
+    3: [260, 200],
+    4: [240, 200],
+    5: [220, 200],
+
+    6: [200, 220],
+    7: [220, 220],
+    8: [200, 240],
+    9: [220, 240],
+    10: [200, 260],
+    11: [220, 260],
+    12: [200, 280],
+    13: [220, 280],
+    14: [200, 300],
+    15: [220, 300],
+
+    16: [220, 320],
+    17: [240, 320],
+    18: [260, 320],
+    19: [280, 320],
+
+    21: [300, 300],
+    22: [280, 300],
+
+    23: [300, 280],
+    24: [280, 280],
+
+    25: [300, 260],
+    26: [280, 260],
+    27: [260, 260],
+    28: [240, 260],
+  };
+  // char dimenstions are: [200, 200 - 300, 320]
+
+  if (timerTick % 2 == 0) {
+    if (character[timerTick/2]) {
+      fireworks.push(new Firework(cw/2, ch * 1.5,
+        cw/2 + character[timerTick/2][0]*2 - 500,
+        ch/2 + character[timerTick/2][1]*2 - 520));
+    }
+  }
+
+  timerTick = (timerTick + 1) % timerTotal;
+}
+window.onload = loop;
+</script>
+
+</body>
+</html>
