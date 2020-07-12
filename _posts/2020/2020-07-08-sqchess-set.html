@@ -4,48 +4,52 @@ title: "Sqchess Set"
 permalink: '/sqchess_set/'
 tags: ['3d printing', 'Blender', 'chess']
 ---
-<p><a href="https://www.blender.org/">Blender</a> is a free and open source software for 3D modeling. Supported platforms
-include Windows, Mac, and Linux. In order to learn
-some basics of Blender, I revisited <a href="/3d_printed_chess_set/">an old project</a> of mine from a few years ago which
-involves designing and 3D printing a chess set.</p>
+<p><a href="https://www.blender.org/">Blender</a> is a free and open source software for 3D modeling. Supported
+platforms include Windows, Mac, and Linux. I revisited <a href="/3d_printed_chess_set/">an old project</a> of mine
+from a few years ago with the purpose of learning some basics of Blender. This article explains the design and
+3D printing of a custom chess set.</p>
 
 <p><img src="/files/2020/sqchess_set/working_in_blender.png"></p>
 
-<p>One way to learn Blender is to watch Youtube tutorials. For example, <a href="https://www.youtube.com/watch?v=elUJCEC06r8">Blender 2.8 Beginner 3D Modeling Tutorial</a>
-explains basic Blender user interface elements as well as basic modeling techniques. Those basic techniques are enough
-for modeling a king, bishop, and pawn. <a href="https://b3d.interplanety.org/en/modeling-with-curves-wires-and-pipes/">Modeling with curves: wires and pipes</a>
-gave me the knowledge to model the knight by explaining how to use Bezier curve. Finally, the rook and queen required
-creating cuts in the model, a skill I learned by reading
+<p>An efficient way to learn Blender is to watch various Youtube tutorials. Most are short and focus on a specific
+skill. For example, <a href="https://www.youtube.com/watch?v=elUJCEC06r8">Blender 2.8 Beginner 3D Modeling Tutorial</a>
+explains the user interface as well as basic modeling techniques, which enabled me to model the king, bishop, and pawn.
+<a href="https://b3d.interplanety.org/en/modeling-with-curves-wires-and-pipes/">Modeling with curves: wires and pipes</a>
+gave me the knowledge to model the knight by leveraging Bezier curves. Finally, the rook and queen required
+creating cuts in the model, a skill explained in
 <a href="https://www.katsbits.com/tutorials/blender/character-2-mesh-editing-making.php">Objects & Mesh Editing A Simple Character In Blender</a>.</p>
 
-<p>I decided to make my pieces roughly the same height as a standard Staunton set. My pieces are
-<a href="https://squareup.com/">Square</a>-ish, so I aimed for equal base surface area. Chess sets typically come with
-weights, so I poked some holes (using boolean modifiers). I used the following table, based on my personal measurement,
-as a guide:
+<p>My pieces are roughly the same height as a standard Staunton set. Each piece is
+<a href="https://squareup.com/">Square</a>-ish and has an equal base surface area as its standard counter part. Chess
+sets typically come with
+weights. Holes to house weights were therefore poked using boolean modifiers. If you are interested to design your
+own chess set, the following table lists approximate measurments:
 <table>
-  <thead><tr><th>piece</th><th>weight</th><th>dimensions</th></tr></thead>
-  <tbody><tr><td>pawn</td><td>14g</td><td>⌀ 27mm x 46mm</td></tr>
-  <tr><td>rook</td><td>35g</td><td>⌀ 32mm x 47mm</td></tr>
-  <tr><td>knight</td><td>35g</td><td>⌀ 32mm x 58mm</td></tr>
-  <tr><td>bishop</td><td>27g</td><td>⌀ 32mm x 63mm</td></tr>
-  <tr><td>queen</td><td>46g</td><td>⌀ 36mm x 76mm</td></tr>
-  <tr><td>king</td><td>55g</td><td>⌀ 37mm x 96mm</td></tr>
+  <thead><tr><th>piece</th><th>dimensions</th><th>weight</th></tr></thead>
+  <tbody><tr><td>pawn</td><td>⌀ 27mm x 46mm</td><td>14g</td></tr>
+  <tr><td>rook</td><td>⌀ 32mm x 47mm</td><td>35g</td></tr>
+  <tr><td>knight</td><td>⌀ 32mm x 58mm</td><td>35g</td></tr>
+  <tr><td>bishop</td><td>⌀ 32mm x 63mm</td><td>27g</td></tr>
+  <tr><td>queen</td><td>⌀ 36mm x 76mm</td><td>46g</td></tr>
+  <tr><td>king</td><td>⌀ 37mm x 96mm</td><td>55g</td></tr>
   </tbody></table>
 </p>
 
-<p>I initially didn't think about rendering a final image in Blender (since my end goal is 3D printing the pieces). I
-figured I'd still give it a shot and I'm quite happy with my textures but I definitely haven't mastered the
-lighting aspect of things. The board I modeled is inspired by
-<a href="https://www.youtube.com/watch?v=knpes6fKhpQ">Making an end grain chessboard</a>, a video showcasing beautful
+<p>While rendering a final image in Blender wasn't a priority, the following image shows the result of placing the
+pieces on a board with custom textures and some basic lighting. The lighting, far from ideal, is the hardest part to
+master. The board is inspired by
+<a href="https://www.youtube.com/watch?v=knpes6fKhpQ">Making an end grain chessboard</a>, a video showcasing beautiful
 craftsmanship.</p>
 
 <p><img src="/files/2020/sqchess_set/rendered.png"></p>
 
-<p>Since I don't own a 3D printer, I explored various printing services: shapeways.com, i.materialise.com, 3dhubs.com,
-xometry.com, craftcloud3d.com, and sculpteo.com. The prices varied by over a factor 5x, so make sure to shop around
-if you ever need a 3D printing service! Obviously the material you pick plays a significant role, with PLA being among
-the cheapest and resin/metals being much more expensive. If you are 3D printing at home, make sure to properly vent
-the room where you print — you don't want to be breading any toxic fumes!</p>
+<p>I don't own a 3D printer, so various printing services were compared for price: <a href="https://www.shapeways.com/">Shapeways</a>,
+<a href="https://i.materialise.com/en">i.materialise</a>, <a href="https://www.3dhubs.com/">3D Hubs</a>,
+<a href="https://www.xometry.com/">Xometry</a>, <a href="https://craftcloud3d.com/">Craftcloud</a>, and
+<a href="https://www.sculpteo.com/en/">Sculpteo</a>. The prices varied by over a factor 5x, so make sure to shop around
+if you ever need a 3D printing service! The material you pick plays a significant role, with PLA being one the cheapest
+and resin/metals being more expensive. If you are 3D printing at home, make sure to properly vent
+the room where you print — you don't want to be breathing any toxic fumes!</p>
 
 <p>Chess pieces typically use lead (Pb) or ferrite to add weight to them. I decided to explore tungsten (W) since lead
 is toxic. Tungsten is also among the densest materials available, resulting in nicely weighted pieces. For reference,
@@ -53,20 +57,19 @@ tungsten's density is 19 g/cm³ while lead is about 11 g/cm³, bismuth 10 g/cm³
 magnets are typically 5-8 g/cm³ depending if ferrite, neodymium, or samarium-cobalt is used.</p>
 
 <p>Tungsten is however difficult to work with; I don't have the necessary tools to cut, sand, or shape it. I decided
-to use Alibaba to contact tungsten suppliers in China. I asked for quotes for 5mm rods cut to 20mm and 30mm lengths.
-I received various quotes, ranging from $85 to $200. I picked the cheapest supplier since the material won't be
-visible.</p>
+to use Alibaba to contact tungsten suppliers in China and have the material cut to exact specifications. The quotes
+for 5mm rods cut to 20mm and 30mm lengths ranged from $89 to $200 for 1.5 kg of pure tungsten. The cheapest supplier was
+chosen since the weights aren't visible.</p>
 
 <p>Total time+money: ~1 week to learn Blender, ~2 days to model the pieces, ~1 day to compare
-prices across 3D printing services, ~1 day to contact tungsten suppliers, $85.46 for printing pieces, $88.95 for weights
-(yes I paid more for the weights than the pieces!). $0 for glue and felt I already had lying around. Overall, the chess
-set turned out fairly expensive (I could have purchased a giant lawn set for the same price) but it's the price to pay
-for custom manufacturing ¯\_(ツ)_/¯.</p>
+prices across 3D printing services, ~1 day to contact tungsten suppliers, $85 for printing pieces, $89 for weights
+(yes the weights cost more than the pieces!). Overall, the chess set turned out fairly expensive (a giant lawn set could
+have been purchased for the same price) but it's the price to pay for custom manufacturing ¯\_(ツ)_/¯.</p>
 
-<p>I achieved my goal of learning some basic Blender skills and being able to
-manufacter something without leaving my home feels magical!</p>
+<p>The goal of learning basic Blender and 3D modeling skills was achieved. Being able to
+manufacter something without leaving your home feels magical!</p>
 
-<p>Download my <a href="/files/2020/sqchess_set/sqchess_stl.zip">STL</a> or <a href="https://drive.google.com/file/d/1kvJawaOVptOf4r-5jr6WnNdfSpxbbwVl/view?usp=sharing">Blender</a> files.
+<p>Download the custom set as <a href="/files/2020/sqchess_set/sqchess_stl.zip">STL</a> or <a href="https://drive.google.com/file/d/1kvJawaOVptOf4r-5jr6WnNdfSpxbbwVl/view?usp=sharing">Blender</a> files.
 
 <small>
 <p>(note: if you are doing a similar project and are thin on the money side, you might want to consider 3D printing
