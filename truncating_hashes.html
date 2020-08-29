@@ -1,0 +1,44 @@
+<html>
+<head>
+<style>
+body {
+  background-color: #eee;
+  border-left: 1px solid black;
+  padding-left: 1em;
+  width: 40em;
+  margin: 10em auto;
+  line-height: 1.5;
+}
+span {
+  font-family: monospace;
+}
+.truncate1 {
+  width: 7ch;
+  display:inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+  <img src="truncating_hashes.png">
+  <h1>Truncate hashes without breaking searchability</h1>
+  <p>
+    Web pages which need to render git hashes (or any hashes really), tend to simply truncate the hash.
+    They might show the first seven characters, <span>6831795</span>, instead of the full hash; saving space on the
+    page. Such truncation breaks the ability to search for the hash if you are copy-pasting the full hash
+    in your browser's search box. Try searching for <span>6831795d653e1f0cf0ccd02a7a45850098db692a</span> on this page.
+  </p>
+  <p>
+    A better approach is to leave the entire data in the page and use css to only display a prefix. For example,
+    <span class="truncate1">6831795d653e1f0cf0ccd02a7a45850098db692a</span>, is truncated using css and can still
+    be searched for using the full hash.
+  </p>
+  <h1>Caveat</h1>
+  <p>
+    Try searching for the trailing characters (say "8db692a") and you'll hit an edge case where the browser's search
+    result will cycle through hidden text. IMHO the advantage of using css to truncate hashes outweighs this caveat.
+  </p>
+</body>
+</html>
