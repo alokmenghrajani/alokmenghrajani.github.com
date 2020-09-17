@@ -9,9 +9,9 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg8"
    version="1.1"
-   viewBox="0 0 28.045832 30.691666"
-   height="30.691666mm"
-   width="28.045832mm"
+   viewBox="0 0 22.754166 25.4"
+   height="25.4mm"
+   width="22.754166mm"
    sodipodi:docname="vii_segment_display.svg"
    inkscape:version="1.0.1 (c497b03c, 2020-09-10)">
   <sodipodi:namedview
@@ -27,9 +27,9 @@
      inkscape:window-height="1017"
      id="namedview70"
      showgrid="true"
-     inkscape:zoom="8.6323656"
-     inkscape:cx="29.239514"
-     inkscape:cy="86.002065"
+     inkscape:zoom="5.9311314"
+     inkscape:cx="28.215192"
+     inkscape:cy="57.220056"
      inkscape:window-x="445"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
@@ -45,8 +45,8 @@
        spacingx="1.3229167"
        spacingy="1.3229167"
        empspacing="1"
-       originx="-95.11771"
-       originy="-56.753127" />
+       originx="-97.763545"
+       originy="-62.044789" />
   </sodipodi:namedview>
   <defs
      id="defs2" />
@@ -64,44 +64,44 @@
   </metadata>
   <path
      id="a"
-     d="M 0.1322915,0.132292 V 30.559376 H 4.1010416 V 0.132292 Z"
-     style="fill:none;stroke:#dddddd;stroke-width:0.26458300000000001px;stroke-opacity:1"
-     sodipodi:nodetypes="ccccc"
+     d="M 0.1322915,0.1322925 V 19.976042 L 2.242541,22.621876 4.1010416,19.976042 V 0.1322925 Z"
+     style="fill:none;stroke:#dddddd;stroke-width:0.264583px;stroke-opacity:1"
+     sodipodi:nodetypes="cccccc"
      inkscape:label="a" />
   <path
      id="b"
-     d="M 9.3927093,30.559375 H 18.653126 L 16.80103,26.590621 h -5.556247 z"
+     d="M 5.4239583,25.267709 H 18.653126 l -2.645834,-3.96875 H 5.4239583 l -0.985765,1.984375 z"
      style="fill:none;stroke:#dddddd;stroke-width:0.264583px;stroke-opacity:1"
-     sodipodi:nodetypes="ccccc"
+     sodipodi:nodetypes="cccccc"
      inkscape:label="b" />
   <path
      id="c"
-     d="M 5.4239574,4.1010426 10.715627,14.684373 h 2.64583 v -3.96875 L 8.0697917,0.132292 H 5.4239583 Z"
-     style="fill:none;stroke:#dddddd;stroke-width:0.26458300000000001px;stroke-opacity:1"
+     d="m 5.4239574,4.1010425 2.6458379,5.291666 h 2.6458307 v -3.96875 L 8.0697917,0.1322925 H 5.4239583 Z"
+     style="fill:none;stroke:#dddddd;stroke-width:0.264583px;stroke-opacity:1"
      sodipodi:nodetypes="ccccccc"
      inkscape:label="c" />
   <path
      id="e"
-     d="M 22.621875,4.1010421 17.330206,14.684372 h -2.64583 v -3.96875 L 19.976041,0.1322915 h 2.645833 z"
-     style="fill:none;stroke:#dddddd;stroke-width:0.26458300000000001px;stroke-opacity:1"
+     d="m 17.330209,4.1010425 -2.645834,5.291665 h -2.64583 v -3.96875 l 2.64583,-5.291666 h 2.645833 z"
+     style="fill:none;stroke:#dddddd;stroke-width:0.264583px;stroke-opacity:1"
      sodipodi:nodetypes="ccccccc"
      inkscape:label="e" />
   <path
      id="g"
-     d="m 23.944792,0.132292 v 30.427084 h 3.96875 V 0.132292 Z"
-     style="fill:none;stroke:#dddddd;stroke-width:0.26458300000000001px;stroke-opacity:1"
+     d="M 18.653126,0.1322925 V 18.653126 l 3.96875,5.291666 V 0.1322925 Z"
+     style="fill:none;stroke:#dddddd;stroke-width:0.264583px;stroke-opacity:1"
      sodipodi:nodetypes="ccccc"
      inkscape:label="g" />
   <path
      id="f"
-     d="m 5.4239583,26.590625 5.2916697,-10.58333 h 2.64583 v 3.96875 L 8.0697926,30.559375 H 5.4239592 Z"
-     style="fill:none;stroke:#dddddd;stroke-width:0.26458300000000001px;stroke-opacity:1"
+     d="M 5.4239574,16.007292 8.0697963,10.71563 h 2.6458307 v 3.96875 L 8.0697917,19.976042 H 5.4239583 Z"
+     style="fill:none;stroke:#dddddd;stroke-width:0.264583px;stroke-opacity:1"
      sodipodi:nodetypes="ccccccc"
      inkscape:label="f" />
   <path
      id="d"
-     d="M 22.621876,26.590625 17.330207,16.007296 h -2.64583 v 3.96875 l 5.291665,10.58333 h 2.645833 z"
-     style="fill:none;stroke:#dddddd;stroke-width:0.26458300000000001px;stroke-opacity:1"
+     d="m 17.33021,16.007291 -2.645834,-5.29166 h -2.64583 v 3.96875 l 2.64583,5.291661 h 2.645833 z"
+     style="fill:none;stroke:#dddddd;stroke-width:0.264583px;stroke-opacity:1"
      sodipodi:nodetypes="ccccccc"
      inkscape:label="d" />
 </svg>
