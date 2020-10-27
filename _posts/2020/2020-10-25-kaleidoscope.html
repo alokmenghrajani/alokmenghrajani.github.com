@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Running a 40-plus-year-old piece of code in today's browser"
+permalink: '/kaleidoscope_part1/'
+tags: ['kaleidoscope', '8-bit']
+---
+<p>I recently came across a <a href="/files/2020/kaleidoscope/kscope.txt">piece of assembly</a> code, written by Li-Chen Wang, which
+displays a Kaleidoscope. This code was written in 1976, and distributed for $15
+on a <a href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Kaleidoscope_for_Cromemco_Dazzler.jpg/1920px-Kaleidoscope_for_Cromemco_Dazzler.jpg">punched tape</a>. It appears this was one of three pieces of code used to
+demonstrate the capabilities of <a href="https://en.wikipedia.org/wiki/Cromemco_Dazzler">Cromemco's Dazzler</a>, the first commercial
+color graphics card for microcomputers.</p>
+
+<blockquote>Stan Veit, owner of the Computer Mart of New York, described the reaction
+  when he displayed the changing patterns of Kaleidoscope on a color television
+  in his store window at the corner of 5th Avenue and 32nd Street in New York
+  City in early 1976. “People driving by began to stop and look – they had never
+  seen anything like it before. In a short time the Dazzler had caused a traffic
+  jam on 5th Avenue!” The police had to contact the building landlord and make
+  him disconnect the television.</blockquote>
+
+<p><a href="https://en.wikipedia.org/wiki/Li-Chen_Wang">Dr. Li-Chen Wang</a> made quite some important
+contributions resulting in the growth of the computer industry, such as a free
+and open source BASIC interpreter as well as pioneering the concept of free software.</p>
+
+<p>It turns out running this code from the dawn of computers in a browser isn't
+too hard. I found an existing <a href="https://github.com/maly/8080js">8080 emulator</a>. With the help of the <a href="/files/2020/kaleidoscope/cromemco_dazzler_manual.pdf">technical manual</a>, I wrote
+the <a href="/files/2020/kaleidoscope/kaleidoscope.js">bare minimum amount of code</a> to emulate a Dazzler. Computer manuals back then were very detailed, espcially for hardware that came as a kit, requiring a day or two of soldering.</p>
+
+<p>This concludes part 1, where I get the code to run. The next part will cover understanding how the code works. Until then, enjoy the result:</p>
+
+<canvas id="canvas"></canvas>
+<script src="/files/2020/kaleidoscope/8080.js"></script>
+<script src="/files/2020/kaleidoscope/kaleidoscope.js"></script>
