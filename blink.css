@@ -1,3 +1,5 @@
+// See https://quaxio.com/blink.html
+
 blink {
   	animation: 1s ease infinite blink_effect;
 }
