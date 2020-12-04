@@ -896,7 +896,7 @@ B = ( A1 0* | A2 0* 2 0* ) ( 1 0* 2 0* )*</pre>
             badResult.textContent = "invalid input, please enter a positive number"
             return
           }
-          if (value > 9007199254740992) {
+          if (value >= 9007199254740992) {
             // modulo of large numbers is sometimes incorrect since the internal representation switches to floats
             // e.g. 28286547982133925 % 3 returns 2, but 28286547982133925 = 9428849327377975 * 3
             badResult.textContent = "sorry, your input is too large"
