@@ -886,14 +886,14 @@ B = ( A1 0* | A2 0* 2 0* ) ( 1 0* 2 0* )*</pre>
     </p>
     <p>Don't believe me? Try it out:</p>
     <div class="form-inline">
-      Enter a number:
+      Enter a positive number:
       <script>
         function check(){
           $('#goodResult')[0].innerHTML = ""
           $('#badResult')[0].innerHTML = ""
           var value = input.value
           if (!/^[0-9]+$/.test(value)) {
-            badResult.textContent = "invalid input, please enter a number"
+            badResult.textContent = "invalid input, please enter a positive number"
             return
           }
           if (value > 9007199254740992) {
