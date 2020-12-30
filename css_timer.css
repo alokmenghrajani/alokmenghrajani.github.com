@@ -1,147 +1,58 @@
-body::before {
+html {
+  padding: 20px;
+}
+
+html::after {
   content: "Pure CSS counter to ten. No javascript, no HTML (*). Not even for this text.";
 }
 
-@keyframes a {
-  0% { background-color: #000; }
-  10% { background-color: #fff; }
-  20% { background-color: #000; }
-  30% { background-color: #000; }
-  40% { background-color: #fff; }
-  50% { background-color: #000; }
-  60% { background-color: #000; }
-  70% { background-color: #000; }
-  80% { background-color: #000; }
-  90% { background-color: #000; }
-  100% { background-color: #000; }
-}
-
-@keyframes g {
-  0% { background-color: #fff; }
-  10% { background-color: #fff; }
-  20% { background-color: #000; }
-  30% { background-color: #000; }
-  40% { background-color: #000; }
-  50% { background-color: #000; }
-  60% { background-color: #000; }
-  70% { background-color: #fff; }
-  80% { background-color: #000; }
-  90% { background-color: #000; }
-  100% { background-color: #fff; }
-}
-
-@keyframes d {
-  0% { background-color: #000; }
-  10% { background-color: #fff; }
-  20% { background-color: #000; }
-  30% { background-color: #000; }
-  40% { background-color: #fff; }
-  50% { background-color: #000; }
-  60% { background-color: #000; }
-  70% { background-color: #fff; }
-  80% { background-color: #000; }
-  90% { background-color: #000; }
-  100% { background-color: #000; }
-}
-
-@keyframes b {
-  0% { background-color: #000; }
-  10% { background-color: #000; }
-  20% { background-color: #000; }
-  30% { background-color: #000; }
-  40% { background-color: #000; }
-  50% { background-color: #fff; }
-  60% { background-color: #fff; }
-  70% { background-color: #000; }
-  80% { background-color: #000; }
-  90% { background-color: #000; }
-  100% { background-color: #000; }
-}
-
-@keyframes c {
-  0% { background-color: #000; }
-  10% { background-color: #000; }
-  20% { background-color: #fff; }
-  30% { background-color: #000; }
-  40% { background-color: #000; }
-  50% { background-color: #000; }
-  60% { background-color: #000; }
-  70% { background-color: #000; }
-  80% { background-color: #000; }
-  90% { background-color: #000; }
-  100% { background-color: #000; }
-}
-
-@keyframes e {
-  0% { background-color: #000; }
-  10% { background-color: #fff; }
-  20% { background-color: #000; }
-  30% { background-color: #fff; }
-  40% { background-color: #fff; }
-  50% { background-color: #fff; }
-  60% { background-color: #000; }
-  70% { background-color: #fff; }
-  80% { background-color: #000; }
-  90% { background-color: #fff; }
-  100% { background-color: #000; }
-}
-
-@keyframes f {
-  0% { background-color: #000; }
-  10% { background-color: #fff; }
-  20% { background-color: #fff; }
-  30% { background-color: #fff; }
-  40% { background-color: #000; }
-  50% { background-color: #000; }
-  60% { background-color: #000; }
-  70% { background-color: #fff; }
-  80% { background-color: #000; }
-  90% { background-color: #000; }
-  100% { background-color: #000; }
-}
-
-div {
+body {
   position: absolute;
-  clip-path: polygon(24px 0, 168px 0, 192px 50%, 168px 100%, 24px 100%, 0 50%);
-  width: 192px;
-  height: 48px;
   top: 50px;
-  left: 200px;
-  animation-duration: 10s;
+  left: 300px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 20s;
   animation-name: a;
   animation-iteration-count: infinite;
 }
 
-div + div {
-  top: 248px;
-  animation-name: g;
-}
-
-div + div + div {
-  top: 444px;
-  animation-name: d;
-}
-
-div + div + div + div {
-  clip-path: polygon(0 24px, 0 168px, 50% 192px, 100% 168px, 100% 24px, 50% 0);
-  width: 48px;
-  height: 192px;
-  top: 78px;
-  left: 372px;
+head {
+  position: absolute;
+  top: 173px;
+  left: 308px;
+  width: 100px;
+  height: 100px;
+  display: block;
+  animation-duration: 20s;
   animation-name: b;
+  animation-iteration-count: infinite;
 }
 
-div + div + div + div + div {
-  top: 274px;
-  animation-name: c;
+@keyframes a {
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  10% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  30% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  60% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
 }
 
-div + div + div + div + div + div {
-  left: 172px;
-  animation-name: e;
-}
-
-div + div + div + div + div + div + div {
-  top: 78px;
-  animation-name: f;
+@keyframes b {
+  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  10% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  30% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  60% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 }
