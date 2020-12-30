@@ -12,9 +12,19 @@ body {
   left: 300px;
   width: 100px;
   height: 100px;
-  animation-duration: 20s;
+  border: 1px solid #fff;
+  animation-duration: 10s;
   animation-name: a;
   animation-iteration-count: infinite;
+  -webkit-animation-duration: 10s;
+  -webkit-animation-name: a;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-duration: 10s;
+  -moz-animation-name: a;
+  -moz-animation-iteration-count: infinite;
+  -o-animation-duration: 10s;
+  -o-animation-name: a;
+  -o-animation-iteration-count: infinite;
 }
 
 head {
@@ -24,9 +34,19 @@ head {
   width: 100px;
   height: 100px;
   display: block;
-  animation-duration: 20s;
+  border: 1px solid #fff;
+  animation-duration: 10s;
   animation-name: b;
   animation-iteration-count: infinite;
+  -webkit-animation-duration: 10s;
+  -webkit-animation-name: b;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-duration: 10s;
+  -moz-animation-name: b;
+  -moz-animation-iteration-count: infinite;
+  -o-animation-duration: 10s;
+  -o-animation-name: b;
+  -o-animation-iteration-count: infinite;
 }
 
 @keyframes a {
@@ -44,6 +64,90 @@ head {
 }
 
 @keyframes b {
+  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  10% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  30% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  60% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+}
+
+@-webkit-keyframes a {
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  10% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  30% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  60% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+}
+
+@-webkit-keyframes b {
+  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  10% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  30% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  60% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+}
+
+@-moz-keyframes a {
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  10% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  30% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  60% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+}
+
+@-moz-keyframes b {
+  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  10% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  30% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  60% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+}
+
+@-o-keyframes a {
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  10% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  20% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  30% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  40% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  60% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  70% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  80% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  90% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+}
+
+@-o-keyframes b {
   0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
   10% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
   20% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
