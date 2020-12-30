@@ -1,0 +1,147 @@
+body::before {
+  content: "Pure CSS counter to ten. No javascript, no HTML (*). Not even for this text.";
+}
+
+@keyframes a {
+  0% { background-color: #000; }
+  10% { background-color: #fff; }
+  20% { background-color: #000; }
+  30% { background-color: #000; }
+  40% { background-color: #fff; }
+  50% { background-color: #000; }
+  60% { background-color: #000; }
+  70% { background-color: #000; }
+  80% { background-color: #000; }
+  90% { background-color: #000; }
+  100% { background-color: #000; }
+}
+
+@keyframes g {
+  0% { background-color: #fff; }
+  10% { background-color: #fff; }
+  20% { background-color: #000; }
+  30% { background-color: #000; }
+  40% { background-color: #000; }
+  50% { background-color: #000; }
+  60% { background-color: #000; }
+  70% { background-color: #fff; }
+  80% { background-color: #000; }
+  90% { background-color: #000; }
+  100% { background-color: #fff; }
+}
+
+@keyframes d {
+  0% { background-color: #000; }
+  10% { background-color: #fff; }
+  20% { background-color: #000; }
+  30% { background-color: #000; }
+  40% { background-color: #fff; }
+  50% { background-color: #000; }
+  60% { background-color: #000; }
+  70% { background-color: #fff; }
+  80% { background-color: #000; }
+  90% { background-color: #000; }
+  100% { background-color: #000; }
+}
+
+@keyframes b {
+  0% { background-color: #000; }
+  10% { background-color: #000; }
+  20% { background-color: #000; }
+  30% { background-color: #000; }
+  40% { background-color: #000; }
+  50% { background-color: #fff; }
+  60% { background-color: #fff; }
+  70% { background-color: #000; }
+  80% { background-color: #000; }
+  90% { background-color: #000; }
+  100% { background-color: #000; }
+}
+
+@keyframes c {
+  0% { background-color: #000; }
+  10% { background-color: #000; }
+  20% { background-color: #fff; }
+  30% { background-color: #000; }
+  40% { background-color: #000; }
+  50% { background-color: #000; }
+  60% { background-color: #000; }
+  70% { background-color: #000; }
+  80% { background-color: #000; }
+  90% { background-color: #000; }
+  100% { background-color: #000; }
+}
+
+@keyframes e {
+  0% { background-color: #000; }
+  10% { background-color: #fff; }
+  20% { background-color: #000; }
+  30% { background-color: #fff; }
+  40% { background-color: #fff; }
+  50% { background-color: #fff; }
+  60% { background-color: #000; }
+  70% { background-color: #fff; }
+  80% { background-color: #000; }
+  90% { background-color: #fff; }
+  100% { background-color: #000; }
+}
+
+@keyframes f {
+  0% { background-color: #000; }
+  10% { background-color: #fff; }
+  20% { background-color: #fff; }
+  30% { background-color: #fff; }
+  40% { background-color: #000; }
+  50% { background-color: #000; }
+  60% { background-color: #000; }
+  70% { background-color: #fff; }
+  80% { background-color: #000; }
+  90% { background-color: #000; }
+  100% { background-color: #000; }
+}
+
+div {
+  position: absolute;
+  clip-path: polygon(24px 0, 168px 0, 192px 50%, 168px 100%, 24px 100%, 0 50%);
+  width: 192px;
+  height: 48px;
+  top: 50px;
+  left: 200px;
+  animation-duration: 10s;
+  animation-name: a;
+  animation-iteration-count: infinite;
+}
+
+div + div {
+  top: 248px;
+  animation-name: g;
+}
+
+div + div + div {
+  top: 444px;
+  animation-name: d;
+}
+
+div + div + div + div {
+  clip-path: polygon(0 24px, 0 168px, 50% 192px, 100% 168px, 100% 24px, 50% 0);
+  width: 48px;
+  height: 192px;
+  top: 78px;
+  left: 372px;
+  animation-name: b;
+}
+
+div + div + div + div + div {
+  top: 274px;
+  animation-name: c;
+}
+
+div + div + div + div + div + div {
+  left: 172px;
+  animation-name: e;
+}
+
+div + div + div + div + div + div + div {
+  top: 78px;
+  animation-name: f;
+}
