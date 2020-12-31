@@ -25,11 +25,14 @@
 Q: Why?
 A: Because.
 
+
 Q: Why build a digital clock?
 A: An analog pure css clock is banal at best.
 
+
 Q: Swiss made, how so?
 A: I was born in Switzerland. By induction, this clock is Swiss made. QED.
+
 
 Q: Why the asterisk after HTML.
 A: (*) Browser's implicit HTML elements are used. I also have to explicitly set
@@ -38,16 +41,19 @@ A: (*) Browser's implicit HTML elements are used. I also have to explicitly set
    https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link
    https://bugs.chromium.org/p/chromium/issues/detail?id=692359
 
+
 Q: Clock always starts at 12:00:00. Is this project a secret tribute to
    microwaves?
 A: Perhaps.
 
+
 Q: Thank you. This is cool, I learned something new about css!
-A: You are welcome. It's great if this little hack fulfills an educational
-   purpose.
+A: You are welcome. It's great if this little hack enlightens people.
+
 
 Q: Did anyone help debug or provide feedback along the way?
-A: Yes. Credits to Erling for his help!
+A: Yes. Credits to Erling (http://alf.nu/) for his help!
+
 
 Q: Ok, how does this work?
 A: This kind of LCD display is called a 7-segment display. Each digit is split
@@ -58,30 +64,37 @@ A: This kind of LCD display is called a 7-segment display. Each digit is split
    way, resulting in the appearance of a digital clock. I need two HTML elements
    per digit.
 
+
 Q: How do you avoid using any HTML?
 A: Browsers automatically create implicit HTML nodes when a document is bare. In
    my case, I set the <link> tag and get implicit <html>, <head>, and <body>
    tags. This might not seem enough but I can use ::before and ::after
    selectors, resulting in exactly the 12 nodes I need.
 
+
 Q: Why do you set content: ""?
 A: Without setting content, ::before and ::after nodes are invisible.
+
 
 Q: Why do you set display: block?
 A: Without setting the display attribute, html, head, and link are invisible.
 
+
 Q: Why do you set border: 1px solid #fff?
 A: Safari doesn't animate attributes which haven't previously been set.
+
 
 Q: What's the clip-path?
 A: CSS borders provide a natural bevel which lines up with how 7-segment
    displays are supposed to look. I used the clip-path to get a similar bevel
    effect on the outer corners.
 
+
 Q: What are all these absolute positions in pixels?
 A: I'm assuming all browsers will render things in roughly the correct way. I
    tested my assumption with Chrome, Firefox, and Safari. I'm a CSS n00b,
    I would otherwise have found a better way to do this ¯\_(ツ)_/¯.
+
 
 Q: Tell me more about seven segment displays?
 A: I drew the following diagram and associated mapping. I then converted the
@@ -104,9 +117,11 @@ A: I drew the following diagram and associated mapping. I then converted the
    F: 1 0 0 0 1 1 1 0 1 1
    G: 0 0 1 1 1 1 1 0 1 1
 
+
 Q: Did you craft this CSS file by hand?
 A: Yes. I wanted to avoid https://xkcd.com/1319/. A nice side-effect is having
    some nice spacing and comments in here.
+
 
 Q: Can I also get paid for crafting these kinds of hacks?
 A: Absolutely, Square is hiring! https://careers.squareup.com/
@@ -278,37 +293,9 @@ body::after {
   8.332% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
 
   8.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  16.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  16.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  24.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  25% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  33.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  33.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  41.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  41.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  49.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  50% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  58.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  58.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  66.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  74.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-
-  75% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
   83.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
 
   83.333% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  91.666% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-
-  91.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  99.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
 
   100% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
 }
@@ -318,37 +305,9 @@ body::after {
   8.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
 
   8.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  16.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  16.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  24.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  25% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  33.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  33.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  41.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  41.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  49.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  50% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  58.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  58.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  66.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  66.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  74.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-
-  75% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
   83.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
   83.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  91.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-
-  91.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  99.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
 
   100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
 }
