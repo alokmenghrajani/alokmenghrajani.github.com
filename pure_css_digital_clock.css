@@ -1,0 +1,550 @@
+/*
+
+================================================================================
+1. Overview
+================================================================================
+
+  Pure Digital CSS, Swiss made, clock. No JavaScript, no HTML(*). Not even for the
+  text.
+
+  Looks something like this, but something happens every second!
+
+    |  --\    /-\  /-\    /-\  /-\
+    |    |    | |  | |    | |  | |
+    |  /-/    | |  | |    | |  | |
+    |  |      | |  | |    | |  | |
+    |  \--    \-/  \-/    \-/  \-/
+
+  See it in action at: https://quaxio.com/pure_css_digital_clock.html
+
+
+================================================================================
+2. Unfrequently Asked Questions
+================================================================================
+
+Q: Why?
+A: Because.
+
+Q: Why build a digital clock?
+A: An analog pure css clock is banal at best.
+
+Q: Swiss made, how so?
+A: I was born in Switzerland. By induction, this clock is Swiss made. QED.
+
+Q: Why the asterisk after HTML.
+A: (*) Browser's implicit HTML elements are used. I also have to explicitly set
+   the <link> tag because most browsers don't support Link headers and
+   stylesheets. See:
+   https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link
+   https://bugs.chromium.org/p/chromium/issues/detail?id=692359
+
+Q: Clock always starts at 12:00:00. Is this project a secret tribute to
+   microwaves?
+A: Perhaps.
+
+Q: Thank you. This is cool, I learned something new about css!
+A: You are welcome. It's great if this little hack fulfills an educational
+   purpose.
+
+Q: Did anyone help debug or provide feedback along the way?
+A: Yes. Credits to Erling for his help!
+
+Q: Ok, how does this work?
+A: This kind of LCD display is called a 7-segment display. Each digit is split
+   in seven segments. Depending on which segments are dark or light, the result
+   looks like a digit between 0 and 9.
+
+   In this hack, I used CSS animations to animate borders in a very specific
+   way, resulting in the appearance of a digital clock. I need two HTML elements
+   per digit.
+
+Q: How do you avoid using any HTML?
+A: Browsers automatically create implicit HTML nodes when a document is bare. In
+   my case, I set the <link> tag and get implicit <html>, <head>, and <body>
+   tags. This might not seem enough but I can use ::before and ::after
+   selectors, resulting in exactly the 12 nodes I need.
+
+Q: Why do you set content: ""?
+A: Without setting content, ::before and ::after nodes are invisible.
+
+Q: Why do you set display: block?
+A: Without setting the display attribute, html, head, and link are invisible.
+
+Q: Why do you set border: 1px solid #fff?
+A: Safari doesn't animate attributes which haven't previously been set.
+
+Q: What's the clip-path?
+A: CSS borders provide a natural bevel which lines up with how 7-segment
+   displays are supposed to look. I used the clip-path to get a similar bevel
+   effect on the outer corners.
+
+Q: What are all these absolute positions in pixels?
+A: I'm assuming all browsers will render things in roughly the correct way. I
+   tested my assumption with Chrome, Firefox, and Safari. I'm a CSS n00b,
+   I would otherwise have found a better way to do this ¯\_(ツ)_/¯.
+
+Q: Tell me more about seven segment displays?
+A: I drew the following diagram and associated mapping. I then converted the
+   mapping to CSS transformations.
+
+    AA
+   F  B
+   F  B
+    GG
+   E  C
+   E  C
+    DD
+
+      0 1 2 3 4 5 6 7 8 9
+   A: 1 0 1 1 0 1 1 1 1 1
+   B: 1 1 1 1 1 0 0 1 1 1
+   C: 1 1 0 1 1 1 1 1 1 1
+   D: 1 0 1 1 0 1 1 0 1 1
+   E: 1 0 1 0 0 0 1 0 1 0
+   F: 1 0 0 0 1 1 1 0 1 1
+   G: 0 0 1 1 1 1 1 0 1 1
+
+Q: Did you craft this CSS file by hand?
+A: Yes. I wanted to avoid https://xkcd.com/1319/. A nice side-effect is having
+   some nice spacing and comments in here.
+
+Q: Can I also get paid for crafting these kinds of hacks?
+A: Absolutely, Square is hiring! https://careers.squareup.com/
+
+*/
+
+*, *::before, *::after {
+  position:absolute;
+  display: block;
+  content: "";
+  border: 1px solid #fff;
+  background-color: #fff;
+}
+
+/* Hours */
+
+html {
+  left: 100px;
+  top: 100px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 43200s;
+  animation-name: most_significant_hour_top;
+  animation-iteration-count: infinite;
+  clip-path: polygon(
+    0 10px, 10px 0, 110px 0, 120px 10px, /* h */
+    145px 10px, 155px 0, 255px 0, 265px 10px, /* h */
+
+    410px 10px, 420px 0, 520px 0, 530px 10px, /* m */
+    555px 10px, 565px 0, 665px 0, 675px 10px, /* m */
+
+    820px 10px, 830px 0, 930px 0, 940px 10px, /* s */
+    960px 10px, 970px 0, 1070px 0, 1080px 10px, /* s */
+
+    1080px 220px, 1070px 230px, 970px 230px, 960px 220px, /* s */
+    940px 220px, 930px 230px, 830px 230px, 820px 220px, /* s */
+
+    675px 220px, 665px 230px, 565px 230px, 555px 220px, /* m */
+    530px 220px, 520px 230px, 420px 230px, 410px 220px, /* m */
+
+    265px 220px, 255px 230px, 155px 230px, 145px 220px, /* h */
+    120px 220px, 110px 230px, 10px 230px, 0 220px, /* h */
+
+    0 240px, 1080px 240px, 1080px 340px, 0 340px); /* text */
+}
+
+html::before {
+  white-space: pre;
+  content: "\a\a\a\a\a\a\a Pure Digital CSS, Swiss made, clock. No JavaScript, no HTML(*). Not even for this text.\a\a This page is best viewed at noon or midnight.\a Peek at css source file for commentary (https://quaxio.com/pure_css_digital_clock.css).";
+  left: -10px;
+  top: 105px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 43200s;
+  animation-name: most_significant_hour_bottom;
+  animation-iteration-count: infinite;
+}
+
+html::after {
+  left: 135px;
+  top: -10px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 43200s;
+  animation-name: least_significant_hour_top;
+  animation-iteration-count: infinite;
+}
+
+head {
+  left: 135px;
+  top: 105px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 43200s;
+  animation-name: least_significant_hour_bottom;
+  animation-iteration-count: infinite;
+}
+
+/* Minutes */
+
+head::before {
+  left: 255px;
+  top: -120px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 3600s;
+  animation-name: most_significant_min_sec_top;
+  animation-iteration-count: infinite;
+}
+
+head::after {
+  left: 255px;
+  top: -5px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 3600s;
+  animation-name: most_significant_min_sec_bottom;
+  animation-iteration-count: infinite;
+}
+
+link {
+  left: 400px;
+  top: -120px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 600s;
+  animation-name: least_significant_min_sec_top;
+  animation-iteration-count: infinite;
+}
+
+link::before {
+  left: -10px;
+  top: 105px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 600s;
+  animation-name: least_significant_min_sec_bottom;
+  animation-iteration-count: infinite;
+}
+
+/* Seconds */
+
+link::after {
+  left: 255px;
+  top: -10px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 60s;
+  animation-name: most_significant_min_sec_top;
+  animation-iteration-count: infinite;
+}
+
+body {
+  left: 802px;
+  top: 97px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 60s;
+  animation-name: most_significant_min_sec_bottom;
+  animation-iteration-count: infinite;
+}
+
+body::before {
+  left: 130px;
+  top: -120px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 10s;
+  animation-name: least_significant_min_sec_top;
+  animation-iteration-count: infinite;
+}
+
+body::after {
+  left: 130px;
+  top: -5px;
+  width: 100px;
+  height: 100px;
+  animation-duration: 10s;
+  animation-name: least_significant_min_sec_bottom;
+  animation-iteration-count: infinite;
+}
+
+/* Keyframes */
+
+/* from 12 -> 01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10 -> 11 -> 12
+   we derive: 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 */
+@keyframes most_significant_hour_top {
+  0% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  8.332% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  8.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  16.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  16.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  24.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  25% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  33.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  33.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  41.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  41.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  49.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  50% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  58.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  58.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  66.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  74.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  75% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  83.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  83.333% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  91.666% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  91.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  99.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  100% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+}
+
+@keyframes most_significant_hour_bottom {
+  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  8.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  8.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  16.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  16.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  24.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  25% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  33.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  33.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  41.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  41.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  49.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  50% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  58.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  58.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  66.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  66.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  74.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  75% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  83.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  83.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  91.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  91.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  99.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+}
+
+/* from 12 -> 01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10 -> 11 -> 12
+   we derive: 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2 */
+@keyframes least_significant_hour_top {
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  8.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+
+  8.333% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  16.666% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  16.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  24.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+
+  25% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  33.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+
+  33.333% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  41.666% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  41.667% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  49.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  58.332% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  58.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  66.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  74.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  75% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  83.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  83.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  91.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  91.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  99.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+}
+
+@keyframes least_significant_hour_bottom {
+  0% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  8.332% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  8.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  16.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  16.667% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  24.999% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  25% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  33.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  33.333% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  41.666% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  41.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  49.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  58.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  58.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  66.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  66.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  74.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  75% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  83.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  83.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  91.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  91.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  99.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  100% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+}
+
+/* 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 0 */
+@keyframes most_significant_min_sec_top {
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  16.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  16.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  33.332% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  33.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  49.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+
+  50% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+
+  66.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  83.332% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  83.333% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  99.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+}
+
+@keyframes most_significant_min_sec_bottom {
+  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  16.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  16.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  33.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  33.333% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  49.999% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  66.666% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  66.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  83.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  83.333% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  99.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+}
+
+/* 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 0 */
+@keyframes least_significant_min_sec_top {
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  9.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+
+  10% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  19.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  20% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  29.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+
+  30% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  39.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+
+  40% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  49.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  59.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  60% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  69.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  70% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  79.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+
+  80% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  89.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  90% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  99.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+}
+
+@keyframes least_significant_min_sec_bottom {
+  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  9.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  10% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  19.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  20% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  29.999% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  30% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  39.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  40% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  49.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  59.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  60% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  69.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  70% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  79.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+
+  80% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  89.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+
+  90% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  99.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+
+  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+}
