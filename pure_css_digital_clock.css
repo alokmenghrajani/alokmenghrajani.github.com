@@ -293,55 +293,55 @@ body::after {
 /* from 12 -> 01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10 -> 11 -> 12
    we derive: 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 */
 @keyframes most_significant_hour_top {
-  0% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  8.332% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  0% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  8.332% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  8.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  83.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  8.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
+  83.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
 
-  83.333% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  83.333% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  100% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  100% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 }
 
 @keyframes most_significant_hour_bottom {
-  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  8.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  0% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  8.332% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  8.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  83.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  8.333% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  83.332% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  83.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  83.333% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  100% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 }
 
 /* from 12 -> 01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10 -> 11 -> 12
    we derive: 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2 */
 @keyframes least_significant_hour_top {
-  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
-  8.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
+  8.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 
-  8.333% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  16.666% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  8.333% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  16.666% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  16.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
-  24.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  16.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
+  24.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 
-  25% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
-  33.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  25% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
+  33.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 
-  33.333% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  41.666% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  33.333% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  41.666% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  41.667% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  49.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  41.667% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  49.999% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  58.332% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  50% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  58.332% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  58.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  58.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
   66.667% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
   74.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
@@ -349,125 +349,125 @@ body::after {
   75% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
   83.332% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  83.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  91.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  83.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
+  91.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
 
-  91.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  99.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  91.667% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  99.999% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 }
 
 @keyframes least_significant_hour_bottom {
-  0% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  8.332% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  0% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  8.332% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  8.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  16.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  8.333% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  16.666% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  16.667% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  24.999% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  16.667% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  24.999% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  25% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  33.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  25% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  33.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
-  33.333% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  41.666% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  33.333% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  41.666% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  41.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  49.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  41.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  49.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
   50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
   58.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  58.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  66.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  58.333% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  66.666% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
   66.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
   74.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  75% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  83.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  75% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  83.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
-  83.333% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  91.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  83.333% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  91.666% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  91.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  99.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  91.667% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  99.999% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  100% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  100% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 }
 
 /* 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 0 */
 @keyframes most_significant_min_sec_top {
-  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  16.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
+  16.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
 
-  16.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  33.332% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  16.667% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  33.332% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  33.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
-  49.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  33.333% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
+  49.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 
-  50% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
-  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  50% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
+  66.666% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 
-  66.667% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  83.332% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  66.667% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  83.332% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  83.333% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  99.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  83.333% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  99.999% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
 }
 
 @keyframes most_significant_min_sec_bottom {
-  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  16.666% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  0% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  16.666% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  16.667% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  33.332% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  16.667% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  33.332% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  33.333% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  49.999% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  33.333% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  49.999% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  66.666% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  66.666% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
-  66.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  83.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  66.667% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  83.332% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  83.333% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  99.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  83.333% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  99.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
-  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  100% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 }
 
 /* 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 0 */
 @keyframes least_significant_min_sec_top {
-  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
-  9.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  0% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
+  9.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
 
-  10% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  19.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  10% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  19.999% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  20% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
-  29.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  20% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
+  29.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 
-  30% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
-  39.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #fff; }
+  30% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
+  39.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #f1f1f1; }
 
-  40% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  49.999% { border-top: 10px solid #fff; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  40% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  49.999% { border-top: 10px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  50% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  59.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  50% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  59.999% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  60% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
-  69.999% { border-top: 10px solid #000; border-right: 10px solid #fff; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  60% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
+  69.999% { border-top: 10px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  70% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
-  79.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #fff; }
+  70% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  79.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
   80% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
   89.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
@@ -475,39 +475,39 @@ body::after {
   90% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
   99.999% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #000; border-left: 10px solid #000; }
 
-  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #fff; border-left: 10px solid #000; }
+  100% { border-top: 10px solid #000; border-right: 10px solid #000; border-bottom: 5px solid #f1f1f1; border-left: 10px solid #000; }
 }
 
 @keyframes least_significant_min_sec_bottom {
-  0% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  9.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  0% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  9.999% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  10% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  19.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  10% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  19.999% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  20% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
-  29.999% { border-top: 5px solid #000; border-right: 10px solid #fff; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  20% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  29.999% { border-top: 5px solid #000; border-right: 10px solid #f1f1f1; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  30% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  39.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  30% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  39.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
-  40% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  49.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  40% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  49.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
-  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  59.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  50% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  59.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
   60% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
   69.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  70% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
-  79.999% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #fff; border-left: 10px solid #fff; }
+  70% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
+  79.999% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #f1f1f1; border-left: 10px solid #f1f1f1; }
 
   80% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
   89.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 
-  90% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
-  99.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #fff; }
+  90% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
+  99.999% { border-top: 5px solid #000; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #f1f1f1; }
 
-  100% { border-top: 5px solid #fff; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
+  100% { border-top: 5px solid #f1f1f1; border-right: 10px solid #000; border-bottom: 10px solid #000; border-left: 10px solid #000; }
 }
