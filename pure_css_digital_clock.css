@@ -124,11 +124,15 @@ A: Yes. I wanted to avoid https://xkcd.com/1319/. A nice side-effect is having
 
 
 Q: Can I also get paid for crafting these kinds of hacks?
-A: Absolutely, Square is hiring! https://careers.squareup.com/
+A: Absolutely, my employer is hiring! https://careers.squareup.com/ Just don't
+   tell anyone what kind of useless stuff I make 🤫.
 
 */
 
-*, *::before, *::after {
+html, html::before, html::after,
+head, head::before, head::after,
+link, link::before, link::after,
+body, body::before, body::after {
   position:absolute;
   display: block;
   content: "";
