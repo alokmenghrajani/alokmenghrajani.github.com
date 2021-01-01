@@ -90,10 +90,9 @@ A: CSS borders provide a natural bevel which lines up with how 7-segment
    effect on the outer corners.
 
 
-Q: What are all these absolute positions in pixels?
-A: I'm assuming all browsers will render things in roughly the correct way. I
-   tested my assumption with Chrome, Firefox, and Safari. I'm a CSS n00b,
-   I would otherwise have found a better way to do this ¯\_(ツ)_/¯.
+Q: Why do I see weird artifacts in Safari?
+A: It's pixel rounding issues, different browsers handle it in a different
+   way ¯\_(ツ)_/¯. Maybe I'll find a work around.
 
 
 Q: Tell me more about seven segment displays?
