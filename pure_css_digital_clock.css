@@ -90,9 +90,12 @@ A: CSS borders provide a natural bevel which lines up with how 7-segment
    effect on the outer corners.
 
 
-Q: Why do I see weird artifacts in Safari?
-A: It's pixel rounding issues, different browsers handle it in a different
-   way ¯\_(ツ)_/¯. Maybe I'll find a work around.
+Q: Why do you set box-sizing: border-box?
+A: It solves a pixel rounding issue with Safari. I use vw, vh, and vmin to make
+   the clock look good and centered irrespective of the screen size. This can
+   cause rounding issues since a box might land on the boundary of two pixels.
+   CSS doesn't offer a ton of control when it comes to pixel rounding, but
+   box-sizing seems to work ¯\_(ツ)_/¯.
 
 
 Q: Tell me more about seven segment displays?
@@ -139,18 +142,19 @@ body, body::before, body::after {
   position:absolute;
   display: block;
   content: "";
-  border: 1px solid #fff;
+  border: 1px solid #fff; /* solves animation issue with Safari */
   background-color: #fff;
-  width: 8vmin;
-  height: 8vmin;
+  width: 9.5vmin;
+  height: 9.5vmin;
   margin: 0;
+  box-sizing: border-box; /* solves rounding issue with Safari */
 }
 
 /* Hours */
 
 html {
-  left: 5vmin;
-  top: 5vmin;
+  left: calc((100vw - 83vmin)/2);
+  top: calc((100vh - 19vmin)/3);
   clip-path: polygon(
     0 1vmin, 1vmin 0, 9vmin 0, 10vmin 1vmin, /* h */
     13vmin 1vmin, 14vmin 0, 22vmin 0, 23vmin 1vmin, /* h */
