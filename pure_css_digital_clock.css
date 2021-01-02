@@ -182,7 +182,8 @@ html {
 
 html::before {
   white-space: pre;
-  content: "\a\a\a\a\a Pure Digital CSS, Swiss made, clock. No JavaScript, no HTML(*). Not even for this text.\a\a This page is best viewed at noon or midnight.\a Peek at css source file for commentary (https://quaxio.com/pure_css_digital_clock.css).";
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  content: "\a\a\a\a\a Pure Digital CSS, \1f1e8\1f1ed Swiss made, clock. No JavaScript, no HTML(*). Not even for this text.\a\a This page is best viewed at noon or midnight.\a Peek at css source file for commentary (https://quaxio.com/pure_css_digital_clock.css).";
   left: -1vmin;
   top: 8.5vmin;
   animation-duration: 43200s;
