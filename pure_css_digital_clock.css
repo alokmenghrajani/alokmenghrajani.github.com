@@ -178,12 +178,14 @@ html {
 
 html::before {
   white-space: pre;
-  content: "\a\a\a\a\a\a\a Pure Digital CSS, Swiss made, clock. No JavaScript, no HTML(*). Not even for this text.\a\a This page is best viewed at noon or midnight.\a Peek at css source file for commentary (https://quaxio.com/pure_css_digital_clock.css).";
+  content: "\a\a\a\a\a Pure Digital CSS, Swiss made, clock. No JavaScript, no HTML(*). Not even for this text.\a\a This page is best viewed at noon or midnight.\a Peek at css source file for commentary (https://quaxio.com/pure_css_digital_clock.css).";
   left: -1vmin;
   top: 8.5vmin;
   animation-duration: 43200s;
   animation-name: most_significant_hour_bottom;
   animation-iteration-count: infinite;
+  line-height: 3vmin;
+  font-size: 2vmin;
 }
 
 html::after {
