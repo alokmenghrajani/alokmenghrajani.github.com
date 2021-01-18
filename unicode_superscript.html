@@ -1,13 +1,30 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<style>
+			body {
+				margin: 5em auto;
+				width: 80ch;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>Unicode(*) superscript 💩</h1>
-		<p>Unicode has superscript versions of numerical characters. These are however not
-			always rendered correctly. This is a test page, using your browser's default font.</p>
+		<p>
+			Unicode has superscript versions of numerical characters. These are however not
+			always rendered correctly (e.g. they are currently broken on MacOSX and iOS
+			with the default font). The reason is because the superscript character 1-3
+			are defined in separate code blocks from characters 0, 4-9. On Apple products,
+			the default font has superscript charactes 1-3 but falls back to a different
+			font for the other numbers.
+		</p>
+		<p>
+			A simple fix would be for Apple to add the other superscript characters to
+			the default font (or remove 1-3 and fallback for all superscript characters).
+		</p>
+		<p>This is a test page, using your browser's default font.</p>
 
-		<p>These don't all line up the same way:</p>
+		<p>These don't always line up the same way:</p>
 		<p>x⁰, x¹, x², x³, x⁴, x⁵, x⁶, x⁷, x⁸, x⁹</p>
 
 		<p>As a result, some of the following lines look like x^(ab), others look like x^a^b, and
@@ -26,8 +43,8 @@
 		<p>Why do I care? Some Wikipedia pages use numerical superscript
 			characters and can lead to mistakes!</p>
 
-		<p>* it's likely that this is a font or font-rendering issue affecting
-			certain platforms. I can reproduce across different browsers on Mac OS X
-			and iOS.</p>
+		<h2>Credits</h2>
+		<p>Thanks to <a href="https://twitter.com/FakeUnicode/status/1351020275991769088">@FakeUnicode</a> and <a href="https://twitter.com/AlecMuffett/status/1351031202497646596">@AlecMuffett</a> for helping figure out what's going on!</p>
+
 	</body>
 </html>
