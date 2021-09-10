@@ -24,7 +24,7 @@ layout: quaxio
       {% for post in site.posts %}
         {% assign currentYear = post.date | date: "%Y" %}
         {% assign currentYearN = currentYear | plus: 0  %}
-        {% if currentYearN < 2012 %}
+        {% if currentYearN <= 2012 %}
         {% assign currentYear = "2012 and older" %}
         {% endif %}
 
