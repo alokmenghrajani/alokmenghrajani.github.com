@@ -1,6 +1,62 @@
 ---
 layout: post
 title:  'Binary Adder (transistor-less)'
-external: 'binary_adder/'
-tags: []
+permalink: '/binary_adder/'
+tags: ['binary adder', 'computing', 'relay']
 ---
+<p>In high school, I built a binary adder which uses no
+silicon components and no transistors. As a student at Chamblandes, Pully, Switzerland, my physics teacher gave me a few tips.</p>
+
+<p>Instead of using transistors or semi-conductor, I used solid state relays, LEDs, switches and resistors. The idea was to built something similar to early computers.</p>
+
+<p>At the time, I hadn't yet learned about circuit design. I also didn't know the link between boolean algebra and computing. I therefore designed this piece of hardware using intuition and lots of trial and error (on paper). One of my main challenges was to reduce the number of relays needed, as these components consume a lot of energy and are expensive.</p>
+
+<p>
+  Computers and calculators typically perform binary computations. Binary is a different way to represent numbers. Humans have ten fingers, our natural instinct is therefore to count in a decimal
+  system. We count from 0 to 9 and then from 10 to 19 and so on. Our numbers are powers of tens. 25 is two times 10 and five times 1. Binary is similar but with powers of two. 101 in binary becomes one times 4, zero times 2, and one times 1. Totalling 5.
+</p>
+
+<p>
+  My hardware uses relays. These are like switches, but instead of being controlled mechanically like a keyboard, they are controlled by an electric current. When the current flows through a relay, it closes
+  (due to electromagnetic interaction). When the current stops, it opens (thanks to a spring). You can see the three relays on the pictures below.
+</p>
+
+<p>
+  The first part of the project involved drawing the circuits on a sheet of paper. This was interesting
+  because I didn't know how many relays I would need; my first design required eight of them. I then reduced the number to three.
+</p>
+
+<p>
+  I then ordered the components and soldered them together. The major difficulty I encountered was working with all the wires.
+  I used a piece of balsa wood, which is soft and easy to work with. It was fun hearing the relays click whenever the inputs to the adder changed!
+</p>
+
+<p>
+  Fun fact: I had to use the power supply from a Commodore 64 (9V, 1A) because of the power consumption of the relays.
+</p>
+
+<h2>Front side of the adder</h2>
+<p>On this picture, you can see the various components I used: 8 switches (top left), 3 relays (top right) and 13 LEDs and  resistors.</p>
+<img src="/files/1999/binary_adder/front.jpg">
+
+<h2>Input to the adder</h2>
+<p>The adder is controlled by these 8 switches. Each switch controls a power of two. Balsa wood is easy to cut in one direction but not both directions. I had to resort to using glue.</p>
+<img src="/files/1999/binary_adder/keyboard.jpg">
+
+<h2>Back side of the adder</h2>
+<p>The back side was a big mess of connections. Burn marks from using
+a lighter with heat shrink tubing. It's better and safer to use
+a heat gun instead.</p>
+<img src="/files/1999/binary_adder/back.jpg">
+
+<h2>Sample calculation</h2>
+<p>We perform a sample computation: 15 + 5 = 20.</p>
+<img src="/files/1999/binary_adder/display.jpg">
+
+<h2>links</h2>
+<ul>
+  <li><a href="/files/1999/binary_adder/binadder.ppt">inside the binary adder</a> (ppt, includes circuit diagram)</li>
+  <li><a href="http://en.wikipedia.org/wiki/Binary_numeral_system">Binary numeral system (wikipedia article)</a></li>
+  <li><a href="http://en.wikipedia.org/wiki/Relay">Relay (wikipedia article)</a></li>
+  <li><a href="http://woodgears.ca/marbleadd/">binary marble adding machine</a></li>
+</ul>
