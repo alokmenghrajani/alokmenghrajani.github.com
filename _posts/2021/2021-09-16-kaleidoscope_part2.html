@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Running a 40-plus-year-old piece of code in today's browser (part 2)"
+permalink: '/kaleidoscope_part2/'
+tags: ['kaleidoscope', '8-bit', 'Intel 8080', 'Cromemco Dazzler']
+---
+<p>This post is split in multiple parts. Make sure you first read <a href="/kaleidoscope_part1/">part 1</a>.</p>
+
+<p>Before I dive into how the Kaleidoscope code works, I wanted to answer the following question: <strong>how do I know the code I'm looking at is the original code?</strong></p>
+
+<p>The answer to this question is related to <a href="https://en.wikipedia.org/wiki/Supply_chain_cyber_security">supply chain security</a>. The short answer is that we can't be 100% sure unless the original code was digitally signed <b>and</b> there's a way to reliably check the key's integrity &amp; ownership. The code predates publication of asymmetric key cryptosystems by a year and widespread adoption of tools such as GPG by two decades! Assuming arguendo, the code was published with a public key signature and the key size/algorithm choice didn't turn out to be weak. We would have to trust that the key has been stored physically and logically securely for 40+ years. We would have to trust the key's owner identity. Finally, we would have to trust our own modern computer which performs the signature verification operation. It turns out that supply chain security is turtles all the way down!</p>
+
+<p>We can however have some level of confidence that the code is the original code. First, there's <a href="https://www.youtube.com/watch?v=CXQR4hgvy1w">Youtube video</a> which looks similar. Then, there's the punch card picture. The punch card is partially visible and
+we can extract 22 bytes to check they match the source code. Finally, Harry Garland, who co-founded Cromemco Inc., reached out to me. In all three cases, we wouldn't spot a minor code difference but we do end up with some confidence that the code we have today is the original code.</p>
+
+<img src="/files/2021/kaleidoscope_part2/punchcard.png">
+
+<p>The punchcard bytes match instructions 003A to 004F! In a subsequent post, I will cover how the code actually works.</p>
