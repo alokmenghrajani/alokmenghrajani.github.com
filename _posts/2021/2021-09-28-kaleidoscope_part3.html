@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Running a 40-plus-year-old piece of code in today's browser (part 3)"
+permalink: '/kaleidoscope_part3/'
+tags: ['kaleidoscope', '8-bit', 'Intel 8080', 'Cromemco Dazzler']
+---
+<p>This post is split in multiple parts. Make sure you first read <a href="/kaleidoscope_part1/">part 1</a> and <a href="/kaleidoscope_part2/">part 2</a>.</p>
+
+<p>Understanding how the assembly code works requires reverse engineering it. The first step is to look at the program's control flow. In some cases, the control flow becomes very complex to decipher (e.g. when dynamic dispatches or signals come into play). To understand the control flow, start by tagging instructions which jump (either conditionally or unconditionally).</p>
+
+<img src="/files/2021/kaleidoscope_part3/control_flow.svg">
+
+<p>Thankfully we aren't dealing with anything too complicated. Without yet decoding individual instructions, we can tell:
+<ul>
+<li>We have an infinite loop that starts at <code>000B</code> and runs until <code>004C</code>, <code>0054</code> or <code>005A</code>.</li>
+<li>We have a subroutine that starts at <code>005D</code> and ends at <code>007E</code>. This subroutine gets called 4x per iteration of the above infinite loop.</li>
+<li>The infinite loop contains 3 conditionals. The subroutine has 1.</li>
+</ul>
+
+<p>Knowing this information, we draft the equivalent code in a higher level language:</p>
+
+<pre>
+main() {
+  ... some initialization ...
+  while (1) {
+    ...
+    if (some_condition) {
+      ...
+    }
+    ...
+    do_something()
+    ...
+    do_something()
+    ...
+    do_something()
+    ...
+    do_something()
+    ...
+    if (some_condition) {
+      continue;
+    }
+    ...
+    if (some_condition) {
+      continue;
+    }
+    ...
+  }
+}
+
+do_something() {
+  if (some_condition) {
+    ...
+    return;
+  }
+  ...
+  return;
+}
+</pre>
+
+<p>The next post will use this structure and convert each individual instruction.</p>
