@@ -1,5 +1,5 @@
 let ctx = canvas.getContext('2d');
-let size = 8;
+let size = canvas.getAttribute("data-size");
 canvas.width = size * 64;
 canvas.height = size * 64;
 
@@ -8,7 +8,7 @@ ctx.fillStyle = "#000000";
 ctx.fillRect(0, 0, 64*size, 64*size);
 
 // memory is simply an array
-let memory = []
+let memory = [];
 
 // videoOffset gets set when portTo is called with addr 14
 let videoOffset = -1;
@@ -95,4 +95,4 @@ function go() {
   CPU8080.steps(33333);
   window.requestAnimationFrame(go)
 }
-go();
+

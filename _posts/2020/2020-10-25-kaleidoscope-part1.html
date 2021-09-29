@@ -4,7 +4,7 @@ title: "Running a 40-plus-year-old piece of code in today's browser (part 1)"
 permalink: '/kaleidoscope_part1/'
 tags: ['kaleidoscope', '8-bit', 'Intel 8080', 'Cromemco Dazzler']
 ---
-<p>I recently came across a <a href="/files/2020/kaleidoscope/kscope.txt">piece of assembly</a> code, written by Li-Chen Wang, which
+<p>I recently came across a <a href="/files/2020/kaleidoscope_part1/kscope.txt">piece of assembly</a> code, written by Li-Chen Wang, which
 displays a Kaleidoscope. This code was written in 1976, and distributed for $15
 on a <a href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Kaleidoscope_for_Cromemco_Dazzler.jpg/1920px-Kaleidoscope_for_Cromemco_Dazzler.jpg">punched tape</a>. It appears this was one of three pieces of code used to
 demonstrate the capabilities of <a href="https://en.wikipedia.org/wiki/Cromemco_Dazzler">Cromemco's Dazzler</a>, the first commercial
@@ -23,11 +23,14 @@ contributions resulting in the growth of the computer industry, such as a free
 and open source BASIC interpreter as well as pioneering the concept of free software.</p>
 
 <p>It turns out running this code from the dawn of computers in a browser isn't
-too hard. The code is 127 bytes long. I found an existing <a href="https://github.com/maly/8080js">8080 emulator</a>. With the help of this <a href="/files/2020/kaleidoscope/cromemco_dazzler_manual.pdf">technical manual</a>, I wrote
-the <a href="/files/2020/kaleidoscope/kaleidoscope.js">bare minimum amount of code</a> to emulate a Dazzler. Computer manuals back then were very detailed, especially for hardware that came as a kit, requiring a day or two of soldering.</p>
+too hard. The code is 127 bytes long. I found an existing <a href="https://github.com/maly/8080js">8080 emulator</a>. With the help of this <a href="/files/2020/kaleidoscope_part1/cromemco_dazzler_manual.pdf">technical manual</a>, I wrote
+the <a href="/files/2020/kaleidoscope_part1/kaleidoscope.js">bare minimum amount of code</a> to emulate a Dazzler. Computer manuals back then were very detailed, especially for hardware that came as a kit, requiring a day or two of soldering.</p>
 
 <p>Below is the result of running the code. In <a href="/kaleidoscope_part2/">part 2</a>, I cover the question of authenticity of this code. In a subsequent post, I will cover how the code actually works.</p>
 
-<canvas id="canvas"></canvas>
-<script src="/files/2020/kaleidoscope/8080.js"></script>
-<script src="/files/2020/kaleidoscope/kaleidoscope.js"></script>
+<canvas id="canvas" data-size="8"></canvas>
+<script src="/files/2020/kaleidoscope_part1/8080.js"></script>
+<script src="/files/2020/kaleidoscope_part1/kaleidoscope.js"></script>
+<script>
+go();
+</script>
