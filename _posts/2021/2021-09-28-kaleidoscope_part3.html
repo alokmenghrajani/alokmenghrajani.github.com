@@ -10,7 +10,7 @@ tags: ['kaleidoscope', '8-bit', 'Intel 8080', 'Cromemco Dazzler']
 
 <img src="/files/2021/kaleidoscope_part3/control_flow.svg">
 
-<p>Thankfully we aren't dealing with anything too complicated. Without yet decoding individual instructions, we can tell:
+<p>Thankfully we aren't dealing with anything too complicated. The code is fairly short and hasn't been purposefully obfuscated. Without yet decoding individual instructions, we can tell:
 <ul>
 <li>We have an infinite loop that starts at <code>000B</code> and runs until <code>004C</code>, <code>0054</code> or <code>005A</code>.</li>
 <li>We have a subroutine that starts at <code>005D</code> and ends at <code>007E</code>. This subroutine gets called 4x per iteration of the above infinite loop.</li>
