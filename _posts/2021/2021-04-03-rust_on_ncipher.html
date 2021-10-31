@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Rust on nCipher 🦀🛡️"
+permalink: '/ncipher_rust/'
+tags: ['ncipher', 'hsm', 'rust', 'codesafe']
+---
+<p>HSM (Hardware Security Modules) are pieces of hardware used to protect
+sensitive cryptographic keys and perform cryptographic operations. These devices
+are typically used in the banking and defense industry. Developers can use
+existing APIs or extend the devices capabilities. In the case of nCipher
+devices, the framework for implementing extensions is called CodeSafe
+and the code is typically written in C (e.g. see <a href="https://github.com/square/subzero">Subzero</a>, Square's HSM-based Bitcoin Cold Storage wallet).</p>
+
+<p>One of my last hacks while working at Square was to build a prototype showing
+how CodeSafe code could be written using Rust. The main appeal for using Rust is
+memory safety/better guarantees compared to C. Rust also enables leveraging a
+rich ecosystem of packages and libraries.</p>
+
+<li><a href="https://github.com/square/subzero">Rust on nCipher repo</a></li>
