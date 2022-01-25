@@ -1,23 +1,22 @@
-<html><body><script>main=()=>{text=["QuineMazeGame","is","a","quine","(a","program","which","prints","itself)",/*~~~~~~
-*O*/ ,      "but"   ,      "also"   ,"a"       ,"game.",    "Navigate"       ,"\x4f" ,        "to",        "the","exit"
-, "" + "using",/**/ " ar"+ "row", "keys", "or" ,"the",   "buttons.",   "Credits",      "to", "<a    href=\"https://twi"
-+ /* ~ */"tter."+/* ~ ~~~~ */"c"+ "om/m"+ "cp" +"her"+ "rinm\">mcp"+ "herrinm</a>" ,/* ~~~~~ ~~~ */ "for","coming"//~~~
-,         "up",     " with        ","the"   ,"idea."]  ;D=document;  B=D.body;     let S=           "<html><body>" +//~
-"<scri" +       "pt>main=" +main +";main() //\x20-\x2d made by Alok \x3c/scrip"+ "t>\x3c/body>"+ "\x3c/html>";let    R=
-()    =>B["app"            +"endChild"](D[             "cr" +  "ea" +"teElement" ]("br"));                 S=S.split //
-("\n"           );X=1;Y=1;   let t=S[Y].split( "");P=t["sp" + "lic"  +"e"](X,1," ");S[Y]=t.join(""); G=S.length -2;   C
-=S[S.length-1] .length;S=S.join(               "\n");C=S.     length -C;B.       innerHTML=text.     join(" "); R("~ ")
-R();let b=["<"                   ,37,"v",40,"^",38,">",39];          for(let i=0  ;i             <8; i++){  let t=    D
-.       createElement("button"); t.textContent=b[i++];t.    onclick= ()=>handle(b[i]); B.appendChild  (t)}; R("    ~");
-R();let d=D.createElement("div") ;B.appendChild(d);d.    style=      "font-family:mo"+ "nospace;wh"  +"it"+     "e-sp"+
-"ace:"+                              "pre"; B.style=  "position:fi"+  "xed";let        draw=(el,            text)=>   {
-text=   text.split("\n");let t= text         [Y].    split("");if(t[X  ]!="\x20"){ return 0}t.splice(X, 1,P.join("" ) )
-text[Y]=t.join("");text=text    .join("\n");      while(el.firstChild)              {el.   firstChild.  remove()}for  (
-i=0;i<text.length;i++){let s=D.createElement("span");s.style="line-height:1em";if(text[i] !=" "&&text[i ]!=P&&i<C){  s.
-style+=";background-col"+  "or:#c77644"}s.innerText=text[i];el.appendChild(s)}return 1};      draw(d,     S);D        .
-onkeyup=(e)=>handle(e.    keyCode);handle=(c)=>{let ox=X;let oy=Y;if(c==37||c==65||      c==74){X--}else if(c==38|| c==
-87||c==73){Y--}else    if(c==39||c==68||c==76){X++} else     if(c==40||      c==83|| c==75){Y++}else       {return} if(
-!draw(d,S)){X=ox;Y=oy}                                   if(            /**/               Y==G) {B. innerText        =
-"success!"}};exit=1;here=2//~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                         ~~~~
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-                                                        exit ^ here };main() // -- made by Alok </script></body></html>
+<html><body><script>made_by_alok=()=>{text=["QuineMazeGame","is","a","quine","(i.e.","a","program","which","prints",/*~~
+*O*/ ,    "itself)  ",  "but"      ,      "also"   ,"a"       ,"game.",    "Navigate"       ,"\x4f" ,             "to  "
+, "  the" ,"exit", "u"+ "sing", "WSAD", "keys",  "or","the", "buttons.", "<br>","Credits", "to","<a href=\"htt"+ "ps" //
++   "://"   +"tw"         +"it" +"ter." +"co"+  "m/mcpher"+                "rinm\"> @mcp"+  "herr"+ "inm</a>"          ,
+" for"    ,"coming","up",         "with        ","the"   ,"idea. "]; D=document;B=   D.body            ;S=    "<html><b"
++      "ody><script>made_by"+ "_alok="+  made_by_alok  +          "; made_by_alok()" +"\x3c/scrip"+ "t>\x3c/" + "body>"+
+"\x3c"            +"/html>";    R=()=>                B["ap"+ "pendChild"](D.        createElement( "br"));     S=    S.
+split("\n") ;X= 1;Y=1;t= S[Y] .split(""); t.splice(X, 1," ").  join   ("");   S[Y]=t  .join("");       G=S. length-2; C=
+S[S          .                length-1] . length;S=S       .  join( "\n");C=S .length            -C;B.      innerHTML  =
+text.join(" ");R("~ ~"); R();             b=["<",  37,"v",40, "^",  38,">",39  ];for(i=0;i<8; i++)   { t= D         . //
+createElement(      "button");t.textContent=b[i++] ;t.onclick      =()=>handle (b[i]);B.appendChild (t)};R("~~~~~ ~~~ ")
+R();I=D.       createElement("div");I.style="font"            +"-"               +"family:monospa"  +"ce;white-"       +
+"space:pre; background: url('data:image/gif;base64,R0lG\x4fDdhBAAEAIAAAMxaA\x4f"                   +"GbZCwAAAAABAAEAAA"+
+"CBkQ\x4faWEKBQA7');         display: inline-block";B.                           appendChild(I);W=(x)=>{x=x.split( "\n")
+t=x[Y].split("");if(t[X]!=" "){return 0}t.splice(X,1,"\x4f"); x[Y]=t.join(""); x=x.join("\n"); while(I.firstChild)    I.
+firstChild.remove();for(i=0 ;i<x.     length;i++){s=D.        createElement(                   "span");s.style     = "";
+if(x[i]==" "||x[i]=="\x4f"        ||i>C){s.style+=";   background-color:     #fff"}s.innerHTML                 =x[i] ;I[
+"appendC"+                 "hild"                    ](s)}return 1};     W(S);D        .onkeyup=(e) =>handle( e.keyCode)
+handle=(c)=>{ox=X;oy=Y;if(c==65||c==74){X--}else if(c==87|| c==      73){Y--}else if(c==68||c==76){ X++}else  if(c==83||
+c==75){Y++}else{return}if(!W(S)){X=ox;Y=oy}if    (Y==G){B       ["i"               +"nnerText"]="success!"}};exit=here=1
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                                                                    exit ^ here }; made_by_alok()</script></body></html>
