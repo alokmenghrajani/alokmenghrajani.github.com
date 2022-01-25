@@ -1,13 +1,13 @@
-<html><body><script>main=()=>{text=["QuineMazeGame","is","a","quine","(a","program","which","prints","itself)",/*------
-*O*/ ,      "but"   ,      "also"   ,"a"       ,"game.",    "Navigate"          , "O",        "to",        "the","exit"
+<html><body><script>main=()=>{text=["QuineMazeGame","is","a","quine","(a","program","which","prints","itself)",/*~~~~~~
+*O*/ ,      "but"   ,      "also"   ,"a"       ,"game.",    "Navigate"       ,"\x4f" ,        "to",        "the","exit"
 , "" + "using",/**/ " ar"+ "row", "keys", "or" ,"the",   "buttons.",   "Credits",      "to", "<a    href=\"https://twi"
 + /* ~ */"tter."+/* ~ ~~~~ */"c"+ "om/m"+ "cp" +"her"+ "rinm\">mcp"+ "herrinm</a>" ,/* ~~~~~ ~~~ */ "for","coming"//~~~
 ,         "up",     " with        ","the"   ,"idea."]  ;D=document;  B=D.body;     let S=           "<html><body>" +//~
-"<scri" +       "pt>main=" +main +";main() //\x20-\x2d made by Alok \x3c/script>\x3c/body>"+ "\x3c/html>";let        R=
-()    =>B["app"            +"endChild"](D[             "cr" +  "ea" +"teElement"]("br"));S=            /*~~~~*/ S.split
+"<scri" +       "pt>main=" +main +";main() //\x20-\x2d made by Alok \x3c/scrip"+ "t>\x3c/body>"+ "\x3c/html>";let    R=
+()    =>B["app"            +"endChild"](D[             "cr" +  "ea" +"teElement" ]("br"));                 S=S.split //
 ("\n"           );X=1;Y=1;   let t=S[Y].split( "");P=t["sp" + "lic"  +"e"](X,1," ");S[Y]=t.join(""); G=S.length -2;   C
 =S[S.length-1] .length;S=S.join(               "\n");C=S.     length -C;B.       innerHTML=text.     join(" "); R("~ ")
-R();let b=["<"                   ,37,"v",40,"^",38,">",39];          for(let i=0;i               <8; i++){  let t=    D
+R();let b=["<"                   ,37,"v",40,"^",38,">",39];          for(let i=0  ;i             <8; i++){  let t=    D
 .       createElement("button"); t.textContent=b[i++];t.    onclick= ()=>handle(b[i]); B.appendChild  (t)}; R("    ~");
 R();let d=D.createElement("div") ;B.appendChild(d);d.    style=      "font-family:mo"+ "nospace;wh"  +"it"+     "e-sp"+
 "ace:"+                              "pre"; B.style=  "position:fi"+  "xed";let        draw=(el,            text)=>   {
@@ -19,5 +19,5 @@ onkeyup=(e)=>handle(e.    keyCode);handle=(c)=>{let ox=X;let oy=Y;if(c==37||c==6
 87||c==73){Y--}else    if(c==39||c==68||c==76){X++} else     if(c==40||      c==83|| c==75){Y++}else       {return} if(
 !draw(d,S)){X=ox;Y=oy}                                   if(            /**/               Y==G) {B. innerText        =
 "success!"}};exit=1;here=2//~~~~~~~~~~~~~~~~~~~~~~~~~~~~      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~                         ~~~~
-/*----------------------------------------------------------- -------------------------------------------------------*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
                                                         exit ^ here };main() // -- made by Alok </script></body></html>
