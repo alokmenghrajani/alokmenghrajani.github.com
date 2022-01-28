@@ -1,0 +1,128 @@
+<html>
+<body>
+  <script>
+/**
+ * Commented version of https://www.quaxio.com/quine_maze_game.html
+ *
+ * I first made this file, then removed all comments and whitespace. I then
+ * manually reintroduced whitespaces in specific places until I had a maze I
+ * liked. Some long strings (e.g. "foobar") had to be split using concatenation
+ * resulting in "foo" + "bar" which is handy for adding whitespaces or exactly
+ * filling rows. Some function calls (e.g. foo.bar()) had to be converted to the
+ * equivalent foo["bar"] form for similar reasons. My favorite trick is to call
+ * the R() function with garbage parameters. I tried to avoid adding any
+ * comments in the final code.
+ */
+
+// Wrap all the code in a function which makes building the quine easy since
+// the function can just be converted to a string. Most people would consider
+// making a quine in this way cheating.
+made_by_alok = () => {
+  // The following variable is part of the first line, which can't have any
+  // spaces. One solution is to encode spaces with \x20. Another is to create
+  // an array and join the array with a space later on.
+  // The /*O*/ comment is for the starting position.
+  T = ["QuineMazeGame", "is", "a", "quine", "(i.e.", "a", "program", "which",/*
+    O*/"prints itself) but also a playable game.<br>",
+    "The code is carefully formatted in such a way that the whitespace becomes",
+    "the paths in the maze.<br>",
+    "Navigate <span style=\"font-family: monospace; background-color: #f00\">O</span>",
+    "to the exit using WSAD keys or the buttons.<br>",
+    "Credits to <a href=\"https://twitter.com/mcpherrinm\">@mcpherrinm</a> for",
+    "coming up with the original idea.<br>",
+    "See the <a href=\"https://github.com/alokmenghrajani/alokmenghrajani.github.com/blob/master/quine_maze_commented.html\">commented code</a>."]
+
+  // Two help variables to keep the code short.
+  D = document
+  B = D.body
+
+  // Two helper functions: C(n) creates nodes. R() appends a <br> to the document.body
+  C = (n) => D.createElement(n)
+  R = () => B.appendChild(C("br"))
+
+  // Q is the self referenting quine
+  Q = "<html><body><script>made_by_alok=" + made_by_alok +
+    "; made_by_alok()\x3c/script>\x3c/body>\x3c/html>"
+
+  // Player position
+  X = 1
+  Y = 1
+
+  // Remove the player from Q
+  Q = Q.split("\n")
+  t = Q[Y].split("")
+  t.splice(X, 1, " ")
+  Q[Y] = t.join("")
+
+  // G is the goal. We'll only check the Y position.
+  G = Q.length - 2
+
+  // Put the description on the page.
+  B.innerHTML = T.join(" ")
+  R(); R()
+
+  // Create the 4 buttons so people without keyboards can still enjoy things.
+  b = "<AvS^W>D"
+  for (let i=0; i<8; i++) {
+    t = C("button")
+    t.textContent = b[i++]
+    t.onclick = () => H(b.charCodeAt(i))
+    B.appendChild(t)
+  }
+  R(); R();
+
+  // Create the playing field and footer.
+  I = C("table")
+  I.style = "font-family: monospace; border-spacing: 0; background: url('data:image/gif;base64,R0lGODdhBAAEAIAAAMxaAOGbZCwAAAAABAAEAAACBkQOaWEKBQA7'); display: inline-block"
+  B.appendChild(I)
+
+  // Fill the playing field
+  Q = Q.map((e) => e.split(""))
+  for (j=0; j<Q.length; j++) {
+    r = C("tr")
+    I.appendChild(r)
+    for (i=0; i<Q[j].length; i++) {
+      c = C("td")
+      c.id = i + "-" + j
+      r.appendChild(c)
+      c.innerText = Q[j][i]
+      if (Q[j][i] == " ")
+        c.style.backgroundColor="#fff"
+    }
+  }
+  r.style.backgroundColor="#fff"
+
+  // W() places the player
+  W = (x, y) => {
+    c = D.getElementById(x + "-" + y)
+
+    // Check if we hit a wall
+    if (!c.innerText) {
+      D.getElementById(X + "-" + Y).style.backgroundColor = "#fff"
+      D.getElementById(X + "-" + Y).innerText = ""
+      c.style.backgroundColor = "#f00"
+      c.innerText = "O"
+      X = x
+      Y = y
+    }
+  }
+  W(X, Y)
+
+  // Hookup keyboard/button handling
+  D.onkeyup = (e) => H(e.keyCode)
+  H=(c) => {
+    if ("ASWD".indexOf(String.fromCharCode(c)) == -1)
+      return
+
+    // A little bit of magic from https://www.quaxio.com/tron/.
+    W(X+[1,-1,0,0][c&3], Y+[-1,1,0,0][9-(c/9.5|0)])
+
+    // Check winning condition
+    if (Y==G)
+      B.innerText = "Success!"
+  }
+
+  // Need to define these
+  exit=here=1
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+                                                                    exit ^ here }; made_by_alok()</script></body></html>
