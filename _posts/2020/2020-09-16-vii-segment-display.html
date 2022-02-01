@@ -1,7 +1,97 @@
 ---
 layout: post
 title: "VII-segment display"
-external: /vii_segment_display/?2020
+permalink: /vii_segment_display/
 tags: ['seven-segment', 'roman numerals']
 ---
+<p>Arabic numerals (0-9) can be represented using <a href="https://en.wikipedia.org/wiki/Seven-segment_display">7-segment displays</a>.
+Amusingly, <a href="https://en.wikipedia.org/wiki/Roman_numerals">Roman numerals</a>
+can also be represented using the same number of segments. So I came up with a vii-segment display.</p>
+<div style="text-align: center">
+  <object style="width: 15%; padding: 0 0.5%" id="seg14" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg13" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg12" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg11" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg10" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <br>
+  <object style="width: 15%; padding: 0 0.5%" id="seg9" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg8" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg7" data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg6"  data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg5"  data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <br>
+  <object style="width: 15%; padding: 0 0.5%" id="seg4"  data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg3"  data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg2"  data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg1"  data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+  <object style="width: 15%; padding: 0 0.5%" id="seg0"  data="/files/2020/vii_segment_display/vii_segment_display.svg" type="image/svg+xml"></object>
+</div>
 
+<p>Enter a number and see it rendered on the vii-segment display above:<br>
+<input id="input" value="7"></p>
+
+<script>
+//   aa       gg
+//   aa c   e gg
+//   aa  c e  gg
+//   aa       gg
+//   aa  f d  gg
+//   aa f   d gg
+//   aa  bbb  gg
+let segments = {
+'I': ['a'],
+'V': ['a', 'f', 'e'],
+'X': ['c', 'd', 'e', 'f'],
+'L': ['a', 'b'],
+'C': ['e', 'd'],
+'D': ['a', 'c', 'f'],
+'M': ['a', 'c', 'e', 'g']
+};
+
+function integer_to_roman(num) {
+var digits = (num+"").split(""),
+key = ["","C","CC","CCC","CD","D","DC","DCC","DCCC","CM",
+"","X","XX","XXX","XL","L","LX","LXX","LXXX","XC",
+"","I","II","III","IV","V","VI","VII","VIII","IX"],
+roman_num = "",
+i = 3;
+while (i--) {
+  roman_num = (key[+digits.pop() + (i * 10)] || "") + roman_num;
+}
+return Array(+digits.join("") + 1).join("M") + roman_num;
+}
+
+function render(char, offset) {
+let el = document.getElementById("seg" + offset);
+for (let i=0; i<segments[char].length; i++) {
+  el.contentDocument.getElementById(segments[char][i]).style.fill = "black";
+}
+}
+
+input.addEventListener("input", _ => refresh())
+
+let refresh = () => {
+let n = input.value | 0;
+if ((n < 1) || (n > 3999)) {
+  n = 0;
+}
+
+// convert n to roman
+let r = integer_to_roman(n);
+
+// clear
+for (let i=0; i<14; i++) {
+  let el = document.getElementById("seg" + i)
+  for (let j=0; j<7; j++) {
+      el.contentDocument.getElementById("abcdefg"[j]).style.fill = "white";
+  }
+}
+
+// render the resulting string, right aligned
+for (let i=0; i<r.length; i++) {
+  render(r[i], r.length - i - 1);
+}
+};
+
+window.addEventListener("load", _ => refresh())
+</script>
