@@ -1,0 +1,357 @@
+<html>
+<head>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+    }
+    body > div {
+      margin: auto;
+    }
+    #board {
+      margin: auto;
+      position: relative;
+      height: 60vmin;
+      width: 60vmin;
+      border: 2vmin solid black;
+      background-color: black;
+      padding: 1px;
+      overflow: hidden;
+    }
+    #board div {
+      width: 12vmin;
+      height: 12vmin;
+      border: 1px solid black;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: white;
+      position: absolute;
+      font-size: 5vmin;
+    }
+    #board .good {
+      background-color: green;
+    }
+    button {
+      width: 12vmin;
+      height: 12vmin;
+    }
+    .win button {
+      background-color: #0f0;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>Alok's weird sliding puzzle (hard)</h1>
+    <p>Goal: use the arrow keys (TODO: buttons + touch gestures) to move the tiles and reorder
+      them from 1 to 16. Tiles can only be moved in pairs of colums or rows.</p>
+    <div id="board"></div>
+  </div>
+
+<script>
+// create SIZE * SIZE elements board
+let SIZE = 4;
+let arr = [];
+let buttons = [];
+let moveEnable = true;
+
+function init() {
+  for (let i=0; i<SIZE; i++) {
+    arr[i] = [];
+    for (let j=0; j<SIZE; j++) {
+      let v = 1 + (i*SIZE)+j;
+      arr[i][j] = v;
+    }
+  }
+  shuffle()
+  for (let i=0; i<SIZE; i++) {
+    for (let j=0; j<SIZE; j++) {
+      createCell(i, j, arr[i][j]);
+    }
+  }
+  markCorrect();
+}
+
+function createCell(x, y, val) {
+  _createCell(x, y, val);
+  // create a hidden cell if this cell is on an edge
+  if (x == 0) {
+    _createCell(x+4, y, val);
+    if (y == 0) {
+      _createCell(x+4, y+4, val);
+    } else if (y == 3) {
+      _createCell(x+4, y-4, val);
+    }
+  } else if (x == 3) {
+    _createCell(x-4, y, val);
+    if (y == 0) {
+      _createCell(x-4, y+4, val);
+    } else if (y == 3) {
+      _createCell(x-4, y-4, val);
+    }
+  }
+  if (y == 0) {
+    _createCell(x, y+4, val);
+  } else if (y == 3) {
+    _createCell(x, y-4, val);
+  }
+}
+
+function _createCell(x, y, val) {
+  let div = document.createElement("div");
+  div.innerText = val;
+  div.style.left = (x * 16) + "vmin";
+  div.style.top = (y * 16) + "vmin";
+  board.appendChild(div);
+}
+
+function handleKey(e) {
+  switch (e.code) {
+    case "ArrowLeft":
+      console.log("ArrowLeft");
+      move(0);
+      break;
+    case "ArrowUp":
+      console.log("ArrowUp");
+      move(1);
+      break;
+    case "ArrowDown":
+      console.log("ArrowDown");
+      move(2);
+      break;
+    case "ArrowRight":
+      console.log("ArrowRight");
+      move(3);
+      break;
+  }
+}
+
+function shuffle() {
+  for (let i=0; i<100; i++) {
+    moveModel((Math.random() * 4)|0);
+  }
+}
+
+function move(dir) {
+  if (!moveEnable) {
+    return;
+  }
+  moveEnable = false
+  // step 1: disable moves
+  // step 2: call moveAnimate for both rows/cols
+  // step 3: call moveModel for both rows/cols
+  // step 4: enable moves
+  switch (dir) {
+    case 0:
+      // left
+      moveAnimate(dir, () => {
+        moveModel(dir);
+        markCorrect();
+        moveEnable = true;
+      });
+      break
+    case 1:
+      // up
+      moveAnimate(dir, () => {
+        moveModel(dir);
+        markCorrect();
+        moveEnable = true;
+      });
+      break
+    case 2:
+      // down
+      moveAnimate(dir, () => {
+        moveModel(dir);
+        markCorrect();
+        moveEnable = true;
+      });
+      break
+    case 3:
+      // right
+      moveAnimate(dir, () => {
+        moveModel(dir);
+        markCorrect();
+        moveEnable = true;
+      });
+      break
+  }
+}
+
+function moveAnimate(dir, continuation) {
+  // step 1: find all the divs which are affected
+  // step 2: update the top/left properties of the relevant divs
+  // step 3: wrap divs around
+  // step 4: call the continuation
+  let divs = {};
+  switch (dir) {
+    case 0:
+      // left
+      for (let i=0; i<SIZE; i++) {
+        divs[arr[i][0]] = true;
+        divs[arr[i][1]] = true;
+      }
+      break;
+    case 1:
+      // up
+      for (let i=0; i<SIZE; i++) {
+        divs[arr[2][i]] = true;
+        divs[arr[3][i]] = true;
+      }
+      break;
+    case 2:
+      // down
+      for (let i=0; i<SIZE; i++) {
+        divs[arr[0][i]] = true;
+        divs[arr[1][i]] = true;
+      }
+      break;
+    case 3:
+      // right
+      for (let i=0; i<SIZE; i++) {
+        divs[arr[i][2]] = true;
+        divs[arr[i][3]] = true;
+      }
+      break;
+  }
+  let nodes = [...board.childNodes].filter(n => divs[n.innerText]);
+  alok = nodes;
+  let n = 0;
+  let f = () => {
+    if (n == 16) {
+      nodes.map(x => {
+        let n = parseInt(x.style.left);
+        // this is quite ugly...
+        if (n == -32) {
+          let t = (parseInt(x.style.top) / 16 + 4)%4;
+          x.style.left = "64vmin"
+          x.innerText = arr[1][t];
+        }
+        if (n == 80) {
+          let t = (parseInt(x.style.top) / 16 + 4)%4;
+          x.style.left = "-16vmin"
+          x.innerText = arr[2][t];
+        }
+        n = parseInt(x.style.top);
+        if (n == -32) {
+          let t = (parseInt(x.style.left) / 16 + 4)%4;
+          x.style.top = "64vmin"
+          x.innerText = arr[t][1];
+        }
+        if (n == 80) {
+          let t = (parseInt(x.style.left) / 16 + 4)%4;
+          x.style.top = "-16vmin"
+          x.innerText = arr[t][2];
+        }
+      });
+      continuation();
+    } else {
+      n++;
+      switch (dir) {
+        case 0:
+          // left
+          nodes.map(x => x.style.left = parseInt(x.style.left) - 1 + "vmin");
+          break;
+        case 1:
+          // up
+          nodes.map(x => x.style.top = parseInt(x.style.top) - 1 + "vmin");
+          break;
+        case 2:
+          // down
+          nodes.map(x => x.style.top = parseInt(x.style.top) + 1 + "vmin");
+          break;
+        case 3:
+          // right
+          nodes.map(x => x.style.left = parseInt(x.style.left) + 1 + "vmin");
+          break;
+      }
+      setTimeout(f, 20);
+    }
+  }
+  f();
+}
+
+function markCorrect() {
+  let divs = {};
+  for (let i=0; i<SIZE; i++) {
+    for (let j=0; j<SIZE; j++) {
+      if (arr[i][j] == 1 + j * 4 + i) {
+        divs[arr[i][j]] = true;
+      }
+    }
+  }
+  [...board.childNodes].map(n => n.className = divs[n.innerText] ? "good" : "bad");
+}
+
+function moveModel(dir) {
+  let t = 0;
+  switch (dir) {
+    case 0:
+      // left
+      t = arr[0][0];
+      for (let j=0; j<(SIZE-1); j++) {
+        arr[j][0] = arr[j+1][0];
+      }
+      arr[SIZE-1][0] = t;
+
+      t = arr[0][1];
+      for (let j=0; j<(SIZE-1); j++) {
+        arr[j][1] = arr[j+1][1];
+      }
+      arr[SIZE-1][1] = t;
+      break;
+    case 1:
+      // up
+      t = arr[2][0];
+      for (let j=0; j<(SIZE-1); j++) {
+        arr[2][j] = arr[2][j+1];
+      }
+      arr[2][SIZE-1] = t;
+
+      t = arr[3][0];
+      for (let j=0; j<(SIZE-1); j++) {
+        arr[3][j] = arr[3][j+1];
+      }
+      arr[3][SIZE-1] = t;
+      break;
+    case 2:
+      // down
+      t = arr[0][SIZE-1];
+      for (let j=SIZE-1; j>0; j--) {
+        arr[0][j] = arr[0][j-1];
+      }
+      arr[0][0] = t;
+
+      t = arr[1][SIZE-1];
+      for (let j=SIZE-1; j>0; j--) {
+        arr[1][j] = arr[1][j-1];
+      }
+      arr[1][0] = t;
+      break;
+    case 3:
+      // right
+      t = arr[SIZE-1][2];
+      for (let j=SIZE-1; j>0; j--) {
+        arr[j][2] = arr[j-1][2];
+      }
+      arr[0][2] = t;
+
+      t = arr[SIZE-1][3];
+      for (let j=SIZE-1; j>0; j--) {
+        arr[j][3] = arr[j-1][3];
+      }
+      arr[0][3] = t;
+      break;
+  }
+}
+
+document.addEventListener('keyup', handleKey);
+init();
+
+</script>
+
+</body>
+</html>
