@@ -1,0 +1,149 @@
+/*
+  The board and target layout depend on the window's aspect-ratio. There are
+  four different cases which need to be handled:
+  - horizontal and very wide: space on the left and right.
+  - horizontal: space on the top and bottom.
+  - vertical: space on the left and right.
+  - vertical and very narrow: space on the top and bottom.
+*/
+
+@media (min-aspect-ratio: 141/100) {
+  body {
+    grid-template-columns: 1fr 98vmin 8.17vmin 32.67vmin 1fr;
+    grid-template-rows: 1fr 65.33vmin 32.67vmin 1fr;
+  }
+
+  #board {
+    grid-column: 2 / 2;
+    grid-row: 2 / span 2;
+  }
+
+  #rules {
+    grid-column: 4 / 4;
+    grid-row: 2 / 2;
+  }
+
+  #goal {
+    grid-column: 4 / 4;
+    grid-row: 3 / 3;
+  }
+}
+
+@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 141/100) {
+  body {
+    grid-template-columns: 1vmax 69.18vmax 5.76vmax 23.06vmax 1vmax;
+    grid-template-rows: 1fr 46.12vmax 23.06vmax 1fr;
+  }
+
+  #board {
+    grid-column: 2 / 2;
+    grid-row: 2 / span 2;
+  }
+
+  #goal {
+    grid-column: 4 / 4;
+    grid-row: 3 / 3;
+  }
+}
+
+@media (max-aspect-ratio: 1/1) and (min-aspect-ratio: 100/141) {
+  body {
+    grid-template-columns: 1fr 46.12vmax 23.06vmax 1fr;
+    grid-template-rows: 1fr 69.18vmax 5.76vmax 23.06vmax 1fr;
+  }
+
+  #board {
+    grid-column: 2 / span 2;
+    grid-row: 2 / 2;
+  }
+
+  #goal {
+    grid-column: 3 / 3;
+    grid-row: 4 / 4;
+  }
+}
+
+@media (max-aspect-ratio: 100/141) {
+  body {
+    grid-template-columns: 1fr 65.33vmin 32.67vmin 1fr;
+    grid-template-rows: 1fr 98vmin 8.17vmin 32.67vmin 1fr;
+  }
+
+  #board {
+    grid-column: 2 / span 2;
+    grid-row: 2 / 2;
+  }
+
+  #goal {
+    grid-column: 3 / 3;
+    grid-row: 4 / 4;
+  }
+}
+
+body {
+  display: grid;
+  touch-action: none; /* disables zooming on mobile */
+}
+
+/* Disallow scrolling. Fixes a Safari issue with grids and fractional units.*/
+html, body {margin: 0; height: 100%; overflow: hidden}
+
+#board {
+  position: relative;
+  overflow: hidden;
+}
+
+.unsolved {
+  border: 1px solid black;
+}
+
+.solved {
+  border: 1px solid black;
+}
+
+.unsolved div {
+  border: 1vmin solid black; /* todo: make this conditional on window shape */
+}
+
+.solved div {
+  border: 0.5vmin solid #474;
+}
+
+#board div {
+  width: 25%;
+  height: 25%;
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  font-size: 7vmin; /* todo: make this conditional on window shape */
+  cursor: move;
+  user-select: none;
+}
+
+#goal {
+  border: 1px solid black;
+  position: relative;
+  overflow: hidden;
+}
+
+#goal div {
+  width: 25%;
+  height: 25%;
+  box-sizing: border-box;
+  border: 1px solid black; /* todo: make this conditional on window shape */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  font-size: 2vmin; /* todo: make this conditional on window shape */
+  user-select: none;
+}
+
+ul {
+  padding-top: 0;
+  margin-top: 0;
+}
