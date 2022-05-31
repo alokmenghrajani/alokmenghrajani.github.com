@@ -9,84 +9,96 @@
 
 @media (min-aspect-ratio: 141/100) {
   body {
-    grid-template-columns: 1fr 98vmin 8.17vmin 32.67vmin 1fr;
-    grid-template-rows: 1fr 65.33vmin 32.67vmin 1fr;
+    display: flex;
+    justify-content: center;
+    gap: 4vmin;
+    padding: 4vmin 0;
+    align-items: center;
   }
 
   #board {
-    grid-column: 2 / 2;
-    grid-row: 2 / span 2;
-  }
-
-  #rules {
-    grid-column: 4 / 4;
-    grid-row: 2 / 2;
+    height: 100%;
+    aspect-ratio: 1 / 1;
   }
 
   #goal {
-    grid-column: 4 / 4;
-    grid-row: 3 / 3;
+    height: 33%;
+    aspect-ratio: 1 / 1;
   }
 }
 
 @media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 141/100) {
   body {
-    grid-template-columns: 1vmax 69.18vmax 5.76vmax 23.06vmax 1vmax;
-    grid-template-rows: 1fr 46.12vmax 23.06vmax 1fr;
+    display: flex;
+    justify-content: center;
+    gap: 4vmax;
+    padding: 0 4vmax;
+    align-items: center;
   }
 
   #board {
-    grid-column: 2 / 2;
-    grid-row: 2 / span 2;
+    width: 100%;
+    aspect-ratio: 1 / 1;
   }
 
   #goal {
-    grid-column: 4 / 4;
-    grid-row: 3 / 3;
+    width: 33%;
+    aspect-ratio: 1 / 1;
   }
 }
 
 @media (max-aspect-ratio: 1/1) and (min-aspect-ratio: 100/141) {
   body {
-    grid-template-columns: 1fr 46.12vmax 23.06vmax 1fr;
-    grid-template-rows: 1fr 69.18vmax 5.76vmax 23.06vmax 1fr;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4vmax;
+    padding: 4vmax 0;
+    align-items: center;
   }
 
   #board {
-    grid-column: 2 / span 2;
-    grid-row: 2 / 2;
+    height: 100%;
+    aspect-ratio: 1 / 1;
   }
 
   #goal {
-    grid-column: 3 / 3;
-    grid-row: 4 / 4;
+    height: 33%;
+    aspect-ratio: 1 / 1;
   }
 }
 
 @media (max-aspect-ratio: 100/141) {
   body {
-    grid-template-columns: 1fr 65.33vmin 32.67vmin 1fr;
-    grid-template-rows: 1fr 98vmin 8.17vmin 32.67vmin 1fr;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4vmin;
+    padding: 0 4vmin;
+    align-items: center;
   }
 
   #board {
-    grid-column: 2 / span 2;
-    grid-row: 2 / 2;
+    width: 100%;
+    aspect-ratio: 1 / 1;
   }
 
   #goal {
-    grid-column: 3 / 3;
-    grid-row: 4 / 4;
+    width: 33%;
+    aspect-ratio: 1 / 1;
   }
 }
 
 body {
-  display: grid;
   touch-action: none; /* disables zooming on mobile */
 }
 
 /* Disallow scrolling. Fixes a Safari issue with grids and fractional units.*/
 html, body {margin: 0; height: 100%; overflow: hidden}
+
+* {
+  box-sizing: border-box;
+}
 
 #board {
   position: relative;
@@ -94,25 +106,24 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 }
 
 .unsolved {
-  border: 1px solid black;
+  border: 3px solid black;
 }
 
 .solved {
-  border: 1px solid black;
+  border: 1px solid #474;
 }
 
 .unsolved div {
-  border: 1vmin solid black; /* todo: make this conditional on window shape */
+  border: 3px solid black;
 }
 
 .solved div {
-  border: 0.5vmin solid #474;
+  border: 1px solid #474;
 }
 
 #board div {
   width: 25%;
   height: 25%;
-  box-sizing: border-box;
   text-align: center;
   display: flex;
   flex-direction: column;
