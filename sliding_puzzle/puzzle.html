@@ -6,7 +6,30 @@
 </head>
 <body>
   <div id="board"></div>
-  <div id="goal"></div>
+  <div id="instructions">
+    <div id="goal"></div>
+    <div>
+      <button id="showInstructions">How&nbsp;to&nbsp;play?</button>
+      <div>Level:
+        <div><input type="radio" id="levelEasy" name="level">Easy</input></div>
+        <div><input type="radio" id="levelMedium" name="level">Medium</input></div>
+        <div><input type="radio" id="levelHard" name="level">Hard</input></div>
+      </div>
+    </div>
+  </div>
+  <div id="instr">
+    <h1>Alok's Sliding Puzzle<br>
+      <em><small>A sliding puzzle with a Rubik's cube-like feel</small></em></h1>
+    <div><strong>Instructions:</strong></div>
+    <ul>
+      <li>This is a block moving puzzle. Blocks wrap around.</li>
+      <li>Using mouse, touch, or keyboard: slide the blocks on the larger board to match the smaller board
+      (keyboard keys: '1', '2', '3', '4', '5', 'T', 'G', 'B' and 'shift').</li>
+    </ul>
+    <p><strong>Source code: </strong><a href="https://github.com/alokmenghrajani/sliding_puzzle">sliding_puzzle</a></p>
+    <button id="hideInstructions">Let's play!</button>
+  </div>
+
   <script src="main.js"></script>
 </body>
 </html>
