@@ -89,10 +89,6 @@
   }
 }
 
-body {
-  touch-action: none; /* disables zooming on mobile */
-}
-
 /* Disallow scrolling. Fixes a Safari issue with grids and fractional units.*/
 html, body {margin: 0; height: 100%; overflow: hidden}
 
@@ -132,6 +128,11 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   font-size: 7vmin; /* todo: make this conditional on window shape */
   cursor: move;
   user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  /* I'm unable to disable double-tap-to-zoom on mobile. So a compromise is to
+     disable zooming on the divs. */
+  touch-action: none;
 }
 
 #goal {
