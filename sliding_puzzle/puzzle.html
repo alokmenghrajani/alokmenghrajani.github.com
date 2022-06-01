@@ -10,29 +10,40 @@
   <link rel="stylesheet" href="puzzle.css">
 </head>
 <body>
-  <div id="board"></div>
-  <div id="instructions">
-    <div id="goal"></div>
-    <div>
+  <div id="title">
+    <h1>Alok's Sliding Puzzle</h1>
+    <div style="text-align: center">
       <button id="showInstructions">How&nbsp;to&nbsp;play?</button>
-      <div>Level:
-        <div><input type="radio" id="levelEasy" name="level">Easy</input></div>
-        <div><input type="radio" id="levelMedium" name="level">Medium</input></div>
-        <div><input type="radio" id="levelHard" name="level">Hard</input></div>
-      </div>
+      <button id="showLevels">Pick level</button>
     </div>
   </div>
+  <div id="container">
+    <div id="board"></div>
+    <div id="goal"></div>
+  </div>
+  <div id="footer">
+  </div>
+
   <div id="instr">
-    <h1>Alok's Sliding Puzzle<br>
-      <em><small>A sliding puzzle with a Rubik's cube-like feel</small></em></h1>
-    <div><strong>Instructions:</strong></div>
-    <ul>
-      <li>This is a block moving puzzle. Blocks wrap around.</li>
-      <li>Using mouse, touch, or keyboard: slide the blocks on the larger board to match the smaller board
-      (keyboard keys: '1', '2', '3', '4', '5', 'T', 'G', 'B' and 'shift').</li>
-    </ul>
-    <p><strong>Source code: </strong><a href="https://github.com/alokmenghrajani/sliding_puzzle">sliding_puzzle</a></p>
-    <button id="hideInstructions">Let's play!</button>
+    <div>
+      <p><em>A sliding puzzle with a Rubik's cube-like feel.</em></p>
+      <div><strong>Instructions:</strong></div>
+      <ul>
+        <li>This is a block moving puzzle. Blocks wrap around.</li>
+        <li>Using mouse, touch, or keyboard: slide the blocks on the larger board to match the smaller board
+        (keyboard keys: '1', '2', '3', '4', '5', 'T', 'G', 'B' and 'shift').</li>
+      </ul>
+      <p><strong>Source code: </strong><a href="https://github.com/alokmenghrajani/sliding_puzzle">sliding_puzzle</a></p>
+    </div>
+  </div>
+
+  <div id="levels">
+    <div>
+      <p>Pick your level:</p>
+      <div>Easy: 2 colors, 8 degrees of movement.</div>
+      <div>Medium: 16 colors, 8 degrees of movement.</div>
+      <div>Hard: 16 colors, 4 degrees of movement.</div>
+      <p><button id="easy">Easy</button> <button id="medium">Medium</button> <button id="hard">Hard</button></p>
   </div>
 
   <script src="main.js"></script>

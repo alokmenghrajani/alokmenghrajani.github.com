@@ -1,125 +1,34 @@
-/*
-  The board and target layout depend on the window's aspect-ratio. There are
-  four different cases which need to be handled:
-  - horizontal and very wide: space on the left and right.
-  - horizontal: space on the top and bottom.
-  - vertical: space on the left and right.
-  - vertical and very narrow: space on the top and bottom.
-*/
+/**
+ * I spent several hours trying to get the layout in pure-css. I got quite far
+ * using 4 aspect-ratio based media queries. It's however tricky to get
+ * everything to work perfectly, across different browsers. So I ended up just
+ * doing the board positioning in js ¯\_(ツ)_/¯.
+ */
 
-@media (min-aspect-ratio: 133/100) {
-  body {
-    padding: 1em 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-  }
-
-  #board {
-    height: 100%;
-    aspect-ratio: 1 / 1;
-  }
-
-  #instructions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1em;
-    height: 100%;
-  }
-
-  #goal {
-    height: 33%;
-    aspect-ratio: 1 / 1;
-  }
+body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (min-aspect-ratio: 1/1) and (max-aspect-ratio: 133/100) {
-  body {
-    padding: 0 1em;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    gap: 1em;
-  }
-
-  #board {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-  }
-
-  #instructions {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1em;
-    width: 33%;
-  }
-
-  #goal {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-  }
+#title {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
 }
 
-@media (max-aspect-ratio: 1/1) and (min-aspect-ratio: 100/133) {
-  body {
-    padding: 1em 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    gap: 1em;
-  }
-
-  #board {
-    height: 100%;
-    aspect-ratio: 1 / 1;
-  }
-
-  #instructions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1em;
-    height: 33%;
-    width: 100%;
-  }
-
-  #goal {
-    width: 33%;
-    aspect-ratio: 1 / 1;
-  }
+#title button {
+  margin: 0.5em;
 }
 
-@media (max-aspect-ratio: 100/133) {
-  body {
-    padding: 0 1em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-  }
+#container {
+  height: 100%;
+  position: relative;
+}
 
-  #board {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-  }
-
-  #instructions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1em;
-    width: 100%;
-  }
-
-  #goal {
-    width: 33%;
-    aspect-ratio: 1 / 1;
-  }
+#container div {
+  position: absolute;
 }
 
 /* Disallow scrolling */
@@ -127,17 +36,10 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 
 * {
   box-sizing: border-box;
-}
-
-button {
+  /* globally disable text selection as it can interfere with the game */
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-}
-
-#board {
-  position: relative;
-  overflow: hidden;
 }
 
 .unsolved {
@@ -156,6 +58,10 @@ button {
   border: 1px solid #474;
 }
 
+#board {
+  overflow: hidden;
+}
+
 #board div {
   width: 25%;
   height: 25%;
@@ -166,18 +72,10 @@ button {
   position: absolute;
   font-size: 7vmin; /* todo: make this conditional on window shape */
   cursor: move;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  /* I'm unable to disable double-tap-to-zoom on mobile. So a compromise is to
-     disable zooming on the divs. */
+  /* I'm unable to disable double-tap-to-zoom on mobile which means we need
+     to provide a way to un-zoom. Disab;ing zooming on the divs is a good
+     middleground. */
   touch-action: none;
-}
-
-#goal {
-  border: 1px solid black;
-  position: relative;
-  overflow: hidden;
 }
 
 #goal div {
@@ -198,27 +96,67 @@ button {
 
 #instr {
   display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
-.instr #instr {
-  display: block;
-  position: absolute;
+#instr.enabled {
+  display: flex;
+}
+
+#instr > div {
   background-color: #08f;
   border: 1px solid black;
   opacity: 0.9;
-  padding: 2em;
+  padding: 1em;
   width: 75%;
 }
 
-.instr #board {
-  filter: blur(4px);
+.hide #board {
+  filter: opacity(0.2);
 }
 
-.instr #instructions {
-  filter: blur(4px);
+.hide #goal {
+  filter: opacity(0.2);
+}
+
+.hide #title {
+  filter: opacity(0.2);
+}
+
+.hide #footer {
+  filter: opacity(0.2);
 }
 
 ul {
   padding-top: 0;
   margin-top: 0;
+}
+
+#levels.enabled {
+  display: flex;
+}
+
+#levels {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+#levels > div {
+  background-color: #08f;
+  border: 1px solid black;
+  opacity: 0.9;
+  padding: 1em;
+  width: 75%;
 }
