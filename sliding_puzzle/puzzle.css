@@ -153,6 +153,8 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   position: absolute;
   font-size: 2vmin; /* todo: make this conditional on window shape */
   user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 ul {
