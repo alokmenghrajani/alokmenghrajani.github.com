@@ -63,8 +63,6 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 }
 
 #board div {
-  width: 25%;
-  height: 25%;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -79,8 +77,6 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 }
 
 #goal div {
-  width: 25%;
-  height: 25%;
   box-sizing: border-box;
   border: 1px solid black; /* todo: make this conditional on window shape */
   text-align: center;
@@ -114,7 +110,6 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   border: 1px solid black;
   opacity: 0.9;
   padding: 1em;
-  width: 75%;
 }
 
 .hide #board {
@@ -158,5 +153,4 @@ ul {
   border: 1px solid black;
   opacity: 0.9;
   padding: 1em;
-  width: 75%;
 }
