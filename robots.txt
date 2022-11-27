@@ -2,8 +2,7 @@ User-Agent: *
 Disallow: /harming/humans
 Disallow: /ignoring/human/orders
 Disallow: /harm/to/self
-
 Allow: /
 
-Sitemap: http://quaxio.com/sitemap.xml
+Sitemap: https://www.quaxio.com/sitemap.xml
 
