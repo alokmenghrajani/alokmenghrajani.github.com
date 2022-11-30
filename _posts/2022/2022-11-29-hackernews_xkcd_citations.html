@@ -1,0 +1,179 @@
+---
+layout: post
+title:  "Hacker's favorite XKCD comics"
+permalink: '/hackernews_xkcd_citations/'
+tags: ['data science', 'hackernews', 'xkcd']
+---
+<p>Ever wondered what is Hacker News' favorite xkcd comic? Wonder no more! Here
+  is how I answered this important question.</p>
+
+<h1>Easy-peasy, just use BigQuery</h1>
+<p>There's a publicly available dataset on BigQuery — Google's big data
+  analytics platform. From <a href="https://console.cloud.google.com/marketplace/product/y-combinator/hacker-news">https://console.cloud.google.com/marketplace/product/y-combinator/hacker-news</a>:</p>
+<cite><p>This dataset contains all stories and comments from Hacker News from
+  its launch in 2006 to present. Each story contains a story ID, the author that
+  made the post, when it was written, and the number of points the story
+  received.</p>
+  <p>This public dataset is hosted in Google BigQuery and is included in
+    BigQuery's 1TB/mo of free tier processing.[...]</p>
+</cite>
+<p>Great, so we can grab the <em>comments</em> table and run some queries. Let's
+  download all the comments which contains the string "xkcd" and process the data
+  locally with ruby. The post-processing will probably be easier to implement in
+  ruby than SQL, at least for me. We'll have to parse the free form text and
+  extract comic IDs to find out which comic is the most cited — and hence most
+  beloved by proxy.</p>
+<img src="/files/2022/hackernews_xkcd_citations/comments_table.png">
+<p>So I ran the following query:</p>
+<pre class="code">
+  SELECT
+    comments.id,
+    comments.by,
+    comments.author,
+    comments.text,
+    comments.time,
+    comments.deleted,
+    comments.dead,
+    comments.ranking
+  FROM
+    `bigquery-public-data.hacker_news.comments` AS comments
+  where UPPER(comments.text) LIKE '%XKCD%'
+</pre>
+<p>Since we are dealing with arbitrary text, it's better to download the result
+  as JSONL vs CSV. I also rename the file to .jsonl, since the file isn't json
+  and that's how my brain works.</p>
+<code>$ mv bq-results-20221130-092554-1669800484644.json raw.jsonl</code>
+<p>I then use some <a href="https://stedolan.github.io/jq/">jq</a> magic to count how many rows I have: <code>$ cat raw.jsonl | jq -r '.id' | wc -l</code> and get 6426.
+  Hmmm, something doesn't feel right. Let's grab the largest timestamp: <code>cat raw.jsonl | jq -r '.time' | sort | tail -n 1</code>
+  we get 1444704035, which we can convert to a human readable form: <code>date -r 1444704035</code> and
+  get "Tue Oct 13 04:40:35 CEST 2015".</p>
+<p>(yes I know, I'm doing cat pipe – For me, it's the right way to roll when
+  quickling hacking on the command line. See also this <a href="https://news.ycombinator.com/item?id=31833405">comment</a>).</p>
+<p>I go back and check the details of the table I queried: it's stale. Womp womp.</p>
+
+<h1>Take two: use BigQuery with the correct table</h1>
+<p>The <em>full</em> table is what I want. It has all the posts and comments and
+is updated regularly.</p>
+<img src="/files/2022/hackernews_xkcd_citations/full_table.png">
+<p>I craft a similar SQL query and 13 seconds later, I have what looks like the
+full dataset I need:</p>
+<pre class="code">
+  SELECT
+  f.id,
+  f.text,
+  f.dead,
+  f.by,
+  f.time,
+  f.ranking,
+  f.deleted
+FROM
+  `bigquery-public-data.hacker_news.full` AS f
+where UPPER(f.text) LIKE '%XKCD%' AND f.type="comment"
+</pre>
+<p><code>$ mv bq-results-20221130-093752-1669801126576.json raw.jsonl</code></p>
+<p><code>$ cat raw.jsonl | jq -r '.id' | wc -l</code> returns 18411. Compared
+  with <a href="https://hn.algolia.com/?dateRange=all&page=0&prefix=false&query=xkcd&sort=byPopularity&type=comment">hn.algolia.com</a>'s
+  19,524 results, we are roughly correct – unsure where the missing 1000 results
+  or so come from. Maybe algolia is fuzzy matching with some other string? Maybe
+  our dataset isn't complete?
+</p>
+
+<h1>Cleaning up the data</h1>
+<p>Our data needs a bit of cleaning up. If I run: <code>$ cat raw.jsonl | jq -r '.text' | head -n 50 | grep --color "xkcd"</code>
+, I see results with a mix of html encoding a raw html:</p>
+<pre>
+&lt;a href="http://xkcd.com/974/" rel="nofollow">http://xkcd.com/974/&lt;/a>
+&lt;a href="https:&amp;#x2F;&amp;#x2F;xkcd.com&amp;#x2F;1235&amp;#x2F;" rel="nofollow">https:&amp;#x2F;&amp;#x2F;xkcd.com&amp;#x2F;1235&amp;#x2F;&lt;/a>
+</pre>
+
+<p>So I write a short ruby <a href="https://github.com/alokmenghrajani/hackernews_xkcd_citations/blob/main/unescape.rb">program</a> to ingest the JSONL, unescape the html and
+  save the result back as JSONL. I wish I could do this directly with jq, but I
+  didn't find a way to do it.</p>
+
+<p>I now need to deduplicate data. E.g. https://m.xkcd.com/2116/ is the same as
+  http://www.xkcd.com/2116 and as http://xkcd.com/2116/. I also need to map
+  imgs.xkcd.com links (e.g. https://imgs.xkcd.com/comics/python_environment.png)
+  back to the comic IDs. In order to build the mapping of image files to IDs, I
+  could crawl xkcd.com, use some kind of search API, manually map the files, etc.
+  I opted for the xkcd's JSON endpoint:</p>
+<pre class="code">
+$ mkdir imgs
+$ cd imgs
+$ for i in `seq 1 2700`; do curl -o $i.json https://xkcd.com/$i/info.0.json; done
+$ for i in `seq 1 2700`; do cat $i.json|jq -c >> ../xkcd.jsonl; done
+cat: 404.json: No such file or directory
+$ cd..
+</pre>
+<p>Fun fact: there's no comic <a href="https://xkcd.com/404">404</a>!</p>
+<p>Now I can write a ruby program (the last one?) which will extract comic IDs
+  from the comments. I'll take m.xkcd.com into account but ignore other
+  subdomains, such as <a href="https://blog.xkcd.com/">blog.xkcd.com</a>,
+  <a href="https://what-if.xkcd.com/">what-if.xkcd.com</a>, forums.xkcd.com (RIP),
+  <a href="https://uni.xkcd.com/">uni.xkcd.com</a>,
+  <a href="https://3d.xkcd.com/">3d.xkcd.com</a>, etc.</p>
+
+<h1>Results</h1>
+<p>Top 10 most cited XKCD comics on Hacker News:</p>
+<img src="/files/2022/hackernews_xkcd_citations/bar_chart.png">
+<ol>
+  <li><a href="https://xkcd.com/927/">Standards</a> cited 1192 times.
+    <img src="https://imgs.xkcd.com/comics/standards.png"></li>
+  <li><a href="https://xkcd.com/538/">Security</a> cited 596 times.
+    <img src="https://imgs.xkcd.com/comics/security.png"></li>
+  <li><a href="https://xkcd.com/1053/">Ten Thousand</a> cited 540 times.
+    <img src="https://imgs.xkcd.com/comics/ten_thousand.png"></li>
+  <li><a href="https://xkcd.com/386/">Duty Calls</a> cited 342 times.
+    <img src="https://imgs.xkcd.com/comics/duty_calls.png"></li>
+  <li><a href="https://xkcd.com/1172/">Workflow</a> cited 291 times.
+    <img src="https://imgs.xkcd.com/comics/workflow.png"></li>
+  <li><a href="https://xkcd.com/936/">Password Strength</a> cited 251 times.
+    <img src="https://imgs.xkcd.com/comics/password_strength.png"></li>
+  <li><a href="https://xkcd.com/882/">Significant</a> cited 233 times.
+    <img src="https://imgs.xkcd.com/comics/significant.png"></li>
+  <li><a href="https://xkcd.com/1357/">Free Speech</a> cited 228 times.
+    <img src="https://imgs.xkcd.com/comics/free_speech.png"></li>
+  <li><a href="https://xkcd.com/810/">Constructive</a> cited 189 times.
+    <img src="https://imgs.xkcd.com/comics/constructive.png"></li>
+  <li><a href="https://xkcd.com/1205/">Is It Worth the Time?</a> cited 180 times.
+    <img src="https://imgs.xkcd.com/comics/is_it_worth_the_time.png"></li>
+</ol>
+
+<h1>Other statistics</h1>
+<p>What happens if we look at the comic cited by the most number of different
+  people? Pretty much the same result – top 7 are unchanged. 9th place gets
+  replaced with <a href="https://xkcd.com/327/">Exploits of a Mom</a> and the
+  8-10th places get switched around.</p>
+<p>Person who cites the most XKCDs or person who cites the most different XKCDs?
+  In both cases, it's <a href="https://news.ycombinator.com/user?id=TeMPOraL">TeMPOraL</a>.</p>
+
+<h1>Caveats</h1>
+<p>Some images didn't get mapped back to their comic id. E.g.
+  https://imgs.xkcd.com/comics/python_environment_2x.png which is a larger version
+  of https://imgs.xkcd.com/comics/python_environment.png. Some comics, such as
+  <a href="https://xkcd.com/1190/">Time</a> and <a href="https://xkcd.com/​​1335/">Now</a>
+  have many images. I could manually map these but we are dealing with only a
+  handful of entries. Ignoring these is fine.</p>
+<p>In order to parse comments such as "xkcd 538 ($5 wrench) is also up there",
+  I wrote some <a href="https://github.com/alokmenghrajani/hackernews_xkcd_citations/blob/main/extract1.rb#L30">ugly regular expression</a>.
+  I'm probably failing to parse some IDs and also grabbing IDs incorrectly.
+  That's inevitable when dealing with freeform text. The effect of parsing
+  (or misparsing) on the top 10 is likely negligible: I tested by writing
+  different regular expressions and the top 10 remained the same.</p>
+
+<h1>My personal favorites</h1>
+<p>Let's see how the top 10 compares with my personal favorites:</p>
+<a href="https://xkcd.com/303/">Compiling</a>, <a href="https://xkcd.com/​​1053/">Ten Thousand</a>,
+<a href="https://xkcd.com/386/">Duty Calls</a>, <a href="https://xkcd.com/927/">Standards</a>,
+<a href="https://xkcd.com/327/">Exploits of a Mom</a>, <a href="https://xkcd.com/612/">Estimation</a>,
+<a href="https://xkcd.com/149/">Sandwich</a>, <a href="https://xkcd.com/202/">YouTube</a>,
+<a href="https://xkcd.com/356/">Nerd Sniping</a>, <a href="https://xkcd.com/chesscoaster/">Chess Coaster</a>,
+<a href="https://xkcd.com/937/">TornadoGuard</a>, <a href="https://xkcd.com/221/">Random Number</a>,
+<a href="https://xkcd.com/541/">TED Talk</a>, <a href="https://xkcd.com/619/">Supported Features</a>,
+<a href="https://xkcd.com/349/">Success</a>, <a href="https://xkcd.com/435/">Purity</a>,
+<a href="https://xkcd.com/978/">Citogenesis</a>, and <a href="https://xkcd.com/162/">Angular Momentum</a>.
+
+<p>I share a few common ones with the top 10. The main difference probably comes from me
+  either liking less popular comics or some comics being easier to cite than others.</p>
+
+<h1>Raw data and code</h1>
+<p>You can access the raw jsonp files and my scrappy ruby code: <a href="https://github.com/alokmenghrajani/hackernews_xkcd_citations">https://github.com/alokmenghrajani/hackernews_xkcd_citations</a></p>
