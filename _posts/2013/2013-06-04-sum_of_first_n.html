@@ -1,6 +1,753 @@
 ---
 layout: post
-title:  'Sum of first n natural numbers'
-external: 'sum_of_first_n/'
-tags: []
+title:  'Sum of first <math><mi>n</mi></math> natural numbers'
+permalink: '/sum_of_first_n/'
+tags: ['math']
 ---
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { scale: 75}
+  });
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  <p>
+    A classic problem in discete mathematics is finding the sum of
+    the first <math><mi>n</mi></math> natural numbers:
+    <math>
+      <mn>1</mn>
+      <mo>+</mo>
+      <mn>2</mn>
+      <mo>+</mo>
+      <mn>3</mn>
+      <mo>+</mo>
+      <mi>&hellip;</mi>
+      <mo>+</mo>
+      <mi>n</mi>
+    </math>.
+    This sum can also be written as:
+    <math>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mi>n</mi>
+        </munderover>
+      </mstyle>
+      <mrow>
+        <mi>k</mi>
+      </mrow>
+    </math>
+  </p>
+  <p>
+    There are various ways to find the answer to this question. If you take a college level discrete mathematics class, you will learn
+    various techniques. I'm going to give a quick overview of some of these techniques applied to this specific case.
+  </p>
+
+<section>
+  <div class="page-header"><h3>Method 1: matching pairs</h3></div>
+  <p>
+    Let's call the sum we are looking for <math><msub><mi>S</mi><mi>n</mi></msub></math>. The idea is to rewrite
+    <math><msub><mi>S</mi><mi>n</mi></msub></math> as the sum from
+    <math><mi>n</mi></math> to <math><mn>1</mn></math> and then add both equations.
+    Each element of the sum will nicely pair up:
+  </p>
+  <div>
+    <math>
+      <mtable>
+        <mtr>
+          <mtd columnalign="right"><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo></mtd>
+          <mtd><mn>1</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mn>2</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mn>3</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>&hellip;</mi></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mrow><mi>n</mi><mn>-2</mn></mrow></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mrow><mi>n</mi><mn>-1</mn></mrow></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>n</mi></mtd>
+        </mtr>
+        <mtr>
+          <mtd columnalign="right"><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo></mtd>
+          <mtd><mi>n</mi></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mrow><mi>n</mi><mn>-1</mn></mrow></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mrow><mi>n</mi><mn>-2</mn></mrow></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>&hellip;</mi></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mn>3</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mn>2</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mn>1</mn></mtd>
+        </mtr>
+        <mtr>
+          <mtd columnalign="right"><msub><mrow><mn>2</mn><mo>&sdot;</mo><mi>S</mi></mrow><mi>n</mi></msub><mo>=</mo></mtd>
+          <mtd><mn>1</mn><mo>+</mo><mi>n</mi></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mn>2</mn><mo>+</mo><mrow><mi>n</mi><mn>-1</mn></mrow></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mn>3</mn><mo>+</mo><mrow><mi>n</mi><mn>-2</mn></mrow></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>&hellip;</mi></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mrow><mi>n</mi><mn>-2</mn></mrow><mo>+</mo><mn>3</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mrow><mi>n</mi><mn>-1</mn></mrow><mo>+</mo><mn>2</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>n</mi><mo>+</mo><mn>1</mn></mtd>
+        </mtr>
+        <mtr>
+          <mtd columnalign="right"><mo>=</mo></mtd>
+          <mtd><mi>n</mi><mo>+</mo><mn>1</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>n</mi><mo>+</mo><mn>1</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>n</mi><mo>+</mo><mn>1</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>&hellip;</mi></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>n</mi><mo>+</mo><mn>1</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>n</mi><mo>+</mo><mn>1</mn></mtd>
+          <mtd><mo>+</mo></mtd>
+          <mtd><mi>n</mi><mo>+</mo><mn>1</mn></mtd>
+        </mtr>
+      </mtable>
+    </math>
+  </div><br/>
+
+  <p>Which leads to: <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><mfrac><mrow><mi>n</mi><mfenced separators=""><mi>n</mi><mo>+</mo><mn>1</mn></mfenced></mrow><mn>2</mn></mfrac></math>. It is believed that Gauss discovered this method when he was just 9 years old.</p>
+</section>
+
+<section>
+  <div class="page-header"><h3>Method 2: proof by induction</h3></div>
+  <p>
+    If you have some intuition about the result or want to prove that Gauss found
+    the right answer, you can prove that the result is right by induction.
+  </p>
+  <p>
+    Let's prove that the solution is correct for <math><mi>n</mi><mo>=</mo><mn>1</mn></math>:
+  </p>
+  <div>
+    <math>
+      <msub><mi>S</mi><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow></msub><mo>=</mo>
+      <mfrac><mrow><mi>n</mi><mfenced separators=""><mi>n</mi><mo>+</mo><mn>1</mn></mfenced></mrow><mn>2</mn></mfrac>
+      <mo>=</mo><mfrac><mrow><mn>1</mn><mfenced separators=""><mn>1</mn><mo>+</mo><mn>1</mn></mfenced></mrow><mn>2</mn></mfrac>
+      <mo>=</mo><mn>1</mn>
+    </math>
+  </div><br/>
+  <p>
+    And then let's prove that <math><msub><mi>S</mi><mi>n</mi></msub></math> is correct if <math><msub><mi>S</mi><mrow><mi>n</mi><mo>-</mo><mn>1</mn></mrow></msub></math> is correct:
+  </p>
+  <div>
+    <math>
+      <msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><msub><mi>S</mi><mrow><mi>n</mi><mo>-</mo><mn>1</mn></mrow></msub><mo>+</mo><mi>n</mi>
+      <mo>=</mo><mfrac><mrow><mfenced separators=""><mi>n</mi><mo>-</mo><mn>1</mn></mfenced><mfenced separators=""><mi>n</mi><mo>-</mo><mn>1</mn><mo>+</mo><mn>1</mn></mfenced></mrow><mn>2</mn></mfrac><mo>+</mo><mi>n</mi>
+      <mo>=</mo><mfrac><mrow><mi>n</mi><mfenced separators=""><mi>n</mi><mo>+</mo><mn>1</mn></mfenced></mrow><mn>2</mn></mfrac>
+      <mspace width="1em"/><mtext mathsize="small">QED</mtext>
+    </math>
+  </div>
+</section>
+
+<section>
+  <div class="page-header"><h3>Method 3: formal notation</h3></div>
+  <p>
+    We can express the idea behind the first method above by using a formal notation. We need to use 4 properties:
+  </p>
+  <div>
+    <math>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>&in;</mo>
+            <mn>K</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mi>c</mi>
+      <mo></mo>
+      <msub><mi>a</mi><mi>k</mi></msub>
+      <mo>=</mo>
+      <mi>c</mi>
+      <mo></mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>&in;</mo>
+            <mn>K</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <msub><mi>a</mi><mi>k</mi></msub>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>&in;</mo>
+            <mn>K</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mfenced separators="">
+        <msub><mi>a</mi><mi>k</mi></msub>
+        <mo>+</mo>
+        <msub><mi>b</mi><mi>k</mi></msub>
+      </mfenced>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>&in;</mo>
+            <mn>K</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <msub><mi>a</mi><mi>k</mi></msub>
+      <mo>+</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>&in;</mo>
+            <mn>K</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <msub><mi>b</mi><mi>k</mi></msub>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>&in;</mo>
+            <mn>K</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <msub><mi>a</mi><mi>k</mi></msub>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mrow><mi>p</mi><mfenced separators=""><mi>k</mi></mfenced></mrow>
+            <mo>&in;</mo>
+            <mn>K</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <msub><mi>a</mi>
+        <mrow><mi>p</mi><mfenced separators=""><mi>k</mi></mfenced></mrow>
+      </msub>
+      <mspace width="1em"/><mtext mathsize="small">
+        Where p(k) is a permutation of k.
+      </mtext>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mn>0</mn>
+          </mrow>
+          <mi>n</mi>
+        </munderover>
+      </mstyle>
+      <mn>1</mn>
+      <mo>=</mo>
+      <mi>n</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+      <mspace width="1em"/><mtext mathsize="small">
+        (trivial to prove by induction)
+      </mtext>
+    </math>
+  </div><br/>
+
+  <p>We then have:</p>
+  <div>
+    <math>
+      <msub><mi>S</mi><mi>n</mi></msub>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>&leq;</mo>
+            <mi>k</mi>
+            <mo>&leq;</mo>
+            <mn>n</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mi>k</mi>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>&leq;</mo>
+            <mrow><mi>n</mi><mo>-</mo><mi>k</mi></mrow>
+            <mo>&leq;</mo>
+            <mn>n</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mi>n</mi><mo>-</mo><mi>k</mi>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>&leq;</mo>
+            <mi>k</mi>
+            <mo>&leq;</mo>
+            <mn>n</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mi>n</mi><mo>-</mo><mi>k</mi>
+    </math>
+  </div><br/>
+
+  <p>And we can add the first and last sum:</p>
+  <div>
+    <math>
+      <mn>2</mn><mo></mo><msub><mi>S</mi><mi>n</mi></msub>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>&leq;</mo>
+            <mi>k</mi>
+            <mo>&leq;</mo>
+            <mn>n</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mi>k</mi>
+      <mo>+</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>&leq;</mo>
+            <mi>k</mi>
+            <mo>&leq;</mo>
+            <mn>n</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mi>n</mi><mo>-</mo><mi>k</mi>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>&leq;</mo>
+            <mi>k</mi>
+            <mo>&leq;</mo>
+            <mn>n</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mi>n</mi>
+      <mo>=</mo>
+      <mi>n</mi>
+      <mo></mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mn>0</mn>
+            <mo>&leq;</mo>
+            <mi>k</mi>
+            <mo>&leq;</mo>
+            <mn>n</mn>
+          </mrow>
+        </munderover>
+      </mstyle>
+      <mn>1</mn>
+      <mo>=</mo>
+      <mi>n</mi>
+      <mo></mo>
+      <mfenced separators=""><mi>n</mi><mo>+</mo><mi>1</mi></mfenced>
+    </math>
+  </div>
+</section>
+
+<section>
+  <div class="page-header"><h3>Method 4: perturbation</h3></div>
+  <p>
+    Let's define the sum of the square of every number from <math><mn>1</mn></math> to
+    <math><mi>n</mi></math>:</p>
+  <div>
+    <math>
+      <msubsup><mi>S</mi><mo>n</mo><mi>'</mi></msubsup>
+      <mo>=</mo>
+      <mn>1</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>4</mn><mo>+</mo>
+      <mi>&hellip;</mi>
+      <mo>+</mo>
+      <mi>n</mi>
+    </math>
+  </div><br/>
+
+  <p>We then have:</p>
+  <div>
+    <math>
+      <msubsup><mi>S</mi><mo>n</mo><mi>'</mi></msubsup>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mi>n</mi>
+        </munderover>
+      </mstyle>
+      <msup><mi>k</mi><mn>2</mn></msup>
+      <mo>=</mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mn>2</mn>
+          </mrow>
+          <mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow>
+        </munderover>
+      </mstyle>
+      <msup>
+        <mfenced separators=""><mi>k</mi><mo>-</mo><mn>1</mn></mfenced>
+        <mn>2</mn>
+      </msup>
+      <mo>=</mo>
+      <mfenced separators="">
+        <mstyle displaystyle="true">
+          <munderover>
+            <mo>&sum;</mo>
+            <mrow>
+              <mi>k</mi>
+              <mo>=</mo>
+              <mn>2</mn>
+            </mrow>
+            <mi>n</mi>
+          </munderover>
+        </mstyle>
+        <msup>
+          <mfenced separators=""><mi>k</mi><mo>-</mo><mn>1</mn></mfenced>
+          <mn>2</mn>
+        </msup>
+      </mfenced>
+      <mo>+</mo>
+      <msup><mi>n</mi><mn>2</mn></msup>
+    </math>
+  </div><br/>
+
+  <p>Since the last sum is 0 for <math><mi>k</mi><mo>=</mo><mn>1</mn></math>, we can write:</p>
+  <div>
+    <math>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mi>n</mi>
+        </munderover>
+      </mstyle>
+      <msup><mi>k</mi><mn>2</mn></msup>
+      <mo>=</mo>
+      <mfenced separators="">
+        <mstyle displaystyle="true">
+          <munderover>
+            <mo>&sum;</mo>
+            <mrow>
+              <mi>k</mi>
+              <mo>=</mo>
+              <mn>1</mn>
+            </mrow>
+            <mi>n</mi>
+          </munderover>
+        </mstyle>
+        <msup>
+          <mi>k</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>-</mo>
+        <mn>2</mn><mo></mo><mi>k</mi>
+        <mo>+</mo>
+        <mn>1</mn>
+      </mfenced>
+      <mo>+</mo>
+      <msup><mi>n</mi><mn>2</mn></msup>
+    </math>
+  </div><br/>
+
+  <p>We can cancel the
+    <math>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mi>n</mi>
+        </munderover>
+      </mstyle>
+      <msup><mi>k</mi><mn>2</mn></msup>
+    </math>:
+  </p>
+  <div>
+    <math>
+      <mn>2</mn>
+      <mo></mo>
+      <mstyle displaystyle="true">
+        <munderover>
+          <mo>&sum;</mo>
+          <mrow>
+            <mi>k</mi>
+            <mo>=</mo>
+            <mn>1</mn>
+          </mrow>
+          <mi>n</mi>
+        </munderover>
+      </mstyle>
+      <mi>k</mi>
+      <mo>=</mo>
+      <mi>n</mi>
+      <mo>+</mo>
+      <msup><mi>n</mi><mn>2</mn></msup>
+    </math>
+  </div><br/>
+
+  <p>Which leads to: <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><mfrac><mrow><mi>n</mi><mfenced separators=""><mi>n</mi><mo>+</mo><mn>1</mn></mfenced></mrow><mn>2</mn></mfrac></math>
+</section>
+
+<section>
+  <div class="page-header"><h3>Method 5: repertoire</h3></div>
+  <p>
+    The repertoire method helps solve general forms of equations, e.g.:
+  </p>
+  <div>
+    <math>
+      <mfenced open="{" separators="" close="">
+        <mtable>
+          <mtr>
+            <mtd columnalign="right"><msub><mi>S</mi><mi>0</mi></msub><mo>=</mo></mtd>
+            <mtd columnalign="left"><mi>&alpha;</mi></mtd>
+          </mtr>
+          <mtr>
+            <mtd columnalign="right"><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo></mtd>
+            <mtd columnalign="left">
+              <msub><mi>S</mi><mrow><mi>n</mi><mo>-</mo><mn>1</mn></mrow></msub>
+              <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+            </mtd>
+          </mtr>
+        </mtable>
+      </mfenced>
+    </math>
+  </div><br/>
+
+  <p>This method works when the solution has the form:</p>
+  <div>
+    <math>
+      <msub><mi>S</mi><mi>n</mi></msub><mo>=</mo>
+      <mi>A</mi><mfenced separators=""><mi>n</mi></mfenced><mo></mo><mi>&alpha;</mi><mo>+</mo>
+      <mi>B</mi><mfenced separators=""><mi>n</mi></mfenced><mo></mo><mi>&beta;</mi><mo>+</mo>
+      <mi>C</mi><mfenced separators=""><mi>n</mi></mfenced><mo></mo><mi>&gamma;</mi>
+    </math>
+  </div><br/>
+
+  <p>We first set <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><mn>1</mn></math>:</p>
+  <div>
+    <math>
+      <mfenced open="{" separators="" close="">
+        <mtable columnalign="left">
+          <mtr>
+            <mtd><mn>1</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+          </mtr>
+          <mtr>
+            <mtd><mn>1</mn><mo>=</mo><mn>1</mn>
+              <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+            </mtd>
+          </mtr>
+        </mtable>
+      </mfenced>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mo selected="true">&rArr;</mo>
+      <mi>&alpha;</mi><mo>=</mo><mn>1</mn>
+      <mtext>,&nbsp;</mtext><mi>&beta;</mi><mo>=</mo><mn>0</mn>
+      <mtext>,&nbsp;</mtext><mi>&gamma;</mi><mo>=</mo><mn>0</mn>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mo selected="true">&rArr;</mo>
+      <mi>A</mi><mfenced separators=""><mi>n</mi></mfenced><mo>=</mo><mn>1</mn>
+    </math>
+  </div><br/><br/>
+
+  <p>We then set <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><mi>n</mi></math>:</p>
+  <div>
+    <math>
+      <mfenced open="{" separators="" close="">
+        <mtable columnalign="left">
+          <mtr>
+            <mtd><mn>0</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+          </mtr>
+          <mtr>
+            <mtd><mi>n</mi><mo>=</mo><mi>n</mi><mo>-</mo><mn>1</mn>
+              <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+            </mtd>
+          </mtr>
+        </mtable>
+      </mfenced>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mo selected="true">&rArr;</mo>
+      <mi>&alpha;</mi><mo>=</mo><mn>0</mn>
+      <mtext>,&nbsp;</mtext><mi>&beta;</mi><mo>=</mo><mn>1</mn>
+      <mtext>,&nbsp;</mtext><mi>&gamma;</mi><mo>=</mo><mn>0</mn>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mo selected="true">&rArr;</mo>
+      <mi>B</mi><mfenced separators=""><mi>n</mi></mfenced><mo>=</mo><mi>n</mi>
+    </math>
+  </div><br/><br/>
+
+  <p>Finally, we set <math><msub><mi>S</mi><mi>n</mi></msub><mo>=</mo><msup><mi>n</mi><mn>2</mn></msup></math>:</p>
+  <div>
+    <math>
+      <mfenced open="{" separators="" close="">
+        <mtable columnalign="left">
+          <mtr>
+            <mtd><mn>0</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+          </mtr>
+          <mtr>
+            <mtd><msup><mi>n</mi><mn>2</mn></msup><mo>=</mo>
+              <msup><mfenced separators=""><mi>n</mi><mo>-</mo><mn>1</mn></mfenced><mn>2</mn></msup>
+              <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+            </mtd>
+          </mtr>
+        </mtable>
+      </mfenced>
+      <mo selected="true">&rArr;</mo>
+      <mfenced open="{" separators="" close="">
+        <mtable columnalign="left">
+          <mtr>
+            <mtd><mn>0</mn><mo>=</mo><mi>&alpha;</mi></mtd>
+          </mtr>
+          <mtr>
+            <mtd><msup><mi>n</mi><mn>2</mn></msup><mo>=</mo>
+              <msup><mi>n</mi><mn>2</mn></msup><mo>-</mo>
+              <mn>2</mn><mo></mo><mi>n</mi><mo>+</mo>
+              <mn>1</mn>
+              <mo>+</mo><mi>&beta;</mi><mo>+</mo><mi>&gamma;</mi><mo></mo><mi>n</mi>
+            </mtd>
+          </mtr>
+        </mtable>
+      </mfenced>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mo selected="true">&rArr;</mo>
+      <mi>&alpha;</mi><mo>=</mo><mn>0</mn>
+      <mtext>,&nbsp;</mtext><mi>&beta;</mi><mo>=</mo><mn>-1</mn>
+      <mtext>,&nbsp;</mtext><mi>&gamma;</mi><mo>=</mo><mn>2</mn>
+    </math>
+  </div><br/>
+
+  <div>
+    <math>
+      <mo selected="true">&rArr;</mo>
+      <mo>-</mo><mi>B</mi><mfenced separators=""><mi>n</mi></mfenced><mo>+</mo>
+      <mn>2</mn><mo></mo><mi>C</mi><mfenced separators=""><mi>n</mi></mfenced>
+      <mo>=</mo><msup><mi>n</mi><mn>2</mn></msup>
+    </math>
+  </div><br/><br/>
+
+  <p>Which results in the general solution:</p>
+
+  <div>
+    <math>
+      <msub><mi>S</mi><mi>n</mi></msub><mo>=</mo>
+      <mi>&alpha;</mi><mo>+</mo>
+      <mi>n</mi><mo></mo><mi>&beta;</mi><mo>+</mo>
+      <mfrac><mrow><msup><mi>n</mi><mn>2</mn></msup><mo>+</mo><mi>n</mi></mrow><mn>2</mn></mfrac><mo></mo>
+      <mi>&gamma;</mi>
+    </math>
+  </div><br/>
+
+</section>
+
+<section>
+  <h3>Links</h3>
+  <ul>
+    <li><a href="http://www.maths.ed.ac.uk/~aar/papers/knuthore.pdf">Concrete Mathematics</a> by Ronald L. Graham, Donald E. Knuth and Oren Patashnik</li>
+    <li><a href="http://en.wikipedia.org/wiki/Carl_Friedrich_Gauss">Carl Friedrich Gauss</a> (wikipedia.org)</li>
+    <li><a href="http://pindancing.blogspot.com/2011/02/repertoire-method-in-concrete.html">The repertoire method in "Concrete Mathematics"</a></li>
+  </ul>
+</section>
