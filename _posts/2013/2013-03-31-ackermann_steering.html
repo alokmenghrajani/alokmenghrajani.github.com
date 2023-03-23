@@ -31,10 +31,10 @@ svg { display: block; margin: 30px auto}
 <script>
 var pressed={};
 
-$('#left').mousedown(e => pressed[37] = true);
-$('#left').mouseup(e => pressed[37] = false);
-$('#right').mousedown(e => pressed[39] = true);
-$('#right').mouseup(e => pressed[39] = false);
+$('#left').bind('touchstart mousedown', e => pressed[37] = true);
+$('#left').bind('touchend mouseup', e => pressed[37] = false);
+$('#right').bind('touchstart mousedown', e => pressed[39] = true);
+$('#right').bind('touchend mouseup', e => pressed[39] = false);
 
 document.onkeydown=function(e) {
   e = e || window.event
