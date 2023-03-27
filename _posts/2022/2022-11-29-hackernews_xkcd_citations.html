@@ -1,11 +1,12 @@
 ---
 layout: post
-title:  "Hacker's favorite XKCD comics"
+title:  "Hacker News' favorite XKCD comics"
 permalink: '/hackernews_xkcd_citations/'
 tags: ['data science', 'hackernews', 'xkcd']
 ---
 <p>Ever wondered what is Hacker News' favorite xkcd comic? Wonder no more! Here
-  is how I answered this important question.</p>
+  is how I answered this important question. <small>(By favorite, I mean the
+most cited.)</small></p>
 
 <h1>Easy-peasy, just use BigQuery</h1>
 <p>There's a publicly available dataset on BigQuery — Google's big data
@@ -48,8 +49,8 @@ tags: ['data science', 'hackernews', 'xkcd']
   we get 1444704035, which we can convert to a human readable form: <code>date -r 1444704035</code> and
   get "Tue Oct 13 04:40:35 CEST 2015".</p>
 <p>(yes I know, I'm doing cat pipe – For me, it's the right way to roll when
-  quickling hacking on the command line. See also this <a href="https://news.ycombinator.com/item?id=31833405">comment</a>).</p>
-<p>I go back and check the details of the table I queried: it's stale. Womp womp.</p>
+  quickly hacking on the command line. See also this <a href="https://news.ycombinator.com/item?id=31833405">comment</a>).</p>
+<p>I go back and check the details of the table I queried: it's stale. <a href="https://www.youtube.com/watch?v=CQeezCdF4mk">Womp womp</a>.</p>
 
 <h1>Take two: use BigQuery with the correct table</h1>
 <p>The <em>full</em> table is what I want. It has all the posts and comments and

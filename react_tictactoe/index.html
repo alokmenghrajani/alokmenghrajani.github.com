@@ -94,86 +94,10 @@
 </head>
 <body>
   <div class="container-narrow">
-    <div class="menu visible-desktop">
-      <div class="profile">
-        <p class="pull-right"><a href="../">&larr; Back to home</a></p>
-      </div>
-    </div>
-
-    <div class="jumbotron">
-      <h1>Combining React and Firebase <div><small>sample TicTacToe game &amp; chat widget</small></div></h1>
-      <div class="lead">
-        <p>
-          I thought that it would be fun to experiment with <a href="http://facebook.github.io/react/index.html" class="external">React</a>
-          and <a href="https://www.firebase.com/index.html" class="external">Firebase</a>. I therefore implemented a TicTacToe game and a simple Chat widget.
-          Each person who is viewing this page is matched up against another random visitor.
-        </p>
-      </div>
-    </div>
-
     <section>
       <div class="page-header"><h3>Try it out!</h3></div>
       <div id="game" class="row-fluid game">Waiting to connect...</div>
     </section>
-
-    <section>
-      <div class="page-header"><h3>Some info</h3></div>
-      <div>
-        <p>
-          When I started off, I was neither familiar with React, nor with Firebase. Intuitively,
-          I figured that these two technologies should work great together.
-        </p>
-        <p>
-          React removes the need to manually do UI bookkeeping. The DOM gets updated automatically, as
-          the state of things change.
-        </p>
-        <p>
-          Firebase makes it easy to build distributed web applications. It also fits nicely with
-          the reactive paradigm: all reads are handled asynchronously in callback functions.
-        </p>
-        <p>
-          It didn't take too long to beat the learning curves of both technologies and get a working prototype. I
-          initially had a few race conditions, and it took a few hours to clean things up.
-        </p>
-        <p>
-          Note: using Firebase lets me host this app directly on github pages, which is nice. It however
-          implies that anyone can cheat and modify random game data.
-        </p>
-        <p>
-          The interesting pieces of code are:
-          <ul>
-            <li>
-              Matching players to each other (a player either waits to start a game or joins someone who is waiting).
-              I used Firebase's transaction system to achieve this. I noticed the browser (at least Chrome) would sometimes
-              setup two Firebase connections, so I had to be careful to write data in the onDisconnect's callback.
-            </li>
-            <li>
-              Handling disconnects: when a disconnect happens, we can deal with it in three ways:
-              <ol>
-                <li>If the player waiting to play disconnects, the disconnect can be handled transparently (the player who came second
-                  just tries to find another player).</li>
-                <li>If a player disconnects while a game is on, the game ends in an incomplete state.</li>
-                <li>If a player disconnects after the game has ended, the disconnect can be simply ignored.</li>
-              </ol>
-            </li>
-          </ul>
-        </p>
-        <p>
-          Check out the source code at:
-          <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/tree/master/react_tictactoe/">https://github.com/alokmenghrajani/alokmenghrajani.github.com/tree/master/react_tictactoe/</a>
-        </p>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div style="float: left" class="fb-like" data-send="false" data-width="450" data-show-faces="false"></div>
-      <p class="pull-right visible-desktop">
-        <a href="https://github.com/alokmenghrajani/alokmenghrajani.github.com/issues/new">contact me</a>
-        <span class="vbar"></span>
-        <a href="#">back to top &uarr;</a>
-      </p>
-    </footer>
-  </div>
 
   <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
   <script type="text/jsx" src="wait_or_join.js"></script>
