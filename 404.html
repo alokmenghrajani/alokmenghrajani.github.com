@@ -6,8 +6,10 @@ permalink: /404.html
 <div class="index">
   <h1>Sorry, the page you're trying to access doesn't exist.</h1>
   <br>
-  <p>Closest match: <a id="best"></a> (<span id="bestTitle"></span>).</p>
-  <p>Otherwise, try <a href="{{ site.baseurl }}/">going to the homepage</a>.</p>
+  <ul>
+    <li id="closestMatch" style="display: none"><p>Closest match: <a id="best"></a> (<span id="bestTitle"></span>).</p></li>
+    <li><p>Try going to the <a href="{{ site.baseurl }}/">homepage</a>.</p></li>
+  </ul>
 </div>
 
 <script>
@@ -139,4 +141,5 @@ if (bestUrl.url[bestUrl.url.length-1] == "/") {
 } else {
   best.href = bestUrl.url + "/" + current.search;
 }
+closestMatch.style.display = "";
 </script>
