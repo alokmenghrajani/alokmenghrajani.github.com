@@ -11,8 +11,8 @@ permalink: /404.html
 </div>
 
 <script>
-// levenstein from https://github.com/gustf/js-levenshtein
-function levenstein(a, b) {
+// levenshtein from https://github.com/gustf/js-levenshtein
+function levenshtein(a, b) {
   function _min(d0, d1, d2, bx, ay) {
     return d0 < d1 || d2 < d1
         ? d0 > d2
@@ -125,7 +125,7 @@ let bestScore = -1;
 let bestUrl = null;
 for (let i=0; i<urls.length; i++) {
   let u = urls[i];
-  let d = levenstein(u.url, current.pathname);
+  let d = levenshtein(u.url, current.pathname);
   if ((bestScore == -1) || (d < bestScore)) {
     bestScore = d;
     bestUrl = u;
