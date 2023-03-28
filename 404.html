@@ -112,7 +112,7 @@ function levenshtein(a, b) {
 
 let urls = [
 {% for post in site.posts %}
-{{% if post.permalink %}
+{ {% if post.permalink %}
 url: {{ post.permalink | jsonify}},
 {% elsif post.external %}
 url: {{ post.external | jsonify}},
