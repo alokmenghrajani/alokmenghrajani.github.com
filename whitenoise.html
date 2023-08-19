@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <style>
+  body {
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  </style>
+</head>
+<body>
+    <script>
+let gain;
+
+function start() {
+  b.style.display = "none";
+  v.style.display = "";
+
+  // for legacy browsers
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioContext = new AudioContext();
+  let bufferSize = 4096;
+  let whiteNoise = audioContext.createScriptProcessor(bufferSize, 1, 1);
+  whiteNoise.onaudioprocess = function(e) {
+      const output = e.outputBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+      }
+  }
+
+  gain = audioContext.createGain();
+  gain.gain.value = 0.5;
+  whiteNoise.connect(gain);
+  gain.connect(audioContext.destination);      
+}
+
+function vol() {
+  gain.gain.value = r.value / 100;
+}
+
+    </script>
+    <button id="b" onClick="start()">start</button>
+    <div id="v" style="display: none">
+      <p><label for="vol">Volume</label></p>
+      <input id="r" type="range" min="0" max="100" value="50" oninput="vol();">
+    </div>
+  </body>
+</html>
