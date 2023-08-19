@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <style>
+  body {
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  </style>
+</head>
+<body>
+    <script>
+// Code adapted from https://noisehack.com/generate-noise-web-audio-api/
+let gain;
+
+function white() {
+  buttons.style.display = "none";
+  v.style.display = "";
+
+  // for legacy browsers
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioContext = new AudioContext();
+  const bufferSize = 4096;
+  const whiteNoise = audioContext.createScriptProcessor(bufferSize, 1, 1);
+  whiteNoise.onaudioprocess = function(e) {
+      const output = e.outputBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+      }
+  }
+
+  gain = audioContext.createGain();
+  gain.gain.value = 0.5;
+  whiteNoise.connect(gain);
+  gain.connect(audioContext.destination);      
+}
+
+function pink() {
+  buttons.style.display = "none";
+  v.style.display = "";
+
+  // for legacy browsers
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioContext = new AudioContext();
+  const bufferSize = 4096;
+  const pinkNoise = (function() {
+      let b0, b1, b2, b3, b4, b5, b6;
+      b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
+      let node = audioContext.createScriptProcessor(bufferSize, 1, 1);
+      node.onaudioprocess = function(e) {
+          var output = e.outputBuffer.getChannelData(0);
+          for (var i = 0; i < bufferSize; i++) {
+              var white = Math.random() * 2 - 1;
+              b0 = 0.99886 * b0 + white * 0.0555179;
+              b1 = 0.99332 * b1 + white * 0.0750759;
+              b2 = 0.96900 * b2 + white * 0.1538520;
+              b3 = 0.86650 * b3 + white * 0.3104856;
+              b4 = 0.55000 * b4 + white * 0.5329522;
+              b5 = -0.7616 * b5 - white * 0.0168980;
+              output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+              output[i] *= 0.11; // (roughly) compensate for gain
+              b6 = white * 0.115926;
+          }
+      }
+      return node;
+  })();
+
+  gain = audioContext.createGain();
+  gain.gain.value = 0.5;
+  pinkNoise.connect(gain);
+  gain.connect(audioContext.destination);      
+}
+
+function waterfall() {
+  buttons.style.display = "none";
+  v.style.display = "";
+
+  // for legacy browsers
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioContext = new AudioContext();
+  const bufferSize = 4096;
+  const waterFallNoise = (function() {
+    let lastOut = 0.0;
+    const node = audioContext.createScriptProcessor(bufferSize, 1, 1);
+    node.onaudioprocess = function(e) {
+        let output = e.outputBuffer.getChannelData(0);
+        for (var i = 0; i < bufferSize; i++) {
+            let white = Math.random() * 2 - 1;
+            output[i] = (lastOut + (0.02 * white)) / 1.02;
+            lastOut = output[i];
+            output[i] *= 3.5; // (roughly) compensate for gain
+        }
+    }
+    return node;
+  })();
+
+  gain = audioContext.createGain();
+  gain.gain.value = 0.5;
+  waterFallNoise.connect(gain);
+  gain.connect(audioContext.destination);      
+}
+
+
+function vol() {
+  gain.gain.value = r.value / 100;
+}
+
+    </script>
+    <div id="buttons">
+      <p>Various infinite noise generators for people who like or need a background noise.</p>
+      <p>Can help soothe babies.</p>
+      <div>noise:</div>
+      <button onClick="white()">white</button>
+      <button onClick="pink()">pink</button>
+      <button onClick="waterfall()">waterfall</button>
+
+    </div>
+    <div id="v" style="display: none">
+      <p><label for="vol">Volume</label></p>
+      <input id="r" type="range" min="0" max="100" value="50" oninput="vol();">
+    </div>
+  </body>
+</html>
