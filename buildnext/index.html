@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <style>
+      h1 {
+        font-weight: normal;
+      }
+      textarea {
+        width: 100%;
+        height: 20em;
+      }
+      body {
+        border-left: 1px solid #00ADB5;
+        border-right: 1px solid #00ADB5;
+        width: 80ch;
+        margin: auto;
+        padding: 2em;
+        background-color: #eee;
+        color: #222831;
+      }
+      .c {
+        text-align: center;
+      }
+      .l {
+        color:#393E46;
+      }
+      .orange {
+        color: #f60;
+      }
+      .red {
+        color: #f00;
+      }
+      .green {
+        color: #090;
+      }
+      .blue {
+        color: #478CC6
+      }
+      .error:not(:empty) {
+        border: 2px solid red;
+        background-color: rgb(255, 120, 120);
+        padding: 1em;
+      }
+      #results img {
+        max-width: 100px;
+      }
+      #results .debug {
+        display: none;
+      }
+      .broken {
+        display: none;
+      }
+    </style>
+  </head>
+  <body onLoad="load()">
+    <script src="inventory_parts.json"></script>
+    <script src="inventories.json"></script>
+    <script src="sets.json"></script>
+    <script src="buildnext.js"></script>
+    <div>
+      <h1>Buildnext</b></h1>
+      <p>Record your LEGO® sets and see which other sets you can build next.</p>
+      <p class="l">Limitations: This tool only take piece shapes into account. Normally, prints and stickers
+        should be ignored. There are however many cases which this tool does not take into account. Some identical
+        pieces in the LEGO catalog are listed under multiple different identification numbers. Some nearly
+        identical pieces can be swapped for each other. Pieces which aren't load bearing could be
+        omitted or replaced with different shaped pieces.</p>
+      <p>This tool is open source, feel free to contribute improvements. Set data provided by
+        <a href="https://rebrickable.com/">https://rebrickable.com/</a>.
+      </p>
+      
+      <p>
+        <label for="input">Sets you own:</label>
+        <textarea id="input" onChange="save()" placeholder="71043
+10181
+...">71043
+10181
+</textarea></p>
+      <div class="c"><button onClick="search()">Search sets</button></div>
+      <p class="error" id="error"></p>
+      <div id="results"></div>
+    </div>
+  </body>
+</html>
