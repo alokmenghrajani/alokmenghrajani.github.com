@@ -46,19 +46,20 @@
       #results .debug {
         display: none;
       }
-      .broken {
+      .hide {
         display: none;
       }
     </style>
   </head>
   <body onLoad="load()">
+    <h1 id="loading">Downloading set data, please wait...</h1>
     <script src="inventory_parts.json"></script>
     <script src="inventories.json"></script>
     <script src="sets.json"></script>
     <script src="buildnext.js"></script>
     <div>
       <h1>Buildnext</b></h1>
-      <p>Record your LEGO® sets and see which other sets you can build next.</p>
+      <p>Input your LEGO® sets and see which other sets you can build next.</p>
       <p class="l">Limitations: This tool only take piece shapes into account. Normally, prints and stickers
         should be ignored. There are however many cases which this tool does not take into account. Some identical
         pieces in the LEGO catalog are listed under multiple different identification numbers. Some nearly

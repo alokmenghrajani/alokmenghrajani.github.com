@@ -1,5 +1,6 @@
 // Load textarea's initial value from local storage
 function load() {
+  loading.className = "hide";
   input.value = localStorage.getItem("sets");
 }
 
@@ -76,8 +77,42 @@ function search() {
     if (!set) {
       continue;
     }
+    if (set[3] == 254) {
+      // ignore "Bulk Bricks"
+      continue;
+    }
+    if ((set[3] == 524) || (set[3] == 443)) {
+      // ignore "Service Packs"
+      continue;
+    }
+    if (set[3] == 371) {
+      // ignore "Supplemental"
+      continue;
+    }
+    if (set[3] == 497) {
+      // ignore "Books"
+      continue;
+    }
+    if ((set[3] == 501) || (set[3] == 503) ||
+    (set[3] == 730) ||
+    (set[3] == 731) ||
+    (set[3] == 732) ||
+    (set[3] == 733) ||
+    (set[3] == 734) ||
+    (set[3] == 735) ||
+    (set[3] == 736) ||
+    (set[3] == 737) ||
+    (set[3] == 738) ||
+    (set[3] == 739) ||
+    (set[3] == 740) ||
+    (set[3] == 741) ||
+    (set[3] == 742)) {
+      // ignore "Gears"
+      // includes stuff like Key Chains and Magnets.
+      continue;
+    }
     const a = document.createElement("a");
-    a.innerText = set_num + ": " + set[0];
+    a.innerText = set_num + ": " + set[0] + " (" + set[2] + " pieces)";
     a.href = "https://rebrickable.com/sets/" + inventories[key] + "-1/";
     const p = document.createElement("p");
     p.appendChild(a);
@@ -85,7 +120,7 @@ function search() {
 
     const img = document.createElement("img");
     img.src = set[1];
-    img.onerror = () => img.classList = "broken";
+    img.onerror = () => img.classList = "hide";
     d.appendChild(img);
 
     const debug = document.createElement("span");
