@@ -82,8 +82,12 @@ function search() {
       // ignore "Bulk Bricks"
       continue;
     }
-    if ((set[3] == 524) || (set[3] == 443) || (set[3] == 525)) {
+    if ((set[3] == 524) || (set[3] == 443) || (set[3] == 525) || (set[3] == 448) || (set[3] == 453) || (set[3] == 456)) {
       // ignore "Service Packs"
+      continue;
+    }
+    if (set[3] == 518) {
+      // ignore "Educational and Dacta"/"Mindstorms"
       continue;
     }
     if (set[3] == 371) {
