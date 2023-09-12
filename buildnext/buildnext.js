@@ -82,7 +82,7 @@ function search() {
       // ignore "Bulk Bricks"
       continue;
     }
-    if ((set[3] == 524) || (set[3] == 443)) {
+    if ((set[3] == 524) || (set[3] == 443) || (set[3] == 525)) {
       // ignore "Service Packs"
       continue;
     }
