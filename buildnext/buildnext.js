@@ -1,6 +1,7 @@
 // Load textarea's initial value from local storage
 function load() {
   loading.className = "hide";
+  app.className = "";
   input.value = localStorage.getItem("sets");
 }
 
