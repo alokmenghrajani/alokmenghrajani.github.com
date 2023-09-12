@@ -90,7 +90,7 @@ function search() {
       // ignore "Educational and Dacta"/"Mindstorms"
       continue;
     }
-    if (set[3] == 371) {
+    if ((set[3] == 371) || (set[3] == 532)) {
       // ignore "Supplemental"
       continue;
     }
