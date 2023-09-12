@@ -1,0 +1,21 @@
+---
+layout: post
+title:  'YCombinator logo'
+permalink: '/ycombinator_logo/'
+tags: ['svg']
+---
+<p>The newest YCombinator <a href="/files/2023/ycombinator_logo/y18.svg">logo</a> (<a href="https://news.ycombinator.com/item?id=35894326">upgraded to SVG in 2023</a>)
+  looks fine on a small screen. But if you zoom or have a large and high resolution screen, you might notice an
+  uneven blue border. The border is 0.375 pixels wide so you might incorrectly think that it's invisible.
+  Some high density screens automatically zoom by a factor between 2.0 and 3.0 (and perhaps more in the future).
+  In such cases, the tiny border becomes apparent (which is how I noticed it).</p>
+<div style="background-color: #0097e4; height: 22px; padding: 2px;"><img src="/files/2023/ycombinator_logo/y18.svg" style="border: 1px white solid; border-radius: 0px; width: 18px; height: 18px; margin: 0"></div>
+<div style="background-color: #0097e4; height: 220px; padding: 20px;"><img src="/files/2023/ycombinator_logo/y18.svg" style="border: 10px white solid; border-radius: 0px; width: 180px; height: 180px; margin: 0"></div>
+<br>
+<p>The logo can be <a href="/files/2023/ycombinator_logo/y18_fixed.svg">fixed</a> by tweaking the svg's viewBox:
+<pre>&lt; ... viewBox="0 0 192 192" ...
+&gt; ... viewBox="4 4 188 188" ...</pre>
+</p>
+<div style="background-color: #0097e4; height: 22px; padding: 2px;"><img src="/files/2023/ycombinator_logo/y18_fixed.svg" style="border: 1px white solid; border-radius: 0px; width: 18px; height: 18px; margin: 0"></div>
+<div style="background-color: #0097e4; height: 220px; padding: 20px;"><img src="/files/2023/ycombinator_logo/y18_fixed.svg" style="border: 10px white solid; border-radius: 0px; width: 180px; height: 180px; margin: 0"></div>
+

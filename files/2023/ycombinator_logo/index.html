@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <style>
+      body {
+        width: 80ch;
+        margin: auto;
+        padding: 2em;
+      }
+      div {
+        background-color: #0097e4;
+      }
+      .a {
+        height: 20px;
+        padding: 2px;
+      }
+      .a img {
+        border: 1px white solid;
+        width: 18px;
+        height: 18px;
+      }
+      .b {
+        height: 200px;
+        padding: 20px;
+      }
+      .b img {
+        border: 10px white solid;
+        width: 180px;
+        height: 180px;
+      }      
+    </style>
+  </head>
+<body>
+  <p>The newest YCombinator <a href="y18.svg">logo</a> (<a href="https://news.ycombinator.com/item?id=35894326">upgraded to SVG in 2023</a>)
+    looks fine on a small screen. But if you zoom or have a large and high resolution screen, you might notice an
+    uneven blue border. The border is 0.375 pixels wide so you might incorrectly think that it's always invisible.
+    Some high density screens automatically zoom by a factor between 2.0 and 3.0 (and perhaps more in the future).
+    In such cases, the tiny border becomes apparent.</p>
+  <div class="a"><img src="y18.svg"></div>
+  <div class="b"><img src="y18.svg"></div>
+  <p>The logo can be <a href="y18_fixed.svg">fixed</a> by tweaking the svg's viewBox:
+  <pre>&lt; ... viewBox="0 0 192 192" ...
+&gt; ... viewBox="4 4 188 188" ...</pre>
+  </p>
+  <div class="a"><img src="y18_fixed.svg"></div>
+  <div class="b"><img src="y18_fixed.svg"></div>
+</body> 
+</html>
+
