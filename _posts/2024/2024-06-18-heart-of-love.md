@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Heart of Love JavaScript port"
-permalink: '/heart-of-love/'
+permalink: '/led-heart-of-love/'
 tags: ['microcontroller', 'javascript']
 ---
 I once purchased an [electronics kit](https://www.kitsrus.com/k136.html)
