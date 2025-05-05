@@ -1,0 +1,122 @@
+<html>
+
+<head>
+  <style>
+    body {
+      width: 100ch;
+      margin: 2em auto
+    }
+
+    input[type="text"] {
+      width: 100%;
+      font-size: small;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="lz-string-1.4.4.js"></script>
+  <p>
+    A test to see if you behave in a random fashion. Type 100 random
+    'x' or 'y' in the input field.
+  </p>
+  <div>
+    <input id="input" type="text">
+    <small><span id="counter">100</span> characters left</small>
+  </div>
+  <p><button onclick="process(input.value)">See result</button></p>
+  <p id="result"></p>
+  <script>
+    const update = e => {
+      input.value = input.value.replaceAll(/[^xyXY]/g, '').substr(0, 100)
+      counter.innerText = 100 - input.value.length
+    }
+    const process = data => {
+      result.innerText = ''
+      data = data.replaceAll(/[^xyXY]/g, '').substr(0, 100).toLowerCase()
+      if (data.length != 100) {
+        result.innerText = "not enough data, please randomly input more 'x' and 'y'"
+        return
+      }
+      let score = 2
+
+      const countX = data.match(/x/g).length
+      if (countX >= 45 && countX <= 55) {
+        score++
+      } else if (countX >= 40 && countX <= 60) {
+        score += 0.5
+      }
+
+      let runs = 0
+      for (let i = 1; i < data.length; i++) {
+        if (data[i - 1] != data[i]) {
+          runs++
+        }
+      }
+      if (runs >= 46 && runs <= 56) {
+        score++
+      } else if (runs >= 41 && runs <= 61) {
+        score += 0.5
+      }
+
+      let run = 0
+      let longest_run = 0
+      for (let i = 1; i < data.length; i++) {
+        if (data[i - 1] != data[i]) {
+          longest_run = Math.max(longest_run, run)
+          run = 0
+        } else {
+          run++
+        }
+      }
+      if (longest_run >= 6 && longest_run <= 8) {
+        score++
+      } else if (longest_run >= 4 && longest_run <= 10) {
+        score += 0.5
+      }
+
+      let xx = 0
+      let xy = 0
+      for (let i = 1; i < data.length; i++) {
+        if (data[i - 1] == 'x') {
+          if (data[i] == 'x') {
+            xx++
+          } else {
+            xy++
+          }
+        }
+      }
+      xx = xx / countX
+      xy = xy / (100 - countX)
+
+      if (xx >= 0.43 && xx <= 0.57) {
+        score++
+      } else if (xx >= 0.36 && xx <= 0.64) {
+        score += 0.5
+      }
+
+      if (xy >= 0.43 && xy <= 0.57) {
+        score++
+      } else if (xy >= 0.36 && xy <= 0.64) {
+        score += 0.5
+      }
+
+      const delta = Math.abs(xx - xy)
+      if (delta < 0.1) {
+        score++
+      } else if (delta < 0.2) {
+        score += 0.5
+      }
+      score = Math.min(6, score)
+      result.innerText = "Your score: " + score + " out of 6. Higher score == more randomness."
+      return score
+    }
+
+
+    input.onkeyup = update
+    input.onchange = update
+    input.onpaste = update
+  </script>
+</body>
+
+</html>
