@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 40ch;
+      margin: 1em auto;
+    }
+
+    div {
+      height: 2em;
+      margin: 1em 0;
+    }
+
+    .button {
+      border: 1px solid black;
+      width: 2em;
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="left">
+    <div class="button" id="span1"></div>
+    <div class="button" id="span2"></div>
+    <input id="hidden" maxlength="1" style="width: 0">
+    <input id="nothidden" maxlength="1" style="width: 0.1px">
+  </div>
+  <div>
+    <div id="instruction1">&lt;-- Click on first button</div>
+    <div id="instruction5">&lt;-- Click on first button</div>
+    <div id="instruction3">
+      <div></div>&lt;--Click on second button
+    </div>
+    <div id="instruction7">
+      <div>(notice how the button doesn't show 'c')</div>&lt;--Click on second button
+    </div>
+    <div id="instruction9">
+      <div></div>(notice how the button does show 'd')
+    </div>
+    <div id="instruction2">
+      <div></div>
+      <div></div>Type 'a'
+    </div>
+    <div id="instruction4">
+      <div></div>
+      <div></div>Type 'b'
+    </div>
+    <div id="instruction6">
+      <div></div>
+      <div></div>Type 'c'
+    </div>
+    <div id="instruction8">
+      <div></div>
+      <div></div>Type 'd'
+    </div>
+  </div>
+  <script>
+    function focus(span, inp) {
+      inp.focus();
+      inp.setSelectionRange(0, inp.value.length);
+      if ((span == span1) && ((instructions == 1) || (instructions == 5))) {
+        instructions++;
+        show(instructions);
+      }
+      if ((span == span2) && ((instructions == 3) || (instructions == 7))) {
+        instructions++;
+        show(instructions);
+      }
+
+    }
+
+    function change(span, inp) {
+      span.innerText = inp.value
+      if ((span == span1) && ((instructions == 2) || (instructions == 6))) {
+        instructions++;
+        show(instructions);
+      }
+      if ((span == span2) && ((instructions == 4) || (instructions == 8))) {
+        instructions++;
+        show(instructions);
+      }
+    }
+
+    function show(n) {
+      for (let i = 1; i <= 9; i++) {
+        if (i == n) {
+          document.getElementById('instruction' + i).style.display = "";
+        } else {
+          document.getElementById('instruction' + i).style.display = "none";
+        }
+      }
+    }
+
+    span1.onclick = () => focus(span1, hidden);
+    hidden.onkeyup = () => change(span1, hidden);
+
+    span2.onclick = () => focus(span2, nothidden);
+    nothidden.onkeyup = () => change(span2, nothidden);
+    let instructions = 1
+    show(instructions);
+  </script>
+</body>
+
+</html>
