@@ -1,24 +1,24 @@
 ---
 layout: post
-title: "Building Crossabble"
+title: "On Building Crossabble"
 permalink: '/building-crossabble/'
-tags: ['web', 'development', 'frontend']
+tags: ['web', 'developer notes']
 ---
 I recently built [crossabble](https://crossabble.com/), a free web word puzzle
 game. I was surprised by the number of edge cases I had to take into account.
 This post is based on my developer notes.
 
-Crossabble is a browser game: html, css, and some javascript. The javascript
-part is quite minimal and trivial -- I spent most of my time on the css part,
+Crossabble is a browser game: html, css, and javascript. The javascript
+part is quite minimal and trivial -- I spent most of my time on css,
 polishing the game's look and feel. I'm primarily a backend software
-engineer -- when working on frontends, I feel I'm punching a little above my
+engineer -- when working on frontends, I'm punching a little above my
 weight.
 
-My goal for Crossabble is to have a game that works across all common web
-environments: laptops, tablets, phones, in landscape and portrait mode, etc. I
-own many devices, it however takes a lot of discipline to test each and every
-change with each and every device, browser, and orientation combination. Backend
-engineering seems simpler in this respect.
+My goal for Crossabble is to have a game that works well across all common
+modern web environments: laptops, tablets, phones, in landscape and portrait
+mode, etc. I own many devices, it however takes a lot of discipline to test each
+and every change with each and every device, browser, and orientation
+combination. Backend engineering seems simpler in this respect.
 
 ## Virtual Keyboard
 
@@ -147,7 +147,7 @@ Instead of showing ads, users can support me via a [buymeacoffee](https://buymea
 
 ## Infrastructure
 
-To wrap up this post, I'll briefly cover the infrastructure. In order to
+To wrap up these notes, I'll briefly cover the infrastructure. In order to
 minimize costs and maximize availability, the site is generated using a custom
 script, akin to a static site generator. The code is hosted in a private
 GitHub repo, but can easily be relocated anywhere. The static site is served by
