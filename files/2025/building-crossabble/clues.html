@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    .nav-and-clues {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      border: 1px solid black;
+    }
+
+    .nav {
+      padding: 1em;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .clue {
+      grid-row-start: 1;
+      grid-column-start: 2;
+      align-self: center;
+      transition: opacity 0.5s ease-in-out;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nav-and-clues">
+    <button class="nav" onclick="nav(2)">&lt;</button>
+    <div class="clue">A short clue</div>
+    <div class="clue" style="opacity: 0">A really long clue. It might span two (or more?) lines.</div>
+    <div class="clue" style="opacity: 0">Some other clue</div>
+    <button class="nav" onclick="nav(1)">&gt;</button>
+  </div>
+  <script>
+    let currentClue = 0;
+    function nav(inc) {
+      const clues = document.getElementsByClassName("clue");
+      currentClue = (currentClue + inc) % clues.length;
+      for (let i = 0; i < clues.length; i++) {
+        clues[i].style.opacity = (i == currentClue) ? "1" : "0";
+      }
+    }
+  </script>
+</body>
+
+</html>

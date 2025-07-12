@@ -1,0 +1,67 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      text-align: center;
+      font-size: 150%;
+      height: 100%;
+    }
+
+    .header {
+      padding: 2em;
+    }
+
+    .footer {
+      padding: 1em;
+    }
+
+    .squares {
+      font-size: 800%;
+      flex-grow: 1;
+      container-type: size;
+      border: 5px solid green;
+      line-height: 0;
+    }
+
+    .s {
+      display: inline-block;
+      height: 19cqmin;
+      width: 19cqmin;
+      margin: 2cqmin;
+      border: 1cqmin solid black;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div>Some header will go here.</div>
+    <div>The squares on this page should always be inside the green box.</div>
+  </div>
+  <div class="squares">
+    <div class="row">
+      <div class="s"></div>
+      <div class="s"></div>
+      <div class="s"></div>
+    </div>
+    <div class="row">
+      <div class="s"></div>
+      <div class="s"></div>
+      <div class="s"></div>
+    </div>
+    <div class="row">
+      <div class="s"></div>
+      <div class="s"></div>
+      <div class="s"></div>
+    </div>
+  </div>
+  <div class="footer">Some footer will go here.</div>
+</body>
+
+</html>

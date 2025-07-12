@@ -1,0 +1,60 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+  <style>
+    #squares {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .s {
+      border: 1px solid black;
+      background: none;
+      color: inherit;
+      height: 2em;
+      width: 2em;
+      margin: 1em;
+      text-align: center;
+      line-height: 2em;
+      vertical-align: middle;
+    }
+
+    input:focus+div>button {
+      background-color: rgb(148, 223, 250);
+    }
+  </style>
+</head>
+
+<body>
+  <label>
+    <div id="squares1">
+      <input class="s" maxlength="1">
+      <input class="s" maxlength="1">
+      <input class="s" maxlength="1">
+    </div>
+  </label>
+  <script>
+    const inputs = document.getElementsByClassName("s");
+    for (let i = 0; i < inputs.length; i++) {
+      const input = inputs[i];
+      input.addEventListener("keydown", ev => {
+        if (ev.key == "ArrowRight") {
+          inputs[(i + 1) % inputs.length].focus();
+        }
+        if (ev.key == "ArrowLeft") {
+          inputs[(i - 1 + inputs.length) % inputs.length].focus();
+        }
+      });
+      input.addEventListener("input", _ => {
+        if (input.value.length == 1) {
+          inputs[(i + 1) % inputs.length].focus();
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
+  <style>
+    input {
+      opacity: 0;
+      position: absolute;
+    }
+
+    #squares {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .s {
+      border: 1px solid black;
+      background: none;
+      color: inherit;
+      height: 2em;
+      width: 2em;
+      margin: 1em;
+      text-align: center;
+      line-height: 2em;
+      vertical-align: middle;
+    }
+
+    input:focus+div>button {
+      background-color: rgb(148, 223, 250);
+    }
+  </style>
+</head>
+
+<body>
+  <label>
+    <input id="input1" maxlength="3" autocomplete="off">
+    <div id="squares1">
+      <button onclick="input1.focus();" class="s"></button>
+      <button onclick="input1.focus();" class="s"></button>
+      <button onclick="input1.focus();" class="s"></button>
+    </div>
+  </label>
+  <script>
+    input1.addEventListener("input", _ => {
+      const s = squares1.children;
+      for (let i = 0; i < s.length; i++) {
+        s[i].textContent = (i < input1.value.length) ? input1.value[i].toUpperCase() : "";
+      }
+    });
+  </script>
+</body>
+
+</html>
