@@ -6,7 +6,7 @@ tags: ['web', 'developer notes']
 ---
 I recently built [crossabble](https://crossabble.com/), a free web word puzzle
 game. I was surprised by the number of edge cases I had to take into account.
-This post is based on my developer notes.
+This post is based on my developer log.
 
 Crossabble is a browser game: html, css, and javascript. The javascript
 part is quite minimal and trivial -- I spent most of my time on css,
@@ -160,3 +160,6 @@ basis.
 Crafting puzzles is the most time consuming part of this project -- which is
 fine as long as I'm enjoying crafting puzzles. I do have a helper tool
 to help me with this process and plan to expand this tool over time.
+
+That's it for now, do share with me if you think I could have done things
+differently or if you see any areas for improving the game!
