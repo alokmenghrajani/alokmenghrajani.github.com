@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <style>
+    body {
+      width: 80ch;
+      margin: 1em auto;
+    }
+
+    input {
+      width: 100%;
+    }
+
+    #output {
+      word-break: break-all;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Fix iCloud links</h1>
+  <p>I sometimes receive iCloud links which can't be downloaded. Apple's site
+    says "Something Went Wrong" and "There was a problem downloading the file.
+    Try again later.". I figured that slightly fixing the URL lets me download
+    the file fine, so I built this tool.
+  </p>
+  <p><label for="url">URL:</label></p>
+  <p><input id="url" type="url"></p>
+  <p><button onclick="fix(); return false;">Fix</button></p>
+  <a id="output"></a>
+  <script>
+    function fix() {
+      let u = url.value;
+      while (1) {
+        let v = u.replace(/(.*&f=.*)%25/, '$1');
+        if (v == u) {
+          break;
+        }
+        u = v;
+      }
+      output.textContent = u;
+      output.href = u;
+    }
+  </script>
+</body>
+
+</html>
