@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Kombom</title>
+<style>
+  @font-face {
+    font-family: 'Roboto Light';
+    src: url('Roboto-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: block;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Roboto Light';
+    background: #1a1a2e;
+    color: #eaeaea;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    height: 100vh;
+    gap: 10px;
+    /* Shared width for status + grid so they line up. */
+    --board-w: min(92vw, calc(100vh - 230px), 480px);
+  }
+
+  header { text-align: center; flex: 0 0 auto; }
+
+  h1 {
+    font-size: clamp(2rem, 7vw, 2.8rem);
+    background: linear-gradient(135deg, #4dabf7, #ff6b6b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: 0.15em;
+    font-weight: 800;
+  }
+
+  /* Status: every possible message lives in the DOM as its own <div>; the
+     active one is shown via the `.active` class. All variants in a status
+     line share a single CSS Grid cell (row 1, column 1), so the line's
+     height is the natural max of all variants and never reflows. */
+  .status {
+    background: #16213e;
+    padding: 10px 20px;
+    border-radius: 12px;
+    width: var(--board-w);
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 4px;
+  }
+  .status-line {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+    justify-items: center;
+  }
+  .status-line > .msg {
+    grid-row: 1;
+    grid-column: 1;
+    visibility: hidden;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .status-line > .msg.active { visibility: visible; }
+  .status.empty { visibility: hidden; }
+  .status .line-1 .msg { font-size: 1.15rem; font-weight: 600; line-height: 1.3; }
+  .status .line-1 .msg.banner { color: #ffd93d; font-size: 1.35rem; font-weight: 700; }
+  .status .line-2 .msg { font-size: 0.9rem; color: #a0a8c0; white-space: normal; }
+  .status .msg .x { color: #4dabf7; }
+  .status .msg .o { color: #ff6b6b; }
+
+  /* Eval is pinned to the viewport's bottom-right as plain text — no
+     background, no border — so it doesn't take any layout space. */
+  .eval {
+    position: fixed;
+    right: 12px;
+    bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    z-index: 50;
+    max-width: calc(100vw - 24px);
+    text-align: right;
+  }
+  .eval.empty { display: none; }
+  .eval.x { color: #4dabf7; }
+  .eval.o { color: #ff6b6b; }
+  .eval.draw { color: #ffd93d; }
+  .eval.calc { color: #a0a8c0; font-weight: 500; font-style: italic; }
+  .eval.empty { color: transparent; }
+
+  /* The wrapper owns the size constraint so the mode-picker overlay can
+     fill exactly the grid's area. The constant subtracted from 100vh
+     approximates the combined fixed height of header + status + controls +
+     gaps + body padding. (Eval and mode-picker are out of flow.) */
+  .grid-wrapper {
+    position: relative;
+    width: var(--board-w);
+    aspect-ratio: 1;
+    flex: 0 1 auto;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    background: #16213e;
+    padding: 6px;
+    border-radius: 12px;
+    touch-action: manipulation;
+  }
+
+  .cell {
+    background: #0f3460;
+    border-radius: 8px;
+    aspect-ratio: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    transition: background 0.12s, transform 0.08s;
+    overflow: hidden;
+  }
+
+  /* Reversi-style disc tokens — gradient sphere with a subtle drop shadow
+     and inset highlight/shadow for depth. */
+  .cell.x::after,
+  .cell.o::after {
+    content: '';
+    display: block;
+    width: 78%;
+    height: 78%;
+    border-radius: 50%;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.45),
+      inset 0 -3px 6px rgba(0, 0, 0, 0.28),
+      inset 0 3px 6px rgba(255, 255, 255, 0.18);
+    transition: filter 0.12s;
+  }
+
+  /* Winning-line animation: each token blinks once when its `win-blink`
+     class is added. JS drives the sequencing (one cell at a time, 3 cycles). */
+  @keyframes win-blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.15; transform: scale(0.78); }
+  }
+  .cell.win-blink::after {
+    animation: win-blink 0.28s ease-in-out;
+  }
+  .cell.x::after {
+    background: radial-gradient(circle at 35% 30%, #9ed5ff, #4dabf7 55%, #2a7fc4);
+  }
+  .cell.o::after {
+    background: radial-gradient(circle at 35% 30%, #ffa6a6, #ff6b6b 55%, #c44a4a);
+  }
+
+  .cell.valid-place,
+  .cell.valid-invert { cursor: pointer; }
+  .cell.valid-place:active,
+  .cell.valid-invert:active { transform: scale(0.95); }
+
+  @media (hover: hover) {
+    .cell.valid-place:hover { background: #14406b; }
+    .cell.valid-invert:hover::after { filter: brightness(1.2); }
+  }
+
+  /* Inline disc used in status messages and the instructions modal —
+     same look as the board tokens, sized to the surrounding text. */
+  .token-inline {
+    display: inline-block;
+    width: 0.95em;
+    height: 0.95em;
+    border-radius: 50%;
+    vertical-align: -0.15em;
+    margin: 0 0.06em;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.25),
+      inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  }
+  .token-inline.x { background: radial-gradient(circle at 35% 30%, #9ed5ff, #4dabf7 55%, #2a7fc4); }
+  .token-inline.o { background: radial-gradient(circle at 35% 30%, #ffa6a6, #ff6b6b 55%, #c44a4a); }
+
+  .controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+
+  button {
+    background: #16213e;
+    color: #eaeaea;
+    border: 1px solid #4dabf7;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s;
+    font-family: inherit;
+  }
+  button:hover, button:active { background: #1f3556; }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+  }
+  .modal.show { display: flex; }
+
+  .modal-content {
+    background: #16213e;
+    padding: 24px;
+    border-radius: 12px;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    line-height: 1.5;
+  }
+  .modal-content h2 { margin-bottom: 14px; color: #4dabf7; }
+  .modal-content ul { padding-left: 20px; margin-bottom: 14px; }
+  .modal-content li { margin-bottom: 8px; }
+  .modal-content li ul { margin-top: 6px; margin-bottom: 0; }
+  .modal-content strong.x { color: #4dabf7; }
+  .modal-content strong.o { color: #ff6b6b; }
+
+  /* Mode picker covers the grid area only — page-level controls (How to
+     Play, Undo, New Game) remain reachable. Behaves modally because cell
+     clicks are JS-gated on `gameMode`. */
+  .mode-selector {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    z-index: 5;
+  }
+  .mode-selector.hidden { display: none; }
+  .mode-selector-content {
+    background: #16213e;
+    padding: 16px 18px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    max-width: 280px;
+    max-height: 100%;
+    overflow-y: auto;
+  }
+  .mode-selector-content h2 {
+    color: #4dabf7;
+    font-size: 1.15rem;
+    text-align: center;
+    margin-bottom: 2px;
+  }
+  .mode-selector-content button {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  .thinking-pulse {
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+</style>
+</head>
+<body>
+  <header><h1>KOMBOM</h1></header>
+
+  <div class="status" id="status">
+    <div class="status-line line-1">
+      <div class="msg" data-msg="turn-2p-x"><span class="token-inline x"></span>'s turn</div>
+      <div class="msg" data-msg="turn-2p-o"><span class="token-inline o"></span>'s turn</div>
+      <div class="msg" data-msg="turn-you-x">Your turn <span class="token-inline x"></span></div>
+      <div class="msg" data-msg="turn-you-o">Your turn <span class="token-inline o"></span></div>
+      <div class="msg" data-msg="thinking-x"><span class="thinking-pulse">Computer <span class="token-inline x"></span> thinking…</span></div>
+      <div class="msg" data-msg="thinking-o"><span class="thinking-pulse">Computer <span class="token-inline o"></span> thinking…</span></div>
+      <div class="msg banner" data-msg="win-x"><span class="token-inline x"></span> wins!</div>
+      <div class="msg banner" data-msg="win-o"><span class="token-inline o"></span> wins!</div>
+      <div class="msg banner" data-msg="you-win">You win!</div>
+      <div class="msg banner" data-msg="you-lose">Computer wins!</div>
+      <div class="msg banner" data-msg="tie">The game is a draw!</div>
+    </div>
+    <div class="status-line line-2">
+      <div class="msg" data-msg="action-place">place your symbol</div>
+      <div class="msg" data-msg="action-invert">invert an opponent's symbol</div>
+      <div class="msg" data-msg="action-both">place your symbol &amp; invert an opponent's symbol</div>
+      <div class="msg" data-msg="action-empty">&nbsp;</div>
+    </div>
+  </div>
+
+  <div class="eval" id="eval-display"></div>
+
+  <div class="grid-wrapper">
+    <div class="grid" id="grid"></div>
+    <div class="mode-selector" id="mode-selector">
+      <div class="mode-selector-content">
+        <button data-mode="2p">2 Players</button>
+        <button data-mode="easy">You vs Easy computer</button>
+        <button data-mode="medium">You vs Medium computer</button>
+        <button data-mode="hard">You vs Hard computer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="btn-instructions">📖 How to Play</button>
+    <button id="btn-undo">⤺ Undo</button>
+    <button id="btn-new-game">▶ New Game</button>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2>How to Play Kombom</h2>
+      <ul>
+        <li>Two players: <span class="token-inline x"></span> goes first, then <span class="token-inline o"></span>, played on a 4x4 grid.</li>
+        <li>On each turn, a player takes <strong>two actions</strong>, in either order:
+          <ul>
+            <li>Place their symbol on an empty square.</li>
+            <li>Invert an opponent's symbol into your own.</li>
+          </ul>
+        </li>
+        <li>Get <strong>4 in a row</strong> &mdash; horizontal, vertical, or diagonal &mdash; to win. You can win mid-turn after just placing or inverting.</li>
+        <li>The 1st move is a half-move: only place (no opponent symbol exists yet).</li>
+        <li>The last move once the board is full is also a half-move: only invert.</li>
+        <li>If no one wins after the last move, the game is a draw.</li>
+      </ul>
+      <button id="btn-close-modal">Got it</button>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const SIZE = 4;
+  const TOTAL_MOVES = 17;
+  const cellEls = [];
+  let board, currentPlayer, moveNum, needsPlace, needsInvert, gameOver;
+  let history; // stack of half-moves: { idx, kind: 'place'|'invert', player }
+
+  // null until the player picks one in the modal — gameplay is gated on this.
+  let gameMode = null; // null | '2p' | 'easy' | 'medium' | 'hard'
+
+  // Eval display is debug-only: enabled by appending `?debug` to the URL.
+  const DEBUG = new URLSearchParams(location.search).has('debug');
+  let humanSymbol = null;
+  let computerSymbol = null;
+  let aiToken = 0; // bumped to cancel any in-flight AI work
+  let aiRunning = false; // true while runComputerTurn is mid-flight
+
+  const grid = document.getElementById('grid');
+  const statusEl = document.getElementById('status');
+  const statusLine1 = statusEl.querySelector('.line-1');
+  const statusLine2 = statusEl.querySelector('.line-2');
+  const evalEl = document.getElementById('eval-display');
+  const modeSelectorEl = document.getElementById('mode-selector');
+  const modal = document.getElementById('modal');
+
+  // Pre-render every status variant; rendering = toggle the `active` class.
+  function setStatusMsg(line, key) {
+    const lineEl = line === 1 ? statusLine1 : statusLine2;
+    const msgs = lineEl.children;
+    for (let i = 0; i < msgs.length; i++) {
+      const el = msgs[i];
+      if (el.dataset.msg === key) el.classList.add('active');
+      else el.classList.remove('active');
+    }
+  }
+
+  const opponent = p => p === 'X' ? 'O' : 'X';
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  function buildGrid() {
+    grid.innerHTML = '';
+    cellEls.length = 0;
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.addEventListener('click', () => onCellClick(i));
+      grid.appendChild(cell);
+      cellEls.push(cell);
+    }
+  }
+
+  function newGame(preferredHuman) {
+    aiToken++;
+    animToken++; // cancel any in-flight winning-line animation
+    aiRunning = false;
+    board = Array(SIZE * SIZE).fill(null);
+    currentPlayer = 'X';
+    moveNum = 1;
+    needsPlace = true;
+    needsInvert = false;
+    gameOver = false;
+    history = [];
+
+    if (!gameMode || gameMode === '2p') {
+      humanSymbol = null;
+      computerSymbol = null;
+    } else if (preferredHuman === 'X' || preferredHuman === 'O') {
+      humanSymbol = preferredHuman;
+      computerSymbol = preferredHuman === 'X' ? 'O' : 'X';
+    } else if (Math.random() < 0.5) {
+      humanSymbol = 'X'; computerSymbol = 'O';
+    } else {
+      humanSymbol = 'O'; computerSymbol = 'X';
+    }
+
+    render();
+    updateHash();
+    if (!replayInProgress && isComputerTurn()) runComputerTurn();
+  }
+
+  // ---- URL fragment serialization (sharing / refresh persistence) ----
+  // Format:  <mode><human?><moves...>
+  //   mode  : 'p' = 2 players, 'e' = easy, 'm' = medium, 'h' = hard
+  //   human : (only when mode != 'p')  'x' = human is X, 'o' = human is O
+  //   moves : one character per half-move played, in order:
+  //             a..p  -> place at cell 0..15
+  //             A..P  -> invert at cell 0..15
+  // Persisted via history.replaceState() (NOT pushState) so per-move updates
+  // don't pile up in the browser's back-button history.
+
+  let replayInProgress = false;
+
+  function encodeState() {
+    if (!gameMode) return '';
+    let s = { '2p': 'p', easy: 'e', medium: 'm', hard: 'h' }[gameMode];
+    if (gameMode !== '2p') s += humanSymbol === 'X' ? 'x' : 'o';
+    for (const h of history) {
+      const c = String.fromCharCode(97 + h.idx); // 'a' + idx
+      s += h.kind === 'place' ? c : c.toUpperCase();
+    }
+    return s;
+  }
+
+  function decodeState(s) {
+    if (!s) return null;
+    const modeMap = { p: '2p', e: 'easy', m: 'medium', h: 'hard' };
+    if (!(s[0] in modeMap)) return null;
+    const mode = modeMap[s[0]];
+    let i = 1, human = null;
+    if (mode !== '2p') {
+      const hc = s[1];
+      if (hc !== 'x' && hc !== 'o') return null;
+      human = hc.toUpperCase();
+      i = 2;
+    }
+    const moves = [];
+    for (; i < s.length; i++) {
+      const code = s.charCodeAt(i);
+      if (code >= 97 && code <= 112) moves.push({ kind: 'place',  idx: code - 97 });
+      else if (code >= 65 && code <= 80) moves.push({ kind: 'invert', idx: code - 65 });
+      else return null;
+    }
+    return { mode, human, moves };
+  }
+
+  function updateHash() {
+    if (replayInProgress) return;
+    const s = encodeState();
+    const want = s ? '#' + s : '';
+    if (location.hash === want) return;
+    const url = s ? want : location.pathname + location.search;
+    // window.history (not the local `history` array of half-moves).
+    try { window.history.replaceState(null, '', url); } catch (_) { /* file:// etc. */ }
+  }
+
+  function loadFromHash() {
+    const hash = location.hash.slice(1);
+    if (!hash) return false;
+    const state = decodeState(hash);
+    if (!state) return false;
+
+    gameMode = state.mode;
+    replayInProgress = true;
+    try {
+      newGame(state.human);
+      for (const m of state.moves) {
+        if (gameOver) break;
+        applyHalfMove({ kind: m.kind, idx: m.idx }, currentPlayer);
+        afterAction();
+      }
+    } finally {
+      replayInProgress = false;
+    }
+
+    updateHash();
+    if (!gameOver && isComputerTurn()) runComputerTurn();
+    return true;
+  }
+
+  function isComputerTurn() {
+    return !!gameMode && gameMode !== '2p' && !gameOver && currentPlayer === computerSymbol;
+  }
+
+  function onCellClick(idx) {
+    if (gameOver || !gameMode || isComputerTurn()) return;
+    const v = board[idx];
+    if (v === null && needsPlace) {
+      applyHalfMove({ kind: 'place', idx }, currentPlayer);
+      afterAction();
+    } else if (v === opponent(currentPlayer) && needsInvert) {
+      applyHalfMove({ kind: 'invert', idx }, currentPlayer);
+      afterAction();
+    }
+  }
+
+  function applyHalfMove(action, player) {
+    board[action.idx] = player;
+    if (action.kind === 'place') needsPlace = false;
+    else needsInvert = false;
+    history.push({ idx: action.idx, kind: action.kind, player });
+    updateHash();
+  }
+
+  function undoOneHalfMove() {
+    if (history.length === 0) return;
+    const last = history.pop();
+    if (last.kind === 'place') board[last.idx] = null;
+    else board[last.idx] = opponent(last.player);
+    gameOver = false;
+
+    const n = history.length;
+    if (n === 0) {
+      moveNum = 1;
+      currentPlayer = 'X';
+      needsPlace = true;
+      needsInvert = false;
+    } else {
+      const k = n - 1;
+      if (k % 2 === 0) {
+        moveNum = 2 + k / 2;
+        currentPlayer = (moveNum % 2 === 1) ? 'X' : 'O';
+        if (moveNum === TOTAL_MOVES) { needsPlace = false; needsInvert = true; }
+        else { needsPlace = true; needsInvert = true; }
+      } else {
+        moveNum = 1 + (k + 1) / 2;
+        currentPlayer = (moveNum % 2 === 1) ? 'X' : 'O';
+        const lastEntry = history[history.length - 1];
+        needsPlace = lastEntry.kind !== 'place';
+        needsInvert = lastEntry.kind !== 'invert';
+      }
+    }
+  }
+
+  function isFreshMoveStart() {
+    if (moveNum === 1) return needsPlace && !needsInvert;
+    if (moveNum === TOTAL_MOVES) return !needsPlace && needsInvert;
+    return needsPlace && needsInvert;
+  }
+
+  function undo() {
+    aiToken++; // cancel any pending AI work
+    animToken++; // cancel any in-flight winning-line animation
+    aiRunning = false;
+
+    if (gameMode === '2p') {
+      if (history.length === 0) return;
+      undoOneHalfMove();
+      render();
+      updateHash();
+      return;
+    }
+
+    if (history.length === 0) return;
+
+    // Rewind until the human is about to start a fresh move, or history empties.
+    while (history.length > 0) {
+      undoOneHalfMove();
+      if (currentPlayer === humanSymbol && isFreshMoveStart()) break;
+    }
+
+    render();
+    updateHash();
+
+    // If we ended up at a state where the computer moves next (e.g. computer
+    // started the game and we rolled all the way back), let it play again.
+    if (isComputerTurn()) runComputerTurn();
+  }
+
+  function afterAction() {
+    if (checkWin(currentPlayer)) {
+      gameOver = true;
+      let bannerKey;
+      if (gameMode === '2p') bannerKey = currentPlayer === 'X' ? 'win-x' : 'win-o';
+      else bannerKey = currentPlayer === humanSymbol ? 'you-win' : 'you-lose';
+      render(bannerKey);
+      const line = findWinLine(currentPlayer);
+      if (line) animateWinningLine(line);
+      return;
+    }
+    if (!needsPlace && !needsInvert) {
+      if (moveNum === TOTAL_MOVES) {
+        gameOver = true;
+        render('tie');
+        return;
+      }
+      moveNum++;
+      currentPlayer = opponent(currentPlayer);
+      if (moveNum === TOTAL_MOVES) {
+        needsPlace = false;
+        needsInvert = true;
+      } else {
+        needsPlace = true;
+        needsInvert = true;
+      }
+    }
+    render();
+
+    if (!replayInProgress && !aiRunning && isComputerTurn()) runComputerTurn();
+  }
+
+  const LINES = (() => {
+    const lines = [];
+    for (let r = 0; r < SIZE; r++) lines.push(Array.from({length: SIZE}, (_, c) => r * SIZE + c));
+    for (let c = 0; c < SIZE; c++) lines.push(Array.from({length: SIZE}, (_, r) => r * SIZE + c));
+    lines.push(Array.from({length: SIZE}, (_, i) => i * SIZE + i));
+    lines.push(Array.from({length: SIZE}, (_, i) => i * SIZE + (SIZE - 1 - i)));
+    return lines;
+  })();
+
+  function checkWin(p, b) {
+    b = b || board;
+    return LINES.some(line => line.every(i => b[i] === p));
+  }
+
+  function findWinLine(p, b) {
+    b = b || board;
+    for (const line of LINES) {
+      if (line.every(i => b[i] === p)) return line;
+    }
+    return null;
+  }
+
+  // Bumped to invalidate any in-flight winning-line animation (e.g. when the
+  // user starts a new game or undoes during the celebration).
+  let animToken = 0;
+
+  function animateWinningLine(line) {
+    animToken++;
+    const myToken = animToken;
+    const blinkMs = 280;
+    const cycles = 3;
+    const sequence = [];
+    for (let c = 0; c < cycles; c++) for (const idx of line) sequence.push(idx);
+
+    let i = 0;
+    function tick() {
+      if (myToken !== animToken || i >= sequence.length) return;
+      const el = cellEls[sequence[i++]];
+      if (!el) return;
+      // Restart the CSS animation by toggling the class with a forced reflow.
+      el.classList.remove('win-blink');
+      void el.offsetWidth;
+      el.classList.add('win-blink');
+      setTimeout(() => {
+        if (myToken !== animToken) return;
+        el.classList.remove('win-blink');
+        tick();
+      }, blinkMs);
+    }
+    tick();
+  }
+
+  function render(bannerKey) {
+    const compTurn = isComputerTurn();
+    cellEls.forEach((el, i) => {
+      el.classList.remove('x', 'o', 'valid-place', 'valid-invert', 'win-blink');
+      const v = board[i];
+      if (v === 'X') el.classList.add('x');
+      else if (v === 'O') el.classList.add('o');
+
+      if (!gameOver && !compTurn) {
+        if (v === null && needsPlace) el.classList.add('valid-place');
+        else if (v === opponent(currentPlayer) && needsInvert) el.classList.add('valid-invert');
+      }
+    });
+
+    const empty = !bannerKey && !gameMode;
+    statusEl.classList.toggle('empty', empty);
+
+    if (bannerKey) {
+      setStatusMsg(1, bannerKey);
+      setStatusMsg(2, 'action-empty');
+    } else if (empty) {
+      // No mode picked yet — hide the status entirely (visibility: hidden so
+      // the surrounding layout doesn't shift when it reappears).
+      setStatusMsg(1, null);
+      setStatusMsg(2, null);
+    } else {
+      let turnKey;
+      if (gameMode === '2p') {
+        turnKey = currentPlayer === 'X' ? 'turn-2p-x' : 'turn-2p-o';
+      } else if (compTurn) {
+        turnKey = currentPlayer === 'X' ? 'thinking-x' : 'thinking-o';
+      } else {
+        turnKey = currentPlayer === 'X' ? 'turn-you-x' : 'turn-you-o';
+      }
+      setStatusMsg(1, turnKey);
+
+      let actionKey;
+      if (compTurn) actionKey = 'action-empty';
+      else if (needsPlace && needsInvert) actionKey = 'action-both';
+      else if (needsPlace) actionKey = 'action-place';
+      else if (needsInvert) actionKey = 'action-invert';
+      else actionKey = 'action-empty';
+      setStatusMsg(2, actionKey);
+    }
+
+    updateModeVisibility();
+    renderEval();
+  }
+
+  // The mode picker overlay is shown until the player has chosen a mode.
+  // Picking is mandatory: gameplay is gated on `gameMode` being non-null.
+  function updateModeVisibility() {
+    modeSelectorEl.classList.toggle('hidden', !!gameMode);
+  }
+
+  // ---- Position evaluation (perfect-play + distance-to-mate) ----
+
+  // Look up the current position's outcome for the side to move. Returns
+  //   { player, value, distance }
+  // where value is +1 if `player` is winning, 0 draw, -1 losing, and distance
+  // is the number of full moves remaining until the result is realized.
+  // Handles both clean start-of-turn states (direct memo lookup) and mid-turn
+  // states (one half-move already done — enumerate the remaining half-move).
+  function evaluateCurrent() {
+    if (gameOver || !perfectMemo) return null;
+
+    const scratch = new Uint8Array(16);
+    for (let i = 0; i < 16; i++) {
+      scratch[i] = board[i] === 'X' ? 1 : board[i] === 'O' ? 2 : 0;
+    }
+
+    const player = currentPlayer === 'X' ? 1 : 2;
+    const opp = 3 - player;
+    const isMax = player === 1;
+
+    // Start-of-turn: needsPlace/needsInvert match what the move number expects.
+    const expP = moveNum !== TOTAL_MOVES;
+    const expI = moveNum !== 1;
+    const isStart = needsPlace === expP && needsInvert === expI;
+
+    if (isStart) {
+      psResetFromArray(scratch);
+      const cb = psSolve(moveNum);
+      const xVal = unpackVal(cb);
+      return {
+        player: currentPlayer,
+        value: isMax ? xVal : -xVal,
+        distance: unpackDist(cb),
+      };
+    }
+
+    // Mid-turn: exactly one half-move remains.
+    let bestRank = -10000, bestCv = 0, bestCd = 0;
+
+    function consider(captured, won) {
+      let cv, cd;
+      if (won) { cv = 1; cd = 1; }
+      else if (moveNum === TOTAL_MOVES) { cv = 0; cd = 1; }
+      else {
+        psResetFromArray(captured);
+        const cb = psSolve(moveNum + 1);
+        const xVal = unpackVal(cb);
+        cv = isMax ? xVal : -xVal;
+        cd = unpackDist(cb) + 1;
+      }
+      const r = cv * 100 + (cv === -1 ? cd : -cd);
+      if (r > bestRank) { bestRank = r; bestCv = cv; bestCd = cd; }
+    }
+
+    if (needsPlace) {
+      for (let i = 0; i < 16; i++) {
+        if (scratch[i] !== 0) continue;
+        scratch[i] = player;
+        const won = psWinsAt(scratch, i, player);
+        const captured = scratch.slice();
+        scratch[i] = 0;
+        consider(captured, won);
+      }
+    } else if (needsInvert) {
+      for (let i = 0; i < 16; i++) {
+        if (scratch[i] !== opp) continue;
+        scratch[i] = player;
+        const won = psWinsAt(scratch, i, player);
+        const captured = scratch.slice();
+        scratch[i] = opp;
+        consider(captured, won);
+      }
+    }
+
+    if (bestRank === -10000) return null;
+    return { player: currentPlayer, value: bestCv, distance: bestCd };
+  }
+
+  function renderEval() {
+    if (!DEBUG) {
+      evalEl.className = 'eval empty';
+      return;
+    }
+    if (gameOver) {
+      evalEl.textContent = '';
+      evalEl.className = 'eval empty';
+      return;
+    }
+    if (!perfectMemo) {
+      evalEl.textContent = 'Computing perfect-play tables…';
+      evalEl.className = 'eval calc';
+      return;
+    }
+    const e = evaluateCurrent();
+    if (!e) {
+      evalEl.textContent = '';
+      evalEl.className = 'eval empty';
+      return;
+    }
+    const plural = (n) => n === 1 ? 'move' : 'moves';
+    if (e.value === 0) {
+      evalEl.textContent = `Drawn (${e.distance} ${plural(e.distance)} remain)`;
+      evalEl.className = 'eval draw';
+      return;
+    }
+    const winner = e.value === 1 ? e.player : (e.player === 'X' ? 'O' : 'X');
+    const disc = `<span class="token-inline ${winner.toLowerCase()}"></span>`;
+    evalEl.innerHTML = `${disc} wins in ${e.distance} ${plural(e.distance)}`;
+    evalEl.className = `eval ${winner.toLowerCase()}`;
+  }
+
+  // ---- Computer turn driver ----
+
+  async function runComputerTurn() {
+    if (aiRunning) return;
+    aiRunning = true;
+    const myToken = aiToken;
+
+    try {
+      // Yield so the "thinking" UI paints before we compute.
+      await sleep(80);
+      if (myToken !== aiToken) return;
+
+      const move = chooseAIMove();
+      if (myToken !== aiToken || !move) return;
+
+      for (let i = 0; i < move.actions.length; i++) {
+        // Visual delay between half-moves so the player can follow.
+        await sleep(i === 0 ? 350 : 600);
+        if (myToken !== aiToken) return;
+
+        applyHalfMove(move.actions[i], currentPlayer);
+        afterAction();
+        if (gameOver || myToken !== aiToken) return;
+      }
+    } finally {
+      if (myToken === aiToken) aiRunning = false;
+    }
+  }
+
+  // ---- AI ----
+
+  function generateMoveOptions(b, player, mn) {
+    const opp = opponent(player);
+    const empties = [];
+    const opps = [];
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      if (b[i] === null) empties.push(i);
+      else if (b[i] === opp) opps.push(i);
+    }
+
+    const options = [];
+
+    if (mn === 1) {
+      for (const pIdx of empties) {
+        const nb = b.slice(); nb[pIdx] = player;
+        options.push({ actions: [{kind:'place', idx:pIdx}], finalBoard: nb, isWin: checkWin(player, nb) });
+      }
+      return options;
+    }
+
+    if (mn === TOTAL_MOVES) {
+      for (const iIdx of opps) {
+        const nb = b.slice(); nb[iIdx] = player;
+        options.push({ actions: [{kind:'invert', idx:iIdx}], finalBoard: nb, isWin: checkWin(player, nb) });
+      }
+      return options;
+    }
+
+    // Single-action wins are preferred — they end the turn early.
+    const placeWins = new Set();
+    for (const pIdx of empties) {
+      const nb = b.slice(); nb[pIdx] = player;
+      if (checkWin(player, nb)) {
+        options.push({ actions: [{kind:'place', idx:pIdx}], finalBoard: nb, isWin: true });
+        placeWins.add(pIdx);
+      }
+    }
+    const invertWins = new Set();
+    for (const iIdx of opps) {
+      const nb = b.slice(); nb[iIdx] = player;
+      if (checkWin(player, nb)) {
+        options.push({ actions: [{kind:'invert', idx:iIdx}], finalBoard: nb, isWin: true });
+        invertWins.add(iIdx);
+      }
+    }
+
+    // Two-action moves, skipping combos where a single action would already win.
+    for (const pIdx of empties) {
+      if (placeWins.has(pIdx)) continue;
+      for (const iIdx of opps) {
+        if (invertWins.has(iIdx)) continue;
+        const nb = b.slice(); nb[pIdx] = player; nb[iIdx] = player;
+        options.push({
+          actions: [{kind:'place', idx:pIdx}, {kind:'invert', idx:iIdx}],
+          finalBoard: nb,
+          isWin: checkWin(player, nb),
+        });
+      }
+    }
+
+    return options;
+  }
+
+  const LINE_WEIGHT = [0, 1, 6, 40, 1000];
+
+  function evaluateBoard(b) {
+    let score = 0;
+    for (const line of LINES) {
+      let me = 0, opp = 0;
+      for (const i of line) {
+        if (b[i] === computerSymbol) me++;
+        else if (b[i] === humanSymbol) opp++;
+      }
+      score += LINE_WEIGHT[me] - LINE_WEIGHT[opp];
+    }
+    return score;
+  }
+
+  function randomChoice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // Depth is counted in full moves (one player's turn). `generateMoveOptions`
+  // returns one option per full move, so each recursion descends one ply.
+  const DEPTH_BY_MODE = { easy: 2, medium: 4 };
+  const WIN_SCORE = 1e6;
+
+  // ---- Perfect-play solver (hard mode) ----
+  //
+  // Memoized minimax over the full game tree with distance-to-mate scoring.
+  // Board is encoded as a base-3 integer (0=empty, 1=X, 2=O); the move number
+  // is determined by the count of filled cells at any decision point, so the
+  // board alone identifies the state.
+  //
+  // Each memo entry is a single byte: 0 = unset, otherwise high 3 bits hold
+  // value+2 (1=O wins, 2=draw, 3=X wins from X's perspective) and low 5 bits
+  // hold the distance — the number of full moves remaining until the result
+  // is realized (1 = "settled this turn"; max 17). With that, the AI ranks
+  // moves by (value, distance): in winning/drawing positions it picks the
+  // shortest line; in lost positions it drags the loss out as long as
+  // possible, forcing the opponent to actually find the win.
+  //
+  // To stay under ~1s we canonicalize via the board's D4 symmetry group:
+  // memo keys are the lex-smallest of the 8 rotated/reflected encodings, so
+  // symmetric positions share entries. We maintain all 8 keys incrementally
+  // as the search mutates the board, so canonicalization is O(8) per node.
+  const PERFECT_MEMO_SIZE = 43046721; // 3^16
+  let perfectMemo = null;
+
+  const LINES_THROUGH_PS = (() => {
+    const t = Array.from({ length: 16 }, () => []);
+    for (const line of LINES) for (const i of line) t[i].push(line);
+    return t;
+  })();
+
+  function psWinsAt(b, i, p) {
+    const lines = LINES_THROUGH_PS[i];
+    for (let li = 0; li < lines.length; li++) {
+      const L = lines[li];
+      if (b[L[0]] === p && b[L[1]] === p && b[L[2]] === p && b[L[3]] === p) return true;
+    }
+    return false;
+  }
+
+  // Workspace board uses 0/1/2 instead of null/'X'/'O' for speed.
+  const psBoard = new Uint8Array(16);
+
+  // Pre-allocated per-depth scratch (one slot per move number) — avoids
+  // re-allocating empties/oppCells on every recursive call.
+  const psEmptiesPool = [];
+  const psOppCellsPool = [];
+  for (let i = 0; i <= TOTAL_MOVES + 1; i++) {
+    psEmptiesPool.push(new Int32Array(16));
+    psOppCellsPool.push(new Int32Array(16));
+  }
+
+  function unpackVal(byte) { return (byte >> 5) - 2; }
+  function unpackDist(byte) { return byte & 31; }
+
+  // ---- D4 symmetry: per-cell weights for each of the 8 transforms.
+  // Symmetry t maps cell index i → PERMS[t][i]; the corresponding base-3 key
+  // for the rotated/reflected board is sum_i (psBoard[i] * 3^PERMS[t][i]).
+  const PS_POW3 = (() => { const p = new Float64Array(17); p[0] = 1; for (let i = 1; i <= 16; i++) p[i] = p[i-1] * 3; return p; })();
+  const PS_WEIGHT = (() => {
+    const W = [];
+    for (let t = 0; t < 8; t++) {
+      const w = new Float64Array(16);
+      for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+        let nr, nc;
+        switch (t) {
+          case 0: nr = r;     nc = c;     break; // identity
+          case 1: nr = c;     nc = 3 - r; break; // rotate 90°
+          case 2: nr = 3 - r; nc = 3 - c; break; // rotate 180°
+          case 3: nr = 3 - c; nc = r;     break; // rotate 270°
+          case 4: nr = 3 - r; nc = c;     break; // flip horizontal
+          case 5: nr = r;     nc = 3 - c; break; // flip vertical
+          case 6: nr = c;     nc = r;     break; // flip main diagonal
+          default: nr = 3 - c; nc = 3 - r;        // flip anti-diagonal
+        }
+        w[r * 4 + c] = PS_POW3[nr * 4 + nc];
+      }
+      W.push(w);
+    }
+    return W;
+  })();
+  const psSymKeys = new Float64Array(8);
+
+  // Mutate psBoard[idx] from oldV to newV, keeping the 8 symmetry keys in sync.
+  function psSetCell(idx, oldV, newV) {
+    const delta = newV - oldV;
+    psSymKeys[0] += delta * PS_WEIGHT[0][idx];
+    psSymKeys[1] += delta * PS_WEIGHT[1][idx];
+    psSymKeys[2] += delta * PS_WEIGHT[2][idx];
+    psSymKeys[3] += delta * PS_WEIGHT[3][idx];
+    psSymKeys[4] += delta * PS_WEIGHT[4][idx];
+    psSymKeys[5] += delta * PS_WEIGHT[5][idx];
+    psSymKeys[6] += delta * PS_WEIGHT[6][idx];
+    psSymKeys[7] += delta * PS_WEIGHT[7][idx];
+    psBoard[idx] = newV;
+  }
+
+  function psCanonKey() {
+    let m = psSymKeys[0];
+    if (psSymKeys[1] < m) m = psSymKeys[1];
+    if (psSymKeys[2] < m) m = psSymKeys[2];
+    if (psSymKeys[3] < m) m = psSymKeys[3];
+    if (psSymKeys[4] < m) m = psSymKeys[4];
+    if (psSymKeys[5] < m) m = psSymKeys[5];
+    if (psSymKeys[6] < m) m = psSymKeys[6];
+    if (psSymKeys[7] < m) m = psSymKeys[7];
+    return m;
+  }
+
+  // Reset psBoard to a given 16-cell array of 0/1/2 and rebuild symmetry keys.
+  function psResetFromArray(arr) {
+    psSymKeys.fill(0);
+    for (let i = 0; i < 16; i++) {
+      const v = arr[i];
+      psBoard[i] = v;
+      if (v !== 0) {
+        psSymKeys[0] += v * PS_WEIGHT[0][i];
+        psSymKeys[1] += v * PS_WEIGHT[1][i];
+        psSymKeys[2] += v * PS_WEIGHT[2][i];
+        psSymKeys[3] += v * PS_WEIGHT[3][i];
+        psSymKeys[4] += v * PS_WEIGHT[4][i];
+        psSymKeys[5] += v * PS_WEIGHT[5][i];
+        psSymKeys[6] += v * PS_WEIGHT[6][i];
+        psSymKeys[7] += v * PS_WEIGHT[7][i];
+      }
+    }
+  }
+
+  // Hard-coded results for moves 1 and 2: the search is unnecessary because
+  // we've verified exhaustively that every reachable board at those points
+  // has the same outcome.
+  //
+  //   Move 1 (empty board, X to move) — every X placement leads to an
+  //   O-winning position; X's "best" line still loses in 12 full moves.
+  //
+  //   Move 2 (1 X piece on the board, O to move) — there's only one X piece
+  //   to invert, and every O placement keeps the win; all 16 reachable boards
+  //   resolve to (value=-1, distance=11) regardless of where X opened.
+  //
+  // Packed byte = ((xVal + 2) << 5) | distance. xVal = -1 → high nybble = 1.
+  const PS_PACKED_MOVE_1 = (1 << 5) | 12; // (-1, 12)
+  const PS_PACKED_MOVE_2 = (1 << 5) | 11; // (-1, 11)
+
+  // psSolve returns the packed byte directly (same shape as the memo entry).
+  // Internally it ranks options from the *current player's* perspective:
+  //   rank = cv*100 + (cv === -1 ? cd : -cd)
+  // — higher is better, so winning shorter and losing longer both rank well.
+  function psSolve(moveNum) {
+    if (moveNum === 1) return PS_PACKED_MOVE_1;
+    if (moveNum === 2) return PS_PACKED_MOVE_2;
+
+    const key = psCanonKey();
+    const cached = perfectMemo[key];
+    if (cached !== 0) return cached;
+
+    const isMax = (moveNum & 1) === 1;
+    const player = isMax ? 1 : 2;
+    const opp = isMax ? 2 : 1;
+
+    const empties = psEmptiesPool[moveNum];
+    const oppCells = psOppCellsPool[moveNum];
+    let empN = 0, oppN = 0;
+    for (let i = 0; i < 16; i++) {
+      const v = psBoard[i];
+      if (v === 0) empties[empN++] = i;
+      else if (v === opp) oppCells[oppN++] = i;
+    }
+
+    let bestRank = -10000;
+    let cpBest = 0;   // value in current player's frame
+    let cpDist = 0;
+
+    if (moveNum === TOTAL_MOVES) {
+      // Terminal one-shot: no recursion, no symmetry-key churn needed.
+      for (let k = 0; k < oppN; k++) {
+        const idx = oppCells[k];
+        psBoard[idx] = player;
+        const won = psWinsAt(psBoard, idx, player);
+        psBoard[idx] = opp;
+        const cv = won ? 1 : 0;
+        const r = cv * 100 - 1;
+        if (r > bestRank) { bestRank = r; cpBest = cv; cpDist = 1; }
+        if (cv === 1) break;
+      }
+    } else {
+      // Single-action wins (no recursion), can short-circuit at (cv=1, cd=1).
+      let singleWin = false;
+      for (let k = 0; k < empN; k++) {
+        const idx = empties[k];
+        psBoard[idx] = player;
+        const won = psWinsAt(psBoard, idx, player);
+        psBoard[idx] = 0;
+        if (won) { singleWin = true; break; }
+      }
+      if (!singleWin) {
+        for (let k = 0; k < oppN; k++) {
+          const idx = oppCells[k];
+          psBoard[idx] = player;
+          const won = psWinsAt(psBoard, idx, player);
+          psBoard[idx] = opp;
+          if (won) { singleWin = true; break; }
+        }
+      }
+      if (singleWin) {
+        cpBest = 1; cpDist = 1;
+      } else {
+        let done = false;
+        for (let pi = 0; pi < empN && !done; pi++) {
+          const pIdx = empties[pi];
+          psSetCell(pIdx, 0, player);
+          for (let ii = 0; ii < oppN; ii++) {
+            const iIdx = oppCells[ii];
+            psSetCell(iIdx, opp, player);
+            let cv, cd;
+            if (psWinsAt(psBoard, pIdx, player) || psWinsAt(psBoard, iIdx, player)) {
+              cv = 1; cd = 1;
+            } else {
+              const cb = psSolve(moveNum + 1);
+              const cvX = (cb >> 5) - 2;
+              cv = isMax ? cvX : -cvX;
+              cd = (cb & 31) + 1;
+            }
+            psSetCell(iIdx, player, opp);
+            const r = cv * 100 + (cv === -1 ? cd : -cd);
+            if (r > bestRank) { bestRank = r; cpBest = cv; cpDist = cd; }
+            if (cv === 1 && cd === 1) { done = true; break; }
+          }
+          psSetCell(pIdx, player, 0);
+        }
+      }
+    }
+
+    const xVal = isMax ? cpBest : -cpBest;
+    const result = ((xVal + 2) << 5) | cpDist;
+    perfectMemo[key] = result;
+    return result;
+  }
+
+  function ensurePerfectMemo() {
+    if (perfectMemo) return;
+    perfectMemo = new Uint8Array(PERFECT_MEMO_SIZE);
+    // Moves 1 and 2 are answered by the hardcoded constants in psSolve, so
+    // the search starts at move 3. A move-3 board has 0 X pieces, 2 O pieces.
+    // Enumerating all C(16,2) = 120 such boards seeds every reachable
+    // canonical move-3 state; psSolve canonicalizes the key, so symmetric
+    // boards share entries and only ~15 unique solves actually run.
+    const arr = new Uint8Array(16);
+    for (let a = 0; a < 16; a++) {
+      for (let b = a + 1; b < 16; b++) {
+        arr.fill(0);
+        arr[a] = 2;
+        arr[b] = 2;
+        psResetFromArray(arr);
+        psSolve(3);
+      }
+    }
+  }
+
+  // Pick the move whose resulting position is best for the computer under
+  // distance-to-mate scoring: among moves with equal game-theoretic value,
+  // win as quickly as possible and lose as slowly as possible.
+  function choosePerfectMove() {
+    ensurePerfectMemo();
+
+    const opts = generateMoveOptions(board, computerSymbol, moveNum);
+    if (opts.length === 0) return null;
+
+    const compIsX = computerSymbol === 'X';
+    const targetSign = compIsX ? 1 : -1;
+    const scratch = new Uint8Array(16);
+
+    let bestRank = -10000;
+    let bestMoves = [];
+
+    for (const opt of opts) {
+      let cv, cd;
+      if (opt.isWin) {
+        cv = 1; cd = 1;
+      } else if (moveNum === TOTAL_MOVES) {
+        cv = 0; cd = 1;
+      } else {
+        for (let i = 0; i < 16; i++) {
+          scratch[i] = opt.finalBoard[i] === 'X' ? 1 : opt.finalBoard[i] === 'O' ? 2 : 0;
+        }
+        psResetFromArray(scratch);
+        const childByte = psSolve(moveNum + 1);
+        cv = unpackVal(childByte) * targetSign;
+        cd = unpackDist(childByte) + 1;
+      }
+      const r = cv * 100 + (cv === -1 ? cd : -cd);
+      if (r > bestRank) { bestRank = r; bestMoves = [opt]; }
+      else if (r === bestRank) bestMoves.push(opt);
+    }
+
+    return randomChoice(bestMoves);
+  }
+
+  function minimax(b, mn, player, depth, alpha, beta) {
+    if (depth <= 0 || mn > TOTAL_MOVES) return evaluateBoard(b);
+    const opts = generateMoveOptions(b, player, mn);
+    if (opts.length === 0) return evaluateBoard(b);
+
+    const isMax = player === computerSymbol;
+    const scored = opts.map(o => ({
+      opt: o,
+      h: o.isWin ? Infinity : evaluateBoard(o.finalBoard),
+    }));
+    scored.sort((a, c) => isMax ? c.h - a.h : a.h - c.h);
+
+    let best = isMax ? -Infinity : Infinity;
+    for (const { opt } of scored) {
+      let score;
+      if (opt.isWin) {
+        // Prefer earlier wins / later losses: more remaining depth = bigger swing.
+        score = isMax ? (WIN_SCORE + depth) : -(WIN_SCORE + depth);
+      } else {
+        score = minimax(opt.finalBoard, mn + 1, opponent(player), depth - 1, alpha, beta);
+      }
+      if (isMax) {
+        if (score > best) best = score;
+        if (best > alpha) alpha = best;
+      } else {
+        if (score < best) best = score;
+        if (best < beta) beta = best;
+      }
+      if (alpha >= beta) break;
+    }
+    return best;
+  }
+
+  function searchAtDepth(opts, depth) {
+    const scored = opts.map(o => ({
+      opt: o,
+      h: o.isWin ? Infinity : evaluateBoard(o.finalBoard),
+    }));
+    scored.sort((a, c) => c.h - a.h);
+
+    let bestScore = -Infinity;
+    let bestMoves = [];
+    let alpha = -Infinity;
+
+    for (const { opt } of scored) {
+      const score = opt.isWin
+        ? (WIN_SCORE + depth)
+        : minimax(opt.finalBoard, moveNum + 1, humanSymbol, depth - 1, alpha, Infinity);
+      if (score > bestScore) { bestScore = score; bestMoves = [opt]; }
+      else if (score === bestScore) bestMoves.push(opt);
+      if (bestScore > alpha) alpha = bestScore;
+    }
+    return { move: randomChoice(bestMoves), score: bestScore };
+  }
+
+  function chooseAIMove() {
+    const opts = generateMoveOptions(board, computerSymbol, moveNum);
+    if (opts.length === 0) return null;
+    if (gameMode === '2p') return randomChoice(opts);
+
+    if (gameMode === 'hard') return choosePerfectMove();
+
+    const targetDepth = DEPTH_BY_MODE[gameMode];
+    const r = searchAtDepth(opts, targetDepth);
+    return r ? r.move : randomChoice(opts);
+  }
+
+  // ---- Wiring ----
+
+  document.getElementById('btn-instructions').addEventListener('click', () => modal.classList.add('show'));
+  document.getElementById('btn-close-modal').addEventListener('click', () => modal.classList.remove('show'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('show'); });
+  document.getElementById('btn-new-game').addEventListener('click', () => {
+    // Re-open the mode picker — the player must choose again before playing.
+    gameMode = null;
+    newGame();
+  });
+  document.getElementById('btn-undo').addEventListener('click', undo);
+
+  document.querySelectorAll('.mode-selector button[data-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      gameMode = btn.dataset.mode;
+      newGame();
+    });
+  });
+
+  // External fragment edits (paste a new URL, edit the address bar, browser
+  // back/forward) reload the game from the new state. Our own writes go
+  // through history.replaceState, which doesn't fire hashchange.
+  window.addEventListener('hashchange', () => {
+    if (!loadFromHash()) {
+      gameMode = null;
+      newGame();
+    }
+  });
+
+  buildGrid();
+  if (!loadFromHash()) newGame();
+
+  // In debug mode, build the perfect-play table eagerly so the eval display
+  // can come online. Otherwise the memo is built lazily on the first hard-mode
+  // AI move (see ensurePerfectMemo()), and skipped entirely for easier modes.
+  if (DEBUG) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      ensurePerfectMemo();
+      render();
+    }));
+  }
+})();
+</script>
+</body>
+</html>
