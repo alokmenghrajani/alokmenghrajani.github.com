@@ -1,0 +1,294 @@
+@font-face {
+  font-family: 'Roboto Light';
+  src: url('Roboto-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: block;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto Light';
+  background: #1a1a2e;
+  color: #eaeaea;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  height: 100vh;
+  gap: 10px;
+  /* Shared width for status + grid so they line up. */
+  --board-w: min(92vw, calc(100vh - 230px), 480px);
+}
+
+header { text-align: center; flex: 0 0 auto; }
+
+h1 {
+  font-size: clamp(2rem, 7vw, 2.8rem);
+  background: linear-gradient(135deg, #4dabf7, #ff6b6b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 0.15em;
+  font-weight: 800;
+}
+
+/* Status: every possible message lives in the DOM as its own <div>; the
+   active one is shown via the `.active` class. All variants in a status
+   line share a single CSS Grid cell (row 1, column 1), so the line's
+   height is the natural max of all variants and never reflows. */
+.status {
+  background: #16213e;
+  padding: 10px 20px;
+  border-radius: 12px;
+  width: var(--board-w);
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 4px;
+}
+.status-line {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  align-items: center;
+  justify-items: center;
+}
+.status-line > .msg {
+  grid-row: 1;
+  grid-column: 1;
+  visibility: hidden;
+  text-align: center;
+  white-space: nowrap;
+}
+.status-line > .msg.active { visibility: visible; }
+.status.empty { visibility: hidden; }
+.status .line-1 .msg { font-size: 1.15rem; font-weight: 600; line-height: 1.3; }
+.status .line-1 .msg.banner { color: #ffd93d; font-size: 1.35rem; font-weight: 700; }
+.status .line-2 .msg { font-size: 0.9rem; color: #a0a8c0; white-space: normal; }
+.status .msg .x { color: #4dabf7; }
+.status .msg .o { color: #ff6b6b; }
+
+/* Eval is pinned to the viewport's bottom-right as plain text — no
+   background, no border — so it doesn't take any layout space. */
+.eval {
+  position: fixed;
+  right: 12px;
+  bottom: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 50;
+  max-width: calc(100vw - 24px);
+  text-align: right;
+}
+.eval.empty { display: none; }
+.eval.x { color: #4dabf7; }
+.eval.o { color: #ff6b6b; }
+.eval.draw { color: #ffd93d; }
+.eval.calc { color: #a0a8c0; font-weight: 500; font-style: italic; }
+.eval.empty { color: transparent; }
+
+/* The wrapper owns the size constraint so the mode-picker overlay can
+   fill exactly the grid's area. The constant subtracted from 100vh
+   approximates the combined fixed height of header + status + controls +
+   gaps + body padding. (Eval and mode-picker are out of flow.) */
+.grid-wrapper {
+  position: relative;
+  width: var(--board-w);
+  aspect-ratio: 1;
+  flex: 0 1 auto;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  background: #16213e;
+  padding: 6px;
+  border-radius: 12px;
+  touch-action: manipulation;
+}
+
+.cell {
+  background: #0f3460;
+  border-radius: 8px;
+  aspect-ratio: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: background 0.12s, transform 0.08s;
+  overflow: hidden;
+}
+
+/* Reversi-style disc tokens — gradient sphere with a subtle drop shadow
+   and inset highlight/shadow for depth. */
+.cell.x::after,
+.cell.o::after {
+  content: '';
+  display: block;
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.45),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.28),
+    inset 0 3px 6px rgba(255, 255, 255, 0.18);
+  transition: filter 0.12s;
+}
+
+/* Winning-line animation: each token blinks once when its `win-blink`
+   class is added. JS drives the sequencing (one cell at a time, 3 cycles). */
+@keyframes win-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.15; transform: scale(0.78); }
+}
+.cell.win-blink::after {
+  animation: win-blink 0.28s ease-in-out;
+}
+.cell.x::after {
+  background: radial-gradient(circle at 35% 30%, #9ed5ff, #4dabf7 55%, #2a7fc4);
+}
+.cell.o::after {
+  background: radial-gradient(circle at 35% 30%, #ffa6a6, #ff6b6b 55%, #c44a4a);
+}
+
+.cell.valid-place,
+.cell.valid-invert { cursor: pointer; }
+.cell.valid-place:active,
+.cell.valid-invert:active { transform: scale(0.95); }
+
+@media (hover: hover) {
+  .cell.valid-place:hover { background: #14406b; }
+  .cell.valid-invert:hover::after { filter: brightness(1.2); }
+}
+
+/* Inline disc used in status messages and the instructions modal —
+   same look as the board tokens, sized to the surrounding text. */
+.token-inline {
+  display: inline-block;
+  width: 0.95em;
+  height: 0.95em;
+  border-radius: 50%;
+  vertical-align: -0.15em;
+  margin: 0 0.06em;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.18);
+}
+.token-inline.x { background: radial-gradient(circle at 35% 30%, #9ed5ff, #4dabf7 55%, #2a7fc4); }
+.token-inline.o { background: radial-gradient(circle at 35% 30%, #ffa6a6, #ff6b6b 55%, #c44a4a); }
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+button {
+  background: #16213e;
+  color: #eaeaea;
+  border: 1px solid #4dabf7;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-family: inherit;
+}
+button:hover, button:active { background: #1f3556; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+.modal.show { display: flex; }
+
+.modal-content {
+  background: #16213e;
+  padding: 24px;
+  border-radius: 12px;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+.modal-content h2 { margin-bottom: 14px; color: #4dabf7; }
+.modal-content p { margin-bottom: 14px; }
+.modal-content ul { padding-left: 20px; margin-bottom: 14px; }
+.modal-content li { margin-bottom: 8px; }
+.modal-content li ul { margin-top: 6px; margin-bottom: 0; }
+.modal-content strong.x { color: #4dabf7; }
+.modal-content strong.o { color: #ff6b6b; }
+
+/* Mode picker covers the grid area only — page-level controls (How to
+   Play, Undo, New Game) remain reachable. Behaves modally because cell
+   clicks are JS-gated on `gameMode`. */
+.mode-selector {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  z-index: 5;
+}
+.mode-selector.hidden { display: none; }
+.mode-selector-content {
+  background: #16213e;
+  padding: 16px 18px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.mode-selector-content h2 {
+  color: #4dabf7;
+  font-size: 1.15rem;
+  text-align: center;
+  margin-bottom: 2px;
+}
+.mode-selector-content button {
+  padding: 10px 16px;
+  font-size: 0.95rem;
+}
+
+.thinking-pulse {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
