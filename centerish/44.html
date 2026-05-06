@@ -1,32 +1,48 @@
 <!doctype html>
 <html lang="en">
-<title>44 — mask-image gradient</title>
+<title>44 — &lt;button&gt; auto-centers its content</title>
 <link rel="stylesheet" href="style.css">
 <script src="preview.js" defer></script>
 <style>
   html, body { height: 100vh; }
-  .page {
+  body { margin: 0; overflow: hidden; }
+  /* a <button> sized to the viewport. the user-agent stylesheet centers
+     button content both horizontally and vertically by default. no flex,
+     no grid, no place-items required — the button does it. */
+  #centerish {
+    width: 100vw;
     height: 100vh;
-    -webkit-mask-image: linear-gradient(transparent 0 42%, #000 42% 58%, transparent 58% 100%);
-            mask-image: linear-gradient(transparent 0 42%, #000 42% 58%, transparent 58% 100%);
+    appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    line-height: 1.4;
+    cursor: pointer;
   }
-  .stack { padding: 24px; }
-  .stack p { margin: 8px 0; }
-  #centerish { display: inline-block;
-               border: 2.5px solid #1a1a1a;
-               padding: 16px 22px; max-width: 480px;
-               line-height: 1.4; }
+  #centerish:focus { outline: none; }
+  /* rotate just the inner text so clicking doesn't whip the entire button */
+  #centerish .text {
+    display: inline-block;
+    max-width: 480px;
+    transition: transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
 </style>
 <div class="chrome">
   <a class="back" href="index.html#44">← Index</a>
   <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
-<div class="page">
-  <div class="stack">
-    <p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p>
-    <p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p>
-    <p><span id="centerish">The content is at the top. A mask hides everything outside a band across the middle. Visual deceit.</span></p>
-    <p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p>
-  </div>
-</div>
+<button type="button" id="centerish">
+  <span class="text">A <code>&lt;button&gt;</code> element auto-centers its content, both axes, per the user-agent stylesheet. We just made the button the size of the viewport. Click me &mdash; I will spin, for no reason.</span>
+</button>
+<script>
+  const text = centerish.querySelector('.text');
+  let spins = 0;
+  centerish.addEventListener('click', () => {
+    spins++;
+    text.style.transform = `rotate(${spins * 360}deg)`;
+  });
+</script>

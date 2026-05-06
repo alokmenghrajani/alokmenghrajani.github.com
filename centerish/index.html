@@ -175,7 +175,7 @@ body {
 
 <article class="entry" id="14">
   <h3><span class="num">14</span> the &lt;center&gt; tag <span class="pill wrong">wrong</span></h3>
-  <p>It's literally called center. Centers horizontally only. The H is silent.</p>
+  <p>It's literally called center. Centers horizontally only.</p>
   <pre><code>&lt;center&gt;am I centered?&lt;/center&gt;</code></pre>
   <a class="preview" href="14.html">preview &rarr;</a>
 </article>
@@ -189,7 +189,7 @@ body {
 
 <article class="entry" id="16">
   <h3><span class="num">16</span> align-content: center on a single-line flex <span class="pill wrong">wrong</span></h3>
-  <p>Silently no-op. Documented. Still surprising. Still wrong.</p>
+  <p>No-op. Documented. Still surprising. Still wrong.</p>
   <pre><code>.row {
   display: flex;
   align-content: center; /* needs flex-wrap to do anything */
@@ -226,8 +226,7 @@ body {
   <h3><span class="num">19</span> SVG &lt;text y="50%" dominant-baseline="middle"&gt; <span class="pill cursed">cursed</span></h3>
   <p>Skip CSS entirely. Render text in SVG. SVG centers, because SVG can do whatever it wants.</p>
   <pre><code>&lt;svg width="100%" height="100vh"&gt;
-  &lt;text x="50%" y="50%" text-anchor="middle"
-        dominant-baseline="middle"&gt;hi&lt;/text&gt;
+  &lt;text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"&gt;hi&lt;/text&gt;
 &lt;/svg&gt;</code></pre>
   <a class="preview" href="19.html">preview &rarr;</a>
 </article>
@@ -256,16 +255,15 @@ body {
 </article>
 
 <article class="entry" id="22">
-  <h3><span class="num">22</span> :target with scroll-padding <span class="pill cursed">cursed</span></h3>
-  <p>Visit the page with #here in the URL. The browser scrolls. The padding does the rest. Works once per pageload.</p>
-  <pre><code>html { scroll-padding-block: 50vh; }
-:target { /* the centerish element, when fragmented */ }</code></pre>
+  <h3><span class="num">22</span> :target with scroll <span class="pill cursed">cursed</span></h3>
+  <p>Visit the page with #here in the URL. The browser scrolls.</p>
+  <pre><code>html { scroll-padding-block: 50vh; }</code></pre>
   <a class="preview" href="22.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="23">
   <h3><span class="num">23</span> position: sticky; top: 50vh <span class="pill cursed">cursed</span></h3>
-  <p>Centered once scrolled.</p>
+  <p>Scroll to center.</p>
   <pre><code>#centerish { position: sticky; top: 50vh; }</code></pre>
   <a class="preview" href="23.html">preview &rarr;</a>
 </article>
@@ -327,7 +325,7 @@ am I centered?</code></pre>
 
 <article class="entry" id="29">
   <h3><span class="num">29</span> &lt;marquee direction="up" behavior="alternate"&gt; <span class="pill crime">crime</span></h3>
-  <p>Bounces past center forever. Catch the screenshot at exactly the right frame.</p>
+  <p>Centered, in the time-averaged sense.</p>
   <pre><code>&lt;marquee direction="up" behavior="alternate"
          height="100vh" scrollamount="3"&gt;
   am I centered?
@@ -340,8 +338,7 @@ am I centered?</code></pre>
   <p>Centers correctly only when JavaScript is disabled.</p>
   <pre><code>&lt;noscript&gt;
   &lt;style&gt;#centerish{display:grid;place-items:center;height:100vh}&lt;/style&gt;
-&lt;/noscript&gt;
-&lt;script&gt;/* exists */&lt;/script&gt;</code></pre>
+&lt;/noscript&gt;</code></pre>
   <a class="preview" href="30.html">preview &rarr;</a>
 </article>
 
@@ -368,7 +365,7 @@ am I centered?</code></pre>
 
 <article class="entry" id="33">
   <h3><span class="num">33</span> &lt;select size="21"&gt; with the line at index 10 <span class="pill crime">crime</span></h3>
-  <p>Form widget as a layout primitive. Keyboard scrolls it. The OS picks the font for you.</p>
+  <p>Form widget as a layout primitive. Keyboard scrolls it. Designed to not work on mobile.</p>
   <pre><code>&lt;select size="21" style="height:100vh; width:100%"&gt;
   &lt;option&gt;&lt;/option&gt; &lt;!-- x10 --&gt;
   &lt;option&gt;am I centered?&lt;/option&gt;
@@ -401,7 +398,7 @@ tick();</code></pre>
 
 <article class="entry" id="36">
   <h3><span class="num">36</span> MutationObserver re-centers on any DOM change <span class="pill js">js crime</span></h3>
-  <p>Including its own writes. The observer triggers itself. Forever. Stop it before it learns.</p>
+  <p>The observer triggers itself. Forever.</p>
   <pre><code>const o = new MutationObserver(() =&gt; {
   el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
 });
@@ -490,10 +487,18 @@ worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
 </article>
 
 <article class="entry" id="44">
-  <h3><span class="num">44</span> mask-image gradient (only looks centered) <span class="pill galaxy">galaxy</span></h3>
-  <p>Content is at the top. A mask hides everything except a band across the middle. Visual deceit.</p>
-  <pre><code>.page {
-  mask-image: linear-gradient(transparent 40%, #000 40% 60%, transparent 60%);
+  <h3><span class="num">44</span> &lt;button&gt; auto-centers its content <span class="pill galaxy">galaxy</span></h3>
+  <p>Browsers center a <code>&lt;button&gt;</code>'s content on both axes for free, courtesy of the user-agent stylesheet. Make the button viewport-sized, strip the default chrome, and the centering happens &mdash; no flex, no grid, no <code>place-items</code>. Click and the text spins.</p>
+  <pre><code>button#centerish {
+  width: 100vw;
+  height: 100vh;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  /* the UA stylesheet does the centering */
 }</code></pre>
   <a class="preview" href="44.html">preview &rarr;</a>
 </article>
@@ -522,8 +527,7 @@ worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
 <article class="entry" id="47">
   <h3><span class="num">47</span> font-size: 50vh; line-height: 0 <span class="pill galaxy">galaxy</span></h3>
   <p>Type metrics to the rescue. Don't think about it too hard.</p>
-  <pre><code>.box { font-size: 50vh; line-height: 0; }
-/* content: a single &middot; */</code></pre>
+  <pre><code>.box { font-size: 50vh; line-height: 0; }</code></pre>
   <a class="preview" href="47.html">preview &rarr;</a>
 </article>
 
