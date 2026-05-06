@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>centerish — 50 ways to vertically center content on a webpage, mostly wrong</title>
+<title>centerish: 50 ways to vertically center content on a webpage, mostly wrong</title>
 <link rel="stylesheet" href="style.css">
 <script src="index.js" defer></script>
 </head>
@@ -27,96 +27,106 @@
   <text x="87" y="62" text-anchor="middle" font-family="Comic Sans MS, cursive" font-size="13" fill="#1a1a1a" stroke="none">centered?</text>
 </svg>
 
-<p class="intro">A field guide to centering vertically. The way it's done in the field. By people who are angry. Each technique is its own page. The dotted line on the preview shows where center actually is.</p>
+<p class="intro">A field guide to centering content vertically on a webpage. The way it's done in the field. By people who are angry. Each technique is its own page. The dotted lines on each preview shows where the center is actually located.</p>
 
 <h2 class="category">Technically correct, theatrically wrong</h2>
 
 <article class="entry" id="01">
   <h3><span class="num">01</span> just a &lt;table&gt; (federally mandated) <span class="pill works">works</span></h3>
   <p>Compliant with the Department of Internet Things' IE5-compatibility mandate. We support exactly one (1) browser. It was released in 1999. We are not allowed to upgrade it.</p>
-  <pre><code>&lt;table border="2" cellpadding="20" cellspacing="0"
-       width="100%" height="100%" bgcolor="#faf6e8"&gt;
-  &lt;tr&gt;&lt;td valign="middle" align="center"&gt;
-    am I centered?
-  &lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;</code></pre>
+  <pre><code><span class="tg">&lt;table</span> <span class="at">border</span>=<span class="st">"2"</span> <span class="at">cellpadding</span>=<span class="st">"20"</span> <span class="at">cellspacing</span>=<span class="st">"0"</span>
+       <span class="at">width</span>=<span class="st">"100%"</span> <span class="at">height</span>=<span class="st">"100%"</span> <span class="at">bgcolor</span>=<span class="st">"#faf6e8"</span>&gt;
+  <span class="tg">&lt;tr</span>&gt;
+    <span class="tg">&lt;td</span> <span class="at">valign</span>=<span class="st">"middle"</span> <span class="at">align</span>=<span class="st">"center"</span>&gt;
+      am I centered?
+    <span class="tg">&lt;/td</span>&gt;
+  <span class="tg">&lt;/tr</span>&gt;
+<span class="tg">&lt;/table</span>&gt;</code></pre>
   <a class="preview" href="01.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="02">
   <h3><span class="num">02</span> Grid place-items on a 50-row template <span class="pill works">works</span></h3>
   <p>Why use one row when you can use fifty and put the content in row 25, give or take.</p>
-  <pre><code>display: grid;
-grid-template-rows: repeat(50, 1fr);
-place-items: center;
-/* good luck explaining this in code review */</code></pre>
+  <pre><code><span class="pr">display</span>: grid;
+<span class="pr">grid-template-rows</span>: <span class="fn">repeat</span>(<span class="nu">50</span>, <span class="nu">1fr</span>);
+<span class="pr">place-items</span>: center;
+<span class="co">/* good luck explaining this in code review */</span></code></pre>
   <a class="preview" href="02.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="03">
   <h3><span class="num">03</span> works until a parent has position: relative <span class="pill wrong">footgun</span></h3>
-  <p>With no positioned ancestor, an <code>absolute</code> + <code>translate(-50%, -50%)</code> child is positioned against the viewport — which centers it correctly! Until someone, anywhere up the tree, types <code>position: relative</code>. The preview has a button so you can watch it happen.</p>
-  <pre><code>.parent { /* position: static — for now */ }
+  <p>With no positioned ancestor, an <code>absolute</code> + <code>translate(-50%, -50%)</code> child is positioned against the viewport which centers it correctly! Until someone, anywhere up the tree, types <code>position: relative</code>.</p>
+  <pre><code><span class="pp">.parent</span> { <span class="co">/* position: static, at least for now */</span> }
+
 #centerish {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
+  <span class="pr">position</span>: absolute;
+  <span class="pr">top</span>: <span class="nu">50%</span>;
+  <span class="pr">left</span>: <span class="nu">50%</span>;
+  <span class="pr">transform</span>: <span class="fn">translate</span>(<span class="nu">-50%</span>, <span class="nu">-50%</span>);
 }
-/* one day .parent will gain position: relative
-   for a tooltip, an overlay, anything. That day,
-   the centering will move and nobody will know why... */</code></pre>
+<span class="co">/* one day .parent will gain position: relative for a tooltip, an overlay, or some
+  other reason. That day, the centering will break and nobody will know why... */</span></code></pre>
   <a class="preview" href="03.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="04">
-  <h3><span class="num">04</span> align-items vs align-self, three rounds each <span class="pill works">works</span></h3>
+  <h3><span class="num">04</span> align-items vs align-self <span class="pill works">works</span></h3>
   <p>The container picks an alignment three times. The child overrides three times. The last declaration on each side wins. Centered, eventually.</p>
   <pre><code>body {
-  display: flex;
-  align-items: flex-start;     /* go top */
-  align-items: flex-end;       /* no, bottom */
-  align-items: center;         /* fine, center */
-  justify-content: center;
+  <span class="pr">display</span>: flex;
+  <span class="pr">align-items</span>: flex-start;     <span class="co">/* go top */</span>
+  <span class="pr">align-items</span>: flex-end;       <span class="co">/* no, bottom */</span>
+  <span class="pr">align-items</span>: center;         <span class="co">/* fine, center */</span>
+  <span class="pr">justify-content</span>: center;
 }
+
 #centerish {
-  align-self: flex-start;      /* the top, please */
-  align-self: stretch;         /* fill the whole thing */
-  align-self: auto;            /* whatever the parent said */
+  <span class="pr">align-self</span>: flex-start;      <span class="co">/* the top, please */</span>
+  <span class="pr">align-self</span>: stretch;         <span class="co">/* fill the whole thing */</span>
+  <span class="pr">align-self</span>: auto;            <span class="co">/* whatever the parent said */</span>
 }</code></pre>
   <a class="preview" href="04.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="05">
-  <h3><span class="num">05</span> line-height = 100vh (centered when terse) <span class="pill wrong">wrong</span></h3>
+  <h3><span class="num">05</span> line-height=100vh (centered when terse) <span class="pill wrong">wrong</span></h3>
   <p>One line of text inside a line box that's 100vh tall ends up vertically centered. Add a second line and each one is 100vh tall. The page becomes a stairway.</p>
-  <pre><code>html, body { height: 100vh; }
+  <pre><code>html, body { <span class="pr">height</span>: <span class="nu">100vh</span>; }
+
 body {
-  text-align: center;
-  line-height: 100vh;
+  <span class="pr">text-align</span>: center;
+  <span class="pr">line-height</span>: <span class="nu">100vh</span>;
 }
-/* one line: centered. two lines: 200vh of content. */</code></pre>
+<span class="co">/* one line: centered. two lines: 200vh of content. */</span></code></pre>
   <a class="preview" href="05.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="06">
   <h3><span class="num">06</span> table-cell wrapped in four divs <span class="pill works">works</span></h3>
   <p>Vertical-align: middle still works in 2026. We just have to dress it up.</p>
-  <pre><code>&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div style="display: table-cell;
-  vertical-align: middle; height:100vh"&gt;
-  ...
-&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></pre>
+  <pre><code><span class="tg">&lt;div</span>&gt;
+  <span class="tg">&lt;div</span>&gt;
+    <span class="tg">&lt;div</span>&gt;
+      <span class="tg">&lt;div</span> <span class="at">style</span>="<span class="pr">display</span>: table-cell; <span class="pr">vertical-align</span>: middle; <span class="pr">height</span>: <span class="nu">100vh</span>"&gt;
+        ...
+      <span class="tg">&lt;/div</span>&gt;
+    <span class="tg">&lt;/div</span>&gt;
+  <span class="tg">&lt;/div</span>&gt;
+<span class="tg">&lt;/div</span>&gt;</code></pre>
   <a class="preview" href="06.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="07">
-  <h3><span class="num">07</span> position: fixed; inset: 0; margin: auto <span class="pill works">works</span></h3>
+  <h3><span class="num">07</span> position: fixed <span class="pill works">works</span></h3>
   <p>Centered. Also pinned. Also covers whatever's in the middle of the page. Also doesn't scroll, ever. Also a cry for help.</p>
   <pre><code>#centerish {
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  width: 300px;
-  height: 80px;
+  <span class="pr">position</span>: fixed;
+  <span class="pr">inset</span>: <span class="nu">0</span>;
+  <span class="pr">margin</span>: auto;
+  <span class="pr">width</span>: <span class="nu">300px</span>;
+  <span class="pr">height</span>: <span class="nu">80px</span>;
 }</code></pre>
   <a class="preview" href="07.html">preview &rarr;</a>
 </article>
@@ -125,9 +135,9 @@ body {
   <h3><span class="num">08</span> aspect-ratio: 1 with place-content <span class="pill wrong">wrong</span></h3>
   <p>Centered when the window is square. Otherwise it's just sitting there.</p>
   <pre><code>body {
-  aspect-ratio: 1;
-  display: grid;
-  place-content: center;
+  <span class="pr">aspect-ratio</span>: <span class="nu">1</span>;
+  <span class="pr">display</span>: grid;
+  <span class="pr">place-content</span>: center;
 }</code></pre>
   <a class="preview" href="08.html">preview &rarr;</a>
 </article>
@@ -138,9 +148,9 @@ body {
   <h3><span class="num">09</span> top: 50% (and nothing else) <span class="pill wrong">wrong</span></h3>
   <p>Centers the top edge. The content sags below. Beautiful.</p>
   <pre><code>#centerish {
-  position: absolute;
-  top: 50%;
-  /* I'm sure that's enough */
+  <span class="pr">position</span>: absolute;
+  <span class="pr">top</span>: <span class="nu">50%</span>;
+  <span class="co">/* I'm sure that's enough */</span>
 }</code></pre>
   <a class="preview" href="09.html">preview &rarr;</a>
 </article>
@@ -148,51 +158,54 @@ body {
 <article class="entry" id="10">
   <h3><span class="num">10</span> margin-top: 50% <span class="pill wrong">wrong</span></h3>
   <p>Percentages on margin are computed against the <em>width</em>. Resize the window. Watch the world drift.</p>
-  <pre><code>#centerish { margin-top: 50%; }</code></pre>
+  <pre><code>#centerish { <span class="pr">margin-top</span>: <span class="nu">50%</span>; }</code></pre>
   <a class="preview" href="10.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="11">
   <h3><span class="num">11</span> padding-top: 384px <span class="pill wrong">wrong</span></h3>
   <p>Works on the developer's laptop. Their screen is 768px tall and 384px is exactly half. Your bug report was closed as "cannot reproduce."</p>
-  <pre><code>#centerish { padding-top: 384px; }</code></pre>
+  <pre><code>#centerish { <span class="pr">padding-top</span>: <span class="nu">384px</span>; }</code></pre>
   <a class="preview" href="11.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="12">
   <h3><span class="num">12</span> calc(50vh - 8px) <span class="pill wrong">wrong</span></h3>
   <p>Assumes a 16px font and one specific text height. Zoom in. The illusion shatters.</p>
-  <pre><code>#centerish { position: absolute; top: calc(50vh - 8px); }</code></pre>
+  <pre><code>#centerish {
+  <span class="pr">position</span>: absolute;
+  <span class="pr">top</span>: <span class="fn">calc</span>(<span class="nu">50vh</span> - <span class="nu">8px</span>);
+}</code></pre>
   <a class="preview" href="12.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="13">
   <h3><span class="num">13</span> vertical-align: middle on a div <span class="pill wrong">wrong</span></h3>
   <p>Written with conviction. Does absolutely nothing. The dev moves on.</p>
-  <pre><code>#centerish { vertical-align: middle; }</code></pre>
+  <pre><code>#centerish { <span class="pr">vertical-align</span>: middle; }</code></pre>
   <a class="preview" href="13.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="14">
   <h3><span class="num">14</span> the &lt;center&gt; tag <span class="pill wrong">wrong</span></h3>
   <p>It's literally called center. Centers horizontally only.</p>
-  <pre><code>&lt;center&gt;am I centered?&lt;/center&gt;</code></pre>
+  <pre><code><span class="tg">&lt;center</span>&gt;am I centered?<span class="tg">&lt;/center</span>&gt;</code></pre>
   <a class="preview" href="14.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="15">
-  <h3><span class="num">15</span> text-align: center, vertically <span class="pill wrong">wrong</span></h3>
+  <h3><span class="num">15</span> text-align: center <span class="pill wrong">wrong</span></h3>
   <p>Bold claim. Same energy as #14, with a CSS property attached.</p>
-  <pre><code>body { text-align: center; }</code></pre>
+  <pre><code>body { <span class="pr">text-align</span>: center; }</code></pre>
   <a class="preview" href="15.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="16">
   <h3><span class="num">16</span> align-content: center on a single-line flex <span class="pill wrong">wrong</span></h3>
   <p>No-op. Documented. Still surprising. Still wrong.</p>
-  <pre><code>.row {
-  display: flex;
-  align-content: center; /* needs flex-wrap to do anything */
+  <pre><code><span class="pp">.row</span> {
+  <span class="pr">display</span>: flex;
+  <span class="pr">align-content</span>: center; <span class="co">/* needs flex-wrap to do anything */</span>
 }</code></pre>
   <a class="preview" href="16.html">preview &rarr;</a>
 </article>
@@ -202,22 +215,26 @@ body {
 <article class="entry" id="17">
   <h3><span class="num">17</span> the ghost element <span class="pill cursed">cursed</span></h3>
   <p>An invisible inline-block sibling, 100% tall, baseline-aligned. Nobody knows why it works. It does.</p>
-  <pre><code>.box::before {
-  content: "";
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle;
+  <pre><code><span class="pp">.box</span>::before {
+  <span class="pr">content</span>: <span class="st">""</span>;
+  <span class="pr">display</span>: inline-block;
+  <span class="pr">height</span>: <span class="nu">100%</span>;
+  <span class="pr">vertical-align</span>: middle;
 }
-#centerish { display: inline-block; vertical-align: middle; }</code></pre>
+
+#centerish {
+  <span class="pr">display</span>: inline-block;
+  <span class="pr">vertical-align</span>: middle;
+}</code></pre>
   <a class="preview" href="17.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="18">
   <h3><span class="num">18</span> writing-mode: vertical-rl + text-align: center <span class="pill cursed">cursed</span></h3>
   <p>Rotate the text-flow 90&deg;, then center horizontally. Which is now vertically.</p>
-  <pre><code>.box {
-  writing-mode: vertical-rl;
-  text-align: center; /* now this means vertically */
+  <pre><code><span class="pp">.box</span> {
+  <span class="pr">writing-mode</span>: vertical-rl;
+  <span class="pr">text-align</span>: center; <span class="co">/* now this means vertically */</span>
 }</code></pre>
   <a class="preview" href="18.html">preview &rarr;</a>
 </article>
@@ -225,32 +242,33 @@ body {
 <article class="entry" id="19">
   <h3><span class="num">19</span> SVG &lt;text y="50%" dominant-baseline="middle"&gt; <span class="pill cursed">cursed</span></h3>
   <p>Skip CSS entirely. Render text in SVG. SVG centers, because SVG can do whatever it wants.</p>
-  <pre><code>&lt;svg width="100%" height="100vh"&gt;
-  &lt;text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"&gt;hi&lt;/text&gt;
-&lt;/svg&gt;</code></pre>
+  <pre><code><span class="tg">&lt;svg</span> <span class="at">width</span>=<span class="st">"100%"</span> <span class="at">height</span>=<span class="st">"100vh"</span>&gt;
+  <span class="tg">&lt;text</span> <span class="at">x</span>=<span class="st">"50%"</span> <span class="at">y</span>=<span class="st">"50%"</span> <span class="at">text-anchor</span>=<span class="st">"middle"</span> <span class="at">dominant-baseline</span>=<span class="st">"middle"</span>&gt;hi<span class="tg">&lt;/text</span>&gt;
+<span class="tg">&lt;/svg</span>&gt;</code></pre>
   <a class="preview" href="19.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="20">
   <h3><span class="num">20</span> &lt;dialog&gt;.showModal() <span class="pill cursed">cursed</span></h3>
-  <p>The browser centers it for free. You didn't even ask. There's an ::backdrop now too. You're welcome?</p>
-  <pre><code>&lt;dialog open&gt;am I centered?&lt;/dialog&gt;
-&lt;script&gt;document.querySelector('dialog').showModal()&lt;/script&gt;</code></pre>
+  <p>The browser centers it for free. You didn't even ask. There's a ::backdrop now too. You're welcome?</p>
+  <pre><code><span class="tg">&lt;dialog</span> open&gt;am I centered?<span class="tg">&lt;/dialog</span>&gt;
+<span class="tg">&lt;script</span>&gt;<span class="bi">document</span><span class="fn">.querySelector</span>(<span class="st">'dialog'</span>)<span class="fn">.showModal</span>()<span class="tg">&lt;/script</span>&gt;</code></pre>
   <a class="preview" href="20.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="21">
   <h3><span class="num">21</span> two divs in synergy <span class="pill works">works</span></h3>
   <p>Two divs working together in cross-functional alignment. The parent owns position. The child owns offset. Together they deliver verticality at scale. Q4 OKR achieved.</p>
-  <pre><code>.parent {
-  position: absolute;
-  top: 50vh;
-  left: 0; right: 0;
+  <pre><code><span class="pp">.parent</span> {
+  <span class="pr">position</span>: absolute;
+  <span class="pr">top</span>: <span class="nu">50vh</span>;
+  <span class="pr">left</span>: <span class="nu">0</span>;
+  <span class="pr">right</span>: <span class="nu">0</span>;
 }
 
 #centerish {
-  margin: 0 auto;
-  transform: translateY(-50%);
+  <span class="pr">margin</span>: <span class="nu">0</span> auto;
+  <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nu">-50%</span>);
 }</code></pre>
   <a class="preview" href="21.html">preview &rarr;</a>
 </article>
@@ -258,33 +276,33 @@ body {
 <article class="entry" id="22">
   <h3><span class="num">22</span> :target with scroll <span class="pill cursed">cursed</span></h3>
   <p>Visit the page with #here in the URL. The browser scrolls.</p>
-  <pre><code>html { scroll-padding-block: 50vh; }</code></pre>
+  <pre><code>html { <span class="pr">scroll-padding-block</span>: <span class="nu">50vh</span>; }</code></pre>
   <a class="preview" href="22.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="23">
   <h3><span class="num">23</span> position: sticky; top: 50vh <span class="pill cursed">cursed</span></h3>
   <p>Scroll to center.</p>
-  <pre><code>#centerish { position: sticky; top: 50vh; }</code></pre>
+  <pre><code>#centerish { <span class="pr">position</span>: sticky; <span class="pr">top</span>: <span class="nu">50vh</span>; }</code></pre>
   <a class="preview" href="23.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="24">
   <h3><span class="num">24</span> &lt;details&gt; with the content in &lt;summary&gt; <span class="pill cursed">cursed</span></h3>
   <p>Disclosure widget as a centering primitive. Don't open it.</p>
-  <pre><code>&lt;details style="display:grid;place-items:center;height:100vh"&gt;
-  &lt;summary&gt;am I centered?&lt;/summary&gt;
-&lt;/details&gt;</code></pre>
+  <pre><code><span class="tg">&lt;details</span> <span class="at">style</span>=<span class="st">"</span><span class="pr">display</span>: grid; <span class="pr">place-items</span>: center; <span class="pr">height</span>: <span class="nu">100vh</span><span class="st">"</span></span>&gt;
+  <span class="tg">&lt;summary</span>&gt;am I centered?<span class="tg">&lt;/summary</span>&gt;
+<span class="tg">&lt;/details</span>&gt;</code></pre>
   <a class="preview" href="24.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="25">
-  <h3><span class="num">25</span> canvas with textBaseline = "middle" <span class="pill cursed">cursed</span></h3>
+  <h3><span class="num">25</span> canvas with textBaseline="middle" <span class="pill cursed">cursed</span></h3>
   <p>Bitmap your text. Place it at (w/2, h/2). Achieve copy-paste protection as bonus.</p>
-  <pre><code>const c = canvas.getContext('2d');
-c.textBaseline = 'middle';
-c.textAlign = 'center';
-c.fillText('am I centered?', canvas.width/2, canvas.height/2);</code></pre>
+  <pre><code><span class="kw">const</span> c = canvas<span class="fn">.getContext</span>(<span class="st">'2d'</span>);
+c<span class="pp">.textBaseline</span> = <span class="st">'middle'</span>;
+c<span class="pp">.textAlign</span> = <span class="st">'center'</span>;
+c<span class="fn">.fillText</span>(<span class="st">'am I centered?'</span>, canvas<span class="pp">.width</span>/<span class="nu">2</span>, canvas<span class="pp">.height</span>/<span class="nu">2</span>);</code></pre>
   <a class="preview" href="25.html">preview &rarr;</a>
 </article>
 
@@ -293,8 +311,8 @@ c.fillText('am I centered?', canvas.width/2, canvas.height/2);</code></pre>
 <article class="entry" id="26">
   <h3><span class="num">26</span> &lt;br&gt; spam <span class="pill crime">crime</span></h3>
   <p>Eyeball it until it looks centered. Resize the window. Add more &lt;br&gt;. This is fine.</p>
-  <pre><code>&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
-&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+  <pre><code><span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;
+<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;<span class="tg">&lt;br</span>&gt;
 am I centered?</code></pre>
   <a class="preview" href="26.html">preview &rarr;</a>
 </article>
@@ -311,16 +329,16 @@ am I centered?</code></pre>
 <article class="entry" id="28">
   <h3><span class="num">28</span> floats (CSS war crimes) <span class="pill crime">crime</span></h3>
   <p>Floats were designed to wrap text around images. We're using one as a 50vh-tall spacer with a negative margin equal to half the content height. Together the math cancels and the content lands centered. The content height is hardcoded.</p>
-  <pre><code>.spacer {
-  float: left;
-  height: 50vh;
-  margin-bottom: -90px;        /* = -(content / 2) */
+  <pre><code><span class="pp">.spacer</span> {
+  <span class="pr">float</span>: left;
+  <span class="pr">height</span>: <span class="nu">50vh</span>;
+  <span class="pr">margin-bottom</span>: <span class="nu">-90px</span>;        <span class="co">/* = -(content / 2) */</span>
 }
 
 #centerish {
-  clear: left;
-  height: 180px;
-  margin: 0 auto;
+  <span class="pr">clear</span>: left;
+  <span class="pr">height</span>: <span class="nu">180px</span>;
+  <span class="pr">margin</span>: <span class="nu">0</span> auto;
 }</code></pre>
   <a class="preview" href="28.html">preview &rarr;</a>
 </article>
@@ -328,52 +346,52 @@ am I centered?</code></pre>
 <article class="entry" id="29">
   <h3><span class="num">29</span> &lt;marquee direction="up" behavior="alternate"&gt; <span class="pill crime">crime</span></h3>
   <p>Centered, in the time-averaged sense.</p>
-  <pre><code>&lt;marquee direction="up" behavior="alternate"
-         height="100vh" scrollamount="3"&gt;
+  <pre><code><span class="tg">&lt;marquee</span> <span class="at">direction</span>=<span class="st">"up"</span> <span class="at">behavior</span>=<span class="st">"alternate"</span>
+         <span class="at">height</span>=<span class="st">"100vh"</span> <span class="at">scrollamount</span>=<span class="st">"3"</span>&gt;
   am I centered?
-&lt;/marquee&gt;</code></pre>
+<span class="tg">&lt;/marquee</span>&gt;</code></pre>
   <a class="preview" href="29.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="30">
   <h3><span class="num">30</span> &lt;noscript&gt; fallback <span class="pill crime">crime</span></h3>
   <p>Centers correctly only when JavaScript is disabled.</p>
-  <pre><code>&lt;noscript&gt;
-  &lt;style&gt;#centerish{display:grid; place-items:center; height:100vh}&lt;/style&gt;
-&lt;/noscript&gt;</code></pre>
+  <pre><code><span class="tg">&lt;noscript</span>&gt;
+  <span class="tg">&lt;style</span>&gt;#centerish{<span class="pr">display</span>:grid; <span class="pr">place-items</span>:center; <span class="pr">height</span>:<span class="nu">100vh</span>}<span class="tg">&lt;/style</span>&gt;
+<span class="tg">&lt;/noscript</span>&gt;</code></pre>
   <a class="preview" href="30.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="31">
   <h3><span class="num">31</span> 50 nested &lt;div&gt;s, padding-top: 1% <span class="pill crime">crime</span></h3>
   <p>Each div pushes a little. Together they push half.</p>
-  <pre><code>&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div&gt;... (47 more) ...
+  <pre><code><span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;... (<span class="nu">47</span> more) ...
   am I centered?
-&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-/* every div: padding-top: 1% */</code></pre>
+<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;
+<span class="co">/* every div: padding-top: 1% */</span></code></pre>
   <a class="preview" href="31.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="32">
   <h3><span class="num">32</span> &lt;hr&gt; on top, &lt;hr&gt; on bottom, flex: 1 each <span class="pill crime">crime</span></h3>
   <p>Two horizontal rules act as struts. The rules push the content. Semantic content is now horizontal rules.</p>
-  <pre><code>&lt;div style="display: flex; flex-direction: column;
-    height: 100vh"&gt;
-  &lt;hr style="flex:1"&gt;
+  <pre><code><span class="tg">&lt;div</span> <span class="at">style</span>="<span class="pr">display</span>: flex; <span class="pr">flex-direction</span>: column;
+    <span class="pr">height</span>: <span class="nu">100vh</span>"&gt;
+  <span class="tg">&lt;hr</span> <span class="at">style</span>=<span class="st">"</span><span class="pr">flex</span>: <span class="nu">1</span><span class="st">"</span>&gt;
   am I centered?
-  &lt;hr style="flex:1"&gt;
-&lt;/div&gt;</code></pre>
+  <span class="tg">&lt;hr</span> <span class="at">style</span>=<span class="st">"</span><span class="pr">flex</span>: <span class="nu">1</span><span class="st">"</span>&gt;
+<span class="tg">&lt;/div</span>&gt;</code></pre>
   <a class="preview" href="32.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="33">
   <h3><span class="num">33</span> &lt;select size="21"&gt; with the line at index 10 <span class="pill crime">crime</span></h3>
   <p>Form widget as a layout primitive. Keyboard scrolls it. Designed to not work on mobile.</p>
-  <pre><code>&lt;select size="21" style="height:100vh; width:100%"&gt;
-  &lt;option&gt;&lt;/option&gt; &lt;!-- x10 --&gt;
-  &lt;option&gt;am I centered?&lt;/option&gt;
-  &lt;option&gt;&lt;/option&gt; &lt;!-- x10 --&gt;
-&lt;/select&gt;</code></pre>
+  <pre><code><span class="tg">&lt;select</span> <span class="at">size</span>=<span class="st">"21"</span> <span class="at">style</span>=<span class="st">"</span><span class="pr">height</span>: <span class="nu">100vh</span>; <span class="pr">width</span>: <span class="nu">100%</span><span class="st">"</span></span>&gt;
+  <span class="tg">&lt;option</span>&gt;<span class="tg">&lt;/option</span>&gt; <span class="co">&lt;!-- 10 times --&gt;</span>
+  <span class="tg">&lt;option</span>&gt;am I centered?<span class="tg">&lt;/option</span>&gt;
+  <span class="tg">&lt;option</span>&gt;<span class="tg">&lt;/option</span>&gt; <span class="co">&lt;!-- 10 times --&gt;</span>
+<span class="tg">&lt;/select</span>&gt;</code></pre>
   <a class="preview" href="33.html">preview &rarr;</a>
 </article>
 
@@ -382,39 +400,39 @@ am I centered?</code></pre>
 <article class="entry" id="34">
   <h3><span class="num">34</span> requestAnimationFrame, every frame, forever <span class="pill js">js crime</span></h3>
   <p>Reads <code>offsetHeight</code>. Writes <code>top</code>. Then again. Then again. Then again.</p>
-  <pre><code>function tick() {
-  el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
-  requestAnimationFrame(tick);
+  <pre><code><span class="kw">function</span> <span class="fn">tick</span>() {
+  el<span class="pp">.style</span><span class="pp">.top</span> = (innerHeight - el<span class="pp">.offsetHeight</span>) / <span class="nu">2</span> + <span class="st">'px'</span>;
+  <span class="bi">requestAnimationFrame</span>(tick);
 }
-tick();</code></pre>
+<span class="fn">tick</span>();</code></pre>
   <a class="preview" href="34.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="35">
   <h3><span class="num">35</span> setInterval(center, 16) <span class="pill js">js crime</span></h3>
   <p>Same as #34, less elegant, more drift. Sometimes 60fps. Sometimes 7.</p>
-  <pre><code>setInterval(() =&gt; {
-  el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
-}, 16);</code></pre>
+  <pre><code><span class="bi">setInterval</span>(() =&gt; {
+  el<span class="pp">.style</span><span class="pp">.top</span> = (innerHeight - el<span class="pp">.offsetHeight</span>) / <span class="nu">2</span> + <span class="st">'px'</span>;
+}, <span class="nu">16</span>);</code></pre>
   <a class="preview" href="35.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="36">
   <h3><span class="num">36</span> MutationObserver re-centers on any DOM change <span class="pill js">js crime</span></h3>
   <p>The observer triggers itself. Forever.</p>
-  <pre><code>const o = new MutationObserver(() =&gt; {
-  el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
+  <pre><code><span class="kw">const</span> o = <span class="kw">new</span> <span class="bi">MutationObserver</span>(() =&gt; {
+  el<span class="pp">.style</span><span class="pp">.top</span> = (innerHeight - el<span class="pp">.offsetHeight</span>) / <span class="nu">2</span> + <span class="st">'px'</span>;
 });
-o.observe(document.body, { attributes: true, subtree: true });</code></pre>
+o<span class="fn">.observe</span>(<span class="bi">document</span><span class="pp">.body</span>, { <span class="pr">attributes</span>: <span class="kw">true</span>, <span class="pr">subtree</span>: <span class="kw">true</span> });</code></pre>
   <a class="preview" href="36.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="37">
   <h3><span class="num">37</span> resize listener, no debounce, animated jitter <span class="pill js">js crime</span></h3>
   <p>Drag the corner of the window. Watch the content shimmy.</p>
-  <pre><code>addEventListener('resize', () =&gt; {
-  el.style.transition = 'top 200ms';
-  el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
+  <pre><code><span class="fn">addEventListener</span>(<span class="st">'resize'</span>, () =&gt; {
+  el<span class="pp">.style</span><span class="pp">.transition</span> = <span class="st">'top 2000ms'</span>;
+  el<span class="pp">.style</span><span class="pp">.top</span> = (innerHeight - el<span class="pp">.offsetHeight</span>) / <span class="nu">2</span> + <span class="st">'px'</span>;
 });</code></pre>
   <a class="preview" href="37.html">preview &rarr;</a>
 </article>
@@ -422,30 +440,28 @@ o.observe(document.body, { attributes: true, subtree: true });</code></pre>
 <article class="entry" id="38">
   <h3><span class="num">38</span> WebGL: a single quad at clip-space (0,0) <span class="pill js">js crime</span></h3>
   <p>Compile a shader. Set up buffers. Render text as a texture. Three hundred lines. Centered.</p>
-  <pre><code>// vertex shader: gl_Position = vec4(pos, 0, 1);
-// quad spans (-0.4, -0.1) to (0.4, 0.1)
-// text drawn to canvas, used as texture
-// 50 LOC of WebGL boilerplate omitted</code></pre>
+  <pre><code><span class="co">// vertex shader: gl_Position = vec4(pos, 0, 1);</span>
+<span class="co">// quad spans (-0.4, -0.1) to (0.4, 0.1)</span>
+<span class="co">// text drawn to canvas, used as texture</span></code></pre>
   <a class="preview" href="38.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="39">
   <h3><span class="num">39</span> Web Worker posts the y-coordinate every 100ms <span class="pill js">js crime</span></h3>
   <p>Threading. For centering. Why? Because we can. Sleep peacefully.</p>
-  <pre><code>// worker.js
-setInterval(() =&gt; postMessage(window.innerHeight / 2), 100);
-// main
-worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
+  <pre><code><span class="co">// worker.js</span>
+<span class="bi">setInterval</span>(() =&gt; <span class="fn">postMessage</span>(<span class="bi">window</span><span class="pp">.innerHeight</span> / <span class="nu">2</span>), <span class="nu">100</span>);
+<span class="co">// main</span>
+worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</span><span class="pp">.top</span> = e<span class="pp">.data</span> + <span class="st">'px'</span>;</code></pre>
   <a class="preview" href="39.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="40">
   <h3><span class="num">40</span> document.write a &lt;style&gt; mid-render <span class="pill js">js crime</span></h3>
   <p>Cursed even when the lighthouse score doesn't tank. Lighthouse score tanks.</p>
-  <pre><code>&lt;script&gt;
-  document.write('&lt;style&gt;#centerish{display:grid;'
-    + 'place-items:center;height:100vh}&lt;/style&gt;');
-&lt;/script&gt;</code></pre>
+  <pre><code><span class="tg">&lt;script</span>&gt;
+  <span class="bi">document</span><span class="fn">.write</span>(<span class="st">'&lt;style&gt;#centerish{display:grid;place-items:center;height:100vh}&lt;/style&gt;'</span>);
+<span class="tg">&lt;/script</span>&gt;</code></pre>
   <a class="preview" href="40.html">preview &rarr;</a>
 </article>
 
@@ -454,9 +470,13 @@ worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
 <article class="entry" id="41">
   <h3><span class="num">41</span> @container query at exactly the demo's height <span class="pill galaxy">galaxy</span></h3>
   <p>Add 1px to the container. The center evaporates.</p>
-  <pre><code>.outer { container-type: size; height: 100vh; }
-@container (height: 800px) {
-  #centerish { /* the centering rules */ }
+  <pre><code><span class="pp">.outer</span> {
+  <span class="pr">container-type</span>: size;
+  <span class="pr">height</span>: <span class="nu">100vh</span>;
+}
+
+@<span class="fn">container</span> (<span class="pr">height</span>: <span class="nu">800px</span>) {
+  #centerish { <span class="co">/* the centering rules */</span> }
 }</code></pre>
   <a class="preview" href="41.html">preview &rarr;</a>
 </article>
@@ -464,8 +484,12 @@ worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
 <article class="entry" id="42">
   <h3><span class="num">42</span> @media print <span class="pill galaxy">galaxy</span></h3>
   <p>Centers correctly only when printed.</p>
-  <pre><code>@media print {
-  #centerish { display: grid; place-items: center; height: 100vh; }
+  <pre><code><span class="fn">@media</span> print {
+  #centerish {
+    <span class="pr">display</span>: grid;
+    <span class="pr">place-items</span>: center;
+    <span class="pr">height</span>: <span class="nu">100vh</span>;
+  }
 }</code></pre>
   <a class="preview" href="42.html">preview &rarr;</a>
 </article>
@@ -473,35 +497,38 @@ worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
 <article class="entry" id="43">
   <h3><span class="num">43</span> CSS anchor positioning (anchor placed by hand) <span class="pill galaxy">galaxy</span></h3>
   <p>Place a 0×0 invisible anchor at the center using <code>top: 50vh</code>. Then position the content relative to the anchor with <code>anchor(center)</code>. Two new CSS specs to do what one already did.</p>
-  <pre><code>.anchor {
-  position: absolute;
-  top: 50vh; left: 50vw;       /* anchor is centered the OLD way */
-  width: 0; height: 0;
-  anchor-name: --middle;
+  <pre><code><span class="pp">.anchor</span> {
+  <span class="pr">position</span>: absolute;
+  <span class="pr">top</span>: <span class="nu">50vh</span>;
+  <span class="pr">left</span>: <span class="nu">50vw</span>;          <span class="co">/* anchor is centered the OLD way */</span>
+  <span class="pr">width</span>: <span class="nu">0</span>;
+  <span class="pr">height</span>: <span class="nu">0</span>;
+  <span class="pr">anchor-name</span>: --middle;
 }
+
 #centerish {
-  position: absolute;
-  position-anchor: --middle;
-  top: anchor(center);          /* defer to the anchor we just placed */
-  left: anchor(center);
-  translate: -50% -50%;
+  <span class="pr">position</span>: absolute;
+  <span class="pr">position-anchor</span>: --middle;
+  <span class="pr">top</span>: <span class="fn">anchor</span>(center); <span class="co">/* defer to the anchor we just placed */</span>
+  <span class="pr">left</span>: <span class="fn">anchor</span>(center);
+  <span class="pr">translate</span>: <span class="nu">-50%</span> <span class="nu">-50%</span>;
 }</code></pre>
   <a class="preview" href="43.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="44">
   <h3><span class="num">44</span> &lt;button&gt; auto-centers its content <span class="pill galaxy">galaxy</span></h3>
-  <p>Browsers center a <code>&lt;button&gt;</code>'s content on both axes for free, courtesy of the user-agent stylesheet. Make the button viewport-sized, strip the default chrome, and the centering happens. No flex, no grid, no <code>place-items</code>. Click and the text spins.</p>
+  <p>Browsers center a <code>&lt;button&gt;</code>'s content on both axes for free, courtesy of the user-agent stylesheet. Make the button viewport-sized, strip the default chrome, and the centering happens. No flex, no grid, no <code>place-items</code>. Click and the text spins for free.</p>
   <pre><code>button#centerish {
-  width: 100vw;
-  height: 100vh;
-  appearance: none;
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  color: inherit;
-  /* the UA stylesheet does the centering */
+  <span class="pr">width</span>: <span class="nu">100vw</span>;
+  <span class="pr">height</span>: <span class="nu">100vh</span>;
+  <span class="pr">appearance</span>: none;
+  <span class="pr">background</span>: none;
+  <span class="pr">border</span>: none;
+  <span class="pr">padding</span>: <span class="nu">0</span>;
+  <span class="pr">font</span>: inherit;
+  <span class="pr">color</span>: inherit;
+  <span class="co">/* the UA stylesheet does the centering */</span>
 }</code></pre>
   <a class="preview" href="44.html">preview &rarr;</a>
 </article>
@@ -510,10 +537,10 @@ worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
   <h3><span class="num">45</span> text at 100vh, centered by being everywhere <span class="pill galaxy">galaxy</span></h3>
   <p>Make the element AND its text 100vh tall. Pick a font-size that fills the viewport top to bottom. The text IS the page. Centered, by virtue of being everywhere.</p>
   <pre><code>#centerish {
-  height: 100vh;
-  width: 100vw;
-  line-height: 1.3;  
-  font-size: 7vh; /* TODO: explain calculation */
+  <span class="pr">height</span>: <span class="nu">100vh</span>;
+  <span class="pr">width</span>: <span class="nu">100vw</span>;
+  <span class="pr">line-height</span>: <span class="nu">1.3</span>;
+  <span class="pr">font-size</span>: <span class="nu">7vh</span>; <span class="co">/* TODO: explain calculation */</span>
 }</code></pre>
   <a class="preview" href="45.html">preview &rarr;</a>
 </article>
@@ -521,39 +548,45 @@ worker.onmessage = e =&gt; el.style.top = e.data + 'px';</code></pre>
 <article class="entry" id="46">
   <h3><span class="num">46</span> &lt;input type="image"&gt; as layout <span class="pill galaxy">galaxy</span></h3>
   <p>It's a form control. It's an image. It's whatever you need it to be at 3am.</p>
-  <pre><code>&lt;input type="image" alt="am I centered?"
-       style="position:absolute; top:50%; left:50%;
-              transform:translate(-50%,-50%)"&gt;</code></pre>
+  <pre><code><span class="tg">&lt;input</span> <span class="at">type</span>=<span class="st">"image"</span> <span class="at">alt</span>=<span class="st">"am I centered?"</span>
+       <span class="at">style</span>="<span class="pr">position</span>: absolute; <span class="pr">top</span>: <span class="nu">50%</span>; <span class="pr">left</span>: <span class="nu">50%</span>;
+              <span class="pr">transform</span>: <span class="fn">translate</span>(<span class="nu">-50%</span>,<span class="nu">-50%</span>)"&gt;</code></pre>
   <a class="preview" href="46.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="47">
   <h3><span class="num">47</span> font-size: 50vh; line-height: 0 <span class="pill galaxy">galaxy</span></h3>
   <p>Type metrics to the rescue. Don't think about it too hard.</p>
-  <pre><code>.box { font-size: 50vh; line-height: 0; }</code></pre>
+  <pre><code><span class="pp">.box</span> {
+  <span class="pr">font-size</span>: <span class="nu">50vh</span>;
+  <span class="pr">line-height</span>: <span class="nu">0</span>;
+}</code></pre>
   <a class="preview" href="47.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="48">
   <h3><span class="num">48</span> :has(:focus) toggle <span class="pill galaxy">galaxy</span></h3>
   <p>Centers only when the user clicks the target. Otherwise the page just hangs out.</p>
-  <pre><code>body:has(#centerish:focus) { display: grid; place-items: center; height: 100vh; }</code></pre>
+  <pre><code><span class="pr">body</span>:<span class="fn">has</span>(#<span class="pr">centerish</span>:focus) {
+  <span class="pr">display</span>: grid;
+  <span class="pr">place-items</span>: center;
+  <span class="pr">height</span>: <span class="nu">100vh</span>;
+}</code></pre>
   <a class="preview" href="48.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="49">
   <h3><span class="num">49</span> &lt;iframe srcdoc&gt; with flexbox inside <span class="pill galaxy">galaxy</span></h3>
-  <p>Outsource centering to a child document. The iframe centers. The page contains an iframe.</p>
-  <pre><code>&lt;iframe srcdoc="&lt;style&gt;body{display:grid;place-items:center;
-  height:100vh;margin:0}&lt;/style&gt;am I centered?"&gt;&lt;/iframe&gt;</code></pre>
+  <p>Outsource centering to a child document.</p>
+  <pre><code><span class="tg">&lt;iframe</span> <span class="at">srcdoc</span>="<span class="st">&lt;style&gt;body{display:grid;place-items:center;height:100vh;margin:0}&lt;/style&gt;am I centered?"</span>&gt;<span class="tg">&lt;/iframe</span>&gt;</code></pre>
   <a class="preview" href="49.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="50">
   <h3><span class="num">50</span> Recursive iframe of itself <span class="pill galaxy">galaxy</span></h3>
   <p>Each level shrinks 5%. The text is somewhere in there. Mathematically, in the limit, centered.</p>
-  <pre><code>&lt;!-- 50.html embeds 50.html?d=1 embeds 50.html?d=2 ... --&gt;
-&lt;iframe src="50.html?d=N+1" style="width:95%;height:95%"&gt;&lt;/iframe&gt;</code></pre>
+  <pre><code><span class="co">&lt;!-- 50.html embeds 50.html?d=1, which embeds 50.html?d=2, ... --&gt;</span>
+<span class="tg">&lt;iframe</span> <span class="at">src</span>=<span class="st">"50.html?d=N+1"</span> <span class="at">style</span>=<span class="st">"width:95%;height:95%"</span>&gt;<span class="tg">&lt;/iframe</span>&gt;</code></pre>
   <a class="preview" href="50.html">preview &rarr;</a>
 </article>
 

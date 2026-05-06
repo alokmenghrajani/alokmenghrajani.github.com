@@ -11,7 +11,7 @@
     btn.addEventListener('click', () => {
       if (typeof centerish === 'undefined') return;
       const tag = centerish.tagName.toLowerCase();
-      // <button> only accepts phrasing content cleanly — just append plain text
+      // <button> only accepts phrasing content cleanly. Just append plain text
       if (tag === 'button') {
         centerish.children[0].textContent += LOREM;
         return;
@@ -19,7 +19,7 @@
       const span = document.createElement('span');
       span.className = 'lorem-text';
       span.textContent = ' ' + LOREM;
-      // canvas / iframe / input / svg can't show appended HTML text — append next to them
+      // canvas / iframe / input / svg can't show appended HTML text. Append next to them
       if (tag === 'canvas' || tag === 'iframe' || tag === 'input' || tag === 'svg') {
         centerish.parentNode.insertBefore(span, centerish.nextSibling);
       } else {

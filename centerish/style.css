@@ -1,6 +1,7 @@
-/* centerish — xkcd-style gallery
-   shared rules (top): apply everywhere — base body, ruler overlay, back link
-   gallery rules (bottom): scoped to body.gallery, only on the index */
+/*
+   shared rules (top): apply everywhere: base body, ruler overlay, back link
+   gallery rules (bottom): scoped to body.gallery, only on the index
+*/
 
 :root {
   --paper: #faf6e8;
@@ -31,7 +32,7 @@ body {
   z-index: 9999;
 }
 
-/* chrome bar — fixed top-left, contains the back link, the Lorem button,
+/* chrome bar. Fixed top-left, contains the back link, the Lorem button,
    and any per-page extra buttons. flex layout handles spacing. */
 .chrome {
   position: fixed;
@@ -74,7 +75,6 @@ body.gallery {
   text-align: center;
   margin: 0 0 4px;
   letter-spacing: -1px;
-  filter: url(#wobble);
 }
 
 .gallery .subtitle {
@@ -82,7 +82,6 @@ body.gallery {
   font-size: 18px;
   color: var(--ink-soft);
   margin: 0 0 8px;
-  filter: url(#wobble);
 }
 
 .gallery .intro {
@@ -103,8 +102,6 @@ body.gallery {
   font-size: 30px;
   margin: 56px 0 18px;
   padding-bottom: 6px;
-  border-bottom: 3px solid var(--ink);
-  filter: url(#wobble-strong);
 }
 
 .gallery .entry {
@@ -113,7 +110,6 @@ body.gallery {
   padding: 18px 22px;
   margin: 18px 0;
   background: var(--paper);
-  filter: url(#wobble);
   position: relative;
   scroll-margin-top: 24px;
 }
@@ -176,10 +172,11 @@ body.gallery {
   color: var(--ink);
 }
 
-/* syntax highlight tokens — applied by index.js, palette inspired by VS Code Light+ */
+/* syntax highlight */
 .gallery .entry pre code .co { color: #008000; font-style: italic; }   /* comments */
 .gallery .entry pre code .st { color: #a31515; }                       /* strings (any quote) */
 .gallery .entry pre code .tg { color: #800000; font-weight: bold; }    /* HTML tag names */
+.gallery .entry pre code .at { color: #0451a5; }                       /* HTML attribute names */
 .gallery .entry pre code .hx { color: #0451a5; font-weight: bold; }    /* hex colors */
 .gallery .entry pre code .nu { color: #098658; }                       /* numbers + units */
 .gallery .entry pre code .pr { color: #0451a5; }                       /* CSS property names */
@@ -197,12 +194,7 @@ body.gallery {
   border-bottom: 2px solid var(--accent);
   padding-bottom: 1px;
 }
-.gallery .entry .preview:hover { background: #fdecec; }
 
-.gallery footer {
-  text-align: center;
-  margin-top: 60px;
-  color: var(--ink-soft);
-  font-size: 14px;
-  filter: url(#wobble);
+.gallery .entry .preview:hover {
+  background: #fdecec;
 }
