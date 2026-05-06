@@ -113,7 +113,8 @@ body.gallery {
   position: relative;
   scroll-margin-top: 24px;
 }
-.gallery .entry:target {
+.gallery .entry:target,
+.gallery .entry.highlighted {
   outline: 4px solid var(--accent);
   outline-offset: 4px;
 }
