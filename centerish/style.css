@@ -148,12 +148,12 @@ body.gallery {
   letter-spacing: 0.5px;
   background: var(--paper);
 }
-.gallery .pill.works  { background: #e8f5e8; }
-.gallery .pill.wrong  { background: #fdecec; }
+.gallery .pill.works { background: #e8f5e8; }
+.gallery .pill.wrong { background: #fdecec; }
 .gallery .pill.cursed { background: #fff3d6; }
-.gallery .pill.crime  { background: #f3e8ff; }
-.gallery .pill.js     { background: #e6f0fb; }
-.gallery .pill.galaxy { background: #f0e6da; }
+.gallery .pill.crime { background: #f3e8ff; }
+.gallery .pill.js { background: #e6f0fb; }
+.gallery .pill.mindblown { background: #f0e6da; }
 
 .gallery .entry p {
   margin: 8px 0 12px;

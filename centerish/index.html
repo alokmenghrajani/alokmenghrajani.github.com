@@ -477,10 +477,10 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
   <a class="preview" href="40.html">preview &rarr;</a>
 </article>
 
-<h2 class="category">Galaxy-brain</h2>
+<h2 class="category">Mind=blown</h2>
 
 <article class="entry" id="41">
-  <h3><span class="num">41</span> @container query at exactly the demo's height <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">41</span> @container query at exactly the demo's height <span class="pill mindblown">mind=blown</span></h3>
   <p>Add 1px to the container. The center evaporates.</p>
   <pre><code><span class="pp">.outer</span> {
   <span class="pr">container-type</span>: size;
@@ -494,7 +494,7 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="42">
-  <h3><span class="num">42</span> @media print <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">42</span> @media print <span class="pill mindblown">mind=blown</span></h3>
   <p>Centers correctly only when printed.</p>
   <pre><code><span class="fn">@media</span> print {
   #centerish {
@@ -507,7 +507,7 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="43">
-  <h3><span class="num">43</span> CSS anchor positioning (anchor placed by hand) <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">43</span> CSS anchor positioning (anchor placed by hand) <span class="pill mindblown">mind=blown</span></h3>
   <p>Place a 0×0 invisible anchor at the center using <code>top: 50vh</code>. Then position the content relative to the anchor with <code>anchor(center)</code>. Two new CSS specs to do what one already did.</p>
   <pre><code><span class="pp">.anchor</span> {
   <span class="pr">position</span>: absolute;
@@ -529,7 +529,7 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="44">
-  <h3><span class="num">44</span> &lt;button&gt; auto-centers its content <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">44</span> &lt;button&gt; auto-centers its content <span class="pill mindblown">mind=blown</span></h3>
   <p>Browsers center a <code>&lt;button&gt;</code>'s content on both axes for free, courtesy of the user-agent stylesheet. Make the button viewport-sized, strip the default chrome, and the centering happens. No flex, no grid, no <code>place-items</code>. Click and the text spins for free.</p>
   <pre><code>button#centerish {
   <span class="pr">width</span>: <span class="nu">100vw</span>;
@@ -546,7 +546,7 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="45">
-  <h3><span class="num">45</span> text at 100vh, centered by being everywhere <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">45</span> text at 100vh, centered by being everywhere <span class="pill mindblown">mind=blown</span></h3>
   <p>Make the element AND its text 100vh tall. Pick a font-size that fills the viewport top to bottom. The text IS the page. Centered, by virtue of being everywhere.</p>
   <pre><code>#centerish {
   <span class="pr">height</span>: <span class="nu">100vh</span>;
@@ -558,7 +558,7 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="46">
-  <h3><span class="num">46</span> &lt;input type="image"&gt; as layout <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">46</span> &lt;input type="image"&gt; as layout <span class="pill mindblown">mind=blown</span></h3>
   <p>It's a form control. It's an image. It's whatever you need it to be at 3am.</p>
   <pre><code><span class="tg">&lt;input</span> <span class="at">type</span>=<span class="st">"image"</span> <span class="at">alt</span>=<span class="st">"am I centered?"</span>
        <span class="at">style</span>="<span class="pr">position</span>: absolute; <span class="pr">top</span>: <span class="nu">50%</span>; <span class="pr">left</span>: <span class="nu">50%</span>;
@@ -567,7 +567,7 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="47">
-  <h3><span class="num">47</span> font-size: 50vh; line-height: 0 <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">47</span> font-size: 50vh; line-height: 0 <span class="pill mindblown">mind=blown</span></h3>
   <p>Type metrics to the rescue. Don't think about it too hard.</p>
   <pre><code><span class="pp">.box</span> {
   <span class="pr">font-size</span>: <span class="nu">50vh</span>;
@@ -577,7 +577,7 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="48">
-  <h3><span class="num">48</span> :has(:focus) toggle <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">48</span> :has(:focus) toggle <span class="pill mindblown">mind=blown</span></h3>
   <p>Centers only when the user clicks the target. Otherwise the page just hangs out.</p>
   <pre><code><span class="pr">body</span>:<span class="fn">has</span>(#<span class="pr">centerish</span>:focus) {
   <span class="pr">display</span>: grid;
@@ -588,14 +588,14 @@ worker<span class="pp">.onmessage</span> = e =&gt; el<span class="pp">.style</sp
 </article>
 
 <article class="entry" id="49">
-  <h3><span class="num">49</span> &lt;iframe srcdoc&gt; with flexbox inside <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">49</span> &lt;iframe srcdoc&gt; with flexbox inside <span class="pill mindblown">mind=blown</span></h3>
   <p>Outsource centering to a child document.</p>
   <pre><code><span class="tg">&lt;iframe</span> <span class="at">srcdoc</span>="<span class="st">&lt;style&gt;body{display:grid;place-items:center;height:100vh;margin:0}&lt;/style&gt;am I centered?"</span>&gt;<span class="tg">&lt;/iframe</span>&gt;</code></pre>
   <a class="preview" href="49.html">preview &rarr;</a>
 </article>
 
 <article class="entry" id="50">
-  <h3><span class="num">50</span> Recursive iframe of itself <span class="pill galaxy">galaxy</span></h3>
+  <h3><span class="num">50</span> Recursive iframe of itself <span class="pill mindblown">mind=blown</span></h3>
   <p>Each level shrinks 5%. The text is somewhere in there. Mathematically, in the limit, centered.</p>
   <pre><code><span class="co">&lt;!-- 50.html embeds 50.html?d=1, which embeds 50.html?d=2, ... --&gt;</span>
 <span class="tg">&lt;iframe</span> <span class="at">src</span>=<span class="st">"50.html?d=N+1"</span> <span class="at">style</span>=<span class="st">"</span><span class="at">width</span>: <span class="nu">95%</span>; <span class="at">height</span>: <span class="nu">95%</span><span class="at">"</span>&gt;<span class="tg">&lt;/iframe</span>&gt;</code></pre>
