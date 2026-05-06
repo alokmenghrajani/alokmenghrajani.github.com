@@ -176,13 +176,17 @@ body.gallery {
   color: var(--ink);
 }
 
-/* syntax highlight tokens — applied by index.js */
-.gallery .entry pre code .co { color: #7a7a7a; font-style: italic; }   /* comments */
-.gallery .entry pre code .st { color: #0b6e36; }                       /* strings */
-.gallery .entry pre code .tg { color: #c0392b; font-weight: bold; }    /* HTML tags */
-.gallery .entry pre code .hx { color: #b34d00; font-weight: bold; }    /* hex colors */
-.gallery .entry pre code .nu { color: #1e4e8c; }                       /* numbers + units */
-.gallery .entry pre code .pr { color: #7a3e9d; }                       /* CSS property names */
+/* syntax highlight tokens — applied by index.js, palette inspired by VS Code Light+ */
+.gallery .entry pre code .co { color: #008000; font-style: italic; }   /* comments */
+.gallery .entry pre code .st { color: #a31515; }                       /* strings (any quote) */
+.gallery .entry pre code .tg { color: #800000; font-weight: bold; }    /* HTML tag names */
+.gallery .entry pre code .hx { color: #0451a5; font-weight: bold; }    /* hex colors */
+.gallery .entry pre code .nu { color: #098658; }                       /* numbers + units */
+.gallery .entry pre code .pr { color: #0451a5; }                       /* CSS property names */
+.gallery .entry pre code .kw { color: #af00db; }                       /* JS keywords */
+.gallery .entry pre code .bi { color: #267f99; }                       /* JS built-in globals */
+.gallery .entry pre code .fn { color: #795e26; }                       /* function calls */
+.gallery .entry pre code .pp { color: #001080; }                       /* property access (.foo) */
 
 .gallery .entry .preview {
   display: inline-block;

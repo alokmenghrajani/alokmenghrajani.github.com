@@ -64,8 +64,8 @@ place-items: center;
   transform: translate(-50%, -50%);
 }
 /* one day .parent will gain position: relative
-   for a tooltip, an overlay, anything. that day,
-   the centering moves. nobody will know why. */</code></pre>
+   for a tooltip, an overlay, anything. That day,
+   the centering will move and nobody will know why... */</code></pre>
   <a class="preview" href="03.html">preview &rarr;</a>
 </article>
 
@@ -102,8 +102,8 @@ body {
 <article class="entry" id="06">
   <h3><span class="num">06</span> table-cell wrapped in four divs <span class="pill works">works</span></h3>
   <p>Vertical-align: middle still works in 2026. We just have to dress it up.</p>
-  <pre><code>&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div style="display:table-cell;
-  vertical-align:middle; height:100vh"&gt;
+  <pre><code>&lt;div&gt;&lt;div&gt;&lt;div&gt;&lt;div style="display: table-cell;
+  vertical-align: middle; height:100vh"&gt;
   ...
 &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></pre>
   <a class="preview" href="06.html">preview &rarr;</a>
@@ -116,7 +116,8 @@ body {
   position: fixed;
   inset: 0;
   margin: auto;
-  width: 300px; height: 80px;
+  width: 300px;
+  height: 80px;
 }</code></pre>
   <a class="preview" href="07.html">preview &rarr;</a>
 </article>
@@ -247,6 +248,7 @@ body {
   top: 50vh;
   left: 0; right: 0;
 }
+
 #centerish {
   margin: 0 auto;
   transform: translateY(-50%);
@@ -315,6 +317,7 @@ am I centered?</code></pre>
   height: 50vh;
   margin-bottom: -90px;        /* = -(content / 2) */
 }
+
 #centerish {
   clear: left;
   height: 180px;
@@ -337,7 +340,7 @@ am I centered?</code></pre>
   <h3><span class="num">30</span> &lt;noscript&gt; fallback <span class="pill crime">crime</span></h3>
   <p>Centers correctly only when JavaScript is disabled.</p>
   <pre><code>&lt;noscript&gt;
-  &lt;style&gt;#centerish{display:grid;place-items:center;height:100vh}&lt;/style&gt;
+  &lt;style&gt;#centerish{display:grid; place-items:center; height:100vh}&lt;/style&gt;
 &lt;/noscript&gt;</code></pre>
   <a class="preview" href="30.html">preview &rarr;</a>
 </article>
@@ -355,7 +358,8 @@ am I centered?</code></pre>
 <article class="entry" id="32">
   <h3><span class="num">32</span> &lt;hr&gt; on top, &lt;hr&gt; on bottom, flex: 1 each <span class="pill crime">crime</span></h3>
   <p>Two horizontal rules act as struts. The rules push the content. Semantic content is now horizontal rules.</p>
-  <pre><code>&lt;div style="display:flex;flex-direction:column;height:100vh"&gt;
+  <pre><code>&lt;div style="display: flex; flex-direction: column;
+    height: 100vh"&gt;
   &lt;hr style="flex:1"&gt;
   am I centered?
   &lt;hr style="flex:1"&gt;
