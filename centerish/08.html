@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<title>08 — aspect-ratio: 1 + place-content</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html { margin: 0; }
+  body {
+    margin: 0;
+    aspect-ratio: 1;       /* the trick: makes body a square */
+    display: grid;
+    place-content: center;
+  }
+  #centerish {
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 480px;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .where-am-i {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    font: 13px "Comic Sans MS", "Marker Felt", cursive;
+    line-height: normal;
+    color: #c0392b;
+    background: rgba(250, 246, 232, 0.92);
+    border: 1.5px solid #c0392b;
+    border-radius: 6px;
+    padding: 6px 12px;
+    z-index: 9999;
+    display: none;
+    max-width: calc(100vw - 24px);
+    text-align: center;
+    animation: nudge 1s ease-in-out infinite alternate;
+  }
+  .where-am-i.show { display: block; }
+  @keyframes nudge {
+    from { transform: translate(-50%, 0); }
+    to   { transform: translate(-50%, 5px); }
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#08">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Centered if your window is square. Resize until it's a perfect square. I'll wait.</div>
+<div class="where-am-i" id="hint">
+  Text is off-screen, make your window narrower.
+</div>
+<script>
+  const hint = document.getElementById('hint');
+  function check() {
+    const r = centerish.getBoundingClientRect();
+    const visible = r.top >= 0 && r.bottom <= innerHeight
+                 && r.left >= 0 && r.right <= innerWidth;
+    hint.classList.toggle('show', !visible);
+  }
+  addEventListener('resize', check);
+  addEventListener('load', check);
+  check();
+</script>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<title>31 — 50 nested divs</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100%; }
+  body {
+         text-align: center; }
+  .lvl { padding-top: 1vh; }
+  #centerish { display: inline-block;
+               transform: translateY(-50%);
+               border: 2.5px solid #1a1a1a;
+               padding: 16px 22px;
+               max-width: 460px;
+               line-height: 1.4;
+               text-align: center; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#31">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<script>
+  // fifty nested divs, each padding-top: 1vh. cumulative = 50vh. fractal centering.
+  let html = '';
+  for (let i = 0; i < 50; i++) html += '<div class="lvl">';
+  html += '<div id="centerish">Centered through 50 levels of <code>&lt;div&gt;</code> nesting, each adding 1vh of padding.</div>';
+  for (let i = 0; i < 50; i++) html += '</div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+</script>

@@ -1,0 +1,204 @@
+/* centerish — xkcd-style gallery
+   shared rules (top): apply everywhere — base body, ruler overlay, back link
+   gallery rules (bottom): scoped to body.gallery, only on the index */
+
+:root {
+  --paper: #faf6e8;
+  --ink: #1a1a1a;
+  --ink-soft: #4a4a4a;
+  --accent: #c0392b;
+  --hand: "Comic Sans MS", "Marker Felt", "Chalkboard SE", cursive;
+  --mono: "Courier New", ui-monospace, monospace;
+}
+
+/* ---------- shared (index + every preview) ---------- */
+
+html, body { margin: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--hand);
+  line-height: 1.5;
+}
+
+.ruler {
+  position: fixed;
+  left: 0; right: 0;
+  top: 50vh;
+  border-top: 1.5px dashed var(--accent);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* chrome bar — fixed top-left, contains the back link, the Lorem button,
+   and any per-page extra buttons. flex layout handles spacing. */
+.chrome {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  gap: 6px;
+  z-index: 9999;
+  flex-wrap: wrap;
+}
+.back, .lorem-btn {
+  font-family: var(--hand);
+  font-size: 13px;
+  line-height: normal;
+  color: var(--accent);
+  background: rgba(250, 246, 232, 0.85);
+  border: 1.5px solid var(--accent);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+.back { text-decoration: none; }
+.back:hover, .lorem-btn:hover { background: #fdecec; }
+.lorem-btn:active { transform: translateY(1px); }
+.lorem-text { font-family: var(--hand); }
+
+/* ---------- gallery only ---------- */
+
+body.gallery {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 40px 28px 80px;
+  font-size: 17px;
+}
+
+.gallery .defs { position: absolute; width: 0; height: 0; pointer-events: none; }
+
+.gallery h1 {
+  font-size: 56px;
+  text-align: center;
+  margin: 0 0 4px;
+  letter-spacing: -1px;
+  filter: url(#wobble);
+}
+
+.gallery .subtitle {
+  text-align: center;
+  font-size: 18px;
+  color: var(--ink-soft);
+  margin: 0 0 8px;
+  filter: url(#wobble);
+}
+
+.gallery .intro {
+  text-align: center;
+  max-width: 580px;
+  margin: 12px auto 36px;
+  color: var(--ink-soft);
+}
+
+.gallery .stick {
+  display: block;
+  margin: 0 auto 24px;
+  width: 140px;
+  height: 110px;
+}
+
+.gallery h2.category {
+  font-size: 30px;
+  margin: 56px 0 18px;
+  padding-bottom: 6px;
+  border-bottom: 3px solid var(--ink);
+  filter: url(#wobble-strong);
+}
+
+.gallery .entry {
+  border: 2.5px solid var(--ink);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin: 18px 0;
+  background: var(--paper);
+  filter: url(#wobble);
+  position: relative;
+  scroll-margin-top: 24px;
+}
+.gallery .entry:target {
+  outline: 4px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.gallery .entry h3 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gallery .entry h3 .num {
+  display: inline-block;
+  min-width: 36px;
+  text-align: center;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2px 8px;
+  font-size: 18px;
+  border-radius: 4px;
+}
+
+.gallery .entry .pill {
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--hand);
+  letter-spacing: 0.5px;
+  background: var(--paper);
+}
+.gallery .pill.works  { background: #e8f5e8; }
+.gallery .pill.wrong  { background: #fdecec; }
+.gallery .pill.cursed { background: #fff3d6; }
+.gallery .pill.crime  { background: #f3e8ff; }
+.gallery .pill.js     { background: #e6f0fb; }
+.gallery .pill.galaxy { background: #f0e6da; }
+
+.gallery .entry p {
+  margin: 8px 0 12px;
+  color: var(--ink-soft);
+}
+
+.gallery .entry pre {
+  background: #f1ecd6;
+  border: 1.5px dashed var(--ink-soft);
+  border-radius: 4px;
+  padding: 10px 14px;
+  overflow-x: auto;
+  margin: 10px 0 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* syntax highlight tokens — applied by index.js */
+.gallery .entry pre code .co { color: #7a7a7a; font-style: italic; }   /* comments */
+.gallery .entry pre code .st { color: #0b6e36; }                       /* strings */
+.gallery .entry pre code .tg { color: #c0392b; font-weight: bold; }    /* HTML tags */
+.gallery .entry pre code .hx { color: #b34d00; font-weight: bold; }    /* hex colors */
+.gallery .entry pre code .nu { color: #1e4e8c; }                       /* numbers + units */
+.gallery .entry pre code .pr { color: #7a3e9d; }                       /* CSS property names */
+
+.gallery .entry .preview {
+  display: inline-block;
+  font-family: var(--hand);
+  font-size: 16px;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 1px;
+}
+.gallery .entry .preview:hover { background: #fdecec; }
+
+.gallery footer {
+  text-align: center;
+  margin-top: 60px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  filter: url(#wobble);
+}

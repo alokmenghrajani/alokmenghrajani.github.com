@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<title>01 — just a &lt;table&gt;</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  /* the Department of Internet Things forbids CSS post-1999. */
+  /* however, our HTML5 doctype refuses to honor <table height="100%"> in
+     standards mode, so the table collapses to content height and nothing
+     centers. This CSS line is the entire negotiated compromise. */
+  html, body { height: 100%; }
+  #centerish {
+    font-family: "Comic Sans MS", "Marker Felt", cursive;
+    line-height: 1.4;
+    max-width: 520px;
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#01">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<table border="2" cellpadding="20" cellspacing="0" width="100%" height="100%" bgcolor="#faf6e8" bordercolor="#1a1a1a">
+  <tr>
+    <td valign="middle" align="center">
+      <div id="centerish">
+        Compliant with our government's IE5-compatibility mandate. We support exactly one (1) browser. It was released in 1999. We are not allowed to upgrade it. The cake is also from 1999.
+      </div>
+    </td>
+  </tr>
+</table>

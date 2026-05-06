@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<title>42 — @media print</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  #centerish { margin: 30px auto;
+               border: 2.5px solid #1a1a1a;
+               padding: 16px 22px; max-width: 480px;
+               text-align: center; line-height: 1.4; }
+  @media print {
+    body { display: grid; place-items: center; height: 100vh; }
+    #centerish { margin: 0; }
+    .ruler, .chrome { display: none; }
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#42">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">The print centers correctly. The screen does not. We do this on purpose.</div>

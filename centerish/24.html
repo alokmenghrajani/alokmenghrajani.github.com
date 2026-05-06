@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<title>24 — &lt;details&gt; never opened</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  /* center the entire <details> using a normal wrapper. when closed, only the
+     summary shows, so the visible content is just the summary — centered. */
+  .stage {
+    display: grid;
+    place-items: center;
+    height: 100vh;
+  }
+  summary#centerish {
+    list-style: none;
+    border: 2.5px solid #1a1a1a;
+    background: #faf6e8;
+    padding: 16px 22px;
+    max-width: 460px;
+    text-align: center;
+    line-height: 1.4;
+    cursor: default;
+  }
+  summary#centerish::-webkit-details-marker { display: none; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#24">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="stage">
+  <details>
+    <summary id="centerish">A disclosure widget that nobody opens. The summary is the whole content. Don't click it. (You can. But don't.)</summary>
+    <p style="text-align:center">(if you did click it, this part appeared. ruining everything.)</p>
+  </details>
+</div>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<title>48 — :has(:focus) slow toggle</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  #centerish {
+    position: fixed;
+    top: 60px;
+    left: 24px;
+    max-width: 460px;
+    background: #faf6e8;
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    text-align: center;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: top 2s ease-in-out, left 2s ease-in-out, transform 2s ease-in-out;
+  }
+  /* :has() at the body level — when centerish is focused, transition it
+     from its top-left park to dead center over 2 seconds. */
+  body:has(#centerish:focus) #centerish {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#48">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<button id="centerish" type="button" autofocus>Click me. Watch me drift to center over 2 seconds. Click away and I drift back. Centering as a slow performance.</button>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<title>21 — two divs in synergy</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  .parent {
+    position: absolute;
+    top: 50vh;
+    left: 0; right: 0;
+  }
+  #centerish {
+    margin: 0 auto;
+    transform: translateY(-50%);
+    background: #faf6e8;
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 480px;
+    text-align: center;
+    line-height: 1.4;
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#21">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="parent">
+  <div id="centerish">Two divs working together in cross-functional synergy. The parent owns positioning (<code>top: 50vh</code>). I own the offset (<code>translateY(-50%)</code>). Together we deliver vertical alignment at scale.</div>
+</div>

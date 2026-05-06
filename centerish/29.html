@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<title>29 — bouncing &lt;marquee&gt;</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; overflow: hidden; }
+  marquee { height: 100vh; }
+  #centerish { display: inline-block; border: 2.5px solid #1a1a1a;
+               padding: 14px 22px; max-width: 460px; line-height: 1.4;
+               text-align: center; background: #faf6e8; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#29">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<marquee direction="up" behavior="alternate" scrollamount="3">
+  <span id="centerish">Centered, in the time-averaged sense.</span>
+</marquee>

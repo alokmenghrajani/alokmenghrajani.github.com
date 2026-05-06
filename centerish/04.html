@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<title>04 — align-items vs align-self, three rounds each</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100%; }
+  body {
+    display: flex;
+    align-items: flex-start;     /* "go to the top!" */
+    align-items: flex-end;       /* "no, go to the bottom!" */
+    align-items: center;         /* "fine, center." (this one wins) */
+    justify-content: center;
+  }
+  #centerish {
+    align-self: flex-start;      /* "I'd like the top, please." */
+    align-self: stretch;         /* "actually, fill the whole thing." */
+    align-self: auto;            /* "you know what, whatever the parent said." */
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 480px;
+    text-align: center;
+    line-height: 1.4;
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#04">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Six votes. <code>align-items</code> picked three values, last wins. <code>align-self</code> picked three values, last one defers. Democracy is messy. Centered.</div>

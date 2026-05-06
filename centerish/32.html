@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<title>32 — &lt;hr&gt; struts</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100%; }
+  body {
+         display: flex; flex-direction: column;
+         height: 100vh; }
+  hr { flex: 1; border: none; border-top: 1px solid #4a4a4a;
+       width: 100%; margin: 0; align-self: stretch; height: auto; }
+  #centerish { margin: 0 auto; border: 2.5px solid #1a1a1a;
+               padding: 16px 22px; max-width: 460px; text-align: center; line-height: 1.4; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#32">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<hr>
+<div id="centerish">Two horizontal rules act as struts, each <code>flex: 1</code>. The semantic content is now horizontal rules. We've come a long way.</div>
+<hr>

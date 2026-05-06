@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<title>44 — mask-image gradient</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  .page {
+    height: 100vh;
+    -webkit-mask-image: linear-gradient(transparent 0 42%, #000 42% 58%, transparent 58% 100%);
+            mask-image: linear-gradient(transparent 0 42%, #000 42% 58%, transparent 58% 100%);
+  }
+  .stack { padding: 24px; }
+  .stack p { margin: 8px 0; }
+  #centerish { display: inline-block;
+               border: 2.5px solid #1a1a1a;
+               padding: 16px 22px; max-width: 480px;
+               line-height: 1.4; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#44">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="page">
+  <div class="stack">
+    <p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p>
+    <p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p>
+    <p><span id="centerish">The content is at the top. A mask hides everything outside a band across the middle. Visual deceit.</span></p>
+    <p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p><p>Filler.</p>
+  </div>
+</div>

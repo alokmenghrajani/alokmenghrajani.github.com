@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<title>25 — canvas fillText</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  canvas#centerish { display: block; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#25">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<canvas id="centerish"></canvas>
+<script>
+  const canvas = document.querySelector('canvas');
+  function draw() {
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#faf6e8';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2.5;
+    const w = 540, h = 70, x = (canvas.width - w) / 2, y = (canvas.height - h) / 2;
+    ctx.strokeRect(x, y, w, h);
+    ctx.fillStyle = '#1a1a1a';
+    ctx.font = '20px "Comic Sans MS", "Marker Felt", cursive';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Bitmap your text. Place it at (w/2, h/2). Achieve copy-paste protection as bonus.',
+                 canvas.width / 2, canvas.height / 2);
+    ctx.fillText('// TODO: handle long text', canvas.width / 2, canvas.height / 2 + 25);
+  }
+  draw();
+  addEventListener('resize', draw);
+</script>

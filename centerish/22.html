@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<title>22 — :target with scroll-padding</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html { scroll-padding-block: 50vh; height: 100%; }
+  body { min-height: 200vh; }
+  #centerish {
+    margin: 100vh auto 0;
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 460px;
+    text-align: center;
+    line-height: 1.4;
+    transition: transform 200ms ease;
+  }
+  /* when the URL fragment matches my id, scroll-padding-block lands my TOP
+     at 50vh, and translateY(-50%) finishes the job by shifting me up by
+     half my height so my CENTER lands there. */
+  #centerish:target {
+    outline: 3px solid #c0392b;
+    outline-offset: 6px;
+    transform: translateY(-50%);
+  }
+
+  .scroll-hint {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    font: 13px "Comic Sans MS", "Marker Felt", cursive;
+    line-height: normal;
+    color: #c0392b;
+    background: rgba(250, 246, 232, 0.92);
+    border: 1.5px solid #c0392b;
+    border-radius: 6px;
+    padding: 6px 12px;
+    z-index: 9999;
+    display: none;
+    animation: nudge-down 1s ease-in-out infinite alternate;
+    max-width: calc(100vw - 24px);
+    text-align: center;
+  }
+  .scroll-hint.show { display: block; }
+  /* when centerish is above the viewport, dock the hint at the top */
+  .scroll-hint.above {
+    bottom: auto;
+    top: 56px;                    /* leave room for the back/Lorem chrome */
+    animation-name: nudge-up;
+  }
+  @keyframes nudge-down {
+    from { transform: translate(-50%, 0); }
+    to   { transform: translate(-50%, 5px); }
+  }
+  @keyframes nudge-up {
+    from { transform: translate(-50%, 0); }
+    to   { transform: translate(-50%, -5px); }
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#22">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" class="lorem-btn" id="toggle-fragment">Toggle fragment</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Centered-ish once the URL fragment matches my id. Click "Toggle fragment".</div>
+<div class="scroll-hint" id="hint"></div>
+<script>
+  // we manage fragment-driven scrolling ourselves; don't let the browser
+  // restore scroll positions on history navigation and fight us.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  // visibility hint — show when centerish is off-screen, with the arrow
+  // and position depending on whether it's above or below the viewport.
+  const hint = document.getElementById('hint');
+  function checkVisible() {
+    const r = centerish.getBoundingClientRect();
+    if (r.top >= innerHeight) {
+      hint.innerHTML = '&darr; below the fold, click "Toggle fragment" up top &darr;';
+      hint.classList.remove('above');
+      hint.classList.add('show');
+    } else if (r.bottom <= 0) {
+      hint.innerHTML = '&uarr; above the fold, click "Toggle fragment" up top &uarr;';
+      hint.classList.add('above');
+      hint.classList.add('show');
+    } else {
+      hint.classList.remove('show');
+    }
+  }
+  checkVisible();
+  addEventListener('scroll', checkVisible);
+  addEventListener('resize', checkVisible);
+  addEventListener('hashchange', checkVisible);
+
+  document.getElementById('toggle-fragment').addEventListener('click', () => {
+    if (location.hash === '#centerish') {
+      // clear fragment without leaving the page
+      history.pushState(null, '', location.pathname + location.search);
+      // pushState doesn't fire hashchange — manually re-check the hint
+      checkVisible();
+    } else {
+      // set the fragment — browser scrolls, :target activates
+      location.hash = 'centerish';
+    }
+  });
+</script>

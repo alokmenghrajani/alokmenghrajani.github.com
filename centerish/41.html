@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<title>41 — @container query at exact height</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100%; }
+  .outer {
+    container-type: size;
+    container-name: stage;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+  /* fallback: in the corner, sulking */
+  #centerish {
+    position: absolute;
+    top: 12px; right: 12px;
+    border: 2.5px solid #1a1a1a;
+    padding: 12px 16px;
+    max-width: 240px;
+    text-align: center;
+    line-height: 1.4;
+    background: #faf6e8;
+  }
+  /* centers ONLY when the container is exactly 800px tall */
+  @container stage (height: 800px) {
+    #centerish {
+      top: 50%; right: auto; left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 480px;
+      padding: 16px 22px;
+    }
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#41">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="outer">
+  <div id="centerish">Centers when the viewport is <em>exactly</em> 800px tall. Resize by a single pixel and I sulk in the corner.</div>
+</div>

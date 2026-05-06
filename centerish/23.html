@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<title>23 — position: sticky; top: 50vh</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  body {
+    min-height: 250vh;
+  }
+  .container { padding: 24px; }
+  .scroll-note { max-width: 580px; padding-bottom: 100vh; }
+  #centerish {
+    position: sticky;
+    top: 50vh;
+    margin: 0 auto;
+    border: 2.5px solid #1a1a1a;
+    background: #faf6e8;
+    padding: 16px 22px;
+    max-width: 460px;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .filler { height: 200vh; }
+
+  .scroll-hint {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    font: 13px "Comic Sans MS", "Marker Felt", cursive;
+    line-height: normal;
+    color: #c0392b;
+    background: rgba(250, 246, 232, 0.92);
+    border: 1.5px solid #c0392b;
+    border-radius: 6px;
+    padding: 6px 12px;
+    z-index: 9999;
+    display: none;
+    animation: nudge-down 1s ease-in-out infinite alternate;
+    max-width: calc(100vw - 24px);
+    text-align: center;
+  }
+  .scroll-hint.show { display: block; }
+  .scroll-hint.above {
+    bottom: auto;
+    top: 56px;
+    animation-name: nudge-up;
+  }
+  @keyframes nudge-down {
+    from { transform: translate(-50%, 0); }
+    to   { transform: translate(-50%, 5px); }
+  }
+  @keyframes nudge-up {
+    from { transform: translate(-50%, 0); }
+    to   { transform: translate(-50%, -5px); }
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#23">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="container">
+  <div class="scroll-note"></div>
+  <div id="centerish">Scroll to help me be centered.</div>
+  <div class="filler"></div>
+</div>
+<div class="scroll-hint" id="hint"></div>
+<script>
+  // don't restore scroll position on reload — start at the top so the
+  // sticky behavior is observable from scratch.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  scrollTo(0, 0);
+
+  const hint = document.getElementById('hint');
+  function checkVisible() {
+    const r = centerish.getBoundingClientRect();
+    if (r.top >= innerHeight) {
+      hint.innerHTML = '&darr; below the fold, scroll down &darr;';
+      hint.classList.remove('above');
+      hint.classList.add('show');
+    } else if (r.bottom <= 0) {
+      hint.innerHTML = '&uarr; above the fold, scroll up &uarr;';
+      hint.classList.add('above');
+      hint.classList.add('show');
+    } else {
+      hint.classList.remove('show');
+    }
+  }
+  checkVisible();
+  addEventListener('scroll', checkVisible);
+  addEventListener('resize', checkVisible);
+</script>

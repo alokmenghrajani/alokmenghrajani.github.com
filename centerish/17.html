@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<title>17 — the ghost element</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  body {
+         text-align: center; }
+  body::before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    /* this is a ghost. it haunts the layout. don't speak of it. */
+  }
+  #centerish {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 480px;
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    text-align: center;
+    line-height: 1.4;
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#17">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">I am centered. There is a ghost element holding me up. Do not look at it. Do not speak its name. <code>::before { height: 100% }</code>.</div>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<title>09 — top: 50% (and nothing else)</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  body {
+         position: relative; }
+  #centerish {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* I'm sure that's enough */
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 460px;
+    text-align: center;
+    line-height: 1.4;
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#09">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Congrats this content is centered&hellip; by its top-left corner! The rest of me hangs below the line like a sad participle.</div>

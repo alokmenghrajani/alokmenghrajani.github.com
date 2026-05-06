@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<title>35 — setInterval(center, 16)</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  #centerish { position: absolute; left: 50%; transform: translateX(-50%);
+               border: 2.5px solid #1a1a1a; padding: 16px 22px;
+               max-width: 480px; text-align: center; line-height: 1.4;
+               background: #faf6e8; transition: top 80ms linear; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#35">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Same crime as #34, less elegant. <code>setInterval</code> with no animation alignment, with a transition for added jitter.</div>
+<script>
+  const el = centerish;
+  setInterval(() => {
+    el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
+  }, 16);
+</script>

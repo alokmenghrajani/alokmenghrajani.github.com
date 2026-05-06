@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<title>43 — anchor positioning (the anchor uses old centering)</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+
+  /* a 0×0 invisible "anchor" element parked at the dead center of the
+     viewport. placed there using the old-fashioned percentage trick,
+     because anchor positioning does not include a way to anchor to nothing. */
+  .anchor {
+    position: absolute;
+    top: 50vh; left: 50vw;
+    width: 0; height: 0;
+    anchor-name: --middle;
+  }
+
+  /* fallback for browsers without anchor positioning (Firefox, older Safari) */
+  #centerish {
+    position: absolute;
+    top: 50vh; left: 50vw;
+    translate: -50% -50%;
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 520px;
+    text-align: center;
+    line-height: 1.4;
+    background: #faf6e8;
+  }
+
+  /* the galaxy-brain version: position relative to the invisible anchor */
+  @supports (anchor-name: --x) {
+    #centerish {
+      position-anchor: --middle;
+      top: anchor(center);
+      left: anchor(center);
+      translate: -50% -50%;
+    }
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#43">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+
+<div class="anchor"></div>
+<div id="centerish">
+  Centered using <code>anchor-name</code> + <code>position-anchor</code> + <code>anchor(center)</code>. The anchor itself? Placed at the middle by writing <code>top: 50vh</code> like a peasant. Two new CSS specs to do what the old one already did.
+</div>

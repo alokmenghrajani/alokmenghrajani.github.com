@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<title>18 — writing-mode: vertical-rl</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  body {
+         writing-mode: vertical-rl;
+         text-align: center; /* horizontal in rotated space = VERTICAL */
+         height: 100vh; }
+  #centerish {
+    writing-mode: horizontal-tb;
+    display: inline-block;
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 460px;
+    text-align: center;
+    line-height: 1.4;
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#18">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Centered by rotating the world 90&deg; and using <code>text-align: center</code>. Loophole exploited.</div>

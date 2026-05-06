@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<title>19 — SVG &lt;text&gt;</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  svg#centerish { display: block; width: 100vw; height: 100vh; }
+  svg#centerish text { font-family: "Comic Sans MS", "Marker Felt", cursive; font-size: 20px; }
+  svg#centerish rect { fill: none; stroke: #1a1a1a; stroke-width: 2.5; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#19">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<svg id="centerish" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet">
+  <rect x="240" y="265" width="520" height="70" rx="4"/>
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#1a1a1a">
+    Centered. By SVG. CSS has left the chat.
+  </text>
+</svg>

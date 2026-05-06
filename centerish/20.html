@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<title>20 — &lt;dialog&gt; showModal</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  dialog#centerish {
+    border: 2.5px solid #1a1a1a;
+    background: #faf6e8;
+    color: #1a1a1a;
+    font-family: "Comic Sans MS", "Marker Felt", cursive;
+    padding: 18px 24px;
+    max-width: 480px;
+    line-height: 1.4;
+    text-align: center;
+    cursor: pointer;
+  }
+  dialog#centerish::backdrop { background: rgba(26, 26, 26, 0.18); }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#20">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" class="lorem-btn" id="show-again">Show again</button>
+</div>
+<div class="ruler"></div>
+<dialog id="centerish">
+  The browser centered me. I didn't even ask. There's a backdrop now too. Click anywhere to dismiss me.
+</dialog>
+<script>
+  // click anywhere (dialog or backdrop) closes
+  centerish.addEventListener('click', () => centerish.close());
+  centerish.showModal();
+
+  document.getElementById('show-again').addEventListener('click', () => {
+    if (!centerish.open) centerish.showModal();
+  });
+</script>

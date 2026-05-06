@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<title>46 — &lt;input type="image"&gt;</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  body {
+         position: relative; }
+  #centerish {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    width: 460px;
+    max-width: 80vw;
+    background: #faf6e8;
+    color: #1a1a1a;
+    font-family: "Comic Sans MS", "Marker Felt", cursive;
+    text-align: center;
+    line-height: 1.4;
+    cursor: default;
+    /* it's an input. it's an image. it's whatever you need at 3am. */
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#46">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<input type="image" id="centerish"
+       alt="It's a form control. It's an image. It's whatever you need at 3am.">

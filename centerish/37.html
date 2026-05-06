@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<title>37 — resize listener, no debounce</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  #centerish { position: absolute; left: 50%; transform: translateX(-50%);
+               border: 2.5px solid #1a1a1a; padding: 16px 22px;
+               max-width: 480px; text-align: center; line-height: 1.4;
+               background: #faf6e8;
+               transition: top 2000ms ease; /* the worst part */ }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#37">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Drag the corner of the window. Watch me shimmy. No debounce. <code>transition</code> set to 2s, so each resize event triggers a fresh slow tween.</div>
+<script>
+  const el = centerish;
+  function center() {
+    el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
+  }
+  center();
+  addEventListener('resize', center);
+</script>

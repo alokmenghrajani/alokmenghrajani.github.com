@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<title>02 — grid with 50 rows</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100%; }
+  body {
+         display: grid; grid-template-rows: repeat(50, 1fr);
+         place-items: center; }
+  #centerish { grid-row: 26; border: 2.5px solid #1a1a1a;
+               padding: 16px 22px; max-width: 480px; text-align: center; line-height: 1.4; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#02">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">I am in row 26 of 50. There are 24 rows above me and 24 below. This is fine.</div>

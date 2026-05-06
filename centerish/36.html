@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<title>36 — MutationObserver loop</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  #centerish { position: absolute; left: 50%; transform: translateX(-50%);
+               border: 2.5px solid #1a1a1a; padding: 16px 22px;
+               max-width: 480px; text-align: center; line-height: 1.4;
+               background: #faf6e8; }
+  .counter { position: fixed; bottom: 8px; right: 12px; font-size: 12px; color: #4a4a4a; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#36">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish">Re-centering on every DOM change. Including my own. The observer triggers itself. Help.</div>
+<div class="counter">re-centerings: <span id="n">0</span></div>
+<script>
+  const el = centerish;
+  const counter = document.getElementById('n');
+  let count = 0;
+  function center() {
+    el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
+    counter.textContent = ++count;
+  }
+  center();
+  const o = new MutationObserver(() => {
+    // schedule the re-center on a timer so we don't lock up the browser
+    setTimeout(center, 80);
+  });
+  o.observe(document.body, { attributes: true, subtree: true, childList: true });
+</script>

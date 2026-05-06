@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<title>47 — font-size: 50vh; line-height as strut</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  /* line-height: 100vh creates a 100vh-tall line strut. font-size: 0 on
+     the stage means there's no baseline, so vertical-align: middle aligns
+     inline-block children to the line's TRUE midpoint (50vh). */
+  .stage {
+    height: 100vh;
+    line-height: 100vh;
+    text-align: center;
+    font-size: 0;
+  }
+  #centerish {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 17px;
+    line-height: 1.4;
+    border: 2.5px solid #1a1a1a;
+    padding: 16px 22px;
+    max-width: 460px;
+    text-align: center;
+    background: #faf6e8;
+    margin-left: 12px;
+  }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#47">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="stage">
+  <div id="centerish">A 100vh line-strut, <code>vertical-align: middle</code>. Type metrics do the rest.</div>
+</div>

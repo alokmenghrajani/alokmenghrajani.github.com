@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<title>06 — table-cell wrapped in four divs</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100%; }
+  .a { display: table; height: 100vh; width: 100%; }
+  .b { display: table-row; }
+  .c { display: table-cell; vertical-align: middle; text-align: center; }
+  .d { display: inline-block; }
+  #centerish { display: inline-block; border: 2.5px solid #1a1a1a;
+               padding: 16px 22px; max-width: 480px; text-align: center; line-height: 1.4; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#06">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="a"><div class="b"><div class="c"><div class="d">
+  <div id="centerish">Centered by a table cell, wrapped in four divs. We don't talk about this implementation in standup.</div>
+</div></div></div></div>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<title>49 — &lt;iframe srcdoc&gt;</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  iframe#centerish { display: block; width: 100vw; height: 100vh; border: none; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#49">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<iframe id="centerish" srcdoc='
+  <!doctype html>
+  <style>
+    html, body { margin: 0; height: 100vh; }
+    body {
+      background: #faf6e8; color: #1a1a1a;
+      font-family: "Comic Sans MS", "Marker Felt", cursive;
+      display: grid; place-items: center;
+    }
+    .box {
+      border: 2.5px solid #1a1a1a;
+      padding: 16px 22px;
+      max-width: 460px;
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+  <div class="box">Outsourced. The iframe centers. The page contains an iframe. Centering is now a microservice.</div>
+'></iframe>

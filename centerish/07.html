@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<title>07 — fixed inset margin auto</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 200vh; /* make the page scroll, just to prove the point */ }
+  #centerish {
+    position: fixed; inset: 0; margin: auto;
+    width: 360px; height: 110px;
+    border: 2.5px solid #1a1a1a;
+    background: #faf6e8;
+    text-align: center;
+    padding: 14px;
+    line-height: 1.4;
+  }
+  .scrollnotice { padding: 30px; max-width: 600px; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#07">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div class="scrollnotice">
+  Try scrolling. The page is 200vh tall. The "centered" box is pinned. It does not scroll. It cannot. You may now panic.
+</div>
+<div id="centerish">Centered. Also pinned. Also covers whatever's in the middle of the page. Also doesn't scroll, ever. Also a cry for help.</div>

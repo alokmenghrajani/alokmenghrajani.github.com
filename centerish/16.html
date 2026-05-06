@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<title>16 — align-content on single-line flex</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; }
+  body {
+         display: flex;
+         align-content: center; /* needs flex-wrap: wrap to do anything. it doesn't have it. */
+         height: 100vh; }
+  #centerish { margin-left: 40px;
+               border: 2.5px solid #1a1a1a;
+               padding: 16px 22px; max-width: 460px;
+               text-align: center; line-height: 1.4;
+               align-self: flex-start; }
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#16">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<div id="centerish"><code>align-content: center</code> on a flex container. Without <code>flex-wrap: wrap</code>, it does absolutely nothing. Documented! Still surprising.</div>

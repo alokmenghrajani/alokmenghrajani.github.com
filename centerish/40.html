@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<title>40 — document.write a &lt;style&gt;</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  /* the rest is injected by document.write below. don't try this at home. */
+</style>
+<div class="chrome">
+  <a class="back" href="index.html#40">← Index</a>
+  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+</div>
+<div class="ruler"></div>
+<script>
+  document.write('<style>'
+    + 'html, body { height: 100vh; }'
+    + 'body { display: grid; place-items: center; }'
+    + '#centerish { border: 2.5px solid #1a1a1a; padding: 16px 22px; '
+    + 'max-width: 460px; text-align: center; line-height: 1.4; }'
+    + '</style>');
+</script>
+<div id="centerish">Centered. By a stylesheet that didn't exist when the parser started. <code>document.write</code> mid-render. Lighthouse score: a personal insult.</div>

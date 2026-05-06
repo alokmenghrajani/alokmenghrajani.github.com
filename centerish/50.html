@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<title>50 — recursive iframe</title>
+<link rel="stylesheet" href="style.css">
+<script src="preview.js" defer></script>
+<style>
+  html, body { height: 100vh; overflow: hidden; }
+  body {
+         padding: 0; }
+  .stage { width: 100vw; height: 100vh; display: grid; place-items: center; padding: 0; }
+  iframe.nest { width: 90vw; height: 90vh; border: 2.5px solid #1a1a1a; background: #faf6e8; display: block; }
+  #centerish { border: 2.5px solid #1a1a1a; padding: 16px 22px; max-width: 460px;
+               text-align: center; line-height: 1.4; background: #faf6e8; }
+  .depth { position: fixed; bottom: 6px; right: 10px; font-size: 12px; color: #4a4a4a; }
+</style>
+<script>
+  const params = new URLSearchParams(location.search);
+  const depth = parseInt(params.get('d') || '0', 10);
+  const MAX = 18;
+  document.addEventListener('DOMContentLoaded', () => {
+    const stage = document.createElement('div');
+    stage.className = 'stage';
+    if (depth >= MAX) {
+      stage.innerHTML = '<div id="centerish">Depth ' + depth + '. The recursion bottoms out here. Mathematically, you are centered. In the limit. Probably.</div>';
+    } else {
+      const f = document.createElement('iframe');
+      f.className = 'nest';
+      f.src = '50.html?d=' + (depth + 1);
+      stage.appendChild(f);
+    }
+    document.body.appendChild(stage);
+    if (depth === 0) {
+      document.body.insertAdjacentHTML('afterbegin',
+        '<div class="chrome">' +
+          '<a class="back" href="index.html#50">← Index</a>' +
+          '<button type="button" class="lorem-btn">+ Lorem Ipsum</button>' +
+        '</div>' +
+        '<div class="ruler"></div>');
+    }
+    const meter = document.createElement('div');
+    meter.className = 'depth';
+    meter.textContent = 'depth ' + depth + ' / ' + MAX;
+    document.body.appendChild(meter);
+  });
+</script>
