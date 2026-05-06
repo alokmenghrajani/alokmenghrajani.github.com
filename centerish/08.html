@@ -43,7 +43,7 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#08">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <div id="centerish">Centered if your window is square. Resize until it's a perfect square. I'll wait.</div>
@@ -51,7 +51,6 @@
   Text is off-screen, make your window narrower.
 </div>
 <script>
-  const hint = document.getElementById('hint');
   function check() {
     const r = centerish.getBoundingClientRect();
     const visible = r.top >= 0 && r.bottom <= innerHeight

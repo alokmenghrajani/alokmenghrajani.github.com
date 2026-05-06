@@ -251,8 +251,8 @@ body {
 <article class="entry" id="20">
   <h3><span class="num">20</span> &lt;dialog&gt;.showModal() <span class="pill cursed">cursed</span></h3>
   <p>The browser centers it for free. You didn't even ask. There's a ::backdrop now too. You're welcome?</p>
-  <pre><code><span class="tg">&lt;dialog</span> open&gt;am I centered?<span class="tg">&lt;/dialog</span>&gt;
-<span class="tg">&lt;script</span>&gt;<span class="bi">document</span><span class="fn">.querySelector</span>(<span class="st">'dialog'</span>)<span class="fn">.showModal</span>()<span class="tg">&lt;/script</span>&gt;</code></pre>
+  <pre><code><span class="tg">&lt;dialog</span> <span class="at">id</span>=<span class="st">"centerish"</span>&gt;am I centered?<span class="tg">&lt;/dialog</span>&gt;
+<span class="tg">&lt;script</span>&gt;centerish<span class="fn">.showModal</span>()<span class="tg">&lt;/script</span>&gt;</code></pre>
   <a class="preview" href="20.html">preview &rarr;</a>
 </article>
 
@@ -283,7 +283,10 @@ body {
 <article class="entry" id="23">
   <h3><span class="num">23</span> position: sticky; top: 50vh <span class="pill cursed">cursed</span></h3>
   <p>Scroll to center.</p>
-  <pre><code>#centerish { <span class="pr">position</span>: sticky; <span class="pr">top</span>: <span class="nu">50vh</span>; }</code></pre>
+  <pre><code>#centerish {
+  <span class="pr">position</span>: sticky;
+  <span class="pr">top</span>: <span class="nu">50vh</span>;
+}</code></pre>
   <a class="preview" href="23.html">preview &rarr;</a>
 </article>
 
@@ -365,9 +368,18 @@ am I centered?</code></pre>
 <article class="entry" id="31">
   <h3><span class="num">31</span> 50 nested &lt;div&gt;s, padding-top: 1% <span class="pill crime">crime</span></h3>
   <p>Each div pushes a little. Together they push half.</p>
-  <pre><code><span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;<span class="tg">&lt;div</span>&gt;... (<span class="nu">47</span> more) ...
-  am I centered?
-<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;<span class="tg">&lt;/div</span>&gt;
+  <pre><code><span class="tg">&lt;div</span>&gt;
+  <span class="tg">&lt;div</span>&gt;
+    <span class="tg">&lt;div</span>&gt;
+      <span class="tg">&lt;div</span>&gt;
+        <span class="tg">&lt;div</span>&gt;
+          ... (47 more) ...
+          am I centered?
+        <span class="tg">&lt;/div</span>&gt;
+      <span class="tg">&lt;/div</span>&gt;
+    <span class="tg">&lt;/div</span>&gt;
+  <span class="tg">&lt;/div</span>&gt;
+<span class="tg">&lt;/div</span>&gt;
 <span class="co">/* every div: padding-top: 1% */</span></code></pre>
   <a class="preview" href="31.html">preview &rarr;</a>
 </article>

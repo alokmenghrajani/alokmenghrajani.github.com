@@ -1,19 +1,21 @@
 <!doctype html>
 <html lang="en">
-<title>05: line-height = 100vh (centered when terse)</title>
+<title>05: line-height=100vh (centered when terse)</title>
 <link rel="stylesheet" href="style.css">
 <script src="preview.js" defer></script>
 <style>
   html, body { height: 100vh; }
   body {
     text-align: center;
-    line-height: 100vh;          /* works as long as we stay one line */
+    line-height: 100vh; /* works as long as we stay one line */
     width: 20em;
     margin: 0 auto;
   }
-  /* keep the chrome buttons their actual size — they'd otherwise inherit
+
+  /* keep the chrome buttons their actual size, they'd otherwise inherit
      line-height: 100vh and become catastrophic */
   .back, .lorem-btn { line-height: normal; }
+
   #centerish {
     border: 2.5px solid #1a1a1a;
     width: 20em;
@@ -34,7 +36,9 @@
     display: none;
     animation: nudge 1s ease-in-out infinite alternate;
   }
+
   .more-below.show { display: block; }
+
   @keyframes nudge {
     from { transform: translate(-50%, 0); }
     to   { transform: translate(-50%, 5px); }
@@ -42,13 +46,12 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#05">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <span id="centerish">Centered as long as I stay terse</span>
-<div class="more-below" id="more">&darr; more text below, each wrapped line is 100vh tall &darr;</div>
+<div class="more-below" id="hint">&darr; more text below, each wrapped line is 100vh tall &darr;</div>
 <script>
-  const hint = document.getElementById('more');
   function check() {
     const overflows = document.documentElement.scrollHeight > innerHeight + 4;
     hint.classList.toggle('show', overflows);

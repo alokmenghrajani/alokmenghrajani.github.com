@@ -12,14 +12,13 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#34">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <div id="centerish">Re-centered every animation frame. Reads my own height. Writes my <code>top</code>. Forever. Your fan go brrr.</div>
 <div class="meter">frames: <span id="n">0</span></div>
 <script>
   const el = centerish;
-  const n = document.getElementById('n');
   let frames = 0;
   function tick() {
     el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';

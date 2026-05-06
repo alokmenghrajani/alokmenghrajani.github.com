@@ -18,14 +18,9 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#31">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
-<script>
-  // fifty nested divs, each padding-top: 1vh. cumulative = 50vh. fractal centering.
-  let html = '';
-  for (let i = 0; i < 50; i++) html += '<div class="lvl">';
-  html += '<div id="centerish">Centered through 50 levels of <code>&lt;div&gt;</code> nesting, each adding 1vh of padding.</div>';
-  for (let i = 0; i < 50; i++) html += '</div>';
-  document.body.insertAdjacentHTML('beforeend', html);
-</script>
+<div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl"><div class="lvl">
+  <div id="centerish">Centered through 50 levels of <code>&lt;div&gt;</code> nesting, each adding 1vh of padding.</div>
+</div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div></div>

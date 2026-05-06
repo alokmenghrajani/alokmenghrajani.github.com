@@ -8,17 +8,23 @@
      absolutely-positioned child inside its 220px box. drop the
      position: relative and the child is suddenly anchored to the
      viewport, which happens to be centered. */
+
   .parent {
     position: relative;
     height: 220px;
     margin: 80px 40px 0;
-    border: 2px dashed #4a4a4a;
+    border: 2px solid #4a4a4a;
     background: #f1ecd6;
     padding: 12px;
     font: 14px "Comic Sans MS", "Marker Felt", cursive;
     color: #4a4a4a;
   }
-  .pos-state { font-weight: bold; color: #1a1a1a; }
+
+  #state {
+    font-weight: bold;
+    color: #1a1a1a;
+  }
+
   #centerish {
     position: absolute;
     top: 50%; left: 50%;
@@ -33,25 +39,22 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#03">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
   <button type="button" class="lorem-btn" id="toggle">Toggle position: relative</button>
 </div>
 <div class="ruler"></div>
-<div class="parent" id="parent">
-  This dashed box is the parent. <code>height: 220px</code>.
-  Its <code>position</code> is currently <span class="pos-state" id="pos-state">relative</span>.
+<div class="parent" id="p">
+  This box is the parent. <code>height: 220px</code>.
+  Its <code>position</code> is currently <span id="state">relative</span>.
   <div id="centerish">
     I'll be centered the moment the parent drops its <code>position: relative</code>. Until then, I'm trapped inside its box. Try the toggle button.
   </div>
 </div>
 <script>
-  // 'parent' as an id collides with window.parent — query explicitly
-  const parentBox = document.getElementById('parent');
-  const state = document.getElementById('pos-state');
   let isRelative = true;
   toggle.addEventListener('click', () => {
     isRelative = !isRelative;
-    parentBox.style.position = isRelative ? 'relative' : 'static';
+    p.style.position = isRelative ? 'relative' : 'static';
     state.textContent = isRelative ? 'relative' : 'static';
   });
 </script>

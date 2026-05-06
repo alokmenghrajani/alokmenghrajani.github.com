@@ -56,7 +56,7 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#23">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <div class="container">
@@ -66,12 +66,13 @@
 </div>
 <div class="scroll-hint" id="hint"></div>
 <script>
-  // don't restore scroll position on reload — start at the top so the
+  // don't restore scroll position on reload, start at the top so the
   // sticky behavior is observable from scratch.
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
   scrollTo(0, 0);
 
-  const hint = document.getElementById('hint');
   function checkVisible() {
     const r = centerish.getBoundingClientRect();
     if (r.top >= innerHeight) {

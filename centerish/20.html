@@ -20,8 +20,8 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#20">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
-  <button type="button" class="lorem-btn" id="show-again">Show again</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
+  <button type="button" class="lorem-btn" id="again">Show again</button>
 </div>
 <div class="ruler"></div>
 <dialog id="centerish">
@@ -32,7 +32,9 @@
   centerish.addEventListener('click', () => centerish.close());
   centerish.showModal();
 
-  document.getElementById('show-again').addEventListener('click', () => {
-    if (!centerish.open) centerish.showModal();
+  again.addEventListener('click', () => {
+    if (!centerish.open) {
+      centerish.showModal();
+    }
   });
 </script>

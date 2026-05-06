@@ -9,17 +9,16 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#38">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <canvas id="centerish"></canvas>
 <script>
-  const canvas = document.querySelector('canvas');
-  const gl = canvas.getContext('webgl');
+  const gl = centerish.getContext('webgl');
 
   function size() {
-    canvas.width = innerWidth * devicePixelRatio;
-    canvas.height = innerHeight * devicePixelRatio;
+    centerish.width = innerWidth * devicePixelRatio;
+    centerish.height = innerHeight * devicePixelRatio;
   }
   size();
 
@@ -46,7 +45,7 @@
   gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fs));
   gl.linkProgram(prog); gl.useProgram(prog);
 
-  // a quad centered at clip-space (0,0) — i.e., screen center
+  // a quad centered at clip-space (0,0), i.e., screen center
   const w = 0.85, h = w * (tex2d.height / tex2d.width) * (innerWidth / innerHeight);
   const verts = new Float32Array([
     -w, -h, 0, 1,
@@ -71,7 +70,7 @@
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.viewport(0, 0, centerish.width, centerish.height);
   gl.clearColor(250/255, 246/255, 232/255, 1);
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

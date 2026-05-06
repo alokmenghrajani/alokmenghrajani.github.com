@@ -13,18 +13,17 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#36">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <div id="centerish">Re-centering on every DOM change. Including my own. The observer triggers itself. Help.</div>
 <div class="counter">re-centerings: <span id="n">0</span></div>
 <script>
   const el = centerish;
-  const counter = document.getElementById('n');
   let count = 0;
   function center() {
     el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
-    counter.textContent = ++count;
+    n.textContent = ++count;
   }
   center();
   const o = new MutationObserver(() => {

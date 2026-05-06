@@ -18,7 +18,7 @@
     cursor: pointer;
     transition: top 2s ease-in-out, left 2s ease-in-out, transform 2s ease-in-out;
   }
-  /* :has() at the body level — when centerish is focused, transition it
+  /* :has() at the body level, when centerish is focused, transition it
      from its top-left park to dead center over 2 seconds. */
   body:has(#centerish:focus) #centerish {
     top: 50%;
@@ -28,7 +28,7 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#48">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <textarea id="centerish" type="button" autofocus>Click me. Watch me drift to center over 2 seconds. Click away and I drift back. Centering as a slow performance.</textarea>

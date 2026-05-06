@@ -6,7 +6,7 @@
 <style>
   html, body { height: 100vh; }
   /* a 1px-wide floated spacer that takes 50vh of height. its negative
-     margin-bottom is half the centerish height — together they cancel
+     margin-bottom is half the centerish height, together they cancel
      so #centerish lands with its CENTER at 50vh. */
   .spacer {
     float: left;
@@ -18,7 +18,7 @@
     clear: left;
     margin: 0 auto;
     width: 460px;
-    height: 180px;              /* hardcoded — the float math needs it */
+    height: 180px;              /* hardcoded, the float math needs it */
     box-sizing: border-box;
     background: #faf6e8;
     border: 2.5px solid #1a1a1a;
@@ -29,7 +29,7 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#28">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <div class="spacer"></div>

@@ -13,22 +13,21 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#39">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <div id="centerish">Threading. For centering. Why? Because we can. The worker is a separate thread doing nothing useful.</div>
 <div class="meter">messages from worker: <span id="n">0</span></div>
 <script>
   const el = centerish;
-  const meter = document.getElementById('n');
   let messages = 0;
 
-  // worker as a blob URL — keeps the file self-contained
+  // worker as a blob URL, keeps the file self-contained
   const workerSrc = `setInterval(() => postMessage('tick'), 100);`;
   const blob = new Blob([workerSrc], { type: 'application/javascript' });
   const worker = new Worker(URL.createObjectURL(blob));
   worker.onmessage = () => {
     el.style.top = (innerHeight - el.offsetHeight) / 2 + 'px';
-    meter.textContent = ++messages;
+    n.textContent = ++messages;
   };
 </script>

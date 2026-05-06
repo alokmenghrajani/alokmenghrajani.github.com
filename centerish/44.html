@@ -8,7 +8,7 @@
   body { margin: 0; overflow: hidden; }
   /* a <button> sized to the viewport. the user-agent stylesheet centers
      button content both horizontally and vertically by default. no flex,
-     no grid, no place-items required — the button does it. */
+     no grid, no place-items required, the button does it. */
   #centerish {
     width: 100vw;
     height: 100vh;
@@ -24,7 +24,7 @@
   }
   #centerish:focus { outline: none; }
   /* rotate just the inner text so clicking doesn't whip the entire button */
-  #centerish .text {
+  #text {
     display: inline-block;
     max-width: 480px;
     transition: transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -32,17 +32,16 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#44">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
 </div>
 <div class="ruler"></div>
 <button type="button" id="centerish">
-  <span class="text">A <code>&lt;button&gt;</code> element auto-centers its content, both axes, per the user-agent stylesheet. We just made the button the size of the viewport. Click me, I will spin, for no reason.</span>
+  <span id="text">A <code>&lt;button&gt;</code> element auto-centers its content, both axes, per the user-agent stylesheet. We just made the button the size of the viewport. Click me, I will spin, for no reason.</span>
 </button>
 <script>
-  const text = centerish.querySelector('.text');
   let spins = 0;
   centerish.addEventListener('click', () => {
     spins++;
-    text.style.transform = `rotate(${spins * 360}deg)`;
+    text.style.transform = `rotate(${spins * 180}deg)`;
   });
 </script>

@@ -59,8 +59,8 @@
 </style>
 <div class="chrome">
   <a class="back" href="index.html#22">← Index</a>
-  <button type="button" class="lorem-btn">+ Lorem Ipsum</button>
-  <button type="button" class="lorem-btn" id="toggle-fragment">Toggle fragment</button>
+  <button type="button" id="lorem">+ Lorem Ipsum</button>
+  <button type="button" class="lorem-btn" id="toggle">Toggle fragment</button>
 </div>
 <div class="ruler"></div>
 <div id="centerish">Centered-ish once the URL fragment matches my id. Click "Toggle fragment".</div>
@@ -68,19 +68,25 @@
 <script>
   // we manage fragment-driven scrolling ourselves; don't let the browser
   // restore scroll positions on history navigation and fight us.
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  if (location.hash === '#centerish') {
+    centerish.scrollIntoView();
+  } else {
+    window.scrollTo(0, 0)
+  }
 
-  // visibility hint — show when centerish is off-screen, with the arrow
+  // visibility hint, show when centerish is off-screen, with the arrow
   // and position depending on whether it's above or below the viewport.
-  const hint = document.getElementById('hint');
   function checkVisible() {
     const r = centerish.getBoundingClientRect();
     if (r.top >= innerHeight) {
-      hint.innerHTML = '&darr; below the fold, click "Toggle fragment" up top &darr;';
+      hint.innerHTML = '&darr; below the fold, click "Toggle fragment" &darr;';
       hint.classList.remove('above');
       hint.classList.add('show');
     } else if (r.bottom <= 0) {
-      hint.innerHTML = '&uarr; above the fold, click "Toggle fragment" up top &uarr;';
+      hint.innerHTML = '&uarr; above the fold, click "Toggle fragment" &uarr;';
       hint.classList.add('above');
       hint.classList.add('show');
     } else {
@@ -92,15 +98,16 @@
   addEventListener('resize', checkVisible);
   addEventListener('hashchange', checkVisible);
 
-  document.getElementById('toggle-fragment').addEventListener('click', () => {
+  toggle.addEventListener('click', () => {
     if (location.hash === '#centerish') {
       // clear fragment without leaving the page
       history.pushState(null, '', location.pathname + location.search);
-      // pushState doesn't fire hashchange — manually re-check the hint
+      // pushState doesn't fire hashchange, manually re-check the hint
       checkVisible();
     } else {
-      // set the fragment — browser scrolls, :target activates
+      // set the fragment, browser scrolls, :target activates
       location.hash = 'centerish';
+      centerish.scrollIntoView();
     }
   });
 </script>

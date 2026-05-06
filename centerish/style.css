@@ -43,7 +43,7 @@ body {
   z-index: 9999;
   flex-wrap: wrap;
 }
-.back, .lorem-btn {
+.back, .chrome button {
   font-family: var(--hand);
   font-size: 13px;
   line-height: normal;
@@ -55,8 +55,8 @@ body {
   cursor: pointer;
 }
 .back { text-decoration: none; }
-.back:hover, .lorem-btn:hover { background: #fdecec; }
-.lorem-btn:active { transform: translateY(1px); }
+.back:hover, .lorem-btn:hover, #lorem:hover { background: #fdecec; }
+.lorem-btn:active, #lorem:active { transform: translateY(1px); }
 .lorem-text { font-family: var(--hand); }
 
 /* ---------- gallery only ---------- */
