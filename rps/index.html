@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock · Paper · Scissors — Strategy Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-a: #c44536;
+    --color-b: #1d6f6f;
+    --bg: #f1e9d2;
+    --panel: #fbf6e7;
+    --ink: #1c1815;
+    --muted: #7a7060;
+    --accent: #d4a236;
+    --serif: 'Fraunces', 'Times New Roman', serif;
+    --mono: 'JetBrains Mono', 'Menlo', monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    background-image:
+      radial-gradient(at 12% 8%, rgba(196,69,54,0.07) 0px, transparent 50%),
+      radial-gradient(at 90% 95%, rgba(29,111,111,0.08) 0px, transparent 50%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1, 0 0 0 0 0.1, 0 0 0 0 0.08, 0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 56px 32px 40px;
+  }
+
+  /* ── Header ─────────────────────────────────────────── */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(40px, 7vw, 76px);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+  h1 .dot-a { color: var(--color-a); }
+  h1 .dot-b { color: var(--color-b); }
+  h1 .dot-x { color: var(--accent); }
+
+  .lead {
+    margin: 16px 0 0;
+    max-width: 620px;
+    font-style: italic;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+
+  /* ── Rules card ─────────────────────────────────────── */
+  .rules {
+    margin-top: 36px;
+    background: var(--panel);
+    border: 1px solid rgba(28,24,21,0.12);
+    border-radius: 16px;
+    padding: 18px 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .rule {
+    text-align: center;
+  }
+  .rule-hands {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .rule-hands .arrow {
+    color: var(--muted);
+    margin: 0 2px;
+  }
+  .rule-text {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .rule-pts {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 2px;
+    color: var(--ink);
+  }
+  .rule-pts.gold { color: var(--accent); }
+
+  /* ── Player panels ──────────────────────────────────── */
+  .players {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 720px) {
+    .players { grid-template-columns: 1fr; }
+    .container { padding: 36px 20px 32px; }
+  }
+
+  .panel {
+    position: relative;
+    background: var(--panel);
+    border-radius: 18px;
+    padding: 26px 24px 22px;
+    border: 1.5px solid;
+  }
+  .panel.a { border-color: rgba(196,69,54,0.28); box-shadow: 0 1px 0 rgba(196,69,54,0.15), 0 8px 24px -16px rgba(196,69,54,0.4); }
+  .panel.b { border-color: rgba(29,111,111,0.28); box-shadow: 0 1px 0 rgba(29,111,111,0.15), 0 8px 24px -16px rgba(29,111,111,0.4); }
+
+  .panel-tag {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff8e7;
+  }
+  .panel.a .panel-tag { background: var(--color-a); }
+  .panel.b .panel-tag { background: var(--color-b); }
+
+  .panel h2 {
+    margin: 6px 0 2px;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+  }
+  .panel-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  /* preview bar */
+  .preview-bar {
+    display: flex;
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(28,24,21,0.06);
+    margin-bottom: 20px;
+  }
+  .preview-seg { transition: width 0.25s ease; }
+  .panel.a .preview-seg { background: var(--color-a); }
+  .panel.b .preview-seg { background: var(--color-b); }
+  .preview-seg.s0 { opacity: 1; }
+  .preview-seg.s1 { opacity: 0.6; }
+  .preview-seg.s2 { opacity: 0.3; }
+
+  /* inputs */
+  .inputs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .input-cell label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--serif);
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .input-cell .emoji { font-size: 18px; }
+  .input-cell input {
+    width: 100%;
+    text-align: center;
+    padding: 10px 6px;
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    background: rgba(255,255,255,0.5);
+    border: 1.5px solid rgba(28,24,21,0.15);
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    -moz-appearance: textfield;
+  }
+  .input-cell input::-webkit-outer-spin-button,
+  .input-cell input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .panel.a .input-cell input:focus { border-color: var(--color-a); background: #fff; }
+  .panel.b .input-cell input:focus { border-color: var(--color-b); background: #fff; }
+  .input-cell .pct {
+    text-align: center;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .panel.a .pct { color: var(--color-a); }
+  .panel.b .pct { color: var(--color-b); }
+
+  .hint {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .sum-indicator {
+    margin-top: 18px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    transition: color 0.15s;
+  }
+  .sum-indicator .sum-value {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .sum-indicator .sum-check {
+    color: var(--accent);
+    margin-left: 4px;
+  }
+  .sum-indicator.invalid { color: #b04030; }
+  .sum-indicator.invalid .sum-value { color: #b04030; }
+  .sum-indicator.invalid .sum-check { display: none; }
+
+  /* ── Run controls ───────────────────────────────────── */
+  .controls {
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+  }
+  .games-select {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--panel);
+    border: 1px solid rgba(28,24,21,0.15);
+    border-radius: 12px;
+    font-family: var(--mono);
+  }
+  .games-select span {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  .games-select select,
+  .games-select input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: text;
+    width: 100px;
+    -moz-appearance: textfield;
+  }
+  .games-select input::-webkit-outer-spin-button,
+  .games-select input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .games-select select { cursor: pointer; }
+  .run-btn {
+    border: none;
+    background: var(--ink);
+    color: #fff8e7;
+    padding: 12px 28px;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--accent), 0 10px 24px -10px var(--ink);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .run-btn:hover { transform: translateY(-1px); }
+  .run-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--accent); }
+  .run-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .play-icon {
+    display: inline-block;
+    width: 0; height: 0;
+    border-left: 9px solid #fff8e7;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+  }
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid #fff8e733;
+    border-top-color: #fff8e7;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Results ────────────────────────────────────────── */
+  .results { margin-top: 44px; display: none; }
+  .results.show { display: block; animation: fadeIn 0.5s ease-out; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-meta {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .winner-block { text-align: center; margin-bottom: 28px; }
+  .winner-headline {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(40px, 7vw, 64px);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .winner-headline.a { color: var(--color-a); }
+  .winner-headline.b { color: var(--color-b); }
+  .winner-headline.tie { color: var(--ink); }
+  .winner-sub {
+    margin-top: 10px;
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 17px;
+  }
+  .winner-sub .edge {
+    font-style: normal;
+    font-weight: 600;
+  }
+  .winner-sub .edge.a { color: var(--color-a); }
+  .winner-sub .edge.b { color: var(--color-b); }
+
+  .share-bar {
+    display: flex;
+    height: 46px;
+    border: 1.5px solid var(--ink);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .share-a, .share-b {
+    display: flex;
+    align-items: center;
+    color: #fff8e7;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    transition: width 0.6s ease-out;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .share-a { background: var(--color-a); justify-content: flex-start; padding-left: 14px; }
+  .share-b { background: var(--color-b); justify-content: flex-end; padding-right: 14px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid rgba(28,24,21,0.15);
+    border-radius: 12px;
+    padding: 18px 14px;
+    text-align: center;
+  }
+  .stat-sub {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 0.04em;
+  }
+  .stat-sub.a { color: var(--color-a); }
+  .stat-sub.b { color: var(--color-b); }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+  }
+  .stat-value.a { color: var(--color-a); }
+  .stat-value.b { color: var(--color-b); }
+
+  .stalled-note {
+    margin-top: 14px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .empty-state {
+    margin-top: 40px;
+    text-align: center;
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .progress {
+    margin-top: 36px;
+    text-align: center;
+    display: none;
+  }
+  .progress.show { display: block; }
+  .progress-text {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .progress-text .games-count {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .progress-bar {
+    height: 6px;
+    background: rgba(28,24,21,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--ink);
+    border-radius: 999px;
+    transition: width 0.08s linear;
+  }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 22px;
+    border-top: 1px dashed rgba(28,24,21,0.25);
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="eyebrow">Strategy Simulator</div>
+    <h1>Rock<span class="dot-a">.</span> Paper<span class="dot-x">.</span> Scissors<span class="dot-b">.</span></h1>
+    <p class="lead">
+      Two strategies enter, ten points wins. Enter each side's probability of throwing rock, paper, and scissors — the three should add up to 100. Run thousands of games to see who comes out ahead.
+    </p>
+  </header>
+
+  <section class="rules">
+    <div class="rule">
+      <div class="rule-hands">✊ <span class="arrow">›</span> ✌️</div>
+      <div class="rule-text">Rock crushes Scissors</div>
+      <div class="rule-pts gold">+2 pts</div>
+    </div>
+    <div class="rule">
+      <div class="rule-hands">✋ <span class="arrow">›</span> ✊</div>
+      <div class="rule-text">Paper covers Rock</div>
+      <div class="rule-pts">+1 pt</div>
+    </div>
+    <div class="rule">
+      <div class="rule-hands">✌️ <span class="arrow">›</span> ✋</div>
+      <div class="rule-text">Scissors cut Paper</div>
+      <div class="rule-pts">+1 pt</div>
+    </div>
+  </section>
+
+  <section class="players">
+    <!-- Player A -->
+    <div class="panel a">
+      <div class="panel-tag">Player A</div>
+      <h2>Strategy A</h2>
+      <div class="panel-sub">PROBABILITIES (%)</div>
+
+      <div class="preview-bar" id="preview-a">
+        <div class="preview-seg s0" style="width:33%"></div>
+        <div class="preview-seg s1" style="width:33%"></div>
+        <div class="preview-seg s2" style="width:34%"></div>
+      </div>
+
+      <div class="inputs">
+        <div class="input-cell">
+          <label><span class="emoji">✊</span>Rock</label>
+          <input type="number" min="0" max="100" step="any" value="33" data-side="a" data-move="0">
+        </div>
+        <div class="input-cell">
+          <label><span class="emoji">✋</span>Paper</label>
+          <input type="number" min="0" max="100" step="any" value="33" data-side="a" data-move="1">
+        </div>
+        <div class="input-cell">
+          <label><span class="emoji">✌️</span>Scissors</label>
+          <input type="number" min="0" max="100" step="any" value="34" data-side="a" data-move="2">
+        </div>
+      </div>
+      <div class="sum-indicator" id="sum-a">
+        Sum: <span class="sum-value" id="sum-a-value">100</span> / 100<span class="sum-check">✓</span>
+      </div>
+    </div>
+
+    <!-- Player B -->
+    <div class="panel b">
+      <div class="panel-tag">Player B</div>
+      <h2>Strategy B</h2>
+      <div class="panel-sub">PROBABILITIES (%)</div>
+
+      <div class="preview-bar" id="preview-b">
+        <div class="preview-seg s0" style="width:25%"></div>
+        <div class="preview-seg s1" style="width:50%"></div>
+        <div class="preview-seg s2" style="width:25%"></div>
+      </div>
+
+      <div class="inputs">
+        <div class="input-cell">
+          <label><span class="emoji">✊</span>Rock</label>
+          <input type="number" min="0" max="100" step="any" value="25" data-side="b" data-move="0">
+        </div>
+        <div class="input-cell">
+          <label><span class="emoji">✋</span>Paper</label>
+          <input type="number" min="0" max="100" step="any" value="50" data-side="b" data-move="1">
+        </div>
+        <div class="input-cell">
+          <label><span class="emoji">✌️</span>Scissors</label>
+          <input type="number" min="0" max="100" step="any" value="25" data-side="b" data-move="2">
+        </div>
+      </div>
+      <div class="sum-indicator" id="sum-b">
+        Sum: <span class="sum-value" id="sum-b-value">100</span> / 100<span class="sum-check">✓</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="controls">
+    <label class="games-select">
+      <span>Seconds</span>
+      <input type="number" id="duration-sec" min="0.5" step="0.5" value="5">
+    </label>
+    <button class="run-btn" id="run-btn">
+      <span class="play-icon" id="run-icon"></span>
+      <span id="run-label">Run Simulation</span>
+    </button>
+  </div>
+
+  <section class="results" id="results">
+    <div class="results-meta" id="results-meta"></div>
+    <div class="winner-block">
+      <div class="winner-headline" id="winner-headline"></div>
+    </div>
+    <div class="share-bar">
+      <div class="share-a" id="share-a"></div>
+      <div class="share-b" id="share-b"></div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Strategy A wins</div>
+        <div class="stat-value a" id="stat-a-count">0</div>
+        <div class="stat-sub a" id="stat-a-pct">0%</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Strategy B wins</div>
+        <div class="stat-value b" id="stat-b-count">0</div>
+        <div class="stat-sub b" id="stat-b-pct">0%</div>
+      </div>
+    </div>
+    <div class="stalled-note" id="stalled-note"></div>
+  </section>
+
+  <div class="progress" id="progress">
+    <div class="progress-text">
+      <span class="games-count" id="progress-games">0</span> games ·
+      <span id="progress-time">0.0s / 5.0s</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div class="empty-state" id="empty-state">
+    Enter weights above, then run a simulation to see the head-to-head.
+  </div>
+
+  <footer>
+    Each game runs to 10 points · Probabilities for each side must add up to 100
+  </footer>
+</div>
+
+<script>
+  // ── Game logic ───────────────────────────────────────
+  //   0 = Rock, 1 = Paper, 2 = Scissors
+  //   rock beats scissors → 2 pts ; paper beats rock → 1 ; scissors beats paper → 1
+
+  function readPercents(side) {
+    const get = (m) => {
+      const el = document.querySelector(`input[data-side="${side}"][data-move="${m}"]`);
+      const v = parseFloat(el.value);
+      return isNaN(v) || v < 0 ? 0 : v;
+    };
+    return [get(0), get(1), get(2)];
+  }
+
+  // True when the three percentages sum to 100 (with tiny tolerance for FP).
+  function isValid(percents) {
+    const s = percents[0] + percents[1] + percents[2];
+    return Math.abs(s - 100) < 0.05;
+  }
+
+  // Time-based, chunked simulation. Runs as many games as it can fit
+  // into `durationMs`, yielding to the browser between chunks so the
+  // UI never freezes. Chunk size auto-adapts to target ~30ms per chunk.
+  function runTimed(pA, pB, durationMs, onProgress, onDone) {
+    const start = performance.now();
+    let wA = 0, wB = 0, stalled = 0;
+    let totalRounds = 0, totalScoreA = 0, totalScoreB = 0;
+    let totalGames = 0;
+    const MAX_ROUNDS = 50000;
+
+    const pa0 = pA[0], pa1 = pA[0] + pA[1];
+    const pb0 = pB[0], pb1 = pB[0] + pB[1];
+
+    let chunkSize = 4000;
+
+    function chunk() {
+      const chunkStart = performance.now();
+      for (let g = 0; g < chunkSize; g++) {
+        let sA = 0, sB = 0, r = 0;
+        while (sA < 10 && sB < 10 && r < MAX_ROUNDS) {
+          const ra = Math.random();
+          const a = ra < pa0 ? 0 : ra < pa1 ? 1 : 2;
+          const rb = Math.random();
+          const b = rb < pb0 ? 0 : rb < pb1 ? 1 : 2;
+
+          if (a !== b) {
+            if      (a === 0 && b === 2) sA += 2;
+            else if (a === 2 && b === 0) sB += 2;
+            else if (a === 1 && b === 0) sA += 1;
+            else if (a === 0 && b === 1) sB += 1;
+            else if (a === 2 && b === 1) sA += 1;
+            else                         sB += 1;
+          }
+          r++;
+        }
+        if (sA >= 10 && sA > sB) wA++;
+        else if (sB >= 10 && sB > sA) wB++;
+        else stalled++;
+        totalRounds += r;
+        totalScoreA += sA;
+        totalScoreB += sB;
+      }
+      totalGames += chunkSize;
+
+      const now = performance.now();
+      const elapsed = now - start;
+      const chunkTime = now - chunkStart;
+
+      // Adapt chunk size: aim for ~30ms per chunk so UI stays smooth.
+      if (chunkTime > 0) {
+        const target = 30;
+        const factor = target / chunkTime;
+        chunkSize = Math.max(500, Math.min(500000, Math.round(chunkSize * factor)));
+      }
+
+      onProgress(totalGames, elapsed);
+
+      if (elapsed >= durationMs) {
+        const finished = totalGames - stalled;
+        onDone({
+          winsA: wA, winsB: wB, stalled, n: totalGames,
+          pctA: finished ? (wA / finished) * 100 : 0,
+          pctB: finished ? (wB / finished) * 100 : 0,
+          avgRounds: totalRounds / totalGames,
+          avgScoreA: totalScoreA / totalGames,
+          avgScoreB: totalScoreB / totalGames,
+          elapsedMs: elapsed,
+        });
+      } else {
+        // Yield to the browser, then continue.
+        setTimeout(chunk, 0);
+      }
+    }
+
+    chunk();
+  }
+
+  // ── UI sync ──────────────────────────────────────────
+  function updatePanel(side) {
+    const pct = readPercents(side);
+    const sum = pct[0] + pct[1] + pct[2];
+
+    // Preview bar: segments take up their literal % of width.
+    const segs = document.querySelectorAll(`#preview-${side} .preview-seg`);
+    segs[0].style.width = Math.min(100, pct[0]) + '%';
+    segs[1].style.width = Math.min(100, pct[1]) + '%';
+    segs[2].style.width = Math.min(100, pct[2]) + '%';
+
+    // Sum indicator
+    const sumEl = document.getElementById(`sum-${side}`);
+    const sumValEl = document.getElementById(`sum-${side}-value`);
+    // Show one decimal only when needed
+    sumValEl.textContent = Number.isInteger(sum) ? sum.toString() : sum.toFixed(1);
+    if (isValid(pct)) sumEl.classList.remove('invalid');
+    else sumEl.classList.add('invalid');
+
+    updateRunState();
+  }
+
+  function updateRunState() {
+    const ok = isValid(readPercents('a')) && isValid(readPercents('b'));
+    runBtn.disabled = !ok;
+    runBtn.title = ok ? '' : 'Each strategy must sum to 100';
+  }
+
+  // ── Run handler ──────────────────────────────────────
+  const runBtn = document.getElementById('run-btn');
+  const runIcon = document.getElementById('run-icon');
+  const runLabel = document.getElementById('run-label');
+
+  document.querySelectorAll('input[data-side]').forEach(el => {
+    el.addEventListener('input', () => updatePanel(el.dataset.side));
+  });
+  // Initial sync on load
+  updatePanel('a');
+  updatePanel('b');
+
+  runBtn.addEventListener('click', () => {
+    const pctA = readPercents('a');
+    const pctB = readPercents('b');
+    if (!isValid(pctA) || !isValid(pctB)) return;
+
+    // Convert percentages → probabilities (divide by 100).
+    const pA = [pctA[0] / 100, pctA[1] / 100, pctA[2] / 100];
+    const pB = [pctB[0] / 100, pctB[1] / 100, pctB[2] / 100];
+
+    const durRaw = parseFloat(document.getElementById('duration-sec').value);
+    const durSec = isNaN(durRaw) || durRaw <= 0 ? 5 : durRaw;
+    const durationMs = durSec * 1000;
+
+    runBtn.disabled = true;
+    runIcon.className = 'spinner';
+    runLabel.textContent = 'Running…';
+
+    // Hide prior results, show progress
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('results').classList.remove('show');
+    const progressEl = document.getElementById('progress');
+    const fillEl = document.getElementById('progress-fill');
+    const gamesEl = document.getElementById('progress-games');
+    const timeEl = document.getElementById('progress-time');
+    progressEl.classList.add('show');
+    fillEl.style.width = '0%';
+    gamesEl.textContent = '0';
+    timeEl.textContent = `0.0s / ${durSec.toFixed(1)}s`;
+
+    const onProgress = (totalGames, elapsed) => {
+      const pct = Math.min(100, (elapsed / durationMs) * 100);
+      fillEl.style.width = pct + '%';
+      gamesEl.textContent = totalGames.toLocaleString();
+      timeEl.textContent = `${(elapsed / 1000).toFixed(1)}s / ${durSec.toFixed(1)}s`;
+    };
+
+    const onDone = (r) => {
+      progressEl.classList.remove('show');
+      renderResults(r);
+      runBtn.disabled = false;
+      runIcon.className = 'play-icon';
+      runLabel.textContent = 'Run Again';
+    };
+
+    // Defer one frame so the spinner/progress bar paints before we start crunching.
+    setTimeout(() => runTimed(pA, pB, durationMs, onProgress, onDone), 16);
+  });
+
+  function renderResults(r) {
+    document.getElementById('empty-state').style.display = 'none';
+    const results = document.getElementById('results');
+    results.classList.add('show');
+
+    document.getElementById('results-meta').textContent =
+      `Results · ${r.n.toLocaleString()} games simulated in ${(r.elapsedMs / 1000).toFixed(1)}s`;
+
+    const head = document.getElementById('winner-headline');
+
+    if (r.pctA > r.pctB) {
+      head.className = 'winner-headline a';
+      head.textContent = 'Strategy A wins';
+    } else if (r.pctB > r.pctA) {
+      head.className = 'winner-headline b';
+      head.textContent = 'Strategy B wins';
+    } else {
+      head.className = 'winner-headline tie';
+      head.textContent = 'Dead heat';
+    }
+
+    document.getElementById('share-a').style.width = r.pctA + '%';
+    document.getElementById('share-b').style.width = r.pctB + '%';
+    document.getElementById('share-a').textContent = r.pctA >= 8 ? `A · ${r.pctA.toFixed(1)}%` : '';
+    document.getElementById('share-b').textContent = r.pctB >= 8 ? `${r.pctB.toFixed(1)}% · B` : '';
+
+    document.getElementById('stat-a-count').textContent = r.winsA.toLocaleString();
+    document.getElementById('stat-a-pct').textContent = r.pctA.toFixed(2) + '%';
+    document.getElementById('stat-b-count').textContent = r.winsB.toLocaleString();
+    document.getElementById('stat-b-pct').textContent = r.pctB.toFixed(2) + '%';
+
+    const note = document.getElementById('stalled-note');
+    if (r.stalled > 0) {
+      const finished = r.n - r.stalled;
+      note.textContent = `${r.stalled.toLocaleString()} games hit the round cap (likely an all-tie matchup) · win % based on ${finished.toLocaleString()} decisive games`;
+    } else {
+      note.textContent = '';
+    }
+  }
+</script>
+</body>
+</html>
