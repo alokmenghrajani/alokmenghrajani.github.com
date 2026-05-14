@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Javascript Music Box</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgo=">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/build/three.module.js",
+    "three/addons/": "./vendor/three/addons/"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div id="splash" class="splash">
+  <div class="splash-card">
+    <h1>Javascript Music Box</h1>
+    <p>A virtual music box plays a Twinkle-Twinkle inspired tune. As the hand crank turns, a brass drum rotates. Metal pins pluck tuned steel teeth.</p>
+    <p>The audio is rendered using Web Audio Spatialization (18 nodes, one per tooth). Move around to experience the sound change direction.</p>
+    <p>Model: hand made using Blender<br>Code: claude.ai (Opus 4.7)</p>
+    <div class="splash-actions">
+      <button id="startBtn">Start</button>
+      <button id="skipBtn" class="ghost">Skip intro</button>
+    </div>
+  </div>
+</div>
+
+<div id="hud" class="hud hidden">
+  <div class="topbar">
+    <button id="pauseBtn" class="btn">Pause</button>
+    <button id="resetBtn" class="btn">Reset camera</button>
+  </div>
+  <div class="joystick" id="joyOrbit" data-label="orbit">
+    <div class="joystick-bg"></div>
+    <div class="joystick-knob"></div>
+    <div class="joystick-label">Orbit</div>
+  </div>
+  <div class="joystick" id="joyOffset" data-label="offset">
+    <div class="joystick-bg"></div>
+    <div class="joystick-knob"></div>
+    <div class="joystick-label">Offset</div>
+  </div>
+</div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

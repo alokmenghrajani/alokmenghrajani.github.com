@@ -1,0 +1,105 @@
+# Twinkle, Twinkle, Little Star — variant arranged for the 18-tooth music box.
+# Full classic verse is played in the middle octave (teeth 5-10), book-ended
+# by a high "sparkle" cascade that visits the top teeth (1-4) and a low
+# reprise + descending coda that picks up the remaining teeth (11-18).
+#
+# Format: one event per line; chords use "+"; "#" starts a comment.
+# Optional "*N" suffix = note duration in beats (default 1; "*2" = half note).
+# Trailing comment on each line is the tooth number for cross-reference.
+
+# Full classic Twinkle in C-major / mid octave (6 phrases, teeth 5-10).
+# Each phrase is 6 quarter notes + 1 half note ("...little STAR").
+
+# Phrase 1: "Twinkle twinkle little star"
+C6   # 10
+C6   # 10
+G6   # 6
+G6   # 6
+A6   # 5
+A6   # 5
+G6 *2   # 6
+
+# Phrase 2: "How I wonder what you are"
+F6   # 7
+F6   # 7
+E6   # 8
+E6   # 8
+D6   # 9
+D6   # 9
+C6 *2   # 10
+
+# Phrase 3: "Up above the world so high"
+G6   # 6
+G6   # 6
+F6   # 7
+F6   # 7
+E6   # 8
+E6   # 8
+D6 *2   # 9
+
+# Phrase 4: "Like a diamond in the sky"
+G6   # 6
+G6   # 6
+F6   # 7
+F6   # 7
+E6   # 8
+E6   # 8
+D6 *2   # 9
+
+# Phrase 5: "Twinkle twinkle little star"
+C6   # 10
+C6   # 10
+G6   # 6
+G6   # 6
+A6   # 5
+A6   # 5
+G6 *2   # 6
+
+# Phrase 6: "How I wonder what you are"
+F6   # 7
+F6   # 7
+E6   # 8
+E6   # 8
+D6   # 9
+D6   # 9
+C6 *2   # 10
+
+# High sparkle — reaches into the top octave (teeth 1-4), ends held
+C7   # 3
+E7   # 1
+D7   # 2
+C7   # 3
+B6   # 4
+A6   # 5
+C7   # 3
+D7 *2   # 2
+
+# Twinkle reprise in the low octave (2 phrases, teeth 12-17)
+C5   # 17
+C5   # 17
+G5   # 13
+G5   # 13
+A5   # 12
+A5   # 12
+G5 *2   # 13
+
+F5   # 14
+F5   # 14
+E5   # 15
+E5   # 15
+D5   # 16
+D5   # 16
+C5 *2   # 17
+
+# Descending coda — covers teeth 11 (B5) and 18 (A4), final note held long
+B5   # 11
+A5   # 12
+G5   # 13
+F5   # 14
+E5   # 15
+D5   # 16
+C5   # 17
+B5   # 11
+G5   # 13
+C5   # 17
+A4 *3   # 18
