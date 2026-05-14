@@ -43,7 +43,8 @@ function beginExperience(skipIntro) {
   if (started) return;
   started = true;
   splash.classList.add('hidden');
-  piano.resume();
+  // Unlock audio synchronously inside this user gesture — required on iOS.
+  piano.unlock();
   // Start the crank (and audio) at the same instant the camera starts moving,
   // so the music plays during the intro.
   scene.setPaused(false);
@@ -55,6 +56,16 @@ function beginExperience(skipIntro) {
 
 startBtn.addEventListener('click', () => beginExperience(false));
 skipBtn?.addEventListener('click', () => beginExperience(true));
+
+// iOS suspends the AudioContext when the tab is backgrounded or after an
+// interruption (phone call, etc.) — re-resume whenever we become visible
+// again, and as a cheap fallback on any pointer interaction.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && started) piano.resume();
+});
+window.addEventListener('pointerdown', () => {
+  if (started) piano.resume();
+});
 
 resetBtn.addEventListener('click', () => {
   scene.resetCamera();

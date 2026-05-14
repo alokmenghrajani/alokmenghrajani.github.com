@@ -49,6 +49,34 @@ function buildMusicBoxWave(ctx) {
   return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
 }
 
+// Build a Blob URL for a short silent WAV. Playing this through a looping
+// HTMLAudioElement on iOS moves Web Audio output onto the media channel,
+// which (unlike the default ringer channel) is NOT silenced by the phone's
+// hardware mute switch.
+function makeSilentWavUrl() {
+  const sampleRate = 8000;
+  const numSamples = sampleRate >> 1; // ~0.5s
+  const dataSize = numSamples;        // 8-bit mono
+  const buf = new ArrayBuffer(44 + dataSize);
+  const dv = new DataView(buf);
+  const str = (off, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i)); };
+  str(0, 'RIFF');
+  dv.setUint32(4, 36 + dataSize, true);
+  str(8, 'WAVE');
+  str(12, 'fmt ');
+  dv.setUint32(16, 16, true);
+  dv.setUint16(20, 1, true);          // PCM
+  dv.setUint16(22, 1, true);          // mono
+  dv.setUint32(24, sampleRate, true);
+  dv.setUint32(28, sampleRate, true); // byte rate
+  dv.setUint16(32, 1, true);          // block align
+  dv.setUint16(34, 8, true);          // bits per sample
+  str(36, 'data');
+  dv.setUint32(40, dataSize, true);
+  for (let i = 0; i < dataSize; i++) dv.setUint8(44 + i, 128); // 8-bit silence
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+
 function buildNoiseBuffer(ctx) {
   const len = Math.floor(ctx.sampleRate * 0.1);
   const buf = ctx.createBuffer(1, len, ctx.sampleRate);
@@ -65,6 +93,14 @@ export class PianoAudio {
     this.ctx = listener.context;
     this.wave = buildMusicBoxWave(this.ctx);
     this.noiseBuf = buildNoiseBuffer(this.ctx);
+
+    // Silent looping <audio> element — used to bypass the iOS mute switch.
+    this._silentEl = new Audio();
+    this._silentEl.src = makeSilentWavUrl();
+    this._silentEl.loop = true;
+    this._silentEl.preload = 'auto';
+    this._silentEl.setAttribute('playsinline', '');
+    this._unlocked = false;
   }
 
   // Returns a THREE.PositionalAudio whose internal panner can be used
@@ -145,8 +181,41 @@ export class PianoAudio {
     noise.stop(now + 0.08);
   }
 
+  // Fully unlock audio for iOS Safari. MUST be called from within a user
+  // gesture handler (click/touch). iOS needs three things:
+  //   1. the AudioContext resumed (it starts 'suspended', and can also enter
+  //      an 'interrupted' state after phone calls / app switches),
+  //   2. a real AudioBufferSourceNode .start()-ed inside the gesture, and
+  //   3. a media element playing, so output routes around the mute switch.
+  unlock() {
+    const ctx = this.ctx;
+    if (ctx.state !== 'running' && ctx.resume) {
+      ctx.resume().catch(() => {});
+    }
+    // Play one sample of silence through the destination — the in-gesture
+    // source start is what actually flips iOS audio on.
+    try {
+      const src = ctx.createBufferSource();
+      src.buffer = ctx.createBuffer(1, 1, ctx.sampleRate);
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch (e) { /* ignore */ }
+    // Start the silent loop so Web Audio rides the media channel.
+    const p = this._silentEl.play();
+    if (p && p.catch) p.catch(() => {});
+    this._unlocked = true;
+  }
+
+  // Lightweight resume — safe to call on visibilitychange / pointer events.
   resume() {
-    if (this.ctx.state === 'suspended') return this.ctx.resume();
+    const ctx = this.ctx;
+    if (ctx.state !== 'running' && ctx.resume) {
+      return ctx.resume().catch(() => {});
+    }
+    if (this._unlocked && this._silentEl.paused) {
+      const p = this._silentEl.play();
+      if (p && p.catch) p.catch(() => {});
+    }
     return Promise.resolve();
   }
 }
