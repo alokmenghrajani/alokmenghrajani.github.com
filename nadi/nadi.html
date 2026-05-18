@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nade: two-player playtest</title>
+<style>
+@font-face {
+  font-family: 'Cause';
+  src: url('Cause-VariableFont_wght.ttf') format('truetype-variations'),
+       url('Cause-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #f3ead9;
+  --bg-deeper: #e9dec5;
+  --ink: #2a1f1a;
+  --ink-soft: #5c4a3e;
+  --card-face: #fbf6e9;
+  --card-edge: rgba(42, 31, 26, 0.14);
+  --p1: #c54b2c;
+  --p1-soft: #f8c4b3;
+  --p2: #1d5c63;
+  --p2-soft: #b3d4d9;
+  --gold: #c89b3c;
+  --water: #5b97a3;
+  --water-deep: #2c6c78;
+  --water-light: #c1dee3;
+  --shadow-sm: rgba(42, 31, 26, 0.12);
+  --shadow-md: rgba(42, 31, 26, 0.25);
+  --current: var(--p1);
+  /* Responsive sizes — cards have 2.5:3.5 ratio (standard playing card) */
+  --card-w: 9vmin;
+  --card-h: 18vmin;
+  --card-gap: 1vmin;
+  --inner-gap: 0.5vmin;
+  --pad: 1vmin;
+  --rim: 0.4vmin;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  color: var(--ink);
+  font-family: 'Cause', system-ui, sans-serif;
+  background: linear-gradient(180deg, #cde3e8 0%, #84afba 100%);
+}
+
+.app {
+  width: 100%;
+  height: 100vh;
+  margin: 0 auto;
+  padding: var(--pad);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--pad);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ---- Header ---- */
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  padding-left: calc((100% - 6 * var(--card-w) - 5 * var(--card-gap)) / 2);
+  padding-right: 1vmin;
+}
+
+.title {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(2.5vmin, 4vmin, 4.5vmin);
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 144, 'SOFT' 50;
+  line-height: 1;
+  margin-bottom: 1.5vmin;
+}
+
+.title .dot {
+  color: var(--gold);
+  font-style: italic;
+  margin: 0 1vmin;
+}
+
+.subtitle {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-style: italic;
+  font-size: 1.75vmin;
+  color: var(--ink-soft);
+}
+
+.rules-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border: 0.25vmin solid white;
+  border-radius: 125vmin;
+  padding: 0.625vmin 1.75vmin;
+  font-size: 1.5vmin;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  box-shadow: 0 0.25vmin 0.75vmin rgba(0, 0, 0, 0.15);
+}
+
+.rules-btn:hover {
+  background: white;
+}
+
+.rules-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---- Player zones ---- */
+.player-zone {
+  background: rgba(255, 250, 240, 0.78);
+  border-radius: 1.6vmin;
+  padding: var(--pad);
+  transition: all 0.25s ease;
+  position: relative;
+  box-shadow: 0 0.4vmin 1.25vmin rgba(0, 0, 0, 0.12), inset 0 0 0 var(--rim) white;
+  grid-column: 1 / 6;
+  display: grid;
+  grid-template-columns: repeat(5, var(--card-w));
+  grid-template-rows: 1fr auto auto;
+  column-gap: var(--inner-gap);
+  row-gap: 0.25vmin;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.player-zone.p2 { grid-row: 1; }
+.player-zone.p1 {
+  grid-row: 3;
+  grid-template-rows: auto auto 1fr;
+}
+
+.player-zone .hand-row,
+.player-zone .player-header,
+.player-zone .bet-row {
+  grid-column: 1 / -1;
+}
+
+.player-zone.active {
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 0.375vmin var(--accent), 0 0.75vmin 2.5vmin rgba(0, 0, 0, 0.18);
+}
+
+.player-zone.p1 { --accent: var(--p1); --accent-soft: var(--p1-soft); }
+.player-zone.p2 { --accent: var(--p2); --accent-soft: var(--p2-soft); }
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25vmin 0.5vmin 0.5vmin;
+}
+
+.player-name {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 2.12vmin;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 1vmin;
+}
+
+.player-name .num {
+  color: var(--accent);
+  font-size: 2.75vmin;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.player-name .turn-tag {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.38vmin;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-weight: 600;
+  background: var(--accent);
+  color: white;
+  padding: 0.375vmin 1.5vmin;
+  border-radius: 125vmin;
+  font-style: normal;
+  display: none;
+  white-space: nowrap;
+}
+
+.player-zone.active .turn-tag { display: inline-block; }
+
+.score {
+  font-size: 1.5vmin;
+  color: var(--ink-soft);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.score-value {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 3.25vmin;
+  font-weight: 700;
+  color: var(--accent);
+  margin-left: 0.75vmin;
+  font-variation-settings: 'opsz' 144;
+}
+
+/* ---- Hand row ---- */
+.hand-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--inner-gap);
+  justify-content: center;
+  padding: 0;
+  align-items: center;
+  min-height: 0;
+}
+
+.hand-card {
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: clamp(0.5vmin, 1vmin, 1.12vmin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 600;
+  font-variation-settings: 'opsz' 144;
+  background: var(--card-face);
+  border: 0.375vmin solid white;
+  box-shadow: 0 0.375vmin 0.75vmin rgba(0, 0, 0, 0.18);
+  position: relative;
+  user-select: none;
+  cursor: default;
+  flex-shrink: 0;
+  font-size: 3.75vmin;
+  color: var(--ink);
+}
+
+.hand-card.just-drawn { animation: drop-in 0.35s ease; }
+
+.hand-card.number {
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.75vmin 0.25vmin 0.5vmin;
+}
+
+.hand-card.number .num {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.75vmin;
+  height: 1.38vmin;
+  background: white;
+  color: var(--ink);
+  border-radius: 0 0 1.38vmin 1.38vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.38vmin;
+  line-height: 1;
+  box-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.18);
+}
+
+.hand-card .card-icon {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 3.75vmin;
+}
+
+.hand-card.number {
+  color: white;
+}
+
+.hand-card.number .num {
+  text-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.25);
+}
+
+.hand-card.number.value-1 { background: linear-gradient(165deg, #8cc4d0, #5896a3); }
+.hand-card.number.value-2 { background: linear-gradient(165deg, #4f8c9b, #2a667a); }
+.hand-card.number.value-3 { background: linear-gradient(165deg, #285a6c, #103848); }
+
+.hand-card.bet {
+  background: var(--accent);
+  color: white;
+  position: relative;
+}
+
+.hand-card.bet .num {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.75vmin;
+  height: 1.38vmin;
+  background: white;
+  color: var(--ink);
+  border-radius: 0 0 1.38vmin 1.38vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.38vmin;
+  line-height: 1;
+  box-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.18);
+}
+
+.hand-card.swap {
+  background: linear-gradient(135deg, #e6b860, #b88a30);
+}
+
+.hand-card.remove {
+  background: linear-gradient(135deg, #7a3e60, #4a2240);
+}
+
+.hand-card.face-down {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30' viewBox='0 0 80 30'%3E%3Cpath d='M0 12 Q 20 4 40 12 T 80 12' fill='none' stroke='white' stroke-opacity='0.3' stroke-width='1'/%3E%3Cpath d='M0 24 Q 20 16 40 24 T 80 24' fill='none' stroke='white' stroke-opacity='0.2' stroke-width='1'/%3E%3C/svg%3E") repeat,
+    linear-gradient(165deg, #a85a3a, #6a3520);
+  color: white;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.38vmin;
+  letter-spacing: 0.25em;
+  text-indent: 0.25em;
+  border: 0.125vmin solid rgba(200, 155, 60, 0.25);
+}
+
+.hand-card.playable { cursor: pointer; }
+.hand-card.playable:hover {
+  transform: translateY(-0.625vmin);
+  box-shadow: 0 1vmin 1.75vmin var(--shadow-md);
+}
+.hand-card.selected {
+  outline: 0.375vmin solid var(--current);
+  outline-offset: 0.375vmin;
+  transform: translateY(-0.875vmin);
+  box-shadow: 0 1.25vmin 2.25vmin var(--shadow-md);
+  cursor: pointer;
+}
+
+.player-zone:not(.active) .hand-card { opacity: 0.78; }
+
+.hand-empty {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-style: italic;
+  font-size: 1.62vmin;
+  color: var(--ink-soft);
+  padding: 2vmin 0;
+}
+
+/* ---- Bet rows ---- */
+.bet-row {
+  display: grid;
+  grid-template-columns: repeat(5, var(--card-w));
+  column-gap: var(--inner-gap);
+  justify-content: center;
+}
+
+.bet-slot {
+  width: var(--card-w);
+  height: clamp(3.5vmin, 5vmin, 6.5vmin);
+  border: 0.188vmin dashed rgba(42, 31, 26, 0.2);
+  border-radius: clamp(0.5vmin, 0.8vmin, 1vmin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.bet-slot.selectable {
+  border-color: var(--current);
+  border-style: solid;
+  border-width: 0.25vmin;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.7);
+  animation: pulse-current 1.4s ease-in-out infinite;
+}
+
+.bet-slot.selectable:hover {
+  transform: translateY(-0.25vmin);
+  background: white;
+}
+
+@keyframes pulse-current {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 0 0.625vmin rgba(255, 255, 255, 0.4); }
+}
+
+.bet-card {
+  width: 84%;
+  height: 84%;
+  background: var(--bet-color);
+  color: white;
+  border-radius: 1vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-variation-settings: 'opsz' 144;
+  box-shadow: 0 0.25vmin 0.75vmin rgba(0, 0, 0, 0.2);
+  position: relative;
+  border: 0.312vmin solid white;
+  box-sizing: border-box;
+  padding-top: 1vmin;
+}
+
+.bet-card.just-placed { animation: drop-in 0.3s ease; }
+
+.bet-card .num {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2vmin;
+  height: 1vmin;
+  background: white;
+  color: var(--ink);
+  border-radius: 0 0 1vmin 1vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1vmin;
+  line-height: 1;
+  box-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.18);
+}
+
+.bet-card.hidden {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30' viewBox='0 0 80 30'%3E%3Cpath d='M0 12 Q 20 4 40 12 T 80 12' fill='none' stroke='white' stroke-opacity='0.3' stroke-width='1'/%3E%3Cpath d='M0 24 Q 20 16 40 24 T 80 24' fill='none' stroke='white' stroke-opacity='0.2' stroke-width='1'/%3E%3C/svg%3E") repeat,
+    linear-gradient(165deg, #a85a3a, #6a3520);
+  color: white;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.12vmin;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  text-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.25);
+  border-color: white;
+}
+
+.prediction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25vmin;
+}
+
+.crystal-glyph {
+  width: 4.5vmin;
+  height: 5.3vmin;
+  flex-shrink: 0;
+}
+
+.predict-icon-glyph {
+  width: 2.6vmin;
+  height: 1.7vmin;
+  flex-shrink: 0;
+}
+
+.bet-card .crystal-glyph { width: 1.6vmin; height: 1.9vmin; }
+.bet-card .predict-icon-glyph { width: 1.1vmin; height: 0.7vmin; }
+.bet-card .prediction { gap: 0.05vmin; }
+
+.bet-points {
+  position: absolute;
+  top: -1.25vmin;
+  right: -1.25vmin;
+  min-width: 2.75vmin;
+  height: 2.75vmin;
+  border-radius: 1.38vmin;
+  padding: 0 0.75vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.38vmin;
+  font-weight: 800;
+  border: 0.25vmin solid white;
+  letter-spacing: 0;
+  text-indent: 0;
+  font-style: normal;
+  color: white;
+  box-shadow: 0 0.25vmin 0.5vmin rgba(0, 0, 0, 0.25);
+}
+
+.bet-card.win .bet-points { background: #4a8c4a; }
+.bet-card.partial .bet-points { background: #c89b3c; }
+.bet-card.lose .bet-points { background: #b54b3c; }
+
+.bet-card.partial { opacity: 0.78; }
+
+.bet-card.lose {
+  opacity: 0.45;
+  filter: saturate(0.5);
+}
+
+.bet-card.reveal {
+  animation: flip-reveal 0.55s ease;
+}
+
+.bet-card.own-preview {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.85);
+  opacity: 0.92;
+}
+
+@keyframes flip-reveal {
+  0% { transform: rotateY(180deg) scale(0.85); }
+  60% { transform: rotateY(-8deg) scale(1.04); }
+  100% { transform: rotateY(0) scale(1); }
+}
+
+@keyframes drop-in {
+  from { transform: scale(0.6) translateY(-1.25vmin); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ---- River ---- */
+.river-zone {
+  grid-column: 1 / 6;
+  grid-row: 2;
+  background: linear-gradient(180deg, rgba(44, 108, 120, 0.45), rgba(28, 78, 88, 0.6));
+  border-radius: 1.6vmin;
+  position: relative;
+  box-shadow: 0 0.4vmin 1.25vmin rgba(0, 0, 0, 0.18), inset 0 0 0 var(--rim) white;
+  display: grid;
+  grid-template-columns: repeat(5, var(--card-w));
+  column-gap: var(--inner-gap);
+  align-items: center;
+  justify-content: center;
+  padding: var(--pad);
+  box-sizing: border-box;
+}
+
+.river { display: contents; }
+
+.deck-area {
+  grid-column: 6;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 2.5vmin;
+  position: relative;
+}
+
+.deck-area .deck-info {
+  position: absolute;
+  top: 50%;
+  margin-top: calc(var(--card-h) / 2 + 3vmin);
+  left: 2.5vmin;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+}
+
+.river-label { color: rgba(255, 255, 255, 0.85); }
+
+.river-label {
+  text-align: center;
+  font-size: 1.25vmin;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.75vmin;
+  font-weight: 700;
+  font-family: 'Cause', system-ui, sans-serif;
+}
+
+.river-label::before, .river-label::after {
+  content: '—';
+  margin: 0 1.5vmin;
+  opacity: 0.5;
+}
+
+
+.river-slot {
+  width: var(--card-w);
+  height: var(--card-h);
+  position: relative;
+  cursor: default;
+  transition: transform 0.2s;
+  overflow: visible;
+}
+
+.river-slot.selectable { cursor: pointer; }
+
+.river-slot.selectable .placeholder,
+.river-slot.selectable .stack {
+  outline: 0.375vmin solid var(--gold);
+  outline-offset: 0.5vmin;
+  border-radius: 1.5vmin;
+  animation: pulse-gold 1.4s ease-in-out infinite;
+}
+
+.river-slot.selectable:hover { transform: translateY(-0.375vmin); }
+
+.river-slot.selected .stack,
+.river-slot.selected .placeholder {
+  outline: 0.375vmin solid var(--current);
+  outline-offset: 0.5vmin;
+  border-radius: 1.5vmin;
+}
+
+.river-slot.full-marker .stack::after {
+  content: 'FULL';
+  position: absolute;
+  top: -1.25vmin;
+  right: -1vmin;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.12vmin;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 0.375vmin 0.75vmin;
+  border-radius: 0.75vmin;
+  border: 0.25vmin solid var(--bg);
+  z-index: 10;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { outline-color: var(--gold); }
+  50% { outline-color: rgba(200, 155, 60, 0.35); }
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    repeating-linear-gradient(45deg, rgba(42, 31, 26, 0.05) 0vmin, rgba(42, 31, 26, 0.05) 0.125vmin, transparent 0.125vmin, transparent 1vmin);
+  border: 0.188vmin dashed rgba(42, 31, 26, 0.22);
+  border-radius: 1.25vmin;
+}
+
+.stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.river-card {
+  position: absolute;
+  inset: 0;
+  background: var(--card-face);
+  border: var(--rim) solid white;
+  border-radius: 1.5vmin;
+  box-shadow: 0 0.5vmin 1.25vmin rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 600;
+  font-variation-settings: 'opsz' 144;
+  color: var(--ink);
+  transition: transform 0.3s ease;
+  padding: 3.5vmin 0.75vmin 1.5vmin;
+}
+
+.river-card .num {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5.5vmin;
+  height: 2.75vmin;
+  background: white;
+  color: var(--ink);
+  border-radius: 0 0 2.75vmin 2.75vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-variation-settings: 'opsz' 144;
+  font-size: 2.25vmin;
+  line-height: 1;
+  box-shadow: 0 0.125vmin 0.375vmin rgba(0, 0, 0, 0.2);
+}
+
+.river-card .card-icon {
+  display: block;
+  max-width: 75%;
+  max-height: 6.25vmin;
+  height: auto;
+}
+
+.river-card.value-1,
+.river-card.value-2,
+.river-card.value-3 {
+  color: white;
+}
+
+.river-card.value-1 { background: linear-gradient(165deg, #8cc4d0, #5896a3); }
+.river-card.value-2 { background: linear-gradient(165deg, #4f8c9b, #2a667a); }
+.river-card.value-3 { background: linear-gradient(165deg, #285a6c, #103848); }
+
+.river-card.face-down {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30' viewBox='0 0 80 30'%3E%3Cpath d='M0 12 Q 20 4 40 12 T 80 12' fill='none' stroke='white' stroke-opacity='0.3' stroke-width='1'/%3E%3Cpath d='M0 24 Q 20 16 40 24 T 80 24' fill='none' stroke='white' stroke-opacity='0.2' stroke-width='1'/%3E%3C/svg%3E") repeat,
+    linear-gradient(165deg, #4d8898, #2c6878);
+}
+
+.river-card[data-stack-pos="0"] { z-index: 1; transform: translate(0, 0); opacity: 0.85; }
+.river-card[data-stack-pos="1"] { z-index: 2; transform: translate(0, -0.5vmin); opacity: 0.95; }
+.river-card[data-stack-pos="2"] { z-index: 3; transform: translate(0, -1vmin); }
+
+.river-card.just-placed {
+  animation: place-card 0.4s ease;
+}
+
+@keyframes place-card {
+  0% { transform: translate(0, -3.75vmin) rotate(-3deg); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0); opacity: 1; }
+}
+
+/* ---- Controls ---- */
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75vmin;
+  /* Right padding includes one extra column-width so the centered text
+     aligns with the playing area (cols 1–5), not the full 6-col board. */
+  padding: 0.5vmin calc(2vmin + var(--card-w) + var(--card-gap)) 0 2vmin;
+  flex-shrink: 0;
+  min-height: 7vmin;
+  justify-content: center;
+}
+
+#cancel-area {
+  min-height: 4vmin;
+  display: flex;
+  align-items: center;
+}
+
+.message {
+  min-height: 2.5vmin;
+}
+
+.turn-indicator {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-style: italic;
+  font-size: 2.75vmin;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.2);
+}
+
+.turn-indicator .player-tag {
+  font-style: normal;
+  font-weight: 700;
+  color: white;
+  background: var(--current);
+  padding: 0.25vmin 1.25vmin;
+  border-radius: 125vmin;
+  font-size: 2vmin;
+  vertical-align: 0.375vmin;
+  box-shadow: 0 0.25vmin 0.75vmin rgba(0, 0, 0, 0.18);
+}
+
+.message {
+  font-size: 1.75vmin;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: center;
+  min-height: 2.75vmin;
+  width: 100%;
+  line-height: 1.45;
+  text-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.2);
+}
+
+.board-column {
+  display: grid;
+  grid-template-columns: repeat(6, var(--card-w));
+  grid-template-rows: min(30vh, 35vmin) 1fr min(30vh, 35vmin);
+  column-gap: var(--card-gap);
+  row-gap: var(--pad);
+  justify-content: center;
+  align-content: center;
+  min-height: 0;
+  min-width: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1vmin;
+}
+
+.rules-btn.active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+.debug-bet-value {
+  position: absolute;
+  bottom: 0.375vmin;
+  right: 0.5vmin;
+  font-size: 1.12vmin;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: 'Cause', system-ui, sans-serif;
+  letter-spacing: 0;
+  text-indent: 0;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: none;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.125vmin 0.5vmin;
+  border-radius: 0.5vmin;
+}
+
+.ai-guess-badge {
+  position: absolute;
+  top: -2vmin;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.4vmin;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 0.9vmin;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0;
+  text-indent: 0;
+  text-transform: none;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.2vmin 0.5vmin;
+  border-radius: 0.4vmin;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.ai-guess-badge span { display: inline-block; }
+
+.hand-card.dragging { opacity: 0.4; }
+
+.bet-slot.drag-over,
+.river-slot.drag-over .stack,
+.river-slot.drag-over .placeholder {
+  outline: 0.375vmin solid var(--current);
+  outline-offset: 0.5vmin;
+}
+
+.player-zone.hand-full::after {
+  content: 'HAND FULL';
+  position: absolute;
+  right: 1.5vmin;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.12vmin;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 0.375vmin 0.875vmin;
+  border-radius: 0.75vmin;
+  text-transform: uppercase;
+  z-index: 5;
+}
+
+.player-zone.p2.hand-full::after { top: 1vmin; }
+.player-zone.p1.hand-full::after { bottom: 1vmin; }
+
+.deck {
+  width: var(--card-w);
+  height: var(--card-h);
+  position: relative;
+  cursor: default;
+  transition: transform 0.2s;
+}
+
+.deck.live {
+  cursor: pointer;
+  border-radius: 0.1vmin;
+  animation: pulse-current 1.4s ease-in-out infinite;
+}
+
+.deck.live::after {
+  content: '';
+  position: absolute;
+  inset: -1.4vmin;
+  border: 0.375vmin solid var(--current);
+  border-radius: 1vmin;
+  pointer-events: none;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.deck.live:hover { transform: translateY(-0.5vmin); }
+
+.deck.empty { opacity: 0.3; }
+
+.deck-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30' viewBox='0 0 80 30'%3E%3Cpath d='M0 12 Q 20 4 40 12 T 80 12' fill='none' stroke='white' stroke-opacity='0.3' stroke-width='1'/%3E%3Cpath d='M0 24 Q 20 16 40 24 T 80 24' fill='none' stroke='white' stroke-opacity='0.2' stroke-width='1'/%3E%3C/svg%3E") repeat,
+    linear-gradient(165deg, #4d8898, #2c6878);
+  border-radius: 1.38vmin;
+  border: 0.375vmin solid white;
+  box-shadow: 0 0.5vmin 1.5vmin rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.38vmin;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.25);
+}
+
+.deck-card.top-card { font-size: 1.62vmin; }
+
+.deck-card.number-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5vmin 0.75vmin 1vmin;
+  color: white;
+  text-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.25);
+}
+
+.deck-card.number-face.value-1 { background: linear-gradient(165deg, #8cc4d0, #5896a3); }
+.deck-card.number-face.value-2 { background: linear-gradient(165deg, #4f8c9b, #2a667a); }
+.deck-card.number-face.value-3 { background: linear-gradient(165deg, #285a6c, #103848); }
+
+.deck-card.number-face .num {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5.5vmin;
+  height: 2.75vmin;
+  background: white;
+  color: var(--ink);
+  border-radius: 0 0 2.75vmin 2.75vmin;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 2.25vmin;
+  line-height: 1;
+  box-shadow: 0 0.15vmin 0.4vmin rgba(0, 0, 0, 0.2);
+  letter-spacing: 0;
+  text-indent: 0;
+  text-shadow: none;
+}
+
+.deck-card.number-face .card-icon {
+  display: block;
+  max-width: 70%;
+  max-height: 6vmin;
+  height: auto;
+}
+
+.deck-card.type-bet,
+.deck-card.type-swap,
+.deck-card.type-remove {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='30' viewBox='0 0 80 30'%3E%3Cpath d='M0 12 Q 20 4 40 12 T 80 12' fill='none' stroke='white' stroke-opacity='0.3' stroke-width='1'/%3E%3Cpath d='M0 24 Q 20 16 40 24 T 80 24' fill='none' stroke='white' stroke-opacity='0.2' stroke-width='1'/%3E%3C/svg%3E") repeat,
+    linear-gradient(165deg, #a85a3a, #6a3520);
+}
+
+.deck-card:nth-child(1) { z-index: 3; }
+.deck-card:nth-child(2) { z-index: 2; transform: translate(0.3vmin, -0.3vmin); }
+.deck-card:nth-child(3) { z-index: 1; transform: translate(0.6vmin, -0.6vmin); }
+
+.deck-info {
+  text-align: center;
+  font-size: clamp(0.875vmin, 1.2vmin, 1.25vmin);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 700;
+  text-shadow: 0 0.125vmin 0.25vmin rgba(0, 0, 0, 0.25);
+}
+
+.deck-info .count {
+  font-size: clamp(1.25vmin, 1.8vmin, 2vmin);
+  font-weight: 800;
+  color: white;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.score.hidden { visibility: hidden; }
+
+.cancel-btn {
+  background: none;
+  border: 0.125vmin solid var(--current);
+  color: var(--current);
+  padding: 0.75vmin 2vmin;
+  border-radius: 125vmin;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.38vmin;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: var(--current);
+  color: white;
+}
+
+/* ---- Game over ---- */
+.game-over {
+  position: fixed;
+  inset: 0;
+  background: rgba(42, 31, 26, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fade-in 0.4s ease;
+  backdrop-filter: blur(0.5vmin);
+  padding: 2.5vmin;
+}
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.go-card {
+  background: var(--bg);
+  padding: 4.5vmin 4vmin;
+  border-radius: 3vmin;
+  text-align: center;
+  max-width: 50vmin;
+  width: 100%;
+  box-shadow: 0 3vmin 7.5vmin rgba(0, 0, 0, 0.45);
+  border: 0.125vmin solid var(--card-edge);
+}
+
+.go-card h2 {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.75vmin;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.75vmin;
+}
+
+.go-card .winner {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-style: italic;
+  font-size: 4vmin;
+  font-weight: 600;
+  margin-bottom: 3vmin;
+  color: var(--ink);
+  font-variation-settings: 'opsz' 144;
+}
+
+.go-card .winner .name {
+  font-style: normal;
+  color: var(--winner-color);
+}
+
+.go-card .scores {
+  display: flex;
+  justify-content: space-around;
+  gap: 3vmin;
+  margin: 2.5vmin 0 3.5vmin;
+}
+
+.score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5vmin;
+  flex: 1;
+  padding: 2vmin 1vmin;
+  border-radius: 1.75vmin;
+  background: var(--block-bg);
+  border: 0.25vmin solid transparent;
+}
+
+.score-block.win {
+  border-color: var(--block-color);
+}
+
+.score-block .label {
+  font-size: 1.38vmin;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.score-block .value {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 7vmin;
+  font-weight: 700;
+  color: var(--block-color);
+  line-height: 1;
+  font-variation-settings: 'opsz' 144;
+}
+
+.btn {
+  background: var(--ink);
+  color: var(--bg);
+  border: none;
+  padding: 1.62vmin 4vmin;
+  border-radius: 125vmin;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.5vmin;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-0.25vmin);
+  box-shadow: 0 1vmin 2vmin var(--shadow-md);
+}
+
+.go-actions {
+  display: flex;
+  gap: 1.25vmin;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 0.25vmin solid var(--ink);
+}
+
+.btn-secondary:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.show-results-btn {
+  position: fixed;
+  bottom: 3vmin;
+  right: 3vmin;
+  background: var(--ink);
+  color: white;
+  border: 0.25vmin solid white;
+  padding: 1.38vmin 2.5vmin;
+  border-radius: 125vmin;
+  font-family: 'Cause', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.5vmin;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 0.75vmin 2.25vmin rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.show-results-btn:hover {
+  transform: translateY(-0.25vmin);
+  box-shadow: 0 1.25vmin 2.75vmin rgba(0, 0, 0, 0.35);
+}
+
+/* ---- Splash modal ---- */
+.splash-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(42, 31, 26, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  backdrop-filter: blur(0.75vmin);
+  padding: 2.5vmin;
+}
+
+.splash-modal.show { display: flex; animation: fade-in 0.3s ease; }
+
+.splash-card {
+  background: var(--bg);
+  padding: 4vmin 3.5vmin;
+  border-radius: 3vmin;
+  text-align: center;
+  max-width: 60vmin;
+  width: 100%;
+  box-shadow: 0 3vmin 7.5vmin rgba(0, 0, 0, 0.45);
+  border: 0.125vmin solid var(--card-edge);
+}
+
+.splash-card h2 {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-style: italic;
+  font-size: 5.5vmin;
+  font-weight: 600;
+  font-variation-settings: 'opsz' 144;
+  color: var(--ink);
+  margin: 0 0 0.5vmin;
+}
+
+.splash-card .splash-sub {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.75vmin;
+  color: var(--ink-soft);
+  margin: 0 0 3vmin;
+  letter-spacing: 0.08em;
+}
+
+.splash-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25vmin;
+  margin-bottom: 2vmin;
+}
+
+.splash-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border: 0.25vmin solid white;
+  border-radius: 1.5vmin;
+  padding: 1.75vmin 1.5vmin;
+  font-family: 'Cause', system-ui, sans-serif;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0.25vmin 0.75vmin rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vmin;
+  text-align: center;
+  align-items: center;
+}
+
+.splash-btn strong {
+  font-size: 2vmin;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.splash-btn span {
+  font-size: 1.3vmin;
+  color: var(--ink-soft);
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.splash-btn:hover {
+  background: white;
+  transform: translateY(-0.25vmin);
+  box-shadow: 0 0.75vmin 1.75vmin rgba(0, 0, 0, 0.2);
+}
+
+.splash-foot {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.25vmin;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 1.5vmin 0 0;
+}
+
+.opponent-tag {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.38vmin;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  align-self: center;
+  padding: 0 0.5vmin;
+}
+
+/* ---- Rules modal ---- */
+.rules-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(42, 31, 26, 0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fade-in 0.3s ease;
+  backdrop-filter: blur(0.5vmin);
+  padding: 2.5vmin;
+}
+
+.rules-modal.show { display: flex; }
+
+.rules-card {
+  background: var(--bg);
+  padding: 4vmin;
+  border-radius: 2.5vmin;
+  max-width: 62.5vmin;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 3vmin 7.5vmin rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.rules-card h3 {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 3.25vmin;
+  font-weight: 600;
+  margin-bottom: 0.5vmin;
+  font-variation-settings: 'opsz' 144;
+}
+
+.rules-card .tag {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 1.75vmin;
+  margin-bottom: 2.5vmin;
+}
+
+.rules-card h4 {
+  font-family: 'Cause', system-ui, sans-serif;
+  font-size: 1.88vmin;
+  font-weight: 700;
+  margin-top: 2.25vmin;
+  margin-bottom: 0.75vmin;
+  letter-spacing: 0.05em;
+}
+
+.rules-card p, .rules-card li {
+  font-size: 1.75vmin;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.rules-card ul {
+  padding-left: 2.25vmin;
+  margin-bottom: 1vmin;
+}
+
+.rules-card li {
+  margin-bottom: 0.5vmin;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1.75vmin;
+  right: 1.75vmin;
+  background: none;
+  border: none;
+  font-size: 2.75vmin;
+  color: var(--ink-soft);
+  cursor: pointer;
+  width: 4vmin;
+  height: 4vmin;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.close-btn:hover { background: var(--bg-deeper); color: var(--ink); }
+
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="title">Nadi</div>
+    </div>
+    <div class="header-actions">
+      <span class="opponent-tag" id="opponent-tag"></span>
+      <button class="rules-btn" id="undo-btn" onclick="undo()" disabled>Undo</button>
+      <button class="rules-btn" id="debug-btn" onclick="toggleDebug()">Debug</button>
+      <button class="rules-btn" onclick="document.getElementById('rules').classList.add('show')">Rules</button>
+    </div>
+  </div>
+
+  <div class="board-column">
+    <div class="player-zone p2" id="zone-p2">
+      <div class="hand-row" id="hand-p2"></div>
+      <div class="player-header">
+        <div class="player-name">
+          Player <span class="num">2</span>
+          <span class="turn-tag">Your turn</span>
+        </div>
+        <div class="score">Score<span class="score-value" id="score-p2">0</span></div>
+      </div>
+      <div class="bet-row" id="bets-p2" style="--current: var(--p2);"></div>
+    </div>
+
+    <div class="river-zone">
+      <div class="river" id="river"></div>
+    </div>
+    <div class="deck-area" id="deck-area"></div>
+
+    <div class="player-zone p1" id="zone-p1">
+      <div class="bet-row" id="bets-p1" style="--current: var(--p1);"></div>
+      <div class="player-header" style="padding-top: 0.5vmin; padding-bottom: 0.25vmin;">
+        <div class="player-name">
+          Player <span class="num">1</span>
+          <span class="turn-tag">Your turn</span>
+        </div>
+        <div class="score">Score<span class="score-value" id="score-p1">0</span></div>
+      </div>
+      <div class="hand-row" id="hand-p1"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="message" id="message"></div>
+    <div id="cancel-area"></div>
+  </div>
+</div>
+
+<!-- Splash modal: choose opponent before game starts -->
+<div class="splash-modal show" id="splash">
+  <div class="splash-card">
+    <h2>Nadi</h2>
+    <p class="splash-sub">Choose your opponent</p>
+    <div class="splash-options">
+      <button class="splash-btn" onclick="startGame('human')">
+        <strong>Human P2</strong>
+        <span>Hot-seat — two players share one device.</span>
+      </button>
+      <button class="splash-btn" onclick="startGame('hard')">
+        <strong>Computer</strong>
+        <span>Probability-aware AI with endgame heuristics. Plays aggressively.</span>
+      </button>
+    </div>
+    <p class="splash-foot">Reload the page to pick a different opponent.</p>
+  </div>
+</div>
+
+<!-- Rules modal -->
+<div class="rules-modal" id="rules" onclick="if(event.target===this) this.classList.remove('show')">
+  <div class="rules-card">
+    <button class="close-btn" onclick="document.getElementById('rules').classList.remove('show')">×</button>
+    <h3>How to play Nadi</h3>
+    <div class="tag">Two-player, fast paced card game. Strategically move cards around and predict the final outcome.</div>
+
+    <h4>Setup</h4>
+    <p>The middle playing field is the river. It has 5 slots, indicated by <strong>5 face-down cards</strong>. These cards are there to indicate the river's slots and their values never come into play.</p>
+    <p>The playing field in front of you is your hand. You start with an empty hand.</p>
+
+    <h4>Your turn</h4>
+    <p>You may hold at most <strong>5 cards</strong> in your hand. On your turn, do <strong>one</strong> of:</p>
+    <ul>
+      <li><strong>Draw</strong> the top deck card to your hand. Disabled when your hand is full.</li>
+      <li><strong>Play</strong> a card from your hand:
+        <ul>
+          <li><strong>Number (1, 2, or 3 — stones, fish, reeds):</strong> place it on top of any river slot. Each slot holds at most 3 cards including the initial face-down.</li>
+          <li><strong>Predict (1, 2, or 3 — stone, fish, or reed):</strong> place face-down next to a slot on your side. Hidden until game end. Each player can place one prediction per slot.</li>
+          <li><strong>Swap:</strong> swap the entire stacks of two river slots. The swap card is then removed from play.</li>
+          <li><strong>Remove:</strong> remove the top card of any river slot (you can't remove the face-down initial). The remove card is then discarded.</li>
+        </ul>
+      </li>
+    </ul>
+    <p>You can drag cards onto a target as a shortcut, or click a card and then click the destination.</p>
+
+    <h4>Card backs</h4>
+    <p>Card backs hint at type without revealing the value:</p>
+    <ul>
+      <li><strong>Blue</strong> back = number card (so the deck top tells you the next draw is harmless).</li>
+      <li><strong>Brown-red</strong> back = action card (prediction, swap, or remove).</li>
+    </ul>
+
+    <h4>The end</h4>
+    <p>The game ends when any of: the deck runs out, every river slot has 3 cards, or the next player has no legal action. All face-down predictions flip face-up.</p>
+
+    <h4>Scoring</h4>
+    <p>For each prediction you placed, compare it to the top card of its slot:</p>
+    <ul>
+      <li><strong>Exact match</strong> → double payout (predict stone → +2, predict fish → +4, predict reed → +6).</li>
+      <li><strong>Top card is higher than your prediction</strong> → partial credit, +1.</li>
+      <li><strong>Top card is lower, or the top is still face-down</strong> → penalty, −1.</li>
+    </ul>
+    <p>Highest total wins.</p>
+
+    <h4>Tips</h4>
+    <ul>
+      <li>Prediction values are hidden — opponents see <em>that</em> you predicted, not on what. Use that to bluff.</li>
+      <li>Predicting reed (3) pays the most on a match but punishes you for any miss.</li>
+      <li>Predictions placed early can drift up — even predicting stone (1) with a top of 2 or 3 still scores +1.</li>
+      <li>Swap cards are your main offensive tool — use them to wreck opponents' predictions.</li>
+      <li>Cards left in your hand at game end are worthless — play them.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// ============ STATE ============
+const state = {
+  deck: [],
+  hands: { 1: [], 2: [] },
+  river: [[], [], [], [], []],
+  bets: {
+    1: [null, null, null, null, null],
+    2: [null, null, null, null, null]
+  },
+  currentPlayer: 1,
+  awaiting: 'choose',
+  selectedHandIndex: null,
+  swapFirst: null,
+  scores: { 1: 0, 2: 0 },
+  lastPlacedSlot: -1,
+  lastDrawnCardId: null,
+  lastPlacedBet: null,
+  revealBets: false,
+  debug: false,
+  history: [],
+  aiLevel: 'human',
+};
+
+const HAND_LIMIT = 5;
+const STACK_LIMIT = 2;  // max player cards per river slot (excludes the face-down initial)
+
+let nextCardId = 1;
+
+// ============ ICONS ============
+const cardIcons = {
+  1: `<svg class="card-icon" viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="stone"><path d="M 5 21 L 6 16 L 10 11 L 15 8 L 22 8 L 28 9 L 33 13 L 36 18 L 34 22 L 7 22 Z" fill="white" stroke-linejoin="round"/><path d="M 10 11 L 16 14 L 22 11 L 28 13" stroke="rgba(0,0,0,0.22)" stroke-width="0.9" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M 22 11 L 22 22" stroke="rgba(0,0,0,0.14)" stroke-width="0.7" fill="none"/></svg>`,
+  2: `<svg class="card-icon" viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="fish"><path d="M 10 13 C 12 8 18 6 26 8 C 32 9.5 36 11 36 13 C 36 15 32 16.5 26 18 C 18 20 12 18 10 13 Z" fill="white"/><path d="M 4 5 L 12 13 L 4 21 Z" fill="white"/><circle cx="30" cy="11.5" r="1.2" fill="#1a3640"/></svg>`,
+  3: `<svg class="card-icon" viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="reed"><line x1="20" y1="3" x2="20" y2="25" stroke="white" stroke-width="1.4" stroke-linecap="round"/><ellipse cx="20" cy="11" rx="2.4" ry="5.5" fill="white"/><line x1="20" y1="3" x2="20" y2="6" stroke="white" stroke-width="1" stroke-linecap="round"/><line x1="11" y1="8" x2="11" y2="25" stroke="white" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="11" cy="14" rx="2" ry="4.5" fill="white" opacity="0.9"/><line x1="11" y1="8" x2="11" y2="10" stroke="white" stroke-width="1" stroke-linecap="round"/><line x1="29" y1="10" x2="29" y2="25" stroke="white" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="29" cy="15" rx="2" ry="4.5" fill="white" opacity="0.9"/><line x1="29" y1="10" x2="29" y2="12" stroke="white" stroke-width="1" stroke-linecap="round"/></svg>`
+};
+
+const swapIcon = `<svg class="card-icon swap-icon" viewBox="0 0 40 32" xmlns="http://www.w3.org/2000/svg" aria-label="swap"><path d="M 6 14 Q 14 5 24 9 L 24 5 L 33 12 L 24 19 L 24 15 Q 17 12 10 18 L 6 14 Z" fill="white"/><path d="M 34 18 Q 26 27 16 23 L 16 27 L 7 20 L 16 13 L 16 17 Q 23 20 30 14 L 34 18 Z" fill="#1f4d5a"/></svg>`;
+
+const removeIcon = `<svg class="card-icon remove-icon" viewBox="0 0 40 32" xmlns="http://www.w3.org/2000/svg" aria-label="remove"><rect x="11" y="5" width="18" height="22" rx="2.2" fill="white"/><line x1="8" y1="6" x2="32" y2="26" stroke="#b54b3c" stroke-width="3" stroke-linecap="round"/><line x1="8" y1="26" x2="32" y2="6" stroke="#b54b3c" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+const crystalBallIcon = `<svg class="crystal-glyph" viewBox="0 0 32 38" xmlns="http://www.w3.org/2000/svg" aria-label="crystal ball"><ellipse cx="16" cy="36" rx="9" ry="1.2" fill="rgba(0,0,0,0.28)"/><path d="M 7 33 L 9 28 L 23 28 L 25 33 Z" fill="white"/><rect x="6" y="32.5" width="20" height="2.5" rx="0.6" fill="white"/><path d="M 9 28 L 9.6 32.5" stroke="rgba(0,0,0,0.18)" stroke-width="0.5" stroke-linecap="round"/><path d="M 23 28 L 22.4 32.5" stroke="rgba(0,0,0,0.18)" stroke-width="0.5" stroke-linecap="round"/><circle cx="16" cy="16" r="12" fill="rgba(255,255,255,0.45)"/><circle cx="16" cy="16" r="12" fill="none" stroke="white" stroke-width="1.4"/><path d="M 27 13 A 12 12 0 0 1 16 28 A 9.5 9.5 0 0 0 24 13 Z" fill="rgba(0,0,0,0.22)"/><path d="M 8 14 Q 13 10 18 12 Q 22 14 20 18" fill="none" stroke="white" stroke-width="0.8" opacity="0.55" stroke-linecap="round"/><ellipse cx="11.5" cy="11" rx="3.4" ry="4.4" fill="white"/><ellipse cx="10.5" cy="10" rx="1.2" ry="1.8" fill="white"/><circle cx="20.5" cy="20.5" r="0.9" fill="white" opacity="0.95"/><circle cx="13" cy="22" r="0.5" fill="white" opacity="0.7"/></svg>`;
+
+const predictIcons = {
+  1: `<svg class="predict-icon-glyph" viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="stone"><path d="M 5 21 L 6 16 L 10 11 L 15 8 L 22 8 L 28 9 L 33 13 L 36 18 L 34 22 L 7 22 Z" fill="white" stroke-linejoin="round"/></svg>`,
+  2: `<svg class="predict-icon-glyph" viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="fish"><path d="M 10 13 C 12 8 18 6 26 8 C 32 9.5 36 11 36 13 C 36 15 32 16.5 26 18 C 18 20 12 18 10 13 Z" fill="white"/><path d="M 4 5 L 12 13 L 4 21 Z" fill="white"/><circle cx="30" cy="11.5" r="1.2" fill="#1a3640"/></svg>`,
+  3: `<svg class="predict-icon-glyph" viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="reed"><line x1="20" y1="3" x2="20" y2="25" stroke="white" stroke-width="1.4" stroke-linecap="round"/><ellipse cx="20" cy="11" rx="2.4" ry="5.5" fill="white"/><line x1="11" y1="8" x2="11" y2="25" stroke="white" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="11" cy="14" rx="2" ry="4.5" fill="white" opacity="0.9"/><line x1="29" y1="10" x2="29" y2="25" stroke="white" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="29" cy="15" rx="2" ry="4.5" fill="white" opacity="0.9"/></svg>`
+};
+
+function predictionHtml(n) {
+  return `<span class="num">${n}</span><span class="prediction">${crystalBallIcon}${predictIcons[n]}</span>`;
+}
+
+// ============ DECK ============
+function buildDeck() {
+  const deck = [];
+  for (let i = 0; i < 7; i++) deck.push({ type: 'number', value: 1, id: nextCardId++ });
+  for (let i = 0; i < 6; i++) deck.push({ type: 'number', value: 2, id: nextCardId++ });
+  for (let i = 0; i < 5; i++) deck.push({ type: 'number', value: 3, id: nextCardId++ });
+  for (let i = 0; i < 3; i++) {
+    deck.push({ type: 'bet', value: 1, id: nextCardId++ });
+    deck.push({ type: 'bet', value: 2, id: nextCardId++ });
+    deck.push({ type: 'bet', value: 3, id: nextCardId++ });
+  }
+  for (let i = 0; i < 6; i++) deck.push({ type: 'swap', id: nextCardId++ });
+  for (let i = 0; i < 3; i++) deck.push({ type: 'remove', id: nextCardId++ });
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return deck;
+}
+
+// ============ ANIMATION (FLIP) ============
+function captureCardPositions() {
+  const positions = new Map();
+  document.querySelectorAll('[data-card-id]').forEach(el => {
+    positions.set(el.dataset.cardId, el.getBoundingClientRect());
+  });
+  return positions;
+}
+
+function flipAnimateCards(beforePositions) {
+  document.querySelectorAll('[data-card-id]').forEach(el => {
+    const id = el.dataset.cardId;
+    const oldRect = beforePositions.get(id);
+    if (!oldRect) return;
+    const newRect = el.getBoundingClientRect();
+    const dx = oldRect.left - newRect.left;
+    const dy = oldRect.top - newRect.top;
+    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+    el.style.transition = 'none';
+    el.style.transform = `translate(${dx}px, ${dy}px)`;
+    el.offsetHeight; // force reflow
+    requestAnimationFrame(() => {
+      el.style.transition = 'transform 0.4s ease';
+      el.style.transform = '';
+    });
+  });
+}
+
+function init() {
+  nextCardId = 1;
+  state.deck = buildDeck();
+  // Discard 5 cards face-down onto the river (wasted, adds randomness)
+  state.river = [[], [], [], [], []];
+  // Parallel ownership: 0 = face-down initial, 1 = P1, 2 = P2
+  state.riverOwners = [[], [], [], [], []];
+  for (let slot = 0; slot < 5; slot++) {
+    if (state.deck.length > 0) {
+      state.deck.pop();
+      state.river[slot].push(0);
+      state.riverOwners[slot].push(0);
+    }
+  }
+  state.bets = { 1: [null,null,null,null,null], 2: [null,null,null,null,null] };
+  state.hands = { 1: [], 2: [] };
+  state.currentPlayer = 1;
+  state.awaiting = 'choose';
+  state.selectedHandIndex = null;
+  state.swapFirst = null;
+  state.scores = { 1: 0, 2: 0 };
+  state.lastPlacedSlot = -1;
+  state.lastDrawnCardId = null;
+  state.lastPlacedBet = null;
+  state.revealBets = false;
+  state.history = [];
+  const existing = document.querySelector('.game-over');
+  if (existing) existing.remove();
+  const showBtn = document.getElementById('show-results-btn');
+  if (showBtn) showBtn.remove();
+  render();
+}
+
+// ============ HISTORY (UNDO) ============
+function snapshot() {
+  return {
+    deck: state.deck.map(c => ({...c})),
+    hands: {
+      1: state.hands[1].map(c => ({...c})),
+      2: state.hands[2].map(c => ({...c}))
+    },
+    river: state.river.map(s => [...s]),
+    riverOwners: state.riverOwners.map(s => [...s]),
+    bets: { 1: [...state.bets[1]], 2: [...state.bets[2]] },
+    currentPlayer: state.currentPlayer,
+    awaiting: state.awaiting,
+    selectedHandIndex: state.selectedHandIndex,
+    swapFirst: state.swapFirst,
+    scores: { ...state.scores },
+    revealBets: state.revealBets,
+  };
+}
+
+function pushHistory() {
+  state.history.push(snapshot());
+}
+
+function undo() {
+  if (state.history.length === 0) return;
+  // In AI mode, when the human is back at their own turn (no mid-action state)
+  // undo pops two snapshots: the AI's last move AND the human's preceding move.
+  // If mid-action, just pop one snapshot to back out of the in-progress play.
+  const atTurnStart = state.awaiting === 'choose';
+  let popsRemaining = (state.aiLevel !== 'human' && state.currentPlayer === 1
+    && atTurnStart && state.history.length >= 2) ? 2 : 1;
+  let prev = null;
+  while (popsRemaining > 0 && state.history.length > 0) {
+    prev = state.history.pop();
+    popsRemaining--;
+  }
+  if (prev) Object.assign(state, prev);
+  state.lastDrawnCardId = null;
+  state.lastPlacedBet = null;
+  state.lastPlacedSlot = -1;
+  const overlay = document.querySelector('.game-over');
+  if (overlay) overlay.remove();
+  const showBtn = document.getElementById('show-results-btn');
+  if (showBtn) showBtn.remove();
+  render();
+}
+
+// ============ TURN LOGIC ============
+function drawToHand() {
+  if (state.deck.length === 0 || state.awaiting !== 'choose') return;
+  if (state.hands[state.currentPlayer].length >= HAND_LIMIT) {
+    flashMessage('Your hand is full — play a card.');
+    return;
+  }
+  pushHistory();
+  const before = captureCardPositions();
+  const deckEl = document.querySelector('.deck');
+  const newCard = state.deck.pop();
+  state.hands[state.currentPlayer].push(newCard);
+  state.lastDrawnCardId = newCard.id;
+  if (deckEl) {
+    before.set(String(newCard.id), deckEl.getBoundingClientRect());
+  }
+  endTurn();
+  flipAnimateCards(before);
+}
+
+function selectHandCard(index) {
+  if (state.awaiting !== 'choose') return;
+  const card = state.hands[state.currentPlayer][index];
+  if (!card) return;
+  if (card.type === 'number') {
+    const anyOpen = state.river.some(s => playerCount(s) < STACK_LIMIT);
+    if (!anyOpen) {
+      flashMessage('Every river slot is full — pick a different card or draw.');
+      return;
+    }
+    pushHistory();
+    state.selectedHandIndex = index;
+    state.awaiting = 'placeNumber';
+  } else if (card.type === 'bet') {
+    const anyOpen = state.bets[state.currentPlayer].some(b => b === null);
+    if (!anyOpen) {
+      flashMessage('Your prediction slots are full — pick a different card or draw.');
+      return;
+    }
+    pushHistory();
+    state.selectedHandIndex = index;
+    state.awaiting = 'placeBet';
+  } else if (card.type === 'swap') {
+    pushHistory();
+    state.selectedHandIndex = index;
+    state.awaiting = 'swap1';
+  } else if (card.type === 'remove') {
+    const anyRemovable = state.river.some(s => playerCount(s) > 0);
+    if (!anyRemovable) {
+      flashMessage('Nothing to remove — no river slot has a player-placed card.');
+      return;
+    }
+    pushHistory();
+    state.selectedHandIndex = index;
+    state.awaiting = 'removeCard';
+  }
+  render();
+}
+
+function cancelPlay() {
+  state.selectedHandIndex = null;
+  state.swapFirst = null;
+  state.awaiting = 'choose';
+  render();
+}
+
+function placeNumber(slot) {
+  if (playerCount(state.river[slot]) >= STACK_LIMIT) return;
+  const card = state.hands[state.currentPlayer][state.selectedHandIndex];
+  if (!card || card.type !== 'number') return;
+  const before = captureCardPositions();
+  state.river[slot].push(card.value);
+  state.riverOwners[slot].push(state.currentPlayer);
+  state.lastPlacedSlot = slot;
+  state.hands[state.currentPlayer].splice(state.selectedHandIndex, 1);
+  endTurn();
+  flipAnimateCards(before);
+}
+
+function placeBet(slot) {
+  if (state.bets[state.currentPlayer][slot] !== null) return;
+  const card = state.hands[state.currentPlayer][state.selectedHandIndex];
+  if (!card || card.type !== 'bet') return;
+  const before = captureCardPositions();
+  state.bets[state.currentPlayer][slot] = card.value;
+  state.lastPlacedBet = { player: state.currentPlayer, slot };
+  state.hands[state.currentPlayer].splice(state.selectedHandIndex, 1);
+  endTurn();
+  flipAnimateCards(before);
+}
+
+function selectSwapFirst(slot) {
+  state.swapFirst = slot;
+  state.awaiting = 'swap2';
+  render();
+}
+
+function removeCardFromRiver(slot) {
+  if (playerCount(state.river[slot]) === 0) return;
+  const card = state.hands[state.currentPlayer][state.selectedHandIndex];
+  if (!card || card.type !== 'remove') return;
+  const before = captureCardPositions();
+  state.river[slot].pop();
+  state.riverOwners[slot].pop();
+  state.hands[state.currentPlayer].splice(state.selectedHandIndex, 1);
+  state.lastPlacedSlot = slot;
+  endTurn();
+  flipAnimateCards(before);
+}
+
+function selectSwapSecond(slot) {
+  if (slot === state.swapFirst) return;
+  const before = captureCardPositions();
+  const tmp = state.river[state.swapFirst];
+  state.river[state.swapFirst] = state.river[slot];
+  state.river[slot] = tmp;
+  const tmpOwners = state.riverOwners[state.swapFirst];
+  state.riverOwners[state.swapFirst] = state.riverOwners[slot];
+  state.riverOwners[slot] = tmpOwners;
+  state.swapFirst = null;
+  state.hands[state.currentPlayer].splice(state.selectedHandIndex, 1);
+  endTurn();
+  flipAnimateCards(before);
+}
+
+function toggleDebug() {
+  state.debug = !state.debug;
+  const btn = document.getElementById('debug-btn');
+  if (btn) btn.classList.toggle('active', state.debug);
+  render();
+}
+
+// ============ COMPUTER PLAYER ============
+function startGame(level) {
+  state.aiLevel = level;
+  const splash = document.getElementById('splash');
+  if (splash) splash.classList.remove('show');
+  const tag = document.getElementById('opponent-tag');
+  if (tag) {
+    const labels = { human: 'Human P2', hard: 'Computer' };
+    tag.textContent = labels[level] || '';
+  }
+  init();
+}
+
+function topOf(slot) {
+  const stack = state.river[slot];
+  if (!stack.length) return null;
+  const t = stack[stack.length - 1];
+  return t === 0 ? null : t;  // face-down marker treated as no card
+}
+
+// Number of player-placed cards on a slot (excludes the face-down initial card)
+function playerCount(stack) {
+  return stack.filter(v => v !== 0).length;
+}
+
+// Bayesian inference of opponent's bet values, slot-by-slot.
+// `forPlayer` is the side doing the inference (so the AI uses forPlayer=2, debug from human POV uses forPlayer=2 too).
+// Returns { 1: p1, 2: p2, 3: p3 } for each slot where the opponent has a bet, otherwise null.
+function inferOpBetProbs(forPlayer) {
+  const opp = forPlayer === 1 ? 2 : 1;
+  // Initial bet pool: 3 of each value.
+  const remBet = { 1: 3, 2: 3, 3: 3 };
+  // Subtract our own known bets (in hand and placed) — those are not in opp's pool.
+  state.hands[forPlayer].forEach(c => { if (c.type === 'bet') remBet[c.value]--; });
+  state.bets[forPlayer].forEach(b => { if (b !== null) remBet[b]--; });
+  // The opponent's bets (placed + still in their hand, hidden) collectively hold values from remBet.
+  const result = [null, null, null, null, null];
+  for (let slot = 0; slot < 5; slot++) {
+    if (state.bets[opp][slot] === null) continue;
+    // Prior: proportional to remaining bet pool
+    const total = Math.max(0.001, remBet[1] + remBet[2] + remBet[3]);
+    const p = {
+      1: Math.max(0, remBet[1]) / total,
+      2: Math.max(0, remBet[2]) / total,
+      3: Math.max(0, remBet[3]) / total,
+    };
+    // Likelihood update: numbers placed by opponent on this slot are evidence the bet matches.
+    const owners = state.riverOwners[slot] || [];
+    const stack = state.river[slot] || [];
+    for (let i = 0; i < stack.length; i++) {
+      const v = stack[i];
+      if (owners[i] === opp && (v === 1 || v === 2 || v === 3)) {
+        p[v] *= 2.5;
+        for (const w of [1, 2, 3]) if (w !== v) p[w] *= 0.6;
+      }
+    }
+    const sum = p[1] + p[2] + p[3];
+    if (sum > 0) {
+      p[1] /= sum; p[2] /= sum; p[3] /= sum;
+    } else {
+      p[1] = p[2] = p[3] = 1/3;
+    }
+    result[slot] = p;
+  }
+  return result;
+}
+
+function chooseAiAction(level) {
+  const player = 2;
+  const opp = 1;
+  const hand = state.hands[player];
+  const oppHand = state.hands[opp];
+  const myBets = state.bets[player];
+  // AI only knows WHICH slots the opponent has bet on (public info), NOT the values
+  const opHasBet = state.bets[opp].map(b => b !== null);
+  const cardsLeft = state.deck.length;
+  const myBetsPlaced = myBets.filter(b => b !== null).length;
+
+  // Count number cards I hold by value (for "I can fulfill my own bet" logic)
+  const myNumberCounts = { 1: 0, 2: 0, 3: 0 };
+  hand.forEach(c => { if (c.type === 'number') myNumberCounts[c.value]++; });
+
+  // Estimate distribution of unseen number cards (deck + face-down river initials).
+  // Numbers in own hand, opponent's hand (numbers are public), and river face-up are visible.
+  const remCounts = { 1: 7, 2: 6, 3: 5 };
+  hand.forEach(c => { if (c.type === 'number') remCounts[c.value]--; });
+  oppHand.forEach(c => { if (c.type === 'number') remCounts[c.value]--; });
+  state.river.forEach(stack => stack.forEach(v => {
+    if (v === 1 || v === 2 || v === 3) remCounts[v]--;
+  }));
+  const remSum = Math.max(1, remCounts[1] + remCounts[2] + remCounts[3]);
+  const probNum = (v) => Math.max(0, remCounts[v]) / remSum;
+
+  // Top of deck (number cards reveal value; bet/swap reveal type only)
+  const deckTopCard = cardsLeft > 0 ? state.deck[cardsLeft - 1] : null;
+
+  // Inferred opponent bet-value probabilities per slot (null if no opp bet)
+  const opBetProbs = inferOpBetProbs(player);
+  // Helper: opp's expected payoff at a slot given a hypothetical top value
+  const opEvAt = (probs, top) => {
+    if (!probs) return 0;
+    if (top === null || top === 0) return -1;
+    let ev = 0;
+    for (const v of [1, 2, 3]) {
+      const p = probs[v];
+      if (top === v) ev += p * 2 * v;
+      else if (top > v) ev += p;
+      else ev += p * -1;
+    }
+    return ev;
+  };
+
+  // Endgame proximity: how many more number-plays are possible across all slots
+  const stackRoom = state.river.reduce((acc, s) => acc + (STACK_LIMIT - playerCount(s)), 0);
+  const isEndgame = cardsLeft <= 6 || stackRoom <= 3;
+
+  const candidates = [];
+
+  hand.forEach((card, idx) => {
+    if (card.type === 'number') {
+      state.river.forEach((stack, slot) => {
+        if (playerCount(stack) >= STACK_LIMIT) return;
+        let score = 1;
+        const top = topOf(slot);
+        const myBet = myBets[slot];
+        if (myBet !== null) {
+          const wasMatch = top === myBet;
+          const willMatch = card.value === myBet;
+          if (willMatch) score += 120;
+          else if (wasMatch && !willMatch) score -= 100;     // don't break my own match
+          else if (!wasMatch && card.value > myBet) score += 25;
+          else if (!wasMatch && card.value < myBet) score -= 35;
+        } else if (top === null) {
+          score += 5;
+        }
+        // Disruption: value-aware via inferred opp bet probabilities
+        if (opHasBet[slot] && level !== 'easy') {
+          const probs = opBetProbs[slot];
+          const before = opEvAt(probs, top);
+          const after = opEvAt(probs, card.value);
+          const delta = after - before;  // negative = I disrupted opp
+          score -= delta * (level === 'medium' ? 10 : 18);
+        } else if (opHasBet[slot] && level === 'easy') {
+          score += 0;
+        }
+        // Hard: in endgame, prefer to lock in slots where I have bets that are still satisfiable
+        if (level === 'hard' && isEndgame && myBet !== null && card.value === myBet && top !== myBet) {
+          score += 25;
+        }
+        candidates.push({ kind: 'number', cardIdx: idx, slot, score });
+      });
+    } else if (card.type === 'bet') {
+      // Pressure to actually place bets:
+      //  - deckPressure grows as the deck shrinks (don't die with bets in hand)
+      //  - handPressure grows as hand fills (must play *something*)
+      const deckPressure = Math.max(0, 28 - cardsLeft);
+      const handPressure = Math.max(0, hand.length - 2) * 6;
+      state.river.forEach((stack, slot) => {
+        if (myBets[slot] !== null) return;
+        let score = 20 + deckPressure + handPressure;
+        const top = topOf(slot);
+        if (top === card.value) {
+          score += 110;
+        } else if (top !== null && top > card.value) {
+          score += 35;
+        } else if (top !== null && top < card.value) {
+          // Recoverable if I have a higher number card to play here
+          const hasRecover = playerCount(stack) < STACK_LIMIT
+            && (myNumberCounts[card.value] > 0
+                || (card.value < 3 && myNumberCounts[3] > 0)
+                || (card.value === 2 && myNumberCounts[2] > 0));
+          score += hasRecover ? -8 : -45;
+        } else {
+          // EMPTY slot — bet on probability of the eventual top
+          if (level === 'easy') {
+            score += 18;  // easy still bets eagerly on empties, just naïve
+          } else {
+            const pMatch = probNum(card.value);
+            const pHigher = card.value === 1 ? probNum(2) + probNum(3)
+                          : card.value === 2 ? probNum(3)
+                          : 0;
+            const pLower = card.value === 1 ? 0
+                         : card.value === 2 ? probNum(1)
+                         : probNum(1) + probNum(2);
+            const ev = 2 * card.value * pMatch + pHigher - pLower;
+            score += Math.round(ev * 25 + myNumberCounts[card.value] * 20);
+          }
+        }
+        // Timing nudges (deckPressure already handles most of this)
+        if (level !== 'easy') {
+          if (card.value === 1 && cardsLeft > 14) score += 6;
+          if (card.value === 3 && cardsLeft < 10) score += 8;
+        }
+        if (level === 'hard') {
+          if (myBetsPlaced >= 4) score -= 4;
+          if (cardsLeft > 12 && myBetsPlaced < 2) score += 8;
+          if (opHasBet[slot]) score += 4;
+        }
+        candidates.push({ kind: 'bet', cardIdx: idx, slot, score });
+      });
+    } else if (card.type === 'swap') {
+      for (let s1 = 0; s1 < 5; s1++) {
+        for (let s2 = s1 + 1; s2 < 5; s2++) {
+          let score = 1;
+          const t1 = topOf(s1), t2 = topOf(s2);
+          const mb1 = myBets[s1], mb2 = myBets[s2];
+          // Make my bets match
+          if (mb1 !== null && t2 === mb1) score += 80;
+          if (mb2 !== null && t1 === mb2) score += 80;
+          // Don't break my own matches
+          if (mb1 !== null && t1 === mb1) score -= 80;
+          if (mb2 !== null && t2 === mb2) score -= 80;
+          // Don't waste swap moving "nothing" toward my bet slot
+          if (mb1 !== null && t2 === null) score -= 5;
+          if (mb2 !== null && t1 === null) score -= 5;
+          // Inference-based opp disruption: net change in opp's expected payoff
+          if (level !== 'easy') {
+            const opBefore = opEvAt(opBetProbs[s1], t1) + opEvAt(opBetProbs[s2], t2);
+            const opAfter = opEvAt(opBetProbs[s1], t2) + opEvAt(opBetProbs[s2], t1);
+            const delta = opAfter - opBefore;  // negative means swap disrupts opp
+            score -= delta * (level === 'medium' ? 10 : 18);
+          }
+          candidates.push({ kind: 'swap', cardIdx: idx, s1, s2, score });
+        }
+      }
+    } else if (card.type === 'remove') {
+      // Removing the top player-placed card of a slot reverts the top to whatever lies underneath
+      // (another player-placed card or the face-down initial = 0, which scores like an empty slot).
+      state.river.forEach((stack, slot) => {
+        if (playerCount(stack) === 0) return;
+        let score = 1;
+        const topBefore = topOf(slot);
+        // Find what the top would be AFTER popping the topmost element
+        // (stack[last] is the current top; we want stack[last-1] under it, but skip face-down 0s)
+        let topAfter = null;
+        for (let k = stack.length - 2; k >= 0; k--) {
+          const v = stack[k];
+          if (v !== 0) { topAfter = v; break; }
+        }
+        const myBet = myBets[slot];
+
+        // My own bet considerations
+        if (myBet !== null) {
+          const wasMatch = topBefore === myBet;
+          const willMatch = topAfter === myBet;
+          if (!wasMatch && willMatch) score += 100;          // reveal a match underneath
+          else if (wasMatch && !willMatch) score -= 120;     // never break my own match
+          else if (!wasMatch) {
+            // Bet score before vs after: scoreForBet treats null/0 as -1, higher top as +1, exact as +bet*2
+            const sb = (top, b) => (top === null || top === 0) ? -1 : (top === b ? b * 2 : (top > b ? 1 : -1));
+            const delta = sb(topAfter, myBet) - sb(topBefore, myBet);
+            score += delta * 18;
+          }
+        }
+
+        // Opponent bet disruption
+        if (opHasBet[slot] && level !== 'easy') {
+          const probs = opBetProbs[slot];
+          const opBefore = opEvAt(probs, topBefore);
+          const opAfter = opEvAt(probs, topAfter);
+          const delta = opAfter - opBefore;  // negative = good for me
+          score -= delta * (level === 'medium' ? 12 : 22);
+        } else if (opHasBet[slot] && level === 'easy') {
+          score += 8;  // easy: simple "disrupt opp bet"
+        }
+
+        // Endgame: removing freshly-placed enemy disruption matters more
+        if (level === 'hard' && isEndgame && opHasBet[slot]) score += 6;
+
+        // Don't waste removes when there's nothing strategic
+        if (myBet === null && !opHasBet[slot]) score -= 10;
+
+        candidates.push({ kind: 'remove', cardIdx: idx, slot, score });
+      });
+    }
+  });
+
+  // Drawing — uses visible deck top now that number cards reveal value,
+  // and the back color reveals type (gold/red back = BET, teal back = SWAP).
+  let drawScore = 10;
+  if (hand.length === 0) drawScore = 70;
+  if (hand.length >= 4) drawScore = -8;
+  if (hand.length >= 5 || cardsLeft === 0) drawScore = -1000;
+  if (deckTopCard && hand.length < 5) {
+    if (deckTopCard.type === 'bet') {
+      // Strongly favor drawing red (BET) cards — they're the AI's main scoring tool.
+      // All levels benefit, hard most.
+      const unbetSlots = 5 - myBetsPlaced;
+      const betsInHand = hand.filter(c => c.type === 'bet').length;
+      const room = Math.max(0, unbetSlots - betsInHand);
+      if (room > 0) {
+        if (level === 'easy') drawScore += 25;
+        else if (level === 'medium') drawScore += 35 + room * 4;
+        else drawScore += 45 + room * 5;
+      }
+    } else if (level !== 'easy' && deckTopCard.type === 'number') {
+      // Eagerly grab numbers that match my placed bets
+      const matching = myBets.filter(b => b === deckTopCard.value).length;
+      if (matching > 0) drawScore += 30 * matching;
+      // 3s are scarce — slight bonus regardless
+      if (deckTopCard.value === 3) drawScore += 6;
+      // If I already have plenty of this value, less urgent
+      if (myNumberCounts[deckTopCard.value] >= 2) drawScore -= 5;
+    } else if (level !== 'easy' && deckTopCard.type === 'swap') {
+      const swapsInHand = hand.filter(c => c.type === 'swap').length;
+      if (level === 'hard' && swapsInHand === 0) drawScore += 6;
+    } else if (level !== 'easy' && deckTopCard.type === 'remove') {
+      // Useful when opponent has placed bets we want to disrupt, or our own bet is currently losing
+      const removeInHand = hand.filter(c => c.type === 'remove').length;
+      const oppBetCount = opHasBet.filter(Boolean).length;
+      const myBetsLosing = myBets.reduce((acc, b, i) => {
+        if (b === null) return acc;
+        const t = topOf(i);
+        return acc + (t !== null && t !== b && t < b ? 1 : 0);
+      }, 0);
+      if (level === 'hard' && removeInHand === 0 && (oppBetCount > 0 || myBetsLosing > 0)) drawScore += 8;
+      if (level === 'medium' && removeInHand === 0 && oppBetCount > 1) drawScore += 4;
+    }
+  }
+  candidates.push({ kind: 'draw', score: drawScore });
+
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates[0];
+}
+
+function triggerAi() {
+  if (state.aiLevel === 'human') return;
+  if (state.currentPlayer !== 2) return;
+  if (state.awaiting !== 'choose') return;
+  const action = chooseAiAction(state.aiLevel);
+  if (!action) return;
+  if (action.kind === 'draw') {
+    drawToHand();
+  } else if (action.kind === 'number') {
+    state.selectedHandIndex = action.cardIdx;
+    placeNumber(action.slot);
+  } else if (action.kind === 'bet') {
+    state.selectedHandIndex = action.cardIdx;
+    placeBet(action.slot);
+  } else if (action.kind === 'swap') {
+    state.selectedHandIndex = action.cardIdx;
+    state.swapFirst = action.s1;
+    selectSwapSecond(action.s2);
+  } else if (action.kind === 'remove') {
+    state.selectedHandIndex = action.cardIdx;
+    state.awaiting = 'removeCard';
+    removeCardFromRiver(action.slot);
+  }
+}
+
+// ============ DRAG & DROP ============
+function onCardDragStart(e, player, idx) {
+  if (state.awaiting !== 'choose' || state.currentPlayer !== player) {
+    e.preventDefault();
+    return;
+  }
+  selectHandCard(idx);
+  if (state.awaiting === 'choose') {
+    e.preventDefault();
+    return;
+  }
+  e.dataTransfer.setData('text/plain', String(idx));
+  e.dataTransfer.effectAllowed = 'move';
+  e.target.classList.add('dragging');
+}
+
+function onCardDragEnd(e) {
+  e.target.classList.remove('dragging');
+  setTimeout(() => {
+    if (state.awaiting === 'placeNumber' || state.awaiting === 'placeBet' || state.awaiting === 'swap1' || state.awaiting === 'removeCard') {
+      cancelPlay();
+    }
+  }, 50);
+}
+
+function onSlotDragOver(e) {
+  if (e.currentTarget.classList.contains('selectable')) {
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+  }
+}
+
+function onSlotDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function onSlotDrop(e, action) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  action();
+}
+
+function canPlayerAct(player) {
+  const handLen = state.hands[player].length;
+  if (handLen < HAND_LIMIT && state.deck.length > 0) return true;
+  for (const card of state.hands[player]) {
+    if (card.type === 'swap') return true;
+    if (card.type === 'number' && state.river.some(s => playerCount(s) < STACK_LIMIT)) return true;
+    if (card.type === 'bet' && state.bets[player].some(b => b === null)) return true;
+    if (card.type === 'remove' && state.river.some(s => playerCount(s) > 0)) return true;
+  }
+  return false;
+}
+
+function endTurn() {
+  state.selectedHandIndex = null;
+  state.swapFirst = null;
+  if (state.deck.length === 0 || state.river.every(s => playerCount(s) >= STACK_LIMIT)) {
+    finishGame();
+    return;
+  }
+  const nextPlayer = state.currentPlayer === 1 ? 2 : 1;
+  if (!canPlayerAct(nextPlayer)) {
+    finishGame();
+    return;
+  }
+  state.currentPlayer = nextPlayer;
+  state.awaiting = 'choose';
+  setTimeout(() => {
+    state.lastPlacedSlot = -1;
+    state.lastDrawnCardId = null;
+    state.lastPlacedBet = null;
+    render();
+  }, 500);
+  render();
+  if (state.aiLevel !== 'human' && state.currentPlayer === 2 && state.awaiting === 'choose') {
+    setTimeout(triggerAi, 900);
+  }
+}
+
+function scoreForBet(bet, top) {
+  if (top === null || top === 0) return -1;  // empty or face-down — penalty
+  if (bet === top) return bet * 2;            // exact match — double payout
+  if (top > bet) return 1;                    // top is higher — partial credit
+  return -1;                                   // top is lower — penalty
+}
+
+function finishGame() {
+  state.revealBets = true;
+  for (let slot = 0; slot < 5; slot++) {
+    const stack = state.river[slot];
+    const top = stack.length ? stack[stack.length - 1] : null;
+    for (const player of [1, 2]) {
+      const bet = state.bets[player][slot];
+      if (bet === null) continue;
+      state.scores[player] += scoreForBet(bet, top);
+    }
+  }
+  state.awaiting = 'gameOver';
+  render();
+}
+
+// ============ RENDER ============
+function flashMessage(msg) {
+  const el = document.getElementById('message');
+  el.textContent = msg;
+}
+
+function getInstruction() {
+  switch (state.awaiting) {
+    case 'choose':
+      return '';
+    case 'placeNumber': {
+      const card = state.hands[state.currentPlayer][state.selectedHandIndex];
+      return `Place this ${card.value} on a river slot (slots cap at 3).`;
+    }
+    case 'placeBet': {
+      const card = state.hands[state.currentPlayer][state.selectedHandIndex];
+      return `Place your ${card.value} prediction next to a slot on your side. Hidden until the end.`;
+    }
+    case 'swap1':
+      return 'Swap — pick the first slot.';
+    case 'swap2':
+      return 'Now pick a second slot to swap with.';
+    case 'removeCard':
+      return 'Remove — pick a river slot whose top card you want to remove.';
+    case 'gameOver':
+      return 'Revealing predictions…';
+    default: return '';
+  }
+}
+
+function render() {
+  const isP1 = state.currentPlayer === 1;
+  const gameOver = state.awaiting === 'gameOver';
+  document.getElementById('zone-p1').classList.toggle('active', isP1 && !gameOver);
+  document.getElementById('zone-p2').classList.toggle('active', !isP1 && !gameOver);
+
+  document.documentElement.style.setProperty('--current', isP1 ? 'var(--p1)' : 'var(--p2)');
+
+  document.getElementById('score-p1').textContent = state.scores[1];
+  document.getElementById('score-p2').textContent = state.scores[2];
+  const undoBtn = document.getElementById('undo-btn');
+  if (undoBtn) undoBtn.disabled = state.history.length === 0;
+  for (const player of [1, 2]) {
+    const scoreEl = document.querySelector(`#zone-p${player} .score`);
+    scoreEl.classList.toggle('hidden', state.scores[player] === 0 && !gameOver);
+  }
+
+  // Hands
+  for (const player of [1, 2]) {
+    const zone = document.getElementById(`zone-p${player}`);
+    zone.classList.toggle('hand-full', state.hands[player].length >= HAND_LIMIT && !gameOver);
+
+    const handEl = document.getElementById(`hand-p${player}`);
+    handEl.innerHTML = '';
+    const hand = state.hands[player];
+    if (hand.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'hand-empty';
+      empty.textContent = 'hand empty';
+      handEl.appendChild(empty);
+    } else {
+      const isOwnTurn = state.currentPlayer === player && !gameOver;
+      hand.forEach((card, idx) => {
+        const el = document.createElement('div');
+        el.dataset.cardId = card.id;
+        const showBack = (card.type === 'bet' || card.type === 'swap' || card.type === 'remove') && !gameOver && (
+          state.aiLevel !== 'human'
+            ? player === 2
+            : state.currentPlayer !== player
+        );
+        if (showBack) {
+          el.className = 'hand-card face-down';
+          if (state.debug) {
+            const dbg = document.createElement('span');
+            dbg.className = 'debug-bet-value';
+            dbg.textContent = card.type === 'bet' ? `×${card.value}` : card.type[0].toUpperCase() + card.type.slice(1);
+            el.appendChild(dbg);
+          }
+        } else {
+          el.className = `hand-card ${card.type}`;
+          if (card.type === 'number') {
+            el.classList.add(`value-${card.value}`);
+            el.innerHTML = `<span class="num">${card.value}</span>${cardIcons[card.value]}`;
+          } else if (card.type === 'bet') {
+            el.innerHTML = predictionHtml(card.value);
+          } else if (card.type === 'swap') {
+            el.innerHTML = swapIcon;
+          } else if (card.type === 'remove') {
+            el.innerHTML = removeIcon;
+          }
+        }
+
+        if (isOwnTurn && state.awaiting === 'choose') {
+          el.classList.add('playable');
+          el.onclick = () => selectHandCard(idx);
+          el.draggable = true;
+          el.ondragstart = (e) => onCardDragStart(e, player, idx);
+          el.ondragend = onCardDragEnd;
+        } else if (isOwnTurn && idx === state.selectedHandIndex) {
+          el.classList.add('selected');
+          el.onclick = cancelPlay;
+        }
+        handEl.appendChild(el);
+      });
+    }
+  }
+
+  // AI's inferred guesses for the human's bet values (used in debug mode)
+  const aiGuesses = (state.aiLevel !== 'human' && state.debug && !state.revealBets)
+    ? inferOpBetProbs(2)
+    : null;
+
+  // Bets
+  for (const player of [1, 2]) {
+    const container = document.getElementById(`bets-p${player}`);
+    container.innerHTML = '';
+    const playerColorVar = player === 1 ? 'var(--p1)' : 'var(--p2)';
+    for (let slot = 0; slot < 5; slot++) {
+      const div = document.createElement('div');
+      div.className = 'bet-slot';
+
+      const isOwnTurnPlacement =
+        state.awaiting === 'placeBet' &&
+        state.currentPlayer === player &&
+        state.bets[player][slot] === null;
+
+      if (isOwnTurnPlacement) {
+        div.classList.add('selectable');
+        div.onclick = () => placeBet(slot);
+        div.ondragover = onSlotDragOver;
+        div.ondragleave = onSlotDragLeave;
+        div.ondrop = (e) => onSlotDrop(e, () => placeBet(slot));
+      }
+
+      const bet = state.bets[player][slot];
+      if (bet !== null) {
+        const card = document.createElement('div');
+        card.className = 'bet-card';
+        card.style.setProperty('--bet-color', playerColorVar);
+        if (state.lastPlacedBet && state.lastPlacedBet.player === player && state.lastPlacedBet.slot === slot) {
+          card.classList.add('just-placed');
+        }
+        // In AI mode, the human (P1) sees their own placed bets face-up as a private preview.
+        const showOwnPreview = !state.revealBets && state.aiLevel !== 'human' && player === 1;
+        if (state.revealBets) {
+          card.classList.add('reveal');
+          card.innerHTML = predictionHtml(bet);
+          const stack = state.river[slot];
+          const top = stack.length ? stack[stack.length - 1] : null;
+          const pts = scoreForBet(bet, top);
+          if (pts >= bet * 2) card.classList.add('win');
+          else if (pts > 0) card.classList.add('partial');
+          else card.classList.add('lose');
+          const badge = document.createElement('span');
+          badge.className = 'bet-points';
+          badge.textContent = (pts > 0 ? '+' : '') + pts;
+          card.appendChild(badge);
+        } else if (showOwnPreview) {
+          card.classList.add('own-preview');
+          card.innerHTML = predictionHtml(bet);
+        } else {
+          card.classList.add('hidden');
+          if (state.debug) {
+            const dbg = document.createElement('span');
+            dbg.className = 'debug-bet-value';
+            dbg.textContent = `×${bet}`;
+            card.appendChild(dbg);
+          }
+        }
+        // Debug: show AI's guesses for the human's bets in AI mode
+        if (aiGuesses && player === 1 && aiGuesses[slot]) {
+          const guess = document.createElement('div');
+          guess.className = 'ai-guess-badge';
+          const probs = aiGuesses[slot];
+          guess.innerHTML =
+            `<span>×1 ${Math.round(probs[1] * 100)}%</span>` +
+            `<span>×2 ${Math.round(probs[2] * 100)}%</span>` +
+            `<span>×3 ${Math.round(probs[3] * 100)}%</span>`;
+          card.appendChild(guess);
+        }
+        div.appendChild(card);
+      }
+      container.appendChild(div);
+    }
+  }
+
+  // River
+  const riverEl = document.getElementById('river');
+  riverEl.innerHTML = '';
+  for (let slot = 0; slot < 5; slot++) {
+    const div = document.createElement('div');
+    div.className = 'river-slot';
+    const stack = state.river[slot];
+
+    if (state.awaiting === 'placeNumber' && playerCount(stack) < STACK_LIMIT) {
+      div.classList.add('selectable');
+      div.onclick = () => placeNumber(slot);
+      div.ondragover = onSlotDragOver;
+      div.ondragleave = onSlotDragLeave;
+      div.ondrop = (e) => onSlotDrop(e, () => placeNumber(slot));
+    } else if (state.awaiting === 'placeNumber' && playerCount(stack) >= STACK_LIMIT) {
+      div.classList.add('full-marker');
+    } else if (state.awaiting === 'swap1') {
+      div.classList.add('selectable');
+      div.onclick = () => selectSwapFirst(slot);
+      div.ondragover = onSlotDragOver;
+      div.ondragleave = onSlotDragLeave;
+      div.ondrop = (e) => onSlotDrop(e, () => selectSwapFirst(slot));
+    } else if (state.awaiting === 'swap2') {
+      if (slot === state.swapFirst) {
+        div.classList.add('selected');
+      } else {
+        div.classList.add('selectable');
+        div.onclick = () => selectSwapSecond(slot);
+        div.ondragover = onSlotDragOver;
+        div.ondragleave = onSlotDragLeave;
+        div.ondrop = (e) => onSlotDrop(e, () => selectSwapSecond(slot));
+      }
+    } else if (state.awaiting === 'removeCard' && playerCount(stack) > 0) {
+      div.classList.add('selectable');
+      div.onclick = () => removeCardFromRiver(slot);
+      div.ondragover = onSlotDragOver;
+      div.ondragleave = onSlotDragLeave;
+      div.ondrop = (e) => onSlotDrop(e, () => removeCardFromRiver(slot));
+    }
+
+    if (stack.length === 0) {
+      const ph = document.createElement('div');
+      ph.className = 'placeholder';
+      div.appendChild(ph);
+    } else {
+      const stackEl = document.createElement('div');
+      stackEl.className = 'stack';
+      const visibleCount = Math.min(stack.length, 3);
+      for (let i = 0; i < visibleCount; i++) {
+        const stackIdx = stack.length - 1 - i;
+        const val = stack[stackIdx];
+        const card = document.createElement('div');
+        card.dataset.stackPos = visibleCount - 1 - i;
+        if (val === 0) {
+          card.className = 'river-card face-down';
+        } else {
+          card.className = `river-card value-${val}`;
+          card.innerHTML = `<span class="num">${val}</span>${cardIcons[val]}`;
+        }
+        if (i === 0 && slot === state.lastPlacedSlot) {
+          card.classList.add('just-placed');
+        }
+        stackEl.appendChild(card);
+      }
+      div.appendChild(stackEl);
+    }
+
+    riverEl.appendChild(div);
+  }
+
+  // Turn-tag dynamic message
+  for (const player of [1, 2]) {
+    const tag = document.querySelector(`#zone-p${player} .turn-tag`);
+    if (!tag) continue;
+    const handLen = state.hands[player].length;
+    let text;
+    if (gameOver) {
+      text = '';
+    } else if (handLen === 0) {
+      text = 'your turn: draw a card';
+    } else if (handLen >= HAND_LIMIT) {
+      text = 'your turn: play a card from your hand';
+    } else {
+      text = 'your turn: draw a card or play a card from your hand';
+    }
+    tag.textContent = text;
+  }
+
+  // Deck pile
+  const deckArea = document.getElementById('deck-area');
+  deckArea.innerHTML = '';
+  const handFull = state.hands[state.currentPlayer].length >= HAND_LIMIT;
+
+  const deck = document.createElement('div');
+  let deckClass = 'deck';
+  if (state.deck.length === 0) deckClass += ' empty';
+  else if (state.awaiting === 'choose' && !gameOver && !handFull) deckClass += ' live';
+  deck.className = deckClass;
+  const topCard = state.deck.length > 0 ? state.deck[state.deck.length - 1] : null;
+  const typeClass = topCard ? `type-${topCard.type}` : '';
+  let topHtml;
+  if (topCard && topCard.type === 'number') {
+    // Number cards are visible on both sides — show the value on the deck top
+    topHtml = `<div class="deck-card top-card number-face value-${topCard.value}"><span class="num">${topCard.value}</span>${cardIcons[topCard.value]}</div>`;
+  } else {
+    topHtml = `<div class="deck-card top-card ${typeClass}"></div>`;
+  }
+  let html = topHtml;
+  if (state.deck.length > 1) html += `<div class="deck-card ${typeClass}"></div>`;
+  if (state.deck.length > 2) html += `<div class="deck-card ${typeClass}"></div>`;
+  deck.innerHTML = html;
+  if (state.deck.length > 0 && state.awaiting === 'choose' && !handFull) {
+    deck.onclick = drawToHand;
+  }
+  deckArea.appendChild(deck);
+
+  const info = document.createElement('div');
+  info.className = 'deck-info';
+  info.innerHTML = `<span class="count">${state.deck.length}</span> cards`;
+  deckArea.appendChild(info);
+
+  // Cancel area
+  const cancelArea = document.getElementById('cancel-area');
+  cancelArea.innerHTML = '';
+  if (['placeNumber', 'placeBet', 'swap1', 'swap2', 'removeCard'].includes(state.awaiting)) {
+    const btn = document.createElement('button');
+    btn.className = 'cancel-btn';
+    btn.textContent = 'Cancel';
+    btn.onclick = cancelPlay;
+    cancelArea.appendChild(btn);
+  }
+
+  flashMessage(getInstruction());
+}
+
+
+// Game starts only after the user picks an opponent via the splash modal (startGame).
+</script>
+</body>
+</html>
