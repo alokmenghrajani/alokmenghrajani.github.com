@@ -1,0 +1,538 @@
+/* Nadi. Board setup (requirement01).
+   Everything is sized in vh/vw so the board scales to laptop or iPad. */
+
+@font-face {
+  font-family: "Cause";
+  src: url("Cause-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Card height drives the whole layout. Capped by both viewport height and
+     width so the portrait board always fits on screen. We use svh (the small
+     viewport height) so iOS/iPadOS Safari toolbars don't crop the bottom. */
+  --vph: 100vh;
+  --vph: 100svh; /* progressive enhancement: ignored where svh isn't supported */
+  --ch: min(10.5svh, 15vw);
+  --cw: calc(var(--ch) * 0.566);   /* card aspect ratio (w/h) from the artwork */
+  --gap-col: 1.2vw;
+  --gap-row: 0.6vh;
+  --bg: #f3f1ea;
+  --zone-bg: #ffffff;
+  --zone-border: #d9d6cc;
+  --slot-empty: #bdbab0;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  font-family: "Cause", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: #3a352e;
+  overflow: hidden;
+  /* The game is tap/drag driven; text selection would interfere with dragging
+     cards (especially a long-press on touch), so it is disabled throughout. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Title block lives in the grid's left column; equal 1fr columns on either
+   side of the centre column keep the board horizontally centred. */
+.z-title {
+  /* span all rows so the (tall) title/status block doesn't inflate row 1 and
+     stretch the opponent's hand zone; it sits at the top of the left column. */
+  grid-row: 1 / -1;
+  grid-column: 1;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 3vh 0 0 2.5vw;
+}
+
+.title {
+  margin: 0;
+  font-size: 6vh;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.rules-link {
+  margin-top: 1.4vh;
+  font-size: 2vh;
+  color: #4a90c2;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+.rules-link:hover { color: #2b6f9e; }
+
+/* The full asset spritesheet is inlined but kept out of view; it is still
+   rendered (not display:none) so getBBox / getScreenCTM work for framing. */
+.asset-sheet {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.board {
+  height: var(--vph); /* 100svh where supported, else 100vh */
+  width: 100vw;
+  display: grid;
+  /* 3 columns: title | centred zones | right zones. minmax(0,1fr) edges are
+     pure spacers that don't resize to their content, so the centred middle
+     column never shifts when the sidebar text changes (e.g. on selection). */
+  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
+  grid-template-rows: repeat(7, max-content);
+  align-content: center;
+  column-gap: 2vw;
+  row-gap: var(--gap-row);
+  padding: 1vh 1vw;
+}
+
+/* ---- grid placement of the 7x3 logical zones ---- */
+.z-A { grid-row: 1; grid-column: 2; }
+.z-B { grid-row: 1; grid-column: 3; }
+.z-C { grid-row: 2; grid-column: 2; }
+.z-D { grid-row: 2; grid-column: 3; }
+.z-E { grid-row: 3; grid-column: 2; }
+.z-F { grid-row: 3; grid-column: 3; }
+.z-G { grid-row: 4; grid-column: 2; }
+.z-H { grid-row: 4; grid-column: 3; }
+.z-I { grid-row: 5; grid-column: 2; }
+.z-J { grid-row: 5; grid-column: 3; }
+.z-K { grid-row: 6; grid-column: 2; }
+.z-L { grid-row: 6; grid-column: 3; }
+.z-M { grid-row: 7; grid-column: 2; }
+.z-N { grid-row: 7; grid-column: 3; }
+
+/* Content rows get a soft framed box like the sketch, with a caption label. */
+.zone.framed {
+  position: relative;
+  background: var(--zone-bg);
+  border: 1px solid var(--zone-border);
+  border-radius: 1vh;
+  padding: 2.6vh 1vw 0.8vh;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-col);
+}
+.zone.framed::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 0.6vh;
+  left: 1vw;
+  font-size: 1.3vh;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9a948a;
+}
+
+/* Half-card spacer rows (C and K). */
+.spacer { height: calc(var(--ch) * 0.45); }
+
+/* Zones keep a fixed height from the start so they never collapse when a hand
+   or prediction row is empty. (padding is 2.6vh top + 0.8vh bottom = 3.4vh) */
+.zone.framed.hand,
+.zone.framed.predictions {
+  min-height: calc(var(--ch) + 3.4vh);
+}
+.zone.framed.river {
+  min-height: calc(var(--ch) * 1.5 + 3.4vh);
+}
+
+.hand        { justify-content: center; }
+.predictions { justify-content: center; }
+.river       { justify-content: center; align-items: flex-end; }
+
+/* ---- generic card + slot ---- */
+.card {
+  display: block;
+  width: var(--cw);
+  height: var(--ch);
+  flex: 0 0 auto; /* keep a fixed card size in flex rows (hands), never shrink */
+}
+
+.slot {
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: 9% / 5%;
+  flex: 0 0 auto;
+}
+
+.slot.empty {
+  border: 0.35vh dashed var(--slot-empty);
+}
+
+/* Empty prediction slots are invisible until the player is placing a
+   prediction; then they reveal as clickable targets. */
+.predictions .slot.pred-empty {
+  border: none;
+}
+.predictions.selecting .slot.pred-empty {
+  border: 0.35vh dashed #4e9c6b;
+  background: rgba(132, 197, 153, 0.18);
+  cursor: pointer;
+}
+
+/* ---- river: each slot is a riverbed with a stack of cards growing upward ---- */
+.river .stack {
+  position: relative;
+  width: var(--cw);
+  height: calc(var(--ch) * 1.5);
+  flex: 0 0 auto;
+}
+.river .stack .card,
+.river .stack .bed {
+  position: absolute;
+  left: 0;
+  width: var(--cw);
+  height: var(--ch);
+}
+
+/* ---- draw deck + discard (zone H) ---- */
+.z-H.framed {
+  gap: 1.2vw;
+  padding-bottom: 5vh; /* room for the pile labels below each pile */
+  align-items: flex-start;
+  justify-self: start; /* size to content, don't fill the 1fr column */
+}
+
+.deck {
+  position: relative;
+  width: var(--cw);
+  height: var(--ch);
+  flex: 0 0 auto;
+}
+.deck .card-rect {
+  position: absolute;
+  width: var(--cw);
+  height: var(--ch);
+  border-radius: 9% / 5%;
+  border: 1px solid rgba(0, 0, 0, 0.45);
+}
+/* cards beneath the top card hide their colour */
+.deck .card-rect.hidden-card {
+  background: #ffffff;
+  border-color: #000;
+}
+/* top of the deck: the real card back (its colour reveals the next card) */
+.deck .deck-top {
+  position: absolute;
+  width: var(--cw);
+  height: var(--ch);
+  filter: drop-shadow(0 0.3vh 0.8vh rgba(0, 0, 0, 0.2));
+}
+
+.pile-label {
+  position: absolute;
+  bottom: -4.6vh;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.4vh;
+  color: #8a857a;
+  white-space: nowrap;
+}
+.pile-label .count {
+  font-weight: 700;
+  font-size: 1.6vh;
+  color: #3a352e;
+}
+
+.discard.slot.empty { position: relative; }
+
+/* discard pile wrapper (top card shown face up) */
+.pile.discard-pile {
+  position: relative;
+  width: var(--cw);
+  height: var(--ch);
+  flex: 0 0 auto;
+}
+.card.discard-top,
+.discard-pile .slot {
+  width: var(--cw);
+  height: var(--ch);
+}
+.deck .card-rect.empty-deck {
+  position: absolute;
+  inset: 0;
+  background: none;
+  border: 0.35vh dashed var(--slot-empty);
+}
+
+/* ===========================================================================
+ * requirement02. Interactive game styling
+ * ======================================================================== */
+
+/* clickable + targetable cues */
+.clickable { cursor: pointer; }
+
+.targetable {
+  outline: 0.4vh solid #4a90c2;
+  outline-offset: 0.2vh;
+  border-radius: 9% / 5%;
+  box-shadow: 0 0 1.4vh rgba(74, 144, 194, 0.55);
+}
+.stack.targetable {
+  outline: none;
+  box-shadow: none;
+}
+.stack.targetable .bed,
+.stack.targetable .card:last-of-type {
+  outline: 0.4vh solid #4a90c2;
+  outline-offset: 0.2vh;
+  box-shadow: 0 0 1.4vh rgba(74, 144, 194, 0.55);
+}
+.deck.targetable { outline: none; }
+.deck.targetable .deck-top {
+  outline: 0.4vh solid #4a90c2;
+  outline-offset: 0.2vh;
+  border-radius: 9% / 5%;
+  box-shadow: 0 0 1.4vh rgba(74, 144, 194, 0.65);
+}
+
+/* a selected hand card lifts up */
+.card.in-hand { transition: transform 0.12s ease; }
+.card.in-hand.selected {
+  transform: translateY(-1.6vh);
+  outline: 0.4vh solid #e0a93b;
+  outline-offset: 0.2vh;
+  border-radius: 9% / 5%;
+}
+.card.in-hand.clickable:hover { transform: translateY(-0.8vh); }
+
+/* "FULL" badge on a complete river stack */
+.full-label {
+  position: absolute;
+  top: 0.4vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #c0392b;
+  color: #fff;
+  font-size: 1.2vh;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.2vh 0.8vh;
+  border-radius: 0.6vh;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ---- status panel (sidebar) ---- */
+.status {
+  margin-top: 3vh;
+  max-width: 13em;
+}
+.turn-line {
+  font-size: 2.4vh;
+  font-weight: 700;
+}
+.hint-line {
+  margin-top: 0.8vh;
+  font-size: 1.7vh;
+  line-height: 1.35;
+  color: #6f6a61;
+}
+.cancel-btn {
+  margin-top: 1.4vh;
+  font-family: inherit;
+  font-size: 1.6vh;
+  padding: 0.5vh 1.4vh;
+  border: 1px solid #c9c4b8;
+  border-radius: 0.8vh;
+  background: #fff;
+  cursor: pointer;
+}
+.cancel-btn:hover:not(:disabled) { background: #f0ede5; }
+.cancel-btn:disabled { opacity: 0.4; cursor: default; }
+#undo-btn { display: block; }
+
+/* secondary "Undo last move" button on the pass splash */
+.splash-undo {
+  display: block;
+  margin: 1.6vh auto 0;
+  font-family: inherit;
+  font-size: 1.7vh;
+  padding: 0.6vh 1.6vh;
+  border: 1px solid #c9c4b8;
+  border-radius: 0.8vh;
+  background: transparent;
+  color: #6f6a61;
+  cursor: pointer;
+}
+.splash-undo:hover { background: rgba(0, 0, 0, 0.04); }
+
+/* ---- overlays / splash screens ---- */
+#overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 100;
+}
+.splash {
+  text-align: center;
+  padding: 4vh 5vw;
+  max-width: 80vw;
+}
+.splash-title {
+  font-size: 9vh;
+  font-weight: 800;
+  margin: 0.4vh 0;
+  line-height: 1;
+}
+.splash-mode {
+  font-size: 2.4vh;
+  color: #6f6a61;
+  margin: 0 0 2.5vh;
+}
+.splash-msg {
+  font-size: 2.6vh;
+  margin: 0.8vh 0;
+}
+.splash-btn {
+  display: block;
+  margin: 2vh auto 0;
+  min-width: 16em;
+  font-family: inherit;
+  font-size: 2.4vh;
+  font-weight: 700;
+  padding: 1.2vh 3vw;
+  border: none;
+  border-radius: 1.2vh;
+  background: #4a90c2;
+  color: #fff;
+  cursor: pointer;
+}
+.splash-btn:hover { background: #3b7aa6; }
+/* the second start button reads as a secondary choice */
+#start-ai-btn { background: #6a8f54; }
+#start-ai-btn:hover { background: #587a45; }
+
+/* per-prediction score badges shown on the board at game end */
+.pred-cell {
+  position: relative;
+  width: var(--cw);
+  height: var(--ch);
+  flex: 0 0 auto;
+}
+.pred-cell .card { width: 100%; height: 100%; }
+.score-badge {
+  position: absolute;
+  top: -0.8vh;
+  right: -0.8vh;
+  min-width: 2.6vh;
+  height: 2.6vh;
+  padding: 0 0.5vh;
+  border-radius: 1.3vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7vh;
+  font-weight: 800;
+  color: #fff;
+  box-shadow: 0 0.2vh 0.6vh rgba(0, 0, 0, 0.3);
+}
+.score-badge.pos { background: #2e8b4f; }
+.score-badge.neg { background: #c0392b; }
+
+/* game-over scoreboard in the sidebar (board stays visible) */
+#gameover { margin-top: 2.6vh; }
+.go-verdict {
+  font-size: 2.8vh;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.2vh;
+}
+.go-table {
+  border-collapse: collapse;
+  margin-bottom: 1.8vh;
+  font-size: 2.1vh;
+}
+.go-table td { padding: 0.2vh 0; }
+.go-table td:last-child {
+  font-weight: 700;
+  text-align: right;
+  padding-left: 2vh;
+}
+.go-table tr.win td { color: #2b6f3e; }
+#gameover .splash-btn { font-size: 1.9vh; padding: 0.9vh 2.2vh; }
+
+/* ---- flying card animation (deal / draw) ---- */
+.flying-card {
+  position: fixed;
+  z-index: 60;
+  transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.flying-card .card { width: 100%; height: 100%; }
+
+/* ---- drag & drop ---- */
+/* draggable sources: stop touch scrolling/zoom so a drag is recognised */
+.card.in-hand,
+.deck {
+  touch-action: none;
+}
+body.dragging {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing;
+}
+.drag-ghost {
+  position: fixed;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.92;
+  filter: drop-shadow(0 0.6vh 1.2vh rgba(0, 0, 0, 0.35));
+  transform: scale(1.04);
+}
+.drag-ghost .card {
+  width: 100%;
+  height: 100%;
+}
+/* the target currently under the dragged card */
+.drop-hover,
+.stack.drop-hover .bed,
+.stack.drop-hover .card:last-of-type {
+  outline: 0.5vh solid #e0a93b !important;
+  outline-offset: 0.2vh;
+  box-shadow: 0 0 1.6vh rgba(224, 169, 59, 0.7) !important;
+  border-radius: 9% / 5%;
+}
+/* hand zone highlighted as a drop target while dragging from the deck */
+.draw-target {
+  outline: 0.4vh dashed #4a90c2;
+  outline-offset: -0.6vh;
+  border-radius: 1vh;
+}
+
+/* ---- card tooltip ---- */
+#tooltip {
+  position: fixed;
+  z-index: 120;
+  max-width: 22vw;
+  min-width: 8em;
+  background: #2f2a24;
+  color: #fdfbf6;
+  font-size: 1.6vh;
+  line-height: 1.35;
+  padding: 0.8vh 1.1vh;
+  border-radius: 0.8vh;
+  box-shadow: 0 0.6vh 1.6vh rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  display: none;
+}
