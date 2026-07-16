@@ -263,6 +263,7 @@
   .modal-overlay[hidden] { display: none; }
   .modal {
     width: 100%; max-width: 22rem;
+    max-height: 90vh; overflow-y: auto;   /* scroll if the content is taller than the viewport */
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 1em;
@@ -270,6 +271,35 @@
     box-shadow: 0 1.5rem 3rem -1rem #000;
     animation: pop .12s ease;
   }
+  /* guided tour */
+  #tour { position: fixed; inset: 0; z-index: 3000; }   /* transparent layer that blocks the game */
+  #tour[hidden] { display: none; }
+  #tour-spot {
+    position: fixed; z-index: 1;
+    border-radius: 0.6em;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 9999px rgba(6,8,14,.74);           /* dims everything except the highlighted box */
+    pointer-events: none;
+    transition: left .25s ease, top .25s ease, width .25s ease, height .25s ease;
+  }
+  #tour-pop {
+    position: fixed; z-index: 2;
+    width: 17rem; max-width: 84vw;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0.8em;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 1rem 2.2rem -0.6rem #000;
+    transition: left .25s ease, top .25s ease;
+  }
+  #tour-text { font-size: clamp(0.9rem, 3.4vw, 1rem); line-height: 1.5; color: var(--text); }
+  #tour-text .dot { display: inline-block; width: 0.85em; height: 0.85em; border-radius: 50%; vertical-align: -0.08em; }
+  #tour-text .dot.correct { background: var(--fb-correct); }
+  #tour-text .dot.wrong { background: var(--fb-wrong); }
+  .tour-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-top: 0.9rem; }
+  #tour-count { color: var(--muted); font-size: 0.85rem; }
+  .tour-btns { display: flex; gap: 0.4rem; }
+  .tour-btns button { padding: 0.4em 0.7em; }
   .modal h2 {
     margin: 0 0 5%;
     text-align: center;
@@ -323,6 +353,7 @@
 
   <div class="toolbar">
     <button id="new">New Puzzle</button>
+    <button id="help">How to Play</button>
   </div>
 
   <div class="board">
@@ -364,6 +395,21 @@
     <div id="m-loading">
       <div class="spinner"></div>
       <div class="loading-text">Generating…</div>
+    </div>
+  </div>
+</div>
+
+<div id="tour" hidden>
+  <div id="tour-spot"></div>
+  <div id="tour-pop">
+    <div id="tour-text"></div>
+    <div class="tour-actions">
+      <span id="tour-count"></span>
+      <span class="tour-btns">
+        <button id="tour-skip">Skip</button>
+        <button id="tour-prev">Back</button>
+        <button id="tour-next" class="primary">Next</button>
+      </span>
     </div>
   </div>
 </div>
@@ -816,8 +862,10 @@ function startPuzzle(params, push){
   hintsUsed = 0;
   writeState(push);
   $('msg').textContent=''; $('msg').className='msg';
-  // full-name JSON shown on screen (the hash stores the compact short-key form), spaced for readability
-  $('hint').textContent = displayJSON(curParams).replaceAll(/([,:])/g, "$1 ");
+  // human-readable summary of the puzzle parameters
+  const rep = curParams.r ? 'repeat' : 'no repeat';
+  $('hint').textContent =
+    `Current puzzle: size ${curParams.s}, ${curParams.c} colors, ${rep}, ${STAR_LABELS[curParams.d-1].toLowerCase()}, seed ${curParams.seed}`;
   buildBoard();
 }
 
@@ -872,10 +920,6 @@ function generateParamsAsync(slots, colors, repeat, difficulty, onDone){
 // compact payload stored in the URL hash: {"w":size,"c":colors,"r":0|1,"d":difficulty,"s":seed}
 function hashJSON(p){
   return JSON.stringify({ w:p.s, c:p.c, r:p.r?1:0, d:p.d, s:p.seed });
-}
-// full-name payload shown on screen (repeat as a boolean)
-function displayJSON(p){
-  return JSON.stringify({ size:p.s, colors:p.c, repeat:!!p.r, difficulty:p.d, seed:p.seed });
 }
 function encodeParams(p){
   return btoa(hashJSON(p)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
@@ -939,8 +983,67 @@ function openModal(){
 function closeModal(){ $('modal').hidden = true; }
 function modalBusy(){ return $('modal').classList.contains('busy'); }
 
+/* guided tour: spotlight each part of the UI in turn */
+const TOUR = [
+  { target: null, text: 'Welcome to The Code Breaker. A secret code of colored pegs is hidden, and the clues give you just enough to deduce it. This quick tour shows you around.' },
+  { target: '#clues', text: 'These rows are past guesses. Each colored peg is a color that was tried in that position.' },
+  { target: '#clues .feedback', all: true, text: 'These dots beside each row are its feedback. A green dot (<span class="dot correct"></span>) means one peg is the right color in the right spot. An orange dot (<span class="dot wrong"></span>) means a right color in the wrong spot. The dots do not line up with the pegs they describe.' },
+  { target: '#guessRow', text: 'Build your final guess in this row, one peg per slot.' },
+  { target: '#palette', text: 'Pick colors here. Tap a color and then a slot to place it, or drag a color straight onto a slot. You can also drag pegs from the clues, and drag a peg off the slots to clear it.' },
+  { target: '#submit', text: 'Press Submit to check. If your guess is wrong, the clue rows it contradicts light up, so you know where to look.' },
+  { target: '#new', text: 'Use New Puzzle to change the size, number of colors, repeats, and difficulty. That is everything, have fun.' },
+];
+let tourIdx = 0;
+// bounding box of the step target. With `all`, unions every match (e.g. all feedback columns)
+function tourRect(step){
+  if(!step.target) return null;
+  const els = step.all ? [...document.querySelectorAll(step.target)]
+                       : [document.querySelector(step.target)].filter(Boolean);
+  if(!els.length) return null;
+  let l=Infinity, t=Infinity, r=-Infinity, b=-Infinity;
+  els.forEach(el=>{ const q=el.getBoundingClientRect(); l=Math.min(l,q.left); t=Math.min(t,q.top); r=Math.max(r,q.right); b=Math.max(b,q.bottom); });
+  return { left:l, top:t, right:r, bottom:b, width:r-l, height:b-t };
+}
+function positionTour(){
+  const step = TOUR[tourIdx], spot = $('tour-spot'), pop = $('tour-pop');
+  const r = tourRect(step);
+  if(r){
+    const pad = 6;
+    spot.style.display = 'block';
+    spot.style.left = (r.left - pad) + 'px';
+    spot.style.top = (r.top - pad) + 'px';
+    spot.style.width = (r.width + 2*pad) + 'px';
+    spot.style.height = (r.height + 2*pad) + 'px';
+    const pw = pop.offsetWidth, ph = pop.offsetHeight, gap = 12;
+    let top = r.bottom + gap;
+    if(top + ph > window.innerHeight - 8) top = r.top - ph - gap;   // no room below, place above
+    top = Math.max(8, Math.min(top, window.innerHeight - ph - 8));
+    let left = r.left + r.width/2 - pw/2;
+    left = Math.max(8, Math.min(left, window.innerWidth - pw - 8));
+    pop.style.left = left + 'px'; pop.style.top = top + 'px';
+  } else {
+    spot.style.display = 'none';
+    pop.style.left = (window.innerWidth/2 - pop.offsetWidth/2) + 'px';
+    pop.style.top  = (window.innerHeight/2 - pop.offsetHeight/2) + 'px';
+  }
+}
+function showTourStep(){
+  const step = TOUR[tourIdx];
+  $('tour-text').innerHTML = step.text;
+  $('tour-count').textContent = `${tourIdx+1} / ${TOUR.length}`;
+  $('tour-prev').disabled = tourIdx === 0;
+  $('tour-next').textContent = tourIdx === TOUR.length-1 ? 'Done' : 'Next';
+  positionTour();
+}
+function startTour(){ tourIdx = 0; $('tour').hidden = false; showTourStep(); window.addEventListener('resize', positionTour); }
+function endTour(){ $('tour').hidden = true; window.removeEventListener('resize', positionTour); }
+
 ['s-slots','s-colors','s-diff','s-repeat'].forEach(id => $(id).addEventListener('input', syncModalLabels));
 $('new').addEventListener('click', openModal);
+$('help').addEventListener('click', startTour);
+$('tour-skip').addEventListener('click', endTour);
+$('tour-prev').addEventListener('click', ()=>{ if(tourIdx>0){ tourIdx--; showTourStep(); } });
+$('tour-next').addEventListener('click', ()=>{ if(tourIdx>=TOUR.length-1) endTour(); else { tourIdx++; showTourStep(); } });
 $('m-cancel').addEventListener('click', closeModal);
 $('modal').addEventListener('click', e=>{ if(!modalBusy() && e.target===$('modal')) closeModal(); }); // backdrop
 $('m-go').addEventListener('click', ()=>{
@@ -978,6 +1081,12 @@ window.addEventListener('popstate', ()=>{
 
 document.addEventListener('keydown', e=>{
   if(!cfg) return;
+  if(!$('tour').hidden){
+    if(e.key==='Escape') endTour();
+    else if(e.key==='ArrowRight' || e.key==='Enter') $('tour-next').click();
+    else if(e.key==='ArrowLeft') $('tour-prev').click();
+    return;
+  }
   if($('modal') && !$('modal').hidden){
     if(e.key==='Enter') $('m-go').click();
     else if(e.key==='Escape' && !modalBusy()) closeModal(); // cannot dismiss while generating
