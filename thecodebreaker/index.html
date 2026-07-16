@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TheCodeBreaker, a deduction game</title>
+<title>The Code Breaker: a deduction puzzle</title>
 <style>
   @font-face {
     font-family: 'Cause';
@@ -23,9 +23,9 @@
     --bad: #ff5d6c;
     --slot: #10131b;
     --peg-white: #f4f6ff;
-    --fb-correct: #35d07f;   /* green — right color, right spot */
-    --fb-wrong:   #ff9d3c;   /* orange — right color, wrong spot */
-    /* fluid sizing — scales with viewport, no fixed breakpoints */
+    --fb-correct: #35d07f;   /* green, right color, right spot */
+    --fb-wrong:   #ff9d3c;   /* orange, right color, wrong spot */
+    /* fluid sizing, scales with viewport, no fixed breakpoints */
     --peg: clamp(1.9rem, 9vw, 2.6rem);
     --swatch: clamp(2rem, 9.5vw, 2.6rem);
     --fb: clamp(0.6rem, 2.8vw, 0.8rem);
@@ -35,20 +35,20 @@
   html, body {
     margin: 0;
     height: 100%;
-    overflow: hidden;              /* content scales to fit. Never scrolls */
+    overflow: hidden;              /* content scales to fit, never scrolls */
     background: radial-gradient(120% 60% at 50% -10%, #1b2030 0%, var(--bg) 60%);
     color: var(--text);
     font-family: 'Cause', "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
     font-size: 1rem;                 /* user-agent normal size (≈16px) baseline */
     -webkit-text-size-adjust: 100%;
-    /* no text selection — it interferes with dragging pegs */
+    /* no text selection, it interferes with dragging pegs */
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
     -webkit-user-drag: none;
   }
-  /* block native HTML5 element drag (the "globe" cursor) — we handle drag via pointer events */
+  /* block native HTML5 element drag (the "globe" cursor), we handle drag via pointer events */
   .peg, .swatch, .drag-ghost { -webkit-user-drag: none; }
   .wrap {
     width: 92%;
@@ -138,7 +138,7 @@
   .row + .row { margin-top: 1.5%; }
   .row.clue { background: var(--panel-2); transition: box-shadow .15s ease, background .15s ease; }
   .row.guess { background: transparent; border: 1px dashed var(--line); }
-  /* clue rows the submitted guess contradicts — where the solver should look */
+  /* clue rows the submitted guess contradicts, where the solver should look */
   .row.clue.mismatch {
     background: rgba(255,93,108,.14);
     box-shadow: inset 0 0 0 2px var(--bad);
@@ -210,8 +210,8 @@
     background: transparent;
     border: 1px solid var(--line);
   }
-  .fb.black { background: var(--fb-correct); border-color: transparent; } /* correct spot → green */
-  .fb.white { background: var(--fb-wrong); border-color: transparent; }   /* wrong spot → orange */
+  .fb.black { background: var(--fb-correct); border-color: transparent; } /* correct spot is green */
+  .fb.white { background: var(--fb-wrong); border-color: transparent; }   /* wrong spot is orange */
 
   .palette {
     display: flex;
@@ -297,12 +297,27 @@
   .modal .check input { width: 1.1em; height: 1.1em; accent-color: var(--accent); cursor: pointer; }
   .modal-actions { display: flex; gap: 4%; margin-top: 7%; }
   .modal-actions button { flex: 1; }
+
+  /* generating state: hide the form, show the spinner */
+  #m-loading { display: none; text-align: center; padding: 2% 0 1%; }
+  #modal.busy label, #modal.busy .modal-actions { display: none; } /* #modal is the overlay that gets .busy */
+  #modal.busy #m-loading { display: block; }
+  .spinner {
+    width: 2.6rem; height: 2.6rem;
+    margin: 2% auto 6%;
+    border-radius: 50%;
+    border: 0.28rem solid var(--line);
+    border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--muted); margin-top: 4%; font-size: clamp(0.85rem, 3.4vw, 1rem); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1 id="title"></h1>
+    <h1><span style="color:#e6194b">T</span><span style="color:#f58231">h</span><span style="color:#ffe119">e</span> <span style="color:#3cb44b">C</span><span style="color:#42d4f4">o</span><span style="color:#4363d8">d</span><span style="color:#b048e0">e</span> <span style="color:#e6194b">B</span><span style="color:#f58231">r</span><span style="color:#ffe119">e</span><span style="color:#3cb44b">a</span><span style="color:#42d4f4">k</span><span style="color:#4363d8">e</span><span style="color:#b048e0">r</span></h1>
     <p class="tag">Minimal clues to deduce the code. Can you break it?</p>
   </header>
 
@@ -312,7 +327,7 @@
 
   <div class="board">
     <div class="legend">
-      <span>Clues played</span>
+      <span>Clues</span>
       <span><span class="dot black"></span>correct spot<span class="dot white"></span>wrong spot</span>
     </div>
     <div id="clues"></div>
@@ -346,6 +361,10 @@
       <button id="m-cancel">Cancel</button>
       <button id="m-go" class="primary">Generate</button>
     </div>
+    <div id="m-loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Generating…</div>
+    </div>
   </div>
 </div>
 
@@ -359,7 +378,7 @@ const STAR_LABELS = ['Gentle','Easy','Moderate','Tricky','Brutal'];
 // current puzzle parameters: { s:slots, c:colors, r:repeat, d:difficulty(1-5), seed }
 let cfg, secret, clues, guess, selColor, solved, hintsUsed, curSeed, curParams;
 
-/* ---------- seeded RNG (mulberry32) — same seed ⇒ same puzzle ---------- */
+/* seeded RNG (mulberry32), same seed gives same puzzle */
 let rng = Math.random;
 function mulberry32(a){
   return function(){
@@ -459,7 +478,7 @@ function minimizeClues(clueList, slots, colors, repeat){
     for(let i=0;i<clueList.length;i++){
       const without = clueList.slice(0,i).concat(clueList.slice(i+1));
       if(consistentCount(without, slots, colors, repeat, 2).count === 1){
-        clueList.splice(i,1); changed = true; break; // still unique without row i → it's redundant
+        clueList.splice(i,1); changed = true; break; // still unique without row i, so it is redundant
       }
     }
   }
@@ -508,16 +527,8 @@ function ratePuzzle(clueList, slots, colors, repeat){
   return Math.log2(afterBest) + 0.6*(steps-1) - 1.5*killed.size;
 }
 
-/* ---------- rendering ---------- */
+/* rendering */
 const $ = id => document.getElementById(id);
-
-// title: each letter tinted with a color cycled from the peg palette
-(function(){
-  const TITLE = 'THECODEBREAKER';
-  $('title').innerHTML = [...TITLE]
-    .map((ch,i)=>`<span style="color:${PALETTE[i % PALETTE.length]}">${ch}</span>`)
-    .join('');
-})();
 
 function pegEl(colorIdx){
   const d = document.createElement('div');
@@ -561,7 +572,7 @@ function paintPeg(p, colorIdx, animate){
   }
 }
 
-// full structural build — only when the puzzle changes
+// full structural build, only when the puzzle changes
 function buildBoard(){
   const {slots, colors} = cfg;
 
@@ -627,7 +638,7 @@ function fit(){
   wrap.style.transform = s < 1 ? `scale(${s})` : 'none';
 }
 
-// lightweight updates — touch only what changed, so nothing else repaints
+// lightweight updates, touch only what changed, so nothing else repaints
 function updateSwatches(){
   swatches.forEach((s,i)=>{
     s.classList.toggle('sel', selColor===i);
@@ -649,7 +660,7 @@ function clearMismatches(){ clueRows.forEach(r=>r.classList.remove('mismatch'));
 
 function selectColor(i){
   selColor = i;
-  updateSwatches();            // only the palette selection changes — no peg rebuild, no blink
+  updateSwatches();            // only the palette selection changes, no peg rebuild, no blink
 }
 
 // repaint guess pegs from state; pass an index to pop-animate the one just placed
@@ -657,31 +668,43 @@ function refreshGuess(animateIdx){
   guess.forEach((v,i)=> paintPeg(guessPegs[i], v, i===animateIdx));
   updateSwatches();
   updateSubmit();
-  clearMismatches();          // guess changed → the previous NO no longer applies
+  clearMismatches();          // guess changed, so the previous NO no longer applies
 }
 
-/* ---------- drag & drop (pointer-based, works on touch + mouse) ---------- */
+/* drag & drop (pointer-based, works on touch + mouse) */
 let drag = null;
 let suppressClick = false;
 
 function startDrag(e, o){
-  drag = Object.assign({ startX:e.clientX, startY:e.clientY, moved:false, ghost:null }, o);
+  if(drag) return;                                  // a drag is already active. Ignore extra touches.
+  drag = Object.assign({ pointerId:e.pointerId, startX:e.clientX, startY:e.clientY, moved:false, ghost:null }, o);
   window.addEventListener('pointermove', onPointerMove);
   window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerCancel);
 }
 function onPegPointerDown(e, i){
   if(solved || guess[i]==null) return;              // only drag filled pegs
-  startDrag(e, { from:i, color:guess[i] });         // from = slot index → move/swap/clear
+  startDrag(e, { from:i, color:guess[i] });         // from is a slot index, so move, swap, or clear
 }
 function onSwatchPointerDown(e, colorIdx){
   if(solved) return;
-  startDrag(e, { from:null, color:colorIdx });      // from = null → dragging a copy from the palette
+  startDrag(e, { from:null, color:colorIdx });      // from is null, so drag a copy from the palette
+}
+
+// tear down listeners and transient UI without applying any drop
+function teardownDrag(){
+  window.removeEventListener('pointermove', onPointerMove);
+  window.removeEventListener('pointerup', onPointerUp);
+  window.removeEventListener('pointercancel', onPointerCancel);
+  document.body.classList.remove('dragging');
+  document.querySelectorAll('.peg.slot.source').forEach(s=>s.classList.remove('source'));
+  clearHighlight();
 }
 
 function onPointerMove(e){
-  if(!drag) return;
+  if(!drag || e.pointerId !== drag.pointerId) return; // only the finger that started the drag
   const dx = e.clientX - drag.startX, dy = e.clientY - drag.startY;
-  if(!drag.moved && Math.hypot(dx, dy) < 6) return; // movement threshold → distinguishes tap from drag
+  if(!drag.moved && Math.hypot(dx, dy) < 6) return; // movement threshold tells a tap from a drag
   if(!drag.moved){
     drag.moved = true;
     const g = document.createElement('div');
@@ -693,7 +716,7 @@ function onPointerMove(e){
       const r = src.getBoundingClientRect();
       g.style.width = r.width + 'px';
       g.style.height = r.height + 'px';
-      if(drag.from!=null) src.classList.add('source'); // dim the moved peg; palette swatch stays (copy)
+      if(drag.from!=null) src.classList.add('source'); // dim the moved peg. The palette swatch stays.
     }
     document.body.appendChild(g);
     drag.ghost = g;
@@ -705,41 +728,45 @@ function onPointerMove(e){
   highlight(e.clientX, e.clientY);
 }
 
-function onPointerUp(e){
-  window.removeEventListener('pointermove', onPointerMove);
-  window.removeEventListener('pointerup', onPointerUp);
+// a second touch or a browser gesture aborted the drag. Clean up, apply nothing.
+function onPointerCancel(e){
+  if(!drag || e.pointerId !== drag.pointerId) return;
   const d = drag; drag = null;
-  if(!d) return;
-  document.body.classList.remove('dragging');
   if(d.ghost) d.ghost.remove();
-  clearHighlight();
-  if(!d.moved) return; // it was a tap → let the click handler run (eyedropper/place)
+  teardownDrag();
+}
 
-  // a real drag happened — swallow the synthetic click the touch/mouse will emit next.
-  // flag-based (not timed): the capture-phase click handler below consumes it, avoiding a
-  // mobile race where the click fires in a later task than a setTimeout reset would.
+function onPointerUp(e){
+  if(!drag || e.pointerId !== drag.pointerId) return;
+  const d = drag; drag = null;
+  if(d.ghost) d.ghost.remove();
+  teardownDrag();
+  if(!d.moved) return; // it was a tap, so let the click handler run (eyedropper or place)
+
+  // A real drag happened, so swallow the synthetic click the touch or mouse will emit next.
+  // This is flag based, not timed: the capture-phase click handler below consumes it, which avoids
+  // a mobile race where the click fires in a later task than a setTimeout reset would.
   suppressClick = true;
 
   const el = document.elementFromPoint(e.clientX, e.clientY);
   const slot = el && el.closest('.peg.slot');
   const to = slot ? parseInt(slot.dataset.idx) : -1;
   if(d.from === null){
-    // from palette: drop a copy onto a slot (off-slot drop does nothing — no accidental clears)
+    // from the palette: drop a copy onto a slot. An off-slot drop does nothing, to avoid stray clears.
     if(to >= 0){
       if(!cfg.repeat){ const j = guess.indexOf(d.color); if(j!==-1 && j!==to) guess[j]=null; }
       guess[to] = d.color;
       selColor = d.color;
     }
   } else if(to >= 0){
-    if(to !== d.from){                      // swap (target may be empty → effective move)
+    if(to !== d.from){                      // swap. The target may be empty, which is an effective move.
       const tmp = guess[to];
       guess[to] = d.color;
       guess[d.from] = tmp;
     }
   } else {
-    guess[d.from] = null;                   // dragged a peg off the slots → clear it
+    guess[d.from] = null;                   // dragged a peg off the slots, so clear it
   }
-  document.querySelectorAll('.peg.slot.source').forEach(s=>s.classList.remove('source'));
   refreshGuess();
 }
 
@@ -779,7 +806,7 @@ function startPuzzle(params, push){
   curParams = params;
   curSeed = params.seed >>> 0;
   cfg = { slots: params.s, colors: params.c, repeat: params.r, clues: params.s };
-  rng = mulberry32(curSeed);              // deterministic: seed + params ⇒ this exact puzzle
+  rng = mulberry32(curSeed);              // deterministic: seed + params gives this exact puzzle
   const p = buildPuzzle();
   secret = p.code;
   clues = p.clueList;
@@ -794,28 +821,54 @@ function startPuzzle(params, push){
   buildBoard();
 }
 
-/* ---------- puzzle generation targeting the difficulty slider ---------- */
+/* puzzle generation targeting the difficulty slider */
 // generate a batch of candidates for this config, then pick the one whose D-rank matches `difficulty`
-function generateParams(slots, colors, repeat, difficulty){
-  if(!repeat && colors < slots) colors = slots;    // no-repeat requires colors ≥ slots
-  cfg = { slots, colors, repeat, clues: slots };   // buildPuzzle reads cfg
+function batchSize(slots, colors){
   const space = Math.pow(colors, slots);
-  const BATCH = space <= 2000 ? 30 : space <= 20000 ? 18 : 10;
-  const cands = [];
-  for(let k=0;k<BATCH;k++){
-    const seed = makeSeed();
-    rng = mulberry32(seed);
-    const p = buildPuzzle();
-    if(!p.clueList.length) continue;
-    cands.push({ seed, D: ratePuzzle(p.clueList, slots, colors, repeat) });
-  }
+  return space <= 2000 ? 30 : space <= 20000 ? 18 : 10;
+}
+function makeCandidate(slots, colors, repeat){
+  const seed = makeSeed();
+  rng = mulberry32(seed);
+  const p = buildPuzzle();
+  return p.clueList.length ? { seed, D: ratePuzzle(p.clueList, slots, colors, repeat) } : null;
+}
+// choose the candidate whose difficulty rank matches the slider (easiest to hardest)
+function pickParams(cands, slots, colors, repeat, difficulty){
   if(!cands.length) return { s:slots, c:colors, r:repeat, d:difficulty, seed:makeSeed() };
-  cands.sort((a,b)=>a.D-b.D);                       // easiest → hardest
+  cands.sort((a,b)=>a.D-b.D);
   const idx = Math.round((difficulty-1)/4 * (cands.length-1));
   return { s:slots, c:colors, r:repeat, d:difficulty, seed:cands[idx].seed };
 }
+// synchronous generation, used at boot
+function generateParams(slots, colors, repeat, difficulty){
+  if(!repeat && colors < slots) colors = slots;    // no-repeat requires colors >= slots
+  cfg = { slots, colors, repeat, clues: slots };
+  const N = batchSize(slots, colors), cands = [];
+  for(let k=0;k<N;k++){ const c = makeCandidate(slots, colors, repeat); if(c) cands.push(c); }
+  return pickParams(cands, slots, colors, repeat, difficulty);
+}
+// chunked generation so the spinner keeps animating, shown for at least MIN_MS to avoid a flash.
+function generateParamsAsync(slots, colors, repeat, difficulty, onDone){
+  if(!repeat && colors < slots) colors = slots;
+  cfg = { slots, colors, repeat, clues: slots };
+  const N = batchSize(slots, colors), cands = [];
+  const MIN_MS = 500;
+  const t0 = performance.now();
+  let k = 0;
+  function step(){
+    const end = Math.min(N, k + 2);                  // a couple of candidates per tick
+    for(; k < end; k++){ const c = makeCandidate(slots, colors, repeat); if(c) cands.push(c); }
+    if(k < N) setTimeout(step, 0);                   // yield between chunks to keep the UI responsive
+    else {
+      const rest = Math.max(0, t0 + MIN_MS - performance.now());
+      setTimeout(()=>onDone(pickParams(cands, slots, colors, repeat, difficulty)), rest);
+    }
+  }
+  setTimeout(step, 0);                               // yield first so the busy UI can paint
+}
 
-/* ---------- URL state: #<base64url(JSON)> + browser history ---------- */
+/* URL state: #<base64url(JSON)> + browser history */
 // compact payload stored in the URL hash: {"w":size,"c":colors,"r":0|1,"d":difficulty,"s":seed}
 function hashJSON(p){
   return JSON.stringify({ w:p.s, c:p.c, r:p.r?1:0, d:p.d, s:p.seed });
@@ -857,17 +910,17 @@ function submit(){
     clearMismatches();
     updateSubmit();
   } else {
-    m.textContent = 'NO. Check the highlighted clues';
+    m.textContent = 'NO. Check the highlighted clues.';
     m.className='msg lose';
     showMismatches();
   }
 }
 
-/* ---------- New-Puzzle modal ---------- */
+/* New-Puzzle modal */
 function fmtDiff(v){ return `${v} · ${STAR_LABELS[v-1]}`; }
 function syncModalLabels(){
   const slots = +$('s-slots').value;
-  // no-repeat needs at least as many colors as slots — nudge the colors slider up if needed
+  // no-repeat needs at least as many colors as slots, nudge the colors slider up if needed
   if(!$('s-repeat').checked && +$('s-colors').value < slots) $('s-colors').value = slots;
   $('v-slots').textContent  = slots;
   $('v-colors').textContent = $('s-colors').value;
@@ -884,23 +937,26 @@ function openModal(){
   $('modal').hidden = false;
 }
 function closeModal(){ $('modal').hidden = true; }
+function modalBusy(){ return $('modal').classList.contains('busy'); }
 
 ['s-slots','s-colors','s-diff','s-repeat'].forEach(id => $(id).addEventListener('input', syncModalLabels));
 $('new').addEventListener('click', openModal);
 $('m-cancel').addEventListener('click', closeModal);
-$('modal').addEventListener('click', e=>{ if(e.target===$('modal')) closeModal(); }); // click backdrop
+$('modal').addEventListener('click', e=>{ if(!modalBusy() && e.target===$('modal')) closeModal(); }); // backdrop
 $('m-go').addEventListener('click', ()=>{
+  if(modalBusy()) return;                           // ignore while a generation is running
   const s=+$('s-slots').value, c=+$('s-colors').value, d=+$('s-diff').value, r=$('s-repeat').checked;
-  closeModal();
-  $('hint').textContent = 'Generating…';
-  setTimeout(()=>{                                  // yield so "Generating…" paints before the heavy loop
-    startPuzzle(generateParams(s, c, r, d), true);
-  }, 20);
+  $('modal').classList.add('busy');                 // keep the dialog open, show the spinner
+  generateParamsAsync(s, c, r, d, params=>{
+    startPuzzle(params, true);
+    $('modal').classList.remove('busy');
+    closeModal();                                   // dismiss only once the puzzle is ready
+  });
 });
 
 $('submit').addEventListener('click', submit);
 
-// kill the browser's native drag (the globe/link cursor) — we drive drag via pointer events
+// kill the browser's native drag (the globe/link cursor), we drive drag via pointer events
 document.addEventListener('dragstart', e=>e.preventDefault());
 
 // each new pointer interaction starts fresh (clears a stale flag from a drag that emitted no click)
@@ -914,7 +970,7 @@ document.addEventListener('click', e=>{
 window.addEventListener('resize', fit);
 window.addEventListener('orientationchange', fit);
 
-// browser back/forward → load the puzzle encoded in the (now-current) URL, without pushing
+// browser back or forward loads the puzzle encoded in the current URL, without pushing
 window.addEventListener('popstate', ()=>{
   const p = parseHash();
   if(p) startPuzzle(p, false);
@@ -924,7 +980,7 @@ document.addEventListener('keydown', e=>{
   if(!cfg) return;
   if($('modal') && !$('modal').hidden){
     if(e.key==='Enter') $('m-go').click();
-    else if(e.key==='Escape') closeModal();
+    else if(e.key==='Escape' && !modalBusy()) closeModal(); // cannot dismiss while generating
     return;
   }
   if(e.key>='1' && e.key<=String(cfg.colors)){
